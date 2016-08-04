@@ -10,42 +10,46 @@ import java.util.List;
 
 public class CoordTests {
 
-    private final String has4 = "has 4 neighbours";
+    private Matcher<Coord> isNeighbourOf(Coord coord) {
+        List<Coord> neighbours = coord.neighbours();
 
-    private Matcher<Coord> isInNeighbourList(List<Coord> coords) {
         return new TypeSafeMatcher<Coord>() {
             @Override
             protected boolean matchesSafely(Coord item) {
-                return coords.contains(item);
+                return neighbours.contains(item);
             }
 
             @Override
             public void describeTo(Description description) {
                 description.appendValue("actual coord in list");
-                description.appendValue(coords);
+                description.appendValue(neighbours);
             }
         };
     }
 
     @Test
     public void checkNeighbours00() {
-        List<Coord> neighbours = new Coord(0, 0).neighbours();
+        Coord coord = new Coord(0, 0);
+        Matcher<Coord> isNeighbour = isNeighbourOf(coord);
+        List<Coord> neighbours = coord.neighbours();
 
-        Assert.assertSame(has4, 4, neighbours.size());
-        Assert.assertThat(new Coord(-1, 0), isInNeighbourList(neighbours));
-        Assert.assertThat(new Coord(1, 0), isInNeighbourList(neighbours));
-        Assert.assertThat(new Coord(0, -1), isInNeighbourList(neighbours));
-        Assert.assertThat(new Coord(0, 1), isInNeighbourList(neighbours));
+        Assert.assertSame("has 4 neighbours", 4, neighbours.size());
+        Assert.assertThat(new Coord(-1, 0), isNeighbour);
+        Assert.assertThat(new Coord(1, 0), isNeighbour);
+        Assert.assertThat(new Coord(0, -1), isNeighbour);
+        Assert.assertThat(new Coord(0, 1), isNeighbour);
     }
 
     @Test
     public void checkNeighbours64() {
-        List<Coord> neighbours = new Coord(6, 4).neighbours();
+        Coord coord = new Coord(6, 4);
+        Matcher<Coord> isNeighbour = isNeighbourOf(coord);
+        List<Coord> neighbours = coord.neighbours();
 
-        Assert.assertSame(has4, 4, neighbours.size());
-        Assert.assertThat(new Coord(5, 4), isInNeighbourList(neighbours));
-        Assert.assertThat(new Coord(7, 4), isInNeighbourList(neighbours));
-        Assert.assertThat(new Coord(6, 3), isInNeighbourList(neighbours));
-        Assert.assertThat(new Coord(6, 5), isInNeighbourList(neighbours));
+        Assert.assertSame("has 4 neighbours", 4, neighbours.size());
+        Assert.assertThat(new Coord(5, 4), isNeighbour);
+        Assert.assertThat(new Coord(7, 4), isNeighbour);
+        Assert.assertThat(new Coord(6, 3), isNeighbour);
+        Assert.assertThat(new Coord(6, 5), isNeighbour);
     }
 }
