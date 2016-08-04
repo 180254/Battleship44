@@ -11,7 +11,7 @@ public @interface DoVerify {
     /**
      * Indicates of verification is done:<br/>
      * - if true method/constructor may throw IllegalArgumentException<br/>
-     * - if false method/constructor accept also "bad params".
+     * - if false method/constructor accept any param
      */
     boolean value();
 }

@@ -14,6 +14,7 @@ public class Grid {
 
     private final int[] cells;
     private final int sizeX;
+    private final int sizeY;
 
     @DoVerify(true)
     public Grid(int sizeX, int sizeY, int[] cells) {
@@ -21,6 +22,7 @@ public class Grid {
         Assert.ensureThat(cells.length == sizeX * sizeY, "cells", "out of grid");
 
         this.sizeX = sizeX;
+        this.sizeY = sizeY;
         this.cells = cells.clone();
     }
 
@@ -30,9 +32,9 @@ public class Grid {
 
         int offset = coordToOffset(coord);
         int code = cells[offset];
-        CellType types = CellType.getByCode(code);
+        Cell.Type type = Cell.Type.getByCode(code);
 
-        return new Cell(coord, types);
+        return new Cell(coord, type);
     }
 
     @DoVerify(true)
@@ -49,14 +51,16 @@ public class Grid {
 
     @DoVerify(false)
     private int coordToOffset(Coord coord) {
-        return coord.getX() * sizeX + coord.getY();
+        return coord.getY() * sizeX + coord.getX();
     }
 
     @DoVerify(true)
     private void verifyCoord(Coord coord) {
         Assert.ensureThat(coordToOffset(coord) < cells.length, "coord.x,y", "out of grid");
         Assert.ensureThat(coord.getX() >= 0, "coord.x", "out of grid");
-        Assert.ensureThat(coord.getY() >= 0, "coord.x", "out of grid");
+        Assert.ensureThat(coord.getY() >= 0, "coord.y", "out of grid");
+        Assert.ensureThat(coord.getX() < sizeX, "coord.x", "out of grid");
+        Assert.ensureThat(coord.getY() < sizeY, "coord.y", "out of grid");
     }
 
     @DoVerify(false)

@@ -7,10 +7,6 @@ import pl.nn44.battleship.DoVerify;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Coord model.
- * This model does NOT do verification of data as parameters.
- */
 public class Coord {
 
     private final int x;

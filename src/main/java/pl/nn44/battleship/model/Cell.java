@@ -4,27 +4,25 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import pl.nn44.battleship.DoVerify;
 
-/**
- * Cell model.
- * This model does NOT do verification of given data as parameters.
- */
+import java.util.Arrays;
+
 public class Cell {
 
     private final Coord coord;
-    private final CellType cellType;
+    private final Type type;
 
     @DoVerify(false)
-    public Cell(Coord coord, CellType cellType) {
+    public Cell(Coord coord, Type type) {
         this.coord = coord;
-        this.cellType = cellType;
+        this.type = type;
     }
 
     public Coord getCoord() {
         return coord;
     }
 
-    public CellType getCellType() {
-        return cellType;
+    public Type getType() {
+        return type;
     }
 
     @Override
@@ -34,19 +32,55 @@ public class Cell {
         Cell cell = (Cell) o;
 
         return Objects.equal(coord, cell.coord) &&
-                cellType == cell.cellType;
+                type == cell.type;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(coord, cellType);
+        return Objects.hashCode(coord, type);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("coord", coord)
-                .add("cellType", cellType)
+                .add("type", type)
                 .toString();
     }
+
+    // ---------------------------------------------------------------------------------------------------------------
+
+    public enum Type {
+
+        EMPTY(0), SHIP(1),
+        HIT(2), MISS(3), VERIFIED_EMPTY(4);
+
+        private int code;
+
+        Type(int code) {
+            this.code = code;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        @DoVerify(true)
+        public static Type getByCode(int code) {
+            Type[] allCells = Type.values();
+            return Arrays.stream(allCells)
+                    .filter(cell -> cell.code == code)
+                    .findAny()
+                    .orElseThrow(() -> new IllegalArgumentException("bad code"));
+        }
+
+        @Override
+        public String toString() {
+            return MoreObjects.toStringHelper(this)
+                    .add("name", name())
+                    .add("code", code)
+                    .toString();
+        }
+    }
+
 }

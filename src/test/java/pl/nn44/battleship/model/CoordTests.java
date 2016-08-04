@@ -52,4 +52,5 @@ public class CoordTests {
         Assert.assertThat(new Coord(6, 3), isNeighbour);
         Assert.assertThat(new Coord(6, 5), isNeighbour);
     }
+
 }

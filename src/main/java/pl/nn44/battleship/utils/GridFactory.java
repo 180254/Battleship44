@@ -6,6 +6,10 @@ import pl.nn44.battleship.model.Grid;
 
 public class GridFactory {
 
+    private GridFactory() {
+
+    }
+
     @DoVerify(true)
     public static Grid sizeFromEnv(Environment env, int[] cells) {
         return new Grid(
