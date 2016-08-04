@@ -53,7 +53,8 @@ public class Cell {
     public enum Type {
 
         EMPTY(0), SHIP(1),
-        HIT(2), MISS(3), VERIFIED_EMPTY(4);
+
+        UNKNOWN(5), HIT(6), MISS(7), VERIFIED_EMPTY(7);
 
         private int code;
 

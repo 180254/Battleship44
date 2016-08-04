@@ -38,10 +38,20 @@ public class Grid {
     }
 
     @DoVerify(true)
-    public List<Cell> getNeighbours(Coord coord) {
+    public List<Cell> getNeighboursPlus(Coord coord) {
         verifyCoord(coord);
 
-        return coord.neighbours().stream()
+        return coord.neighboursPlus().stream()
+                .filter(this::isCoordProper)
+                .map(this::getCell)
+                .collect(Collectors.toList());
+    }
+
+    @DoVerify(true)
+    public List<Cell> getNeighboursX(Coord coord) {
+        verifyCoord(coord);
+
+        return coord.neighboursX().stream()
                 .filter(this::isCoordProper)
                 .map(this::getCell)
                 .collect(Collectors.toList());
@@ -63,7 +73,6 @@ public class Grid {
         Assert.ensureThat(coord.getY() < sizeY, "coord.y", "out of grid");
     }
 
-    @DoVerify(false)
     private boolean isCoordProper(Coord coord) {
         // TODO: better method without repeating conditions?
         try {

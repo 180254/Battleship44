@@ -31,19 +31,23 @@ public class Coord {
         return y;
     }
 
-    /**
-     * Get neighbours of this coord.
-     * This method does _not_ verify if given neighbours are proper (in grid).
-     *
-     * @return list of neighbours
-     */
     @DoVerify(false)
-    public List<Coord> neighbours() {
+    public List<Coord> neighboursPlus() {
         return Arrays.asList(
                 Coord.c(x - 1, y),
                 Coord.c(x + 1, y),
                 Coord.c(x, y - 1),
                 Coord.c(x, y + 1)
+        );
+    }
+
+    @DoVerify(false)
+    public List<Coord> neighboursX() {
+        return Arrays.asList(
+                Coord.c(x - 1, y - 1),
+                Coord.c(x - 1, y + 1),
+                Coord.c(x + 1, y - 1),
+                Coord.c(x + 1, y + 1)
         );
     }
 

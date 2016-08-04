@@ -185,7 +185,7 @@ public class GridTests {
     }
 
     @Test
-    public void getNeighbours_allInGrid() {
+    public void getNeighboursPlus_allInGrid() {
         int[] cells = {
                 0, 0, 0,
                 1, 1, 0,
@@ -194,8 +194,8 @@ public class GridTests {
         Grid grid = new Grid(3, 3, cells);
 
         Coord coord = new Coord(1, 1);
-        List<Cell> neighbours = grid.getNeighbours(coord);
-        List<Coord> coordNeighbours = coord.neighbours();
+        List<Cell> neighbours = grid.getNeighboursPlus(coord);
+        List<Coord> coordNeighbours = coord.neighboursPlus();
 
         Assert.assertSame(4, neighbours.size());
 
@@ -205,7 +205,7 @@ public class GridTests {
     }
 
     @Test
-    public void getNeighbours_someOutOfGrid_top() {
+    public void getNeighboursPlus_someOutOfGrid_top() {
         int[] cells = {
                 0, 0, 0,
                 1, 1, 0,
@@ -214,7 +214,7 @@ public class GridTests {
         Grid grid = new Grid(3, 3, cells);
 
         Coord coord = new Coord(1, 0);
-        List<Cell> neighbours = grid.getNeighbours(coord);
+        List<Cell> neighbours = grid.getNeighboursPlus(coord);
 
         Assert.assertSame(3, neighbours.size());
         Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 0))));
@@ -223,7 +223,7 @@ public class GridTests {
     }
 
     @Test
-    public void getNeighbours_someOutOfGrid_left() {
+    public void getNeighboursPlus_someOutOfGrid_left() {
         int[] cells = {
                 0, 0, 0,
                 1, 1, 0,
@@ -232,7 +232,7 @@ public class GridTests {
         Grid grid = new Grid(3, 3, cells);
 
         Coord coord = new Coord(0, 1);
-        List<Cell> neighbours = grid.getNeighbours(coord);
+        List<Cell> neighbours = grid.getNeighboursPlus(coord);
 
         Assert.assertSame(3, neighbours.size());
         Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 0))));
@@ -241,7 +241,7 @@ public class GridTests {
     }
 
     @Test
-    public void getNeighbours_someOutOfGrid_right() {
+    public void getNeighboursPlus_someOutOfGrid_right() {
         int[] cells = {
                 0, 0, 0,
                 1, 1, 0,
@@ -250,7 +250,7 @@ public class GridTests {
         Grid grid = new Grid(3, 3, cells);
 
         Coord coord = new Coord(2, 1);
-        List<Cell> neighbours = grid.getNeighbours(coord);
+        List<Cell> neighbours = grid.getNeighboursPlus(coord);
 
         Assert.assertSame(3, neighbours.size());
         Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(2, 0))));
@@ -259,7 +259,7 @@ public class GridTests {
     }
 
     @Test
-    public void getNeighbours_someOutOfGrid_bottom() {
+    public void getNeighboursPlus_someOutOfGrid_bottom() {
         int[] cells = {
                 0, 0, 0,
                 1, 1, 0,
@@ -268,7 +268,7 @@ public class GridTests {
         Grid grid = new Grid(3, 3, cells);
 
         Coord coord = new Coord(1, 2);
-        List<Cell> neighbours = grid.getNeighbours(coord);
+        List<Cell> neighbours = grid.getNeighboursPlus(coord);
 
         Assert.assertSame(3, neighbours.size());
         Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 2))));
@@ -277,7 +277,7 @@ public class GridTests {
     }
 
     @Test
-    public void getNeighbours_someOutOfGrid_topLeft() {
+    public void getNeighboursPlus_someOutOfGrid_topLeft() {
         int[] cells = {
                 0, 0, 0, 1,
                 1, 1, 0, 0,
@@ -286,11 +286,15 @@ public class GridTests {
         Grid grid = new Grid(4, 3, cells);
 
         Coord coord = new Coord(0, 0);
-        List<Cell> neighbours = grid.getNeighbours(coord);
+        List<Cell> neighbours = grid.getNeighboursPlus(coord);
+
+        Assert.assertSame(2, neighbours.size());
+        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 1))));
+        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 0))));
     }
 
     @Test
-    public void getNeighbours_someOutOfGrid_topRight() {
+    public void getNeighboursPlus_someOutOfGrid_topRight() {
         int[] cells = {
                 0, 0, 0, 1,
                 1, 1, 0, 0,
@@ -299,7 +303,7 @@ public class GridTests {
         Grid grid = new Grid(4, 3, cells);
 
         Coord coord = new Coord(3, 0);
-        List<Cell> neighbours = grid.getNeighbours(coord);
+        List<Cell> neighbours = grid.getNeighboursPlus(coord);
 
         Assert.assertSame(2, neighbours.size());
         Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(2, 0))));
@@ -307,7 +311,7 @@ public class GridTests {
     }
 
     @Test
-    public void getNeighbours_someOutOfGrid_bottomLeft() {
+    public void getNeighboursPlus_someOutOfGrid_bottomLeft() {
         int[] cells = {
                 0, 0, 0, 1,
                 1, 1, 0, 0,
@@ -316,7 +320,7 @@ public class GridTests {
         Grid grid = new Grid(4, 3, cells);
 
         Coord coord = new Coord(0, 2);
-        List<Cell> neighbours = grid.getNeighbours(coord);
+        List<Cell> neighbours = grid.getNeighboursPlus(coord);
 
         Assert.assertSame(2, neighbours.size());
         Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 1))));
@@ -324,7 +328,7 @@ public class GridTests {
     }
 
     @Test
-    public void getNeighbours_someOutOfGrid_bottomRight() {
+    public void getNeighboursPlus_someOutOfGrid_bottomRight() {
         int[] cells = {
                 0, 0, 0, 1,
                 1, 1, 0, 0,
@@ -333,7 +337,7 @@ public class GridTests {
         Grid grid = new Grid(4, 3, cells);
 
         Coord coord = new Coord(3, 2);
-        List<Cell> neighbours = grid.getNeighbours(coord);
+        List<Cell> neighbours = grid.getNeighboursPlus(coord);
 
         Assert.assertSame(2, neighbours.size());
         Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(3, 1))));
