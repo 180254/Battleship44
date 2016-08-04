@@ -47,7 +47,7 @@ public class Coord {
                 Coord.c(x - 1, y),
                 Coord.c(x + 1, y),
                 Coord.c(x, y - 1),
-                Coord.c(x, y - 1)
+                Coord.c(x, y + 1)
         );
     }
 
