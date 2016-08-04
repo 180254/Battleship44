@@ -12,7 +12,7 @@ public class CoordTests {
 
     private final String has4 = "has 4 neighbours";
 
-    private Matcher<Coord> isNeighbourOf(List<Coord> coords) {
+    private Matcher<Coord> isInNeighbourList(List<Coord> coords) {
         return new TypeSafeMatcher<Coord>() {
             @Override
             protected boolean matchesSafely(Coord item) {
@@ -32,10 +32,10 @@ public class CoordTests {
         List<Coord> neighbours = new Coord(0, 0).neighbours();
 
         Assert.assertSame(has4, 4, neighbours.size());
-        Assert.assertThat(new Coord(-1, 0), isNeighbourOf(neighbours));
-        Assert.assertThat(new Coord(1, 0), isNeighbourOf(neighbours));
-        Assert.assertThat(new Coord(0, -1), isNeighbourOf(neighbours));
-        Assert.assertThat(new Coord(0, 1), isNeighbourOf(neighbours));
+        Assert.assertThat(new Coord(-1, 0), isInNeighbourList(neighbours));
+        Assert.assertThat(new Coord(1, 0), isInNeighbourList(neighbours));
+        Assert.assertThat(new Coord(0, -1), isInNeighbourList(neighbours));
+        Assert.assertThat(new Coord(0, 1), isInNeighbourList(neighbours));
     }
 
     @Test
@@ -43,9 +43,9 @@ public class CoordTests {
         List<Coord> neighbours = new Coord(6, 4).neighbours();
 
         Assert.assertSame(has4, 4, neighbours.size());
-        Assert.assertThat(new Coord(5, 4), isNeighbourOf(neighbours));
-        Assert.assertThat(new Coord(7, 4), isNeighbourOf(neighbours));
-        Assert.assertThat(new Coord(6, 3), isNeighbourOf(neighbours));
-        Assert.assertThat(new Coord(6, 5), isNeighbourOf(neighbours));
+        Assert.assertThat(new Coord(5, 4), isInNeighbourList(neighbours));
+        Assert.assertThat(new Coord(7, 4), isInNeighbourList(neighbours));
+        Assert.assertThat(new Coord(6, 3), isInNeighbourList(neighbours));
+        Assert.assertThat(new Coord(6, 5), isInNeighbourList(neighbours));
     }
 }
