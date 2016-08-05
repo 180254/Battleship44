@@ -1,5 +1,6 @@
 package pl.nn44.battleship.model;
 
+import com.google.common.collect.ImmutableList;
 import pl.nn44.battleship.annotation.DoVerify;
 import pl.nn44.battleship.utils.Assert;
 
@@ -21,6 +22,14 @@ public class Grid {
         this.cells = cells.clone();
     }
 
+    public int getSizeX() {
+        return sizeX;
+    }
+
+    public int getSizeY() {
+        return sizeY;
+    }
+
     @DoVerify(true)
     public Cell getCell(Coord coord) {
         Assert.ensureThat(isCoordProper(coord), "coord", "out of grid");
@@ -30,6 +39,16 @@ public class Grid {
         Cell.Type type = Cell.Type.getByCode(code);
 
         return new Cell(coord, type);
+    }
+
+    @DoVerify(true)
+    public List<Cell> getNeighbours(Coord coord) {
+        Assert.ensureThat(isCoordProper(coord), "coord", "out of grid");
+
+        return ImmutableList.<Cell>builder()
+                .addAll(getNeighboursPlus(coord))
+                .addAll(getNeighboursX(coord))
+                .build();
     }
 
     @DoVerify(true)
@@ -55,15 +74,16 @@ public class Grid {
     // ---------------------------------------------------------------------------------------------------------------
 
     @DoVerify(false)
-    private int coordToOffset(Coord coord) {
-        return coord.getY() * sizeX + coord.getX();
-    }
-
-    @DoVerify(false)
     private boolean isCoordProper(Coord coord) {
         return (coord.getX() >= 0
                 && coord.getY() >= 0
                 && coord.getX() < sizeX
                 && coord.getY() < sizeY);
     }
+
+    @DoVerify(false)
+    private int coordToOffset(Coord coord) {
+        return coord.getY() * sizeX + coord.getX();
+    }
+
 }
