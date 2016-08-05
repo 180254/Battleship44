@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class Grid {
 
-    private final int[] cells;
+    protected final int[] cells;
     private final int sizeX;
     private final int sizeY;
 
@@ -20,6 +20,10 @@ public class Grid {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         this.cells = cells.clone();
+    }
+
+    public int getSize() {
+        return cells.length;
     }
 
     public int getSizeX() {
@@ -74,7 +78,7 @@ public class Grid {
     // ---------------------------------------------------------------------------------------------------------------
 
     @DoVerify(false)
-    private boolean isCoordProper(Coord coord) {
+    protected boolean isCoordProper(Coord coord) {
         return (coord.getX() >= 0
                 && coord.getY() >= 0
                 && coord.getX() < sizeX
@@ -82,7 +86,7 @@ public class Grid {
     }
 
     @DoVerify(false)
-    private int coordToOffset(Coord coord) {
+    protected int coordToOffset(Coord coord) {
         return coord.getY() * sizeX + coord.getX();
     }
 

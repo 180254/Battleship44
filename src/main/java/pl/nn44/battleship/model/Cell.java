@@ -52,9 +52,13 @@ public class Cell {
 
     public enum Type {
 
-        EMPTY(0), SHIP(1),
+        EMPTY(0),
+        SHIP(1),
 
-        UNKNOWN(5), HIT(6), MISS(7), VERIFIED_EMPTY(8);
+        SHOOT_UNKNOWN(5),
+        SHOOT_HIT(6),
+        SHOOT_MISS(7),
+        SHOOT_EMPTY(8);
 
         private int code;
 

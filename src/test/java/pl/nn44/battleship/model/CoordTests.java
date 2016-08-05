@@ -26,7 +26,6 @@ public class CoordTests {
         };
     }
 
-
     @Test
     public void checkNeighboursPlus_00() {
         Coord coord = new Coord(0, 0);
