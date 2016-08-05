@@ -1,6 +1,6 @@
 package pl.nn44.battleship.model;
 
-import pl.nn44.battleship.service.grid.ShipFinder;
+import pl.nn44.battleship.service.ShipFinder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +20,7 @@ public class ShootGrid extends Grid {
         this.opponentGrid = opponentGrid;
         this.opShipFinder = ShipFinder.forGrid(opponentGrid);
 
-        Arrays.fill(this.cells, Cell.Type.SHOOT_UNKNOWN.getCode());
+        Arrays.fill(this.cells, Cell.Type.UNKNOWN.getCode());
     }
 
     /**
@@ -32,19 +32,19 @@ public class ShootGrid extends Grid {
         Cell.Type opponentCell = opponentGrid.getCell(coord).getType();
 
         if (opponentCell == Cell.Type.SHIP) {
-            this.setCell(coord, Cell.Type.SHOOT_HIT);
+            this.setCell(coord, Cell.Type.SHIP);
 
             Ship opponentShip = opShipFinder.findShip(coord);
             if (isShipSink(opponentShip)) {
 
                 for (Coord surroundCoord : opShipFinder.surrounding(opponentShip)) {
-                    this.setCell(surroundCoord, Cell.Type.SHOOT_EMPTY);
+                    this.setCell(surroundCoord, Cell.Type.EMPTY);
                     changedCell.add(this.getCell(surroundCoord));
                 }
             }
 
         } else {
-            this.setCell(coord, Cell.Type.SHOOT_EMPTY);
+            this.setCell(coord, Cell.Type.EMPTY);
         }
 
         changedCell.add(this.getCell(coord));
@@ -56,7 +56,7 @@ public class ShootGrid extends Grid {
     private boolean isShipSink(Ship ship) {
         return ship.getCoords().stream()
                 .map(this::getCell)
-                .allMatch(c -> c.getType() == Cell.Type.SHOOT_HIT);
+                .allMatch(c -> c.getType() == Cell.Type.SHIP);
     }
 
     // ---------------------------------------------------------------------------------------------------------------

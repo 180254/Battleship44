@@ -1,12 +1,10 @@
-package pl.nn44.battleship.service.fleet.impl;
+package pl.nn44.battleship.service;
 
 import org.junit.Assert;
 import org.junit.Test;
 import pl.nn44.battleship.model.Grid;
-import pl.nn44.battleship.service.fleet.FleetVerifier;
-import pl.nn44.battleship.service.fleet.FleetVerifierFactory;
 
-public class CurvedFleetVerifierTest {
+public class FleetVerifierCurvedTest {
 
     private final FleetVerifier fleetVerifier = FleetVerifierFactory.curvedRussian();
 

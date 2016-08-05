@@ -56,12 +56,9 @@ public class Cell {
 
     public enum Type {
 
+        UNKNOWN(-1),
         EMPTY(0),
-        SHIP(1),
-
-        SHOOT_UNKNOWN(5),
-        SHOOT_HIT(6),
-        SHOOT_EMPTY(7);
+        SHIP(1);
 
         private int code;
 

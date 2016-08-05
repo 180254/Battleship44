@@ -1,11 +1,9 @@
-package pl.nn44.battleship.service.fleet;
-
-import pl.nn44.battleship.service.fleet.impl.CurvedFleetVerifier;
+package pl.nn44.battleship.service;
 
 public class FleetVerifierFactory {
 
     public static FleetVerifier curvedRussian() {
-        return new CurvedFleetVerifier(new int[]{
+        return new FleetVerifierCurved(new int[]{
                 4,
                 3, 3,
                 2, 2, 2,

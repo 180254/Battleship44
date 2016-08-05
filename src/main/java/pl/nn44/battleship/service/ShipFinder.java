@@ -1,4 +1,4 @@
-package pl.nn44.battleship.service.grid;
+package pl.nn44.battleship.service;
 
 
 import pl.nn44.battleship.model.Cell;
