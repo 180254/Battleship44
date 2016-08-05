@@ -2,7 +2,7 @@ package pl.nn44.battleship.model;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import pl.nn44.battleship.DoVerify;
+import pl.nn44.battleship.annotation.DoVerify;
 
 import java.util.Arrays;
 
@@ -54,7 +54,7 @@ public class Cell {
 
         EMPTY(0), SHIP(1),
 
-        UNKNOWN(5), HIT(6), MISS(7), VERIFIED_EMPTY(7);
+        UNKNOWN(5), HIT(6), MISS(7), VERIFIED_EMPTY(8);
 
         private int code;
 

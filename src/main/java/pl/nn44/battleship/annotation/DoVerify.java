@@ -1,4 +1,4 @@
-package pl.nn44.battleship;
+package pl.nn44.battleship.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

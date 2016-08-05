@@ -1,7 +1,7 @@
 package pl.nn44.battleship.utils;
 
 import org.springframework.core.env.Environment;
-import pl.nn44.battleship.DoVerify;
+import pl.nn44.battleship.annotation.DoVerify;
 import pl.nn44.battleship.model.Grid;
 
 public class GridFactory {

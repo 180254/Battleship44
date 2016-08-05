@@ -1,15 +1,11 @@
 package pl.nn44.battleship.model;
 
-import pl.nn44.battleship.DoVerify;
+import pl.nn44.battleship.annotation.DoVerify;
 import pl.nn44.battleship.utils.Assert;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Grid model.
- * This model DO verification of data given as parameters.
- */
 public class Grid {
 
     private final int[] cells;
@@ -18,7 +14,6 @@ public class Grid {
 
     @DoVerify(true)
     public Grid(int sizeX, int sizeY, int[] cells) {
-        Assert.notNull(cells, "cells");
         Assert.ensureThat(cells.length == sizeX * sizeY, "cells", "out of grid");
 
         this.sizeX = sizeX;
@@ -28,7 +23,7 @@ public class Grid {
 
     @DoVerify(true)
     public Cell getCell(Coord coord) {
-        verifyCoord(coord);
+        Assert.ensureThat(isCoordProper(coord), "coord", "out of grid");
 
         int offset = coordToOffset(coord);
         int code = cells[offset];
@@ -39,7 +34,7 @@ public class Grid {
 
     @DoVerify(true)
     public List<Cell> getNeighboursPlus(Coord coord) {
-        verifyCoord(coord);
+        Assert.ensureThat(isCoordProper(coord), "coord", "out of grid");
 
         return coord.neighboursPlus().stream()
                 .filter(this::isCoordProper)
@@ -49,7 +44,7 @@ public class Grid {
 
     @DoVerify(true)
     public List<Cell> getNeighboursX(Coord coord) {
-        verifyCoord(coord);
+        Assert.ensureThat(isCoordProper(coord), "coord", "out of grid");
 
         return coord.neighboursX().stream()
                 .filter(this::isCoordProper)
@@ -57,29 +52,18 @@ public class Grid {
                 .collect(Collectors.toList());
     }
 
-    // -------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------------------------
 
     @DoVerify(false)
     private int coordToOffset(Coord coord) {
         return coord.getY() * sizeX + coord.getX();
     }
 
-    @DoVerify(true)
-    private void verifyCoord(Coord coord) {
-        Assert.ensureThat(coordToOffset(coord) < cells.length, "coord.x,y", "out of grid");
-        Assert.ensureThat(coord.getX() >= 0, "coord.x", "out of grid");
-        Assert.ensureThat(coord.getY() >= 0, "coord.y", "out of grid");
-        Assert.ensureThat(coord.getX() < sizeX, "coord.x", "out of grid");
-        Assert.ensureThat(coord.getY() < sizeY, "coord.y", "out of grid");
-    }
-
+    @DoVerify(false)
     private boolean isCoordProper(Coord coord) {
-        // TODO: better method without repeating conditions?
-        try {
-            verifyCoord(coord);
-            return true;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
+        return (coord.getX() >= 0
+                && coord.getY() >= 0
+                && coord.getX() < sizeX
+                && coord.getY() < sizeY);
     }
 }

@@ -2,7 +2,7 @@ package pl.nn44.battleship.model;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import pl.nn44.battleship.DoVerify;
+import pl.nn44.battleship.annotation.DoVerify;
 
 import java.util.Arrays;
 import java.util.List;
