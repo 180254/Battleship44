@@ -3,7 +3,6 @@ package pl.nn44.battleship.model;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
-import pl.nn44.battleship.annotation.DoVerify;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,13 +12,11 @@ public class Coord {
     private final int x;
     private final int y;
 
-    @DoVerify(false)
     public Coord(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    @DoVerify(false)
     public static Coord c(int x, int y) {
         return new Coord(x, y);
     }
@@ -32,7 +29,6 @@ public class Coord {
         return y;
     }
 
-    @DoVerify(false)
     public List<Coord> neighbours() {
         return ImmutableList.<Coord>builder()
                 .addAll(neighboursPlus())
@@ -40,7 +36,6 @@ public class Coord {
                 .build();
     }
 
-    @DoVerify(false)
     public List<Coord> neighboursPlus() {
         return Arrays.asList(
                 Coord.c(x - 1, y),
@@ -50,7 +45,6 @@ public class Coord {
         );
     }
 
-    @DoVerify(false)
     public List<Coord> neighboursX() {
         return Arrays.asList(
                 Coord.c(x - 1, y - 1),

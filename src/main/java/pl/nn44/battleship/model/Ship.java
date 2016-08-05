@@ -1,5 +1,7 @@
 package pl.nn44.battleship.model;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
@@ -18,5 +20,25 @@ public class Ship {
 
     public int getSize() {
         return coords.size();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ship ship = (Ship) o;
+        return Objects.equal(coords, ship.coords);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(coords);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("coords", coords)
+                .toString();
     }
 }

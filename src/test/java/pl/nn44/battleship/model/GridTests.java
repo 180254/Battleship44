@@ -30,42 +30,6 @@ public class GridTests {
     };
 
     @Test
-    public void newGrid_properSize_square() {
-        int[] cells = CELLS_33.clone();
-        new Grid(3, 3, cells);
-    }
-
-    @Test
-    public void newGrid_properSize_notSquare() {
-        int[] cells = CELLS_34.clone();
-        new Grid(3, 4, cells);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void newGrid_wrongSize_square() {
-        int[] cells = CELLS_33.clone();
-        new Grid(3, 4, cells);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void newGrid_wrongSize_notSquare() {
-        int[] cells = CELLS_34.clone();
-        new Grid(3, 5, cells);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void newGrid_wrongSize_zeroX() {
-        int[] cells = CELLS_33.clone();
-        new Grid(0, 2, cells);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void newGrid_wrongSize_zeroY() {
-        int[] cells = CELLS_33.clone();
-        new Grid(3, 0, cells);
-    }
-
-    @Test
     public void getCell_first() {
         int[] cells = CELLS_33.clone();
         Grid grid = new Grid(3, 3, cells);
@@ -123,43 +87,6 @@ public class GridTests {
 
         Assert.assertSame(Cell.Type.getByCode(1), cell.getType());
         Assert.assertSame(cellCord, cell.getCoord());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getCell_outOfGrid_X() {
-        int[] cells = CELLS_33.clone();
-        Grid grid = new Grid(3, 3, cells);
-
-        Coord cellCord = new Coord(3, 0);
-        grid.getCell(cellCord);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getCell_outOfGrid_Y() {
-        int[] cells = CELLS_33.clone();
-        Grid grid = new Grid(3, 3, cells);
-
-        Coord cellCord = new Coord(0, 3);
-        grid.getCell(cellCord);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getCell_minusX() {
-        int[] cells = CELLS_33.clone();
-        Grid grid = new Grid(3, 3, cells);
-
-        Coord cellCord = new Coord(-1, 0);
-        grid.getCell(cellCord);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getCell_minusY() {
-        int[] cells = CELLS_33.clone();
-        Grid grid = new Grid(3, 3, cells);
-
-        Coord cellCord = new Coord(0, -1);
-        grid.getCell(cellCord);
     }
 
     @Test

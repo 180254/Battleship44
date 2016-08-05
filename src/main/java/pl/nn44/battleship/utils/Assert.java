@@ -2,9 +2,6 @@ package pl.nn44.battleship.utils;
 
 public class Assert {
 
-    private Assert() {
-    }
-
     public static void notNull(Object obj, String paramName) {
         if (obj == null) {
             String exMsg = String.format("null parameter: %s", paramName);
@@ -18,5 +15,4 @@ public class Assert {
             throw new IllegalArgumentException(exMsg);
         }
     }
-
 }

@@ -7,7 +7,7 @@ import java.util.Arrays;
 public class ShootGrid extends Grid {
 
     private final Grid opponentGrid;
-
+ 
     public ShootGrid(Grid opponentGrid) {
         super(
                 opponentGrid.getSizeX(),
