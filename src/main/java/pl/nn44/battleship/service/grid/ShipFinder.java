@@ -38,6 +38,19 @@ public class ShipFinder {
         return surrounding.computeIfAbsent(ship, this::calculateSurrounding);
     }
 
+    public Ship findShip(Coord coord) {
+        Ship find = null;
+
+        for (Ship ship : ships.get()) {
+            if (ship.getCoords().contains(coord)) {
+                find = ship;
+                break;
+            }
+        }
+
+        return find;
+    }
+
     // ---------------------------------------------------------------------------------------------------------------
 
     private List<Ship> calculateShips() {

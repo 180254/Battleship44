@@ -68,6 +68,10 @@ public class Grid {
         return coord.getY() * sizeX + coord.getX();
     }
 
+    protected void setCell(Coord coord, Cell.Type type) {
+        cells[coordToOffset(coord)] = type.getCode();
+    }
+
     // ---------------------------------------------------------------------------------------------------------------
 
     @Override

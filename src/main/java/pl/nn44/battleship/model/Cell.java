@@ -61,8 +61,7 @@ public class Cell {
 
         SHOOT_UNKNOWN(5),
         SHOOT_HIT(6),
-        SHOOT_MISS(7),
-        SHOOT_EMPTY(8);
+        SHOOT_EMPTY(7);
 
         private int code;
 
@@ -90,5 +89,4 @@ public class Cell {
                     .toString();
         }
     }
-
 }
