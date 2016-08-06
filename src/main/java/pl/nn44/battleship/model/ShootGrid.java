@@ -13,8 +13,7 @@ public class ShootGrid extends Grid {
 
     public ShootGrid(Grid opponentGrid) {
         super(
-                opponentGrid.getSizeX(),
-                opponentGrid.getSizeY(),
+                opponentGrid.getRowsNo(), opponentGrid.getColsNo(),
                 new int[opponentGrid.getSize()]);
 
         this.opponentGrid = opponentGrid;

@@ -56,10 +56,10 @@ public class ShipFinder {
     private List<Ship> calculateShips() {
         List<Ship> ships = new ArrayList<>();
 
-        for (int posX = 0; posX < grid.getSizeX(); posX++) {
-            for (int posY = 0; posY < grid.getSizeY(); posY++) {
+        for (int rowNo = 0; rowNo < grid.getRowsNo(); rowNo++) {
+            for (int colNo = 0; colNo < grid.getColsNo(); colNo++) {
 
-                Coord coord = Coord.c(posX, posY);
+                Coord coord = Coord.c(rowNo, colNo);
                 Cell cell = grid.getCell(coord);
 
                 if (cell.getType() == Cell.Type.SHIP) {

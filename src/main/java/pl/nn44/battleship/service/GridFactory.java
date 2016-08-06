@@ -7,8 +7,8 @@ public class GridFactory {
 
     public static Grid sizeFromEnv(Environment env, int[] cells) {
         return new Grid(
-                env.getProperty("grid.size.x", int.class),
-                env.getProperty("grid.size.y", int.class),
+                env.getProperty("grid.size.rows", int.class),
+                env.getProperty("grid.size.cols", int.class),
                 cells
         );
     }

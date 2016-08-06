@@ -9,24 +9,24 @@ import java.util.List;
 
 public class Coord {
 
-    private final int x;
-    private final int y;
+    private final int row;
+    private final int col;
 
-    public Coord(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public Coord(int row, int col) {
+        this.row = row;
+        this.col = col;
     }
 
-    public static Coord c(int x, int y) {
-        return new Coord(x, y);
+    public static Coord c(int row, int col) {
+        return new Coord(row, col);
     }
 
-    public int getX() {
-        return x;
+    public int getCol() {
+        return col;
     }
 
-    public int getY() {
-        return y;
+    public int getRow() {
+        return row;
     }
 
     public List<Coord> neighbours() {
@@ -38,19 +38,19 @@ public class Coord {
 
     public List<Coord> neighboursPlus() {
         return Arrays.asList(
-                Coord.c(x - 1, y),
-                Coord.c(x + 1, y),
-                Coord.c(x, y - 1),
-                Coord.c(x, y + 1)
+                Coord.c(row, col - 1),
+                Coord.c(row, col + 1),
+                Coord.c(row - 1, col),
+                Coord.c(row + 1, col)
         );
     }
 
     public List<Coord> neighboursX() {
         return Arrays.asList(
-                Coord.c(x - 1, y - 1),
-                Coord.c(x - 1, y + 1),
-                Coord.c(x + 1, y - 1),
-                Coord.c(x + 1, y + 1)
+                Coord.c(row - 1, col - 1),
+                Coord.c(row + 1, col - 1),
+                Coord.c(row - 1, col + 1),
+                Coord.c(row + 1, col + 1)
         );
     }
 
@@ -59,20 +59,20 @@ public class Coord {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Coord coord = (Coord) o;
-        return x == coord.x &&
-                y == coord.y;
+        return row == coord.row &&
+                col == coord.col;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(x, y);
+        return Objects.hashCode(row, col);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("x", x)
-                .add("y", y)
+                .add("row", row)
+                .add("col", col)
                 .toString();
     }
 }

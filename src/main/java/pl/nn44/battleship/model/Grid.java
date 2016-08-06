@@ -7,12 +7,12 @@ import java.util.stream.Collectors;
 public class Grid {
 
     protected final int[] cells;
-    private final int sizeX;
-    private final int sizeY;
+    private final int rowsNo;
+    private final int colsNo;
 
-    public Grid(int sizeX, int sizeY, int[] cells) {
-        this.sizeX = sizeX;
-        this.sizeY = sizeY;
+    public Grid(int rowsNo, int colsNo, int[] cells) {
+        this.rowsNo = rowsNo;
+        this.colsNo = colsNo;
         this.cells = cells.clone();
     }
 
@@ -20,19 +20,20 @@ public class Grid {
         return cells.length;
     }
 
-    public int getSizeX() {
-        return sizeX;
+    public int getRowsNo() {
+        return rowsNo;
     }
 
-    public int getSizeY() {
-        return sizeY;
+    public int getColsNo() {
+        return colsNo;
     }
+
 
     public boolean isCoordProper(Coord coord) {
-        return (coord.getX() >= 0
-                && coord.getY() >= 0
-                && coord.getX() < sizeX
-                && coord.getY() < sizeY);
+        return (coord.getRow() >= 0
+                && coord.getCol() >= 0
+                && coord.getRow() < rowsNo
+                && coord.getCol() < colsNo);
     }
 
     public Cell getCell(Coord coord) {
@@ -65,7 +66,7 @@ public class Grid {
     }
 
     protected int coordToOffset(Coord coord) {
-        return coord.getY() * sizeX + coord.getX();
+        return coord.getRow() * colsNo + coord.getCol();
     }
 
     protected void setCell(Coord coord, Cell.Type type) {
