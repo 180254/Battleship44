@@ -1,6 +1,5 @@
 package pl.nn44.battleship.service;
 
-
 import pl.nn44.battleship.model.Cell;
 import pl.nn44.battleship.model.Coord;
 import pl.nn44.battleship.model.Grid;
@@ -8,6 +7,7 @@ import pl.nn44.battleship.model.Ship;
 import pl.nn44.battleship.utils.Suppliers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -73,15 +73,16 @@ public class ShipFinder {
             }
         }
 
-        return ships;
+        return Collections.unmodifiableList(ships);
     }
 
     private List<Coord> calculateSurrounding(Ship ship) {
-        return ship.getCoords().stream()
+        List<Coord> surrounding = ship.getCoords().stream()
                 .flatMap(c -> grid.getNeighbours(c).stream())
                 .map(Cell::getCoord)
                 .filter(c -> !ship.getCoords().contains(c))
                 .collect(Collectors.toList());
+        return Collections.unmodifiableList(surrounding);
     }
 
     // ---------------------------------------------------------------------------------------------------------------

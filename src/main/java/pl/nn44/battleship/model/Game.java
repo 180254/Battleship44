@@ -1,23 +1,40 @@
 package pl.nn44.battleship.model;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
+import pl.nn44.battleship.utils.IdGenerator;
+
 public class Game {
 
-    private Player player1;
-    private Player player2;
+    public final String id;
+    public Player player1;
+    public Player player2;
 
-    public Player getPlayer1() {
-        return player1;
+    public Game(IdGenerator idGenerator) {
+        id = idGenerator.nextId();
     }
 
-    public void setPlayer1(Player player1) {
-        this.player1 = player1;
+    // ---------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Game game = (Game) o;
+        return Objects.equal(id, game.id);
     }
 
-    public Player getPlayer2() {
-        return player2;
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 
-    public void setPlayer2(Player player2) {
-        this.player2 = player2;
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("id", id)
+                .add("player1", player1)
+                .add("player2", player2)
+                .toString();
     }
 }

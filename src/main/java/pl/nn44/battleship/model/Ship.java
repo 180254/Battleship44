@@ -22,6 +22,8 @@ public class Ship {
         return coords.size();
     }
 
+    // ---------------------------------------------------------------------------------------------------------------
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
