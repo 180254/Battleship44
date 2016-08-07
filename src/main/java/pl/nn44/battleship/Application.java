@@ -1,4 +1,4 @@
-package pl.nn44;
+package pl.nn44.battleship;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
