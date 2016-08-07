@@ -1,16 +1,21 @@
 package pl.nn44.battleship.controller;
 
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import pl.nn44.battleship.model.Player;
 
-@Component
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 class WebSocketController extends TextWebSocketHandler {
 
-    public WebSocketController() {
-        super();
+    private final ConcurrentMap<WebSocketSession, Player> sessionToPlayer = new ConcurrentHashMap<>();
+
+    @Override
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        session.sendMessage(new TextMessage("Welcome. What you're looking for here?"));
     }
 
     @Override

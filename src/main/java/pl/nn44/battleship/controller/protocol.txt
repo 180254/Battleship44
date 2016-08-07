@@ -1,0 +1,17 @@
+( -> TO SERVER   )
+( <- FROM SERVER )
+
+-> GAME NEW/ID
+<- GAME OK
+
+-> GRID 0,1,0,1,1,1,0,1,0,1,0,1,1,0,0,0,0
+<- GRID OK/FAIL
+
+<- 2 PLAYERS
+<- TOUR YOU/HE
+
+-> SHOOT [0,2]
+<- YOU [HIT,0,2],[EMPTY,2,1],[EMPTY,2,2]
+<- HE [EMPTY,2,7]
+
+<- WON YOU/HE
