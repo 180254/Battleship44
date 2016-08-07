@@ -1,18 +1,19 @@
-package pl.nn44.battleship.service;
+package pl.nn44.battleship.service.verifier;
 
 import pl.nn44.battleship.model.Coord;
 import pl.nn44.battleship.model.Grid;
 import pl.nn44.battleship.model.Ship;
+import pl.nn44.battleship.service.other.ShipFinder;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class FleetVerifierCurved implements FleetVerifier {
+public class CurvedFleetVerifier implements FleetVerifier {
 
     public final int[] availSheepSizes;
 
-    public FleetVerifierCurved(int[] availSheepSizes) {
+    public CurvedFleetVerifier(int[] availSheepSizes) {
         this.availSheepSizes = availSheepSizes.clone();
         Arrays.sort(this.availSheepSizes);
     }

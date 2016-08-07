@@ -1,4 +1,4 @@
-package pl.nn44.battleship.service;
+package pl.nn44.battleship.service.verifier;
 
 import pl.nn44.battleship.model.Grid;
 

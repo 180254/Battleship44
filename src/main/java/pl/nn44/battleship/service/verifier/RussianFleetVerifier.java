@@ -1,8 +1,8 @@
-package pl.nn44.battleship.service;
+package pl.nn44.battleship.service.verifier;
 
 import pl.nn44.battleship.model.Grid;
 
-public class FleetVerifierRussian implements FleetVerifier {
+public class RussianFleetVerifier implements FleetVerifier {
 
     @Override
     public boolean verify(Grid grid) {

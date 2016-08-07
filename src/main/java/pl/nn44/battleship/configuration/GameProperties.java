@@ -3,7 +3,7 @@ package pl.nn44.battleship.configuration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "game")
-public class GameProperties {
+class GameProperties {
 
     private Grid grid;
 

@@ -1,0 +1,50 @@
+-> TO__ SERVER
+<- FROM SERVER
+
+-- protocol --
+
+<- HI_. <some_text>
+
+-> GAME NEW
+-> GAME <game_id>
+<- GAME OK <game_number>
+<- GAME FAIL no-such-game
+<- GAME FAIL no-free-slot
+
+-> GRID 0,1,0,1,1,1,0,1,0,1,0,1,1,0,0,0,0
+<- GRID OK
+<- GRID FAIL
+
+<- 2PLA
+<- TOUR YOU
+<- TOUT HE
+
+-> SHOT [0,2]
+<- YOU_ [HIT,0,2],[EMPTY,2,1],[EMPTY,2,2]
+<- HE__ [EMPTY,2,7]
+
+<- WON_ YOU
+<- WON_ HE
+<- 1PLA game_id
+
+-> PING <some_text>
+<- PONG <some_text>
+
+-> <bad_command>
+<- 400_ <optional_info>
+
+-- commands --
+
+HI_.
+GAME
+GRID
+2PLA
+TOUR
+SHOT
+YOU_
+HE__
+WON_
+PING
+PONG
+1PLA
+400_

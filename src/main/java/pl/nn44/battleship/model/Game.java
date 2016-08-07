@@ -6,12 +6,70 @@ import pl.nn44.battleship.utils.IdGenerator;
 
 public class Game {
 
-    public final String id;
-    public Player player1;
-    public Player player2;
+    private final String id;
+    private Player player1;
+    private Player player2;
 
-    public Game(IdGenerator idGenerator) {
+    public Game(IdGenerator idGenerator, Player player1) {
         id = idGenerator.nextId();
+        this.player1 = player1;
+    }
+    // ---------------------------------------------------------------------------------------------------------------
+
+    public String getId() {
+        return id;
+    }
+
+    public Player getPlayer1() {
+        return player1;
+    }
+
+    public void setPlayer1(Player player1) {
+        this.player1 = player1;
+        player1.setGame(this);
+    }
+
+    public Player getPlayer2() {
+        return player2;
+    }
+
+    public void setPlayer2(Player player2) {
+        this.player2 = player2;
+        player2.setGame(this);
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+
+    public boolean removePlayer(Player player) {
+        if (player.equals(player1)) {
+            player1 = null;
+            return true;
+
+        } else if (player.equals(player2)) {
+            player2 = null;
+            return true;
+
+        } else {
+            return false;
+        }
+    }
+
+    public Player secondPlayer(Player player) {
+        return player.equals(player1)
+                ? player2
+                : player1;
+    }
+
+    public synchronized boolean setPlayerToFreeSlot(Player player) {
+        if (player1 == null) {
+            player1 = player;
+            return true;
+        } else if (player2 == null) {
+            player2 = player;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     // ---------------------------------------------------------------------------------------------------------------

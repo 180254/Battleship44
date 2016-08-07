@@ -6,9 +6,44 @@ import org.springframework.web.socket.WebSocketSession;
 
 public class Player {
 
-    public WebSocketSession session;
-    public Grid grid;
-    public ShootGrid shootGrid;
+    private final WebSocketSession session;
+    private Grid grid;
+    private ShootGrid shootGrid;
+    private Game game;
+
+    public Player(WebSocketSession session) {
+        this.session = session;
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+
+    public WebSocketSession getSession() {
+        return session;
+    }
+
+    public Grid getGrid() {
+        return grid;
+    }
+
+    public void setGrid(Grid grid) {
+        this.grid = grid;
+    }
+
+    public ShootGrid getShootGrid() {
+        return shootGrid;
+    }
+
+    public void setShootGrid(ShootGrid shootGrid) {
+        this.shootGrid = shootGrid;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
 
     // ---------------------------------------------------------------------------------------------------------------
 

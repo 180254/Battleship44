@@ -1,6 +1,6 @@
 package pl.nn44.battleship.model;
 
-import pl.nn44.battleship.service.ShipFinder;
+import pl.nn44.battleship.service.other.ShipFinder;
 
 import java.util.ArrayList;
 import java.util.Arrays;

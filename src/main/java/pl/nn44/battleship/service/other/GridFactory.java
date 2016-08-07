@@ -1,4 +1,4 @@
-package pl.nn44.battleship.service;
+package pl.nn44.battleship.service.other;
 
 import org.springframework.core.env.Environment;
 import pl.nn44.battleship.model.Grid;

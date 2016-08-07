@@ -1,4 +1,4 @@
-package pl.nn44.battleship.service;
+package pl.nn44.battleship.service.other;
 
 import pl.nn44.battleship.model.Cell;
 import pl.nn44.battleship.model.Coord;
