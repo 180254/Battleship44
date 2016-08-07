@@ -1,0 +1,36 @@
+{
+  "groups": [
+    {
+      "name": "game",
+      "type": "pl.nn44.battleship.configuration.GameProperties",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties"
+    },
+    {
+      "name": "game.grid",
+      "type": "pl.nn44.battleship.configuration.GameProperties$Grid",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties",
+      "sourceMethod": "getGrid()"
+    },
+    {
+      "name": "game.grid.size",
+      "type": "pl.nn44.battleship.configuration.GameProperties$Grid$Size",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Grid",
+      "sourceMethod": "getSize()"
+    }
+  ],
+  "properties": [
+    {
+      "name": "game.grid.size.cols",
+      "type": "java.lang.Integer",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Grid$Size",
+      "defaultValue": 0
+    },
+    {
+      "name": "game.grid.size.rows",
+      "type": "java.lang.Integer",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Grid$Size",
+      "defaultValue": 0
+    }
+  ],
+  "hints": []
+}
