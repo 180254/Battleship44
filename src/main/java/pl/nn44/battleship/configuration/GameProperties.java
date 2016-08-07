@@ -5,48 +5,48 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "game")
 class GameProperties {
 
-    private Grid grid;
+    private GridSize gridSize;
+    private FleetType fleetType;
 
-    public Grid getGrid() {
-        return grid;
+    public GridSize getGridSize() {
+        return gridSize;
     }
 
-    public void setGrid(Grid grid) {
-        this.grid = grid;
+    public void setGridSize(GridSize gridSize) {
+        this.gridSize = gridSize;
     }
 
-    private static class Grid {
+    public FleetType getFleetType() {
+        return fleetType;
+    }
 
-        private Size size;
+    public void setFleetType(FleetType fleetType) {
+        this.fleetType = fleetType;
+    }
 
-        public Size getSize() {
-            return size;
+    private enum FleetType {
+        RUSSIAN, RUSSIAN_CURVED
+    }
+
+    private static class GridSize {
+
+        private int rows;
+        private int cols;
+
+        public int getRows() {
+            return rows;
         }
 
-        public void setSize(Size size) {
-            this.size = size;
+        public void setRows(int rows) {
+            this.rows = rows;
         }
 
-        private static class Size {
-            private int rows;
-            private int cols;
-
-            public int getRows() {
-                return rows;
-            }
-
-            public void setRows(int rows) {
-                this.rows = rows;
-            }
-
-            public int getCols() {
-                return cols;
-            }
-
-            public void setCols(int cols) {
-                this.cols = cols;
-            }
+        public int getCols() {
+            return cols;
         }
 
+        public void setCols(int cols) {
+            this.cols = cols;
+        }
     }
 }
