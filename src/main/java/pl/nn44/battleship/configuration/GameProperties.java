@@ -7,6 +7,7 @@ public class GameProperties {
 
     private GridSize gridSize;
     private FleetType fleetType;
+    private Impl impl;
 
     public GridSize getGridSize() {
         return gridSize;
@@ -24,9 +25,21 @@ public class GameProperties {
         this.fleetType = fleetType;
     }
 
+    public Impl getImpl() {
+        return impl;
+    }
+
+    public void setImpl(Impl impl) {
+        this.impl = impl;
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+
     public enum FleetType {
         RUSSIAN, RUSSIAN_CURVED
     }
+
+    // ---------------------------------------------------------------------------------------------------------------
 
     public static class GridSize {
 
@@ -47,6 +60,20 @@ public class GameProperties {
 
         public void setCols(int cols) {
             this.cols = cols;
+        }
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+
+    public static class Impl {
+        private int locks;
+
+        public int getLocks() {
+            return locks;
+        }
+
+        public void setLocks(int locks) {
+            this.locks = locks;
         }
     }
 }

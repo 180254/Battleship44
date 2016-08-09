@@ -10,6 +10,12 @@
       "type": "pl.nn44.battleship.configuration.GameProperties$GridSize",
       "sourceType": "pl.nn44.battleship.configuration.GameProperties",
       "sourceMethod": "getGridSize()"
+    },
+    {
+      "name": "game.impl",
+      "type": "pl.nn44.battleship.configuration.GameProperties$Impl",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties",
+      "sourceMethod": "getImpl()"
     }
   ],
   "properties": [
@@ -28,6 +34,12 @@
       "name": "game.grid-size.rows",
       "type": "java.lang.Integer",
       "sourceType": "pl.nn44.battleship.configuration.GameProperties$GridSize",
+      "defaultValue": 0
+    },
+    {
+      "name": "game.impl.locks",
+      "type": "java.lang.Integer",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Impl",
       "defaultValue": 0
     }
   ],

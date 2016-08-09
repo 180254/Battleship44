@@ -9,8 +9,12 @@ import java.util.concurrent.locks.Lock;
 
 public class LockerImpl implements Locker {
 
-    private final Striped<Lock> lockStriped = Striped.lazyWeakLock(100);
     private final Lock fastLock = new FastLock();
+    private final Striped<Lock> lockStriped;
+
+    public LockerImpl(int locks) {
+        lockStriped = Striped.lazyWeakLock(locks);
+    }
 
     @Override
     public Lock[] lock(Player player) {
