@@ -7,31 +7,41 @@
 
 -> GAME NEW
 -> GAME <game_id>
-<- GAME OK <game_number>
+<- GAME OK <game_id>
 <- GAME FAIL no-such-game
 <- GAME FAIL no-free-slot
+<- 400_ you-are-in-game
 
 -> GRID 0,1,0,1,1,1,0,1,0,1,0,1,1,0,0,0,0
 <- GRID OK
 <- GRID FAIL
+<- 400_ no-game-set
+<- 400_ game-in-progress
+<- 400_ grid-already-set
 
 <- 2PLA
+<- TOUR START
 <- TOUR YOU
-<- TOUT HE
+<- TOUR HE
 
 -> SHOT [0,2]
 <- YOU_ [HIT,0,2],[EMPTY,2,1],[EMPTY,2,2]
 <- HE__ [EMPTY,2,7]
+<- 400_ no-game-set
+<- 400_ game-waiting
+<- 400_ not-your-tour
 
 <- WON_ YOU
 <- WON_ HE
 <- 1PLA game_id
 
--> PING <some_text>
-<- PONG <some_text>
+<- 1PLA opponent-is-gone
+
+-> PING <ping_msg>
+<- PONG <ping_msg>
 
 -> <bad_command>
-<- 400_ <optional_info>
+<- 400_ unknown-command
 
 -- commands --
 
