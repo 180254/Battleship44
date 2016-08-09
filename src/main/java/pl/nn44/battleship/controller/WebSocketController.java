@@ -8,6 +8,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import pl.nn44.battleship.model.*;
+import pl.nn44.battleship.service.locker.Locker;
 import pl.nn44.battleship.service.serializer.Serializer;
 import pl.nn44.battleship.service.verifier.FleetVerifier;
 import pl.nn44.battleship.utils.IdGenerator;
@@ -19,12 +20,15 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.Lock;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
 public class WebSocketController extends TextWebSocketHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketController.class);
+
 
     public static final int COMMAND_LEN = 4;
     private final Map<String, BiConsumer<Player, String>> commands =
@@ -39,6 +43,7 @@ public class WebSocketController extends TextWebSocketHandler {
     private final ConcurrentMap<String, Game> games = new ConcurrentHashMap<>();
 
     private final Random random;
+    private final Locker locker;
     private final IdGenerator idGenerator;
     private final FleetVerifier fleetVerifier;
     private final Serializer<Grid, String> gridSerializer;
@@ -46,12 +51,14 @@ public class WebSocketController extends TextWebSocketHandler {
     private final Serializer<Cell, String> cellSerializer;
 
     public WebSocketController(Random random,
+                               Locker locker,
                                IdGenerator idGenerator,
                                FleetVerifier fleetVerifier,
                                Serializer<Grid, String> gridSerializer,
                                Serializer<Coord, String> coordSerializer,
                                Serializer<Cell, String> cellSerializer) {
         this.random = random;
+        this.locker = locker;
         this.idGenerator = idGenerator;
         this.fleetVerifier = fleetVerifier;
         this.gridSerializer = gridSerializer;
@@ -89,23 +96,29 @@ public class WebSocketController extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         Player player = players.get(session);
-        if (player == null) {
-            return;
-        }
-        players.remove(session);
+        Lock[] locks = locker.lock(player);
+        try {
 
-        Game game = player.getGame();
-        if (game == null) {
-            return;
-        }
+            if (player == null) {
+                return;
+            }
+            players.remove(session);
 
-        Player secondPlayer = game.secondPlayer(player);
-        game.removePlayer(player);
+            Game game = player.getGame();
+            if (game == null) {
+                return;
+            }
 
-        if (secondPlayer != null) {
-            txt(secondPlayer, "1PLA");
-        } else {
-            games.remove(game.getId());
+            Player secondPlayer = game.secondPlayer(player);
+            game.removePlayer(player);
+
+            if (secondPlayer != null) {
+                txt(secondPlayer, "1PLA");
+            } else {
+                games.remove(game.getId());
+            }
+        } finally {
+            locker.unlock(locks);
         }
     }
 
@@ -120,9 +133,15 @@ public class WebSocketController extends TextWebSocketHandler {
         Player player = players
                 .computeIfAbsent(session, Player::new);
 
-        commands
-                .getOrDefault(command, this::other)
-                .accept(player, param);
+        Lock[] locks = locker.lock(player);
+
+        try {
+            commands
+                    .getOrDefault(command, this::other)
+                    .accept(player, param);
+        } finally {
+            locker.unlock(locks);
+        }
     }
 
     // ---------------------------------------------------------------------------------------------------------------
