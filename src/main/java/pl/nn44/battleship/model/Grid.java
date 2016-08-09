@@ -16,6 +16,10 @@ public class Grid {
         this.cells = cells.clone();
     }
 
+    public int[] getCells() {
+        return cells.clone();
+    }
+
     public int getSize() {
         return cells.length;
     }

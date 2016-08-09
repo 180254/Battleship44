@@ -1,4 +1,4 @@
-package pl.nn44.battleship.utils;
+package pl.nn44.battleship.utils.other;
 
 import org.junit.Test;
 

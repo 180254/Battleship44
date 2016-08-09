@@ -1,4 +1,4 @@
-package pl.nn44.battleship.utils;
+package pl.nn44.battleship.utils.other;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -10,6 +10,7 @@ public class FastLock implements Lock {
 
     @Override
     public void lock() {
+
     }
 
     @Override
@@ -26,6 +27,7 @@ public class FastLock implements Lock {
     @Override
     public boolean tryLock(long time, @NotNull TimeUnit unit)
             throws InterruptedException {
+
         return true;
     }
 

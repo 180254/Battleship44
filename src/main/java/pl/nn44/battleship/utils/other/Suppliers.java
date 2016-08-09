@@ -1,4 +1,4 @@
-package pl.nn44.battleship.utils;
+package pl.nn44.battleship.utils.other;
 
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;

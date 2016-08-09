@@ -2,7 +2,7 @@ package pl.nn44.battleship.model;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import pl.nn44.battleship.utils.IdGenerator;
+import pl.nn44.battleship.utils.id.IdGenerator;
 
 import java.util.Random;
 

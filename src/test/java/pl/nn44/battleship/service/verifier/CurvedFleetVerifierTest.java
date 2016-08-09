@@ -1,10 +1,8 @@
-package pl.nn44.battleship.service;
+package pl.nn44.battleship.service.verifier;
 
 import org.junit.Assert;
 import org.junit.Test;
 import pl.nn44.battleship.model.Grid;
-import pl.nn44.battleship.service.verifier.FleetVerifier;
-import pl.nn44.battleship.service.verifier.FleetVerifierFactory;
 
 public class CurvedFleetVerifierTest {
 
@@ -18,7 +16,7 @@ public class CurvedFleetVerifierTest {
                 0, 0, 0
         });
 
-        Assert.assertSame(false, fleetVerifier.verify(grid));
+        Assert.assertEquals(false, fleetVerifier.verify(grid));
     }
 
     @Test
@@ -29,11 +27,11 @@ public class CurvedFleetVerifierTest {
                 0, 0, 0
         });
 
-        Assert.assertSame(false, fleetVerifier.verify(grid));
+        Assert.assertEquals(false, fleetVerifier.verify(grid));
     }
 
     @Test
-    public void verify_properFleet_straight() {
+    public void verify_properFleetNumber_straight() {
         Grid grid = new Grid(10, 10, new int[]{
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 1, 0, 1, 0, 0, 0, 1, 0, 0,
@@ -47,11 +45,11 @@ public class CurvedFleetVerifierTest {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         });
 
-        Assert.assertSame(true, fleetVerifier.verify(grid));
+        Assert.assertEquals(true, fleetVerifier.verify(grid));
     }
 
     @Test
-    public void verify_properFleet_straight_collision() {
+    public void verify_properFleetNumber_straight_collision() {
         Grid grid = new Grid(10, 10, new int[]{
                 0, 0, 0, 0, 0, 1, 1, 0, 0, 0,
                 0, 1, 0, 1, 0, 0, 0, 1, 0, 0,
@@ -65,11 +63,11 @@ public class CurvedFleetVerifierTest {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         });
 
-        Assert.assertSame(false, fleetVerifier.verify(grid));
+        Assert.assertEquals(false, fleetVerifier.verify(grid));
     }
 
     @Test
-    public void verify_properFleet_curved() {
+    public void verify_properFleetNumber_curved() {
         Grid grid = new Grid(10, 10, new int[]{
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 1, 0, 1, 0, 0, 0, 1, 0, 0,
@@ -83,11 +81,11 @@ public class CurvedFleetVerifierTest {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         });
 
-        Assert.assertSame(true, fleetVerifier.verify(grid));
+        Assert.assertEquals(true, fleetVerifier.verify(grid));
     }
 
     @Test
-    public void verify_properFleet_curved_collision() {
+    public void verify_properFleetNumber_curved_noSpaceAround() {
         Grid grid = new Grid(10, 10, new int[]{
                 0, 0, 1, 1, 0, 0, 0, 0, 0, 0,
                 0, 1, 0, 1, 0, 0, 0, 1, 0, 0,
@@ -101,6 +99,42 @@ public class CurvedFleetVerifierTest {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         });
 
-        Assert.assertSame(false, fleetVerifier.verify(grid));
+        Assert.assertEquals(false, fleetVerifier.verify(grid));
+    }
+
+    @Test
+    public void verify_properFleetNumber_andIllegalCode_minus() {
+        Grid grid = new Grid(10, 10, new int[]{
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, -1, 0, 1, 0, 0, 0, 1, 0, 0,
+                0, 1, 0, 1, 1, 0, 0, 0, 0, 0,
+                1, 1, 0, 0, 0, 0, 0, 1, 0, 0,
+                0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 1, 0, 1, 0, 0,
+                0, 1, 1, 1, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 1, 0, 1, 0, 0,
+                0, 0, 1, 1, 0, 1, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        });
+
+        Assert.assertEquals(false, fleetVerifier.verify(grid));
+    }
+
+    @Test
+    public void verify_properFleetNumber_andIllegalCode_9() {
+        Grid grid = new Grid(10, 10, new int[]{
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+                0, 1, 0, 1, 0, 0, 0, 1, 0, 0,
+                0, 1, 0, 1, 1, 0, 0, 0, 0, 0,
+                1, 1, 0, 0, 0, 0, 0, 1, 0, 0,
+                0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 1, 0, 1, 0, 0,
+                0, 1, 1, 1, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 1, 0, 1, 0, 0,
+                0, 0, 1, 1, 0, 1, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        });
+
+        Assert.assertEquals(false, fleetVerifier.verify(grid));
     }
 }

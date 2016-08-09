@@ -3,7 +3,7 @@ package pl.nn44.battleship.configuration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "game")
-class GameProperties {
+public class GameProperties {
 
     private GridSize gridSize;
     private FleetType fleetType;
@@ -24,11 +24,11 @@ class GameProperties {
         this.fleetType = fleetType;
     }
 
-    private enum FleetType {
+    public enum FleetType {
         RUSSIAN, RUSSIAN_CURVED
     }
 
-    private static class GridSize {
+    public static class GridSize {
 
         private int rows;
         private int cols;

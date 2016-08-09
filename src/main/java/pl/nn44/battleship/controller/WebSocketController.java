@@ -11,8 +11,8 @@ import pl.nn44.battleship.model.*;
 import pl.nn44.battleship.service.locker.Locker;
 import pl.nn44.battleship.service.serializer.Serializer;
 import pl.nn44.battleship.service.verifier.FleetVerifier;
-import pl.nn44.battleship.utils.IdGenerator;
-import pl.nn44.battleship.utils.Strings;
+import pl.nn44.battleship.utils.id.IdGenerator;
+import pl.nn44.battleship.utils.other.Strings;
 
 import java.io.IOException;
 import java.util.List;
@@ -184,7 +184,7 @@ public class WebSocketController extends TextWebSocketHandler {
             txt(player, "400_ grid-already-set");
 
         } else {
-            Grid grid = gridSerializer.deserialize(param);
+            Grid grid = null;//gridSerializer.deserialize(param);
             if (!fleetVerifier.verify(grid)) {
                 txt(player, "GRID FAIL");
 
@@ -218,7 +218,7 @@ public class WebSocketController extends TextWebSocketHandler {
             txt(player, "400_ not-your-tour");
 
         } else {
-            Coord coord = coordSerializer.deserialize(param);
+            Coord coord = null;//coordSerializer.deserialize(param);
             Player tourPlayer = game.getTourPlayer();
             List<Cell> shoot = tourPlayer.getShootGrid().shoot(coord);
             String shootSerial = shoot.stream().map(cellSerializer::serialize).collect(Collectors.joining(","));

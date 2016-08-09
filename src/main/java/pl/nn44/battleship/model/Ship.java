@@ -3,6 +3,7 @@ package pl.nn44.battleship.model;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
+import pl.nn44.battleship.utils.other.Lists;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class Ship {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ship ship = (Ship) o;
-        return Objects.equal(coords, ship.coords);
+        return Lists.equalsIgnoreOrder(coords, ship.coords);
     }
 
     @Override

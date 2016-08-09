@@ -3,6 +3,7 @@ package pl.nn44.battleship.service.serializer;
 import pl.nn44.battleship.model.Cell;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CellSerializer implements Serializer<List<Cell>, String> {
@@ -24,7 +25,7 @@ public class CellSerializer implements Serializer<List<Cell>, String> {
     }
 
     @Override
-    public List<Cell> deserialize(String ser) {
-        throw new UnsupportedOperationException("not supported");
+    public Optional<List<Cell>> deserialize(String ser) {
+        throw new UnsupportedOperationException();
     }
 }

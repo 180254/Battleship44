@@ -6,6 +6,7 @@ public class RussianFleetVerifier implements FleetVerifier {
 
     @Override
     public boolean verify(Grid grid) {
+        // TODO: maybe implement
         return false;
     }
 }
