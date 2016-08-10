@@ -160,13 +160,13 @@ public class WebSocketController extends TextWebSocketHandler {
             if (game == null) {
                 txt(player, "GAME FAIL no-such-game");
 
-            } else if (!game.setPlayerToFreeSlot(player)) {
+            } else if (!game.setPlayerAtFreeSlot(player)) {
                 txt(player, "GAME FAIL no-free-slot");
 
             } else {
                 txt(player, "GAME OK %s", game.getId());
+                txt(game.getPlayer0(), "2PLA");
                 txt(game.getPlayer1(), "2PLA");
-                txt(game.getPlayer2(), "2PLA");
             }
 
         }
@@ -192,12 +192,12 @@ public class WebSocketController extends TextWebSocketHandler {
                 player.setGrid(grid);
                 txt(player, "GRID OK");
 
-                if (game.bothGridSet()) {
+                if (game.bothGridSets()) {
                     game.setState(Game.State.IN_PROGRESS);
-                    game.setShootGrids();
+                    game.prepareShootGrids();
 
+                    txt(game.getPlayer0(), "TOUR START");
                     txt(game.getPlayer1(), "TOUR START");
-                    txt(game.getPlayer2(), "TOUR START");
                     txt(game.getTourPlayer(), "TOUR YOU");
                     txt(game.getNotTourPlayer(), "TOUR HE");
                 }

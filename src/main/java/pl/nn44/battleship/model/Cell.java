@@ -11,6 +11,12 @@ public class Cell {
     private final Coord coord;
     private final Type type;
 
+    public Cell(Coord coord, Type type) {
+        this.grid = null;
+        this.coord = coord;
+        this.type = type;
+    }
+
     public Cell(Grid grid, Coord coord, Type type) {
         this.grid = grid;
         this.coord = coord;

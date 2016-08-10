@@ -3,6 +3,7 @@ package pl.nn44.battleship.model;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import pl.nn44.battleship.utils.id.IdGenerator;
+import pl.nn44.battleship.utils.other.Arrays;
 
 import java.util.Random;
 
@@ -15,7 +16,7 @@ public class Game {
 
     public Game(IdGenerator idGenerator, Player player1) {
         id = idGenerator.nextId();
-        this.players[1] = player1;
+        this.players[0] = player1;
     }
     // ---------------------------------------------------------------------------------------------------------------
 
@@ -23,22 +24,12 @@ public class Game {
         return id;
     }
 
-    public Player getPlayer1() {
-        return players[0];
+    public Player getPlayer(int no) {
+        return players[no];
     }
 
-    public void setPlayer1(Player player1) {
-        players[0] = player1;
-        player1.setGame(this);
-    }
-
-    public Player getPlayer2() {
-        return players[1];
-    }
-
-    public void setPlayer2(Player player2) {
-        players[1] = player2;
-        player2.setGame(this);
+    public void setPlayer(int no, Player player) {
+        players[no] = player;
     }
 
     public State getState() {
@@ -59,39 +50,32 @@ public class Game {
 
     // ---------------------------------------------------------------------------------------------------------------
 
-    public boolean removePlayer(Player player) {
-        if (player.equals(players[0])) {
-            players[0] = null;
-            return true;
+    public boolean setPlayerAtFreeSlot(Player player) {
+        int slotIndex = Arrays.indexOf(null, players);
 
-        } else if (player.equals(players[1])) {
-            players[1] = null;
-            return true;
-
-        } else {
-            return false;
+        if (slotIndex != -1) {
+            players[slotIndex] = player;
         }
+
+        return slotIndex != -1;
+    }
+
+    public boolean removePlayer(Player player) {
+        int playerIndex = Arrays.indexOf(player, players);
+
+        if (playerIndex != -1) {
+            players[playerIndex] = null;
+        }
+
+        return playerIndex != -1;
     }
 
     public Player secondPlayer(Player player) {
-        return player.equals(players[0])
-                ? players[1]
-                : players[0];
+        int playerIndex = Arrays.indexOf(player, players);
+        return players[playerIndex + 1 % 2];
     }
 
-    public synchronized boolean setPlayerToFreeSlot(Player player) {
-        if (players[0] == null) {
-            players[0] = player;
-            return true;
-        } else if (players[1] == null) {
-            players[1] = player;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean bothGridSet() {
+    public boolean bothGridSets() {
         return players[0] != null
                 && players[1] != null
                 && players[0].getGrid() != null
@@ -112,9 +96,20 @@ public class Game {
         return players[(tour + 1) % 2];
     }
 
-    public void setShootGrids() {
+    public void prepareShootGrids() {
         players[0].setShootGrid(new ShootGrid(players[1].getGrid()));
         players[1].setShootGrid(new ShootGrid(players[0].getGrid()));
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+
+    public boolean completed() {
+        // TODO: implement
+        return false;
+    }
+
+    public void nextGame() {
+        // TODO: implement
     }
 
     // ---------------------------------------------------------------------------------------------------------------
@@ -138,14 +133,6 @@ public class Game {
                 .add("id", id)
                 .add("players", players)
                 .toString();
-    }
-
-    public boolean completed() {
-        return false;
-    }
-
-    public void reset() {
-
     }
 
     // ---------------------------------------------------------------------------------------------------------------
