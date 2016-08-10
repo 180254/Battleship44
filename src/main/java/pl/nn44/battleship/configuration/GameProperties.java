@@ -1,8 +1,10 @@
 package pl.nn44.battleship.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 @ConfigurationProperties(prefix = "game")
+@Component
 public class GameProperties {
 
     private GridSize gridSize;
@@ -66,14 +68,24 @@ public class GameProperties {
     // ---------------------------------------------------------------------------------------------------------------
 
     public static class Impl {
-        private int locks;
 
-        public int getLocks() {
-            return locks;
+        private int idLen;
+        private int locksNo;
+
+        public int getIdLen() {
+            return idLen;
         }
 
-        public void setLocks(int locks) {
-            this.locks = locks;
+        public void setIdLen(int idLen) {
+            this.idLen = idLen;
+        }
+
+        public int getLocksNo() {
+            return locksNo;
+        }
+
+        public void setLocksNo(int locksNo) {
+            this.locksNo = locksNo;
         }
     }
 }

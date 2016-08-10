@@ -30,6 +30,7 @@
 <- 400_ no-game-set
 <- 400_ game-waiting
 <- 400_ not-your-tour
+<- 400_ bad-shoot
 
 <- WON_ YOU
 <- WON_ HE

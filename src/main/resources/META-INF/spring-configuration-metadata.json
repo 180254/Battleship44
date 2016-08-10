@@ -37,7 +37,13 @@
       "defaultValue": 0
     },
     {
-      "name": "game.impl.locks",
+      "name": "game.impl.id-len",
+      "type": "java.lang.Integer",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Impl",
+      "defaultValue": 0
+    },
+    {
+      "name": "game.impl.locks-no",
       "type": "java.lang.Integer",
       "sourceType": "pl.nn44.battleship.configuration.GameProperties$Impl",
       "defaultValue": 0

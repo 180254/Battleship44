@@ -17,7 +17,7 @@ public class LockerImpl implements Locker {
     }
 
     @Override
-    public Lock[] lock(Player player) {
+    public Locker.Sync lock(Player player) {
         Lock[] locks = new Lock[2];
 
         locks[0] = lockNullable(player);
@@ -26,19 +26,17 @@ public class LockerImpl implements Locker {
                 ? lockNullable(player.getGame())
                 : fastLock;
 
-        return locks;
+        return () -> LockerImpl.this.unlock(locks);
 
     }
 
     @Override
-    public Lock[] lock(Game game) {
-        return new Lock[]{
-                lockNullable(game)
-        };
-
+    public Locker.Sync lock(Game game) {
+        Lock lock = lockNullable(game);
+        return lock::unlock;
     }
 
-    @Override
+
     public void unlock(Lock[] locks) {
         for (int i = locks.length - 1; i >= 0; i--) {
             Lock lock = locks[i];
@@ -47,8 +45,11 @@ public class LockerImpl implements Locker {
     }
 
     public Lock lockNullable(Object obj) {
-        return obj != null
+        Lock lock = obj != null
                 ? lockStriped.get(obj)
                 : fastLock;
+
+        lock.lock();
+        return lock;
     }
 }

@@ -17,14 +17,12 @@ import pl.nn44.battleship.utils.other.Strings;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.locks.Lock;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
-@SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
 public class WebSocketController extends TextWebSocketHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketController.class);
@@ -48,7 +46,7 @@ public class WebSocketController extends TextWebSocketHandler {
     private final FleetVerifier fleetVerifier;
     private final Serializer<Grid, String> gridSerializer;
     private final Serializer<Coord, String> coordSerializer;
-    private final Serializer<Cell, String> cellSerializer;
+    private final Serializer<List<Cell>, String> cellSerializer;
 
     public WebSocketController(Random random,
                                Locker locker,
@@ -56,7 +54,7 @@ public class WebSocketController extends TextWebSocketHandler {
                                FleetVerifier fleetVerifier,
                                Serializer<Grid, String> gridSerializer,
                                Serializer<Coord, String> coordSerializer,
-                               Serializer<Cell, String> cellSerializer) {
+                               Serializer<List<Cell>, String> cellSerializer) {
         this.random = random;
         this.locker = locker;
         this.idGenerator = idGenerator;
@@ -68,17 +66,18 @@ public class WebSocketController extends TextWebSocketHandler {
 
     // ---------------------------------------------------------------------------------------------------------------
 
-    private TextMessage txt(String str) {
-        return new TextMessage(str);
+    private void txt(Player player, String format, Object... args) {
+        txt(player.getSession(), format, args);
     }
 
-    private void txt(Player player, String format, Object... args) {
+    private void txt(WebSocketSession session, String format, Object... args) {
         String msgId = idGenerator.nextId();
         String msg = String.format(format, args);
-        LOGGER.info("-> {} @ {} @ {}", msgId, player.getSession(), msg);
+        LOGGER.info("-> {} @ {} @ {}", msgId, session, msg);
 
         try {
-            player.getSession().sendMessage(txt(msg));
+            TextMessage textMessage = new TextMessage(msg);
+            session.sendMessage(textMessage);
         } catch (IOException e) {
             LOGGER.warn("SERVER -> USER FAIL: {}", msgId);
             LOGGER.warn("exception stack", e);
@@ -90,18 +89,19 @@ public class WebSocketController extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        session.sendMessage(txt("HI_. What you're looking for here?"));
+        txt(session, "HI_. What you're looking for here?");
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         Player player = players.get(session);
-        Lock[] locks = locker.lock(player);
-        try {
+        Locker.Sync lock = locker.lock(player);
 
+        try {
             if (player == null) {
                 return;
             }
+
             players.remove(session);
 
             Game game = player.getGame();
@@ -114,11 +114,12 @@ public class WebSocketController extends TextWebSocketHandler {
 
             if (secondPlayer != null) {
                 txt(secondPlayer, "1PLA");
+                game.nextGame();
             } else {
                 games.remove(game.getId());
             }
         } finally {
-            locker.unlock(locks);
+            lock.unlock();
         }
     }
 
@@ -130,50 +131,63 @@ public class WebSocketController extends TextWebSocketHandler {
         String command = Strings.safeSubstring(payload, 0, COMMAND_LEN);
         String param = Strings.safeSubstring(payload, COMMAND_LEN + 1);
 
+        LOGGER.info("-> {} @ {} @ {}", "_", session, message);
+
         Player player = players
                 .computeIfAbsent(session, Player::new);
 
-        Lock[] locks = locker.lock(player);
+        Locker.Sync lock = locker.lock(player);
 
         try {
             commands
                     .getOrDefault(command, this::other)
                     .accept(player, param);
         } finally {
-            locker.unlock(locks);
+            lock.unlock();
         }
     }
 
     // ---------------------------------------------------------------------------------------------------------------
 
     private void game(Player player, String param) {
-        if (player.getGame() != null) {
-            txt(player, "400_ you-are-in-game");
+        Locker.Sync lockGame = null;
 
-        } else if (param.equals("NEW")) {
-            Game game = new Game(idGenerator, player);
-            games.put(game.getId(), game);
-            txt(player, "GAME OK %s", game.getId());
+        try {
+            if (player.getGame() != null) {
+                txt(player, "400_ you-are-in-game");
 
-        } else {
-            Game game = games.get(param);
-            if (game == null) {
-                txt(player, "GAME FAIL no-such-game");
-
-            } else if (!game.setPlayerAtFreeSlot(player)) {
-                txt(player, "GAME FAIL no-free-slot");
+            } else if (param.equals("NEW")) {
+                Game game = new Game(idGenerator, player);
+                games.put(game.getId(), game);
+                txt(player, "GAME OK %s", game.getId());
 
             } else {
-                txt(player, "GAME OK %s", game.getId());
-                txt(game.getPlayer0(), "2PLA");
-                txt(game.getPlayer1(), "2PLA");
+                Game game = games.get(param);
+                lockGame = locker.lock(game);
+
+                if (game == null) {
+                    txt(player, "GAME FAIL no-such-game");
+
+                } else if (!game.setPlayerAtFreeSlot(player)) {
+                    txt(player, "GAME FAIL no-free-slot");
+
+                } else {
+                    txt(player, "GAME OK %s", game.getId());
+                    txt(game.getPlayer(0), "2PLA");
+                    txt(game.getPlayer(1), "2PLA");
+                }
             }
 
+        } finally {
+            if (lockGame != null) {
+                lockGame.unlock();
+            }
         }
     }
 
     private void grid(Player player, String param) {
         Game game = player.getGame();
+
         if (game == null) {
             txt(player, "400_ no-game-set");
 
@@ -184,20 +198,25 @@ public class WebSocketController extends TextWebSocketHandler {
             txt(player, "400_ grid-already-set");
 
         } else {
-            Grid grid = null;//gridSerializer.deserialize(param);
-            if (!fleetVerifier.verify(grid)) {
+            Optional<Grid> grid = gridSerializer.deserialize(param);
+
+            if (!grid.isPresent()) {
+                txt(player, "GRID FAIL");
+
+            } else if (!fleetVerifier.verify(grid.get())) {
                 txt(player, "GRID FAIL");
 
             } else {
-                player.setGrid(grid);
+                player.setGrid(grid.get());
                 txt(player, "GRID OK");
 
                 if (game.bothGridSets()) {
                     game.setState(Game.State.IN_PROGRESS);
                     game.prepareShootGrids();
+                    game.nextTour(random);
 
-                    txt(game.getPlayer0(), "TOUR START");
-                    txt(game.getPlayer1(), "TOUR START");
+                    txt(game.getPlayer(0), "TOUR START");
+                    txt(game.getPlayer(1), "TOUR START");
                     txt(game.getTourPlayer(), "TOUR YOU");
                     txt(game.getNotTourPlayer(), "TOUR HE");
                 }
@@ -208,6 +227,7 @@ public class WebSocketController extends TextWebSocketHandler {
 
     private void shot(Player player, String param) {
         Game game = player.getGame();
+
         if (game == null) {
             txt(player, "400_ no-game-set");
 
@@ -218,18 +238,24 @@ public class WebSocketController extends TextWebSocketHandler {
             txt(player, "400_ not-your-tour");
 
         } else {
-            Coord coord = null;//coordSerializer.deserialize(param);
-            Player tourPlayer = game.getTourPlayer();
-            List<Cell> shoot = tourPlayer.getShootGrid().shoot(coord);
-            String shootSerial = shoot.stream().map(cellSerializer::serialize).collect(Collectors.joining(","));
+            Optional<Coord> coord = coordSerializer.deserialize(param);
 
-            txt(tourPlayer, "YOU_ %s", shootSerial);
-            txt(game.getNotTourPlayer(), "HE__ %s", shootSerial);
+            if (!coord.isPresent()) {
+                txt(player, "400_ bad-shoot");
 
-            if (game.completed()) {
-                txt(tourPlayer, "WON_ YOU");
-                txt(game.getNotTourPlayer(), "WON_ HE");
-                game.reset();
+            } else {
+                Player tourPlayer = game.getTourPlayer();
+                List<Cell> shoot = tourPlayer.getShootGrid().shoot(coord.get());
+                String shootSerial = cellSerializer.serialize(shoot);
+
+                txt(tourPlayer, "YOU_ %s", shootSerial);
+                txt(game.getNotTourPlayer(), "HE__ %s", shootSerial);
+
+                if (game.completed()) {
+                    txt(tourPlayer, "WON_ YOU");
+                    txt(game.getNotTourPlayer(), "WON_ HE");
+                    game.nextGame();
+                }
             }
         }
 
