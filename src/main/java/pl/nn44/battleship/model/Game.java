@@ -104,12 +104,15 @@ public class Game {
     // ---------------------------------------------------------------------------------------------------------------
 
     public boolean completed() {
-        // TODO: implement
-        return false;
+        return players[0].getShootGrid().allShotDown()
+                || players[1].getShootGrid().allShotDown();
     }
 
     public void nextGame() {
-        // TODO: implement
+        state = State.WAITING;
+        tour = null;
+        players[0].setShootGrid(null);
+        players[1].setShootGrid(null);
     }
 
     // ---------------------------------------------------------------------------------------------------------------

@@ -50,6 +50,10 @@ public class ShootGrid extends Grid {
         return changedCell;
     }
 
+    public boolean allShotDown() {
+        return opShipFinder.ships().stream().allMatch(this::isShipSink);
+    }
+
     // ---------------------------------------------------------------------------------------------------------------
 
     private boolean isShipSink(Ship ship) {
