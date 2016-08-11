@@ -5,8 +5,8 @@ import pl.nn44.battleship.service.other.ShipFinder;
 
 public class CurvedFleetVerifier extends AbstractFleetVerifier {
 
-    public CurvedFleetVerifier(int[] availSheepSizes) {
-        super(availSheepSizes);
+    public CurvedFleetVerifier(int[] availShipSizes) {
+        super(availShipSizes);
     }
 
     @Override

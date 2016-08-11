@@ -17,11 +17,11 @@ public abstract class AbstractFleetVerifier implements FleetVerifier {
             Cell.Type.SHIP.getCode()
     );
 
-    protected final int[] availSheepSizes;
+    protected final int[] availShipSizes;
 
-    public AbstractFleetVerifier(int[] availSheepSizes) {
-        this.availSheepSizes = availSheepSizes.clone();
-        Arrays.sort(this.availSheepSizes);
+    public AbstractFleetVerifier(int[] availShipSizes) {
+        this.availShipSizes = availShipSizes.clone();
+        Arrays.sort(this.availShipSizes);
     }
 
     protected boolean hasProperValues(Grid grid) {
@@ -32,7 +32,7 @@ public abstract class AbstractFleetVerifier implements FleetVerifier {
     protected boolean hasProperShipSizes(ShipFinder shipFinder) {
         List<Ship> ships = shipFinder.ships();
         int[] shipSizes = ships.stream().mapToInt(Ship::getSize).sorted().toArray();
-        return Arrays.equals(availSheepSizes, shipSizes);
+        return Arrays.equals(availShipSizes, shipSizes);
     }
 
     protected boolean hasSpaceAroundShips(ShipFinder shipFinder) {

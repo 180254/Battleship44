@@ -9,8 +9,8 @@ import java.util.List;
 
 public class StraightFleetVerifier extends AbstractFleetVerifier {
 
-    public StraightFleetVerifier(int[] availSheepSizes) {
-        super(availSheepSizes);
+    public StraightFleetVerifier(int[] availShipSizes) {
+        super(availShipSizes);
     }
 
     @Override
