@@ -1,5 +1,7 @@
 package pl.nn44.battleship.util.id;
 
+import pl.nn44.battleship.util.other.Strings;
+
 import java.math.BigInteger;
 import java.util.Random;
 
@@ -22,13 +24,12 @@ public class BigIdGenerator implements IdGenerator {
     public BigIdGenerator(Random random, int numberOfChars) {
         this.random = random;
         this.numberOfChars = numberOfChars;
-        this.bits = (numberOfChars + 1) * BIT_PER_CHARACTER + 1;
+        this.bits = (numberOfChars + 2) * BIT_PER_CHARACTER;
     }
 
     @Override
     public String nextId() {
-        return new BigInteger(bits, random)
-                .toString(32)
-                .substring(0, numberOfChars);
+        String nextId = new BigInteger(bits, random).toString(32);
+        return Strings.safeSubstring(nextId, 0, numberOfChars);
     }
 }
