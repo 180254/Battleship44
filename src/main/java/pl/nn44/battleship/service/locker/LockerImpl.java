@@ -3,7 +3,7 @@ package pl.nn44.battleship.service.locker;
 import com.google.common.util.concurrent.Striped;
 import pl.nn44.battleship.model.Game;
 import pl.nn44.battleship.model.Player;
-import pl.nn44.battleship.utils.other.FastLock;
+import pl.nn44.battleship.util.other.FastLock;
 
 import java.util.concurrent.locks.Lock;
 

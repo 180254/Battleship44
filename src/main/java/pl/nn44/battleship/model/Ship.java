@@ -3,7 +3,7 @@ package pl.nn44.battleship.model;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
-import pl.nn44.battleship.utils.other.Lists;
+import pl.nn44.battleship.util.other.Lists;
 
 import java.util.List;
 

@@ -17,8 +17,8 @@ import pl.nn44.battleship.service.serializer.GridSerializer;
 import pl.nn44.battleship.service.serializer.Serializer;
 import pl.nn44.battleship.service.verifier.FleetVerifier;
 import pl.nn44.battleship.service.verifier.FleetVerifierFactory;
-import pl.nn44.battleship.utils.id.BigIdGenerator;
-import pl.nn44.battleship.utils.id.IdGenerator;
+import pl.nn44.battleship.util.id.BigIdGenerator;
+import pl.nn44.battleship.util.id.IdGenerator;
 
 import java.security.SecureRandom;
 import java.util.List;

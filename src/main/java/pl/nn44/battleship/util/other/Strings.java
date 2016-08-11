@@ -1,4 +1,4 @@
-package pl.nn44.battleship.utils.other;
+package pl.nn44.battleship.util.other;
 
 public class Strings {
 

@@ -11,8 +11,8 @@ import pl.nn44.battleship.model.*;
 import pl.nn44.battleship.service.locker.Locker;
 import pl.nn44.battleship.service.serializer.Serializer;
 import pl.nn44.battleship.service.verifier.FleetVerifier;
-import pl.nn44.battleship.utils.id.IdGenerator;
-import pl.nn44.battleship.utils.other.Strings;
+import pl.nn44.battleship.util.id.IdGenerator;
+import pl.nn44.battleship.util.other.Strings;
 
 import java.io.IOException;
 import java.util.List;
