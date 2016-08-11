@@ -1,0 +1,50 @@
+body {
+    text-align: center;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 10pt;
+    background-color: #2C3E44;
+}
+
+main {
+    display: inline-block;
+    width: 850px;
+    margin-top: 50px;
+    text-align: left;
+}
+
+.grid table {
+    margin: 0 auto;
+    font-weight: bold;
+}
+
+#grid-opponent {
+float:left;
+}
+
+#grid-opponent.grid td {
+    width: 30px;
+    height: 30px;
+}
+
+#grid-shoot.grid td {
+    width: 40px;
+    height: 40px;
+}
+
+
+.grid td.unknown {
+     background-color: white;!important;
+}
+
+
+.grid td.empty {
+    background-color: #d6c5d0 !important;
+}
+
+
+.grid td.ship {
+ background-color: #0b5c53 !important;
+ }
+
+
+
