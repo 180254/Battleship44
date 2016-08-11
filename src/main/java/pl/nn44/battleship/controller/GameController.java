@@ -23,9 +23,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiConsumer;
 
-public class WebSocketController extends TextWebSocketHandler {
+public class GameController extends TextWebSocketHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GameController.class);
 
 
     public static final int COMMAND_LEN = 4;
@@ -48,13 +48,13 @@ public class WebSocketController extends TextWebSocketHandler {
     private final Serializer<Coord, String> coordSerializer;
     private final Serializer<List<Cell>, String> cellSerializer;
 
-    public WebSocketController(Random random,
-                               Locker locker,
-                               IdGenerator idGenerator,
-                               FleetVerifier fleetVerifier,
-                               Serializer<Grid, String> gridSerializer,
-                               Serializer<Coord, String> coordSerializer,
-                               Serializer<List<Cell>, String> cellSerializer) {
+    public GameController(Random random,
+                          Locker locker,
+                          IdGenerator idGenerator,
+                          FleetVerifier fleetVerifier,
+                          Serializer<Grid, String> gridSerializer,
+                          Serializer<Coord, String> coordSerializer,
+                          Serializer<List<Cell>, String> cellSerializer) {
         this.random = random;
         this.locker = locker;
         this.idGenerator = idGenerator;

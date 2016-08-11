@@ -5,7 +5,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.Assert;
-import pl.nn44.battleship.controller.WebSocketController;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import pl.nn44.battleship.controller.GameController;
 import pl.nn44.battleship.model.Cell;
 import pl.nn44.battleship.model.Coord;
 import pl.nn44.battleship.model.Grid;
@@ -25,8 +28,9 @@ import java.util.List;
 import java.util.Random;
 
 @Configuration
+@EnableWebSocket
 @EnableConfigurationProperties
-class GameConfiguration {
+class GameConfiguration implements WebSocketConfigurer {
 
     final GameProperties gm;
 
@@ -37,7 +41,7 @@ class GameConfiguration {
     }
 
     @Bean
-    WebSocketController webSocketController() {
+    GameController webSocketController() {
 
         Random random = new SecureRandom();
         Locker locker = new LockerImpl(gm.getImpl().getLocksNo());
@@ -47,7 +51,7 @@ class GameConfiguration {
         Serializer<Coord, String> coordSerializer = new CoordSerializer();
         Serializer<List<Cell>, String> cellSerializer = new CellSerializer();
 
-        return new WebSocketController(
+        return new GameController(
                 random,
                 locker,
                 idGenerator,
@@ -57,5 +61,8 @@ class GameConfiguration {
                 cellSerializer);
     }
 
-
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(webSocketController(), "/ws").setAllowedOrigins("*");
+    }
 }
