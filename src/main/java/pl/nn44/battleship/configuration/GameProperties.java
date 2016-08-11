@@ -37,8 +37,37 @@ public class GameProperties {
 
     // ---------------------------------------------------------------------------------------------------------------
 
-    public enum FleetType {
-        RUSSIAN, RUSSIAN_CURVED
+    public static class FleetType {
+
+        private Mode mode;
+        private Sizes sizes;
+
+        public enum Mode {
+            CURVED,
+            STRAIGHT;
+        }
+
+        public enum Sizes {
+            RUSSIAN,
+            CLASSIC_ONE,
+            CLASSIC_TWO,
+        }
+
+        public Mode getMode() {
+            return mode;
+        }
+
+        public void setMode(Mode mode) {
+            this.mode = mode;
+        }
+
+        public Sizes getSizes() {
+            return sizes;
+        }
+
+        public void setSizes(Sizes sizes) {
+            this.sizes = sizes;
+        }
     }
 
     // ---------------------------------------------------------------------------------------------------------------

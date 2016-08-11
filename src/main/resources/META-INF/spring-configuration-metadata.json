@@ -6,6 +6,12 @@
       "sourceType": "pl.nn44.battleship.configuration.GameProperties"
     },
     {
+      "name": "game.fleet-type",
+      "type": "pl.nn44.battleship.configuration.GameProperties$FleetType",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties",
+      "sourceMethod": "getFleetType()"
+    },
+    {
       "name": "game.grid-size",
       "type": "pl.nn44.battleship.configuration.GameProperties$GridSize",
       "sourceType": "pl.nn44.battleship.configuration.GameProperties",
@@ -20,9 +26,14 @@
   ],
   "properties": [
     {
-      "name": "game.fleet-type",
-      "type": "pl.nn44.battleship.configuration.GameProperties$FleetType",
-      "sourceType": "pl.nn44.battleship.configuration.GameProperties"
+      "name": "game.fleet-type.mode",
+      "type": "pl.nn44.battleship.configuration.GameProperties$FleetType$Mode",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$FleetType"
+    },
+    {
+      "name": "game.fleet-type.sizes",
+      "type": "pl.nn44.battleship.configuration.GameProperties$FleetType$Sizes",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$FleetType"
     },
     {
       "name": "game.grid-size.cols",

@@ -42,7 +42,7 @@ class GameConfiguration {
         Random random = new SecureRandom();
         Locker locker = new LockerImpl(gm.getImpl().getLocksNo());
         IdGenerator idGenerator = new BigIdGenerator(random, gm.getImpl().getIdLen());
-        FleetVerifier fleetVerifier = FleetVerifierFactory.curvedRussian();
+        FleetVerifier fleetVerifier = FleetVerifierFactory.forTypeFromGm(gm);
         Serializer<Grid, String> gridSerializer = new GridSerializer(gm);
         Serializer<Coord, String> coordSerializer = new CoordSerializer();
         Serializer<List<Cell>, String> cellSerializer = new CellSerializer();
