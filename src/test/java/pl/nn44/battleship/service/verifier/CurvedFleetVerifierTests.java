@@ -5,7 +5,7 @@ import org.junit.Test;
 import pl.nn44.battleship.configuration.GameProperties.FleetType;
 import pl.nn44.battleship.model.Grid;
 
-public class CurvedFleetVerifierTest {
+public class CurvedFleetVerifierTests {
 
     private final FleetVerifier fleetVerifier = FleetVerifierFactory.forType(
             FleetType.Mode.CURVED, FleetType.Sizes.RUSSIAN);

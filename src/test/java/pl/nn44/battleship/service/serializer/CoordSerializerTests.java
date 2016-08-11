@@ -6,7 +6,7 @@ import pl.nn44.battleship.model.Coord;
 
 import java.util.Optional;
 
-public class CoordSerializerTest {
+public class CoordSerializerTests {
 
     private final CoordSerializer coordSerializer = new CoordSerializer();
 

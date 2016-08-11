@@ -7,7 +7,7 @@ import pl.nn44.battleship.model.Grid;
 
 import java.util.Optional;
 
-public class GridSerializerTest {
+public class GridSerializerTests {
 
     private GameProperties gm(int rows, int cols) {
         GameProperties.GridSize gs = new GameProperties.GridSize();

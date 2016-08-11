@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class CellSerializerTest {
+public class CellSerializerTests {
 
     private final CellSerializer cellSerializer = new CellSerializer();
 
