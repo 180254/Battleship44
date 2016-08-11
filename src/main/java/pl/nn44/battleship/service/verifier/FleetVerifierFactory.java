@@ -35,7 +35,6 @@ public class FleetVerifierFactory {
         }
     }
 
-
     public static FleetVerifier forTypeFromGm(GameProperties gm) {
         FleetType.Mode mode = gm.getFleetType().getMode();
         FleetType.Sizes sizes = gm.getFleetType().getSizes();
