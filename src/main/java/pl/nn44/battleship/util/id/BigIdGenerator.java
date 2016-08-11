@@ -1,8 +1,10 @@
 package pl.nn44.battleship.util.id;
 
-import pl.nn44.battleship.util.other.Strings;
+import com.google.common.base.Strings;
+import com.google.common.math.IntMath;
 
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.Random;
 
 // credits: friends @ stackoverflow
@@ -15,21 +17,22 @@ import java.util.Random;
 // changes[1] - customizable number of characters in result id (instead of bits)
 public class BigIdGenerator implements IdGenerator {
 
-    private final static int BIT_PER_CHARACTER = 5;
+    private final static int NUMBER_BASE = 32;
+    private final static int BIT_PER_CHAR = IntMath.log2(NUMBER_BASE, RoundingMode.UNNECESSARY);
 
     private final Random random;
-    private final int numberOfChars;
+    private final int chars;
     private final int bits;
 
-    public BigIdGenerator(Random random, int numberOfChars) {
+    public BigIdGenerator(Random random, int chars) {
         this.random = random;
-        this.numberOfChars = numberOfChars;
-        this.bits = (numberOfChars + 2) * BIT_PER_CHARACTER;
+        this.chars = chars;
+        this.bits = chars * BIT_PER_CHAR;
     }
 
     @Override
     public String nextId() {
-        String nextId = new BigInteger(bits, random).toString(32);
-        return Strings.safeSubstring(nextId, 0, numberOfChars);
+        String nextId = new BigInteger(bits, random).toString(NUMBER_BASE);
+        return Strings.padStart(nextId, chars, '0');
     }
 }
