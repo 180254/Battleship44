@@ -61,11 +61,11 @@ var set_cell = function (gridId, row, col, newClass) {
 
 
 var set_message = function (message, timeout) {
-    $("#connecting").remove();
+    $("#msg-connecting").remove();
     console.log("set: " + message);
 
     if (timeout === undefined) {
-        $("#message#cont-msg").text(message);
+        $("#msg-const").text(message);
 
     } else {
         var id = random_string(7, "a0");
@@ -206,7 +206,7 @@ var go_game = function () {
     ws.onmessage = function (evt) {
         var received_msg = evt.data;
         functions_detect(received_msg);
-        set_message("onmessage: " + received_msg, 3000);
+        set_message("onmessage: " + received_msg);
 
     };
 
