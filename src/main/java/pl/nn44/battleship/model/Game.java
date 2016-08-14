@@ -72,7 +72,7 @@ public class Game {
 
     public Player secondPlayer(Player player) {
         int playerIndex = Arrays.indexOf(player, players);
-        return players[playerIndex + 1 % 2];
+        return players[(playerIndex + 1) % 2];
     }
 
     public boolean bothGridSets() {
@@ -111,8 +111,13 @@ public class Game {
     public void nextGame() {
         state = State.WAITING;
         tour = null;
-        players[0].setShootGrid(null);
-        players[1].setShootGrid(null);
+
+        if (players[0] != null) {
+            players[0].setShootGrid(null);
+        }
+        if (players[1] != null) {
+            players[1].setShootGrid(null);
+        }
     }
 
     // ---------------------------------------------------------------------------------------------------------------

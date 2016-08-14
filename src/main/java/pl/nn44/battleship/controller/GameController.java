@@ -113,7 +113,7 @@ public class GameController extends TextWebSocketHandler {
             game.removePlayer(player);
 
             if (secondPlayer != null) {
-                txt(secondPlayer, "1PLA");
+                txt(secondPlayer, "1PLA opponent-is-gone " + game.getId());
                 game.nextGame();
             } else {
                 games.remove(game.getId());
@@ -158,6 +158,7 @@ public class GameController extends TextWebSocketHandler {
 
             } else if (param.equals("NEW")) {
                 Game game = new Game(idGenerator, player);
+                player.setGame(game);
                 games.put(game.getId(), game);
                 txt(player, "GAME OK %s", game.getId());
 
@@ -172,6 +173,7 @@ public class GameController extends TextWebSocketHandler {
                     txt(player, "GAME FAIL no-free-slot");
 
                 } else {
+                    player.setGame(game);
                     txt(player, "GAME OK %s", game.getId());
                     txt(game.getPlayer(0), "2PLA");
                     txt(game.getPlayer(1), "2PLA");

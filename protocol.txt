@@ -34,9 +34,8 @@
 
 <- WON_ YOU
 <- WON_ HE
-<- 1PLA game_id
 
-<- 1PLA opponent-is-gone
+<- 1PLA opponent-is-gone <game_id>
 
 -> PING <ping_msg>
 <- PONG <ping_msg>
