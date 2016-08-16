@@ -1,5 +1,8 @@
 package pl.nn44.battleship.configuration;
 
+import org.eclipse.jetty.websocket.api.WebSocketBehavior;
+import org.eclipse.jetty.websocket.api.WebSocketPolicy;
+import org.eclipse.jetty.websocket.server.WebSocketServerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +11,9 @@ import org.springframework.util.Assert;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.web.socket.server.HandshakeHandler;
+import org.springframework.web.socket.server.jetty.JettyRequestUpgradeStrategy;
+import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 import pl.nn44.battleship.controller.GameController;
 import pl.nn44.battleship.model.Cell;
 import pl.nn44.battleship.model.Coord;
@@ -26,10 +32,12 @@ import pl.nn44.battleship.util.id.IdGenerator;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 @EnableWebSocket
 @EnableConfigurationProperties
+// http://docs.spring.io/spring/docs/current/spring-framework-reference/html/websocket.html
 class GameConfiguration implements WebSocketConfigurer {
 
     final GameProperties gm;
@@ -61,8 +69,22 @@ class GameConfiguration implements WebSocketConfigurer {
                 cellSerializer);
     }
 
+    @Bean
+    HandshakeHandler handshakeHandler() {
+        WebSocketPolicy policy = new WebSocketPolicy(WebSocketBehavior.SERVER);
+        policy.setIdleTimeout(TimeUnit.MINUTES.toMillis(5L));
+
+        return new DefaultHandshakeHandler(
+                new JettyRequestUpgradeStrategy(
+                        new WebSocketServerFactory(policy)
+                )
+        );
+    }
+
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(webSocketController(), "/ws").setAllowedOrigins("*");
+        registry.addHandler(webSocketController(), "/ws")
+                .setAllowedOrigins("*")
+                .setHandshakeHandler(handshakeHandler());
     }
 }
