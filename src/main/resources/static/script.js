@@ -117,7 +117,7 @@ var ship_selection_collect = function () {
     return $(grid_id)
         .find("tr").find("td")
         .map(function () {
-            return $(this).hasClass(clazz) ? 1 : 0;
+            return $(this).hasClass(clazz) | 0;
         })
         .get()
         .join();
@@ -127,7 +127,6 @@ var ship_selection_collect = function () {
 
 var set_message = function (message, timeout) {
     $("#msg-connecting").remove();
-    console.log("set_message: " + message);
 
     if (timeout === undefined) {
         $("#msg-const").text(message);
@@ -161,27 +160,35 @@ var init = function () {
         return;
     }
 
-    go_game();
+    ws_go_game();
 };
 
-var go_game = function () {
-    var ws = new WebSocket("ws://" + window.location.host + "/ws");
+var ws = undefined;
+var ws_go_game = function () {
+    ws = new WebSocket("ws://" + window.location.host + "/ws");
 
     ws.onopen = function () {
         var id = url_param("id") || "NEW";
-        ws.send("GAME " + id)
+        ws_send("GAME " + id)
     };
 
     ws.onmessage = function (evt) {
         var received_msg = evt.data;
-        execute_detect(received_msg);
-        set_message("onmessage: " + received_msg);
+        console.log("ws.onmessage: " + received_msg);
+        set_message("ws.onmessage: " + received_msg);
 
+        onMsg_auto(received_msg);
     };
 
     ws.onclose = function () {
-        set_message("onclose");
+        console.log("ws.onclose");
+        set_message("ws.onclose");
     };
+};
+
+var ws_send = function (msg) {
+    console.log("ws.send: " + msg);
+    ws.send(msg)
 };
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -268,7 +275,7 @@ var functions = {
     "400_": onMsg400
 };
 
-var execute_detect = function (msg) {
+var onMsg_auto = function (msg) {
     var funcNames = Object.keys(functions);
 
     for (var i = 0; i < funcNames.length; i++) {
@@ -285,6 +292,9 @@ var execute_detect = function (msg) {
 };
 
 
+// -------------------------------------------------------------------------------------------------------------------
+
+// GO!
 init();
 
 // -------------------------------------------------------------------------------------------------------------------
