@@ -23,42 +23,77 @@ var url_param = function (name) {
     return results[1];
 };
 
-var fresh_grid = function (rows, cols) {
+// -------------------------------------------------------------------------------------------------------------------
+
+var fresh_grid = function (grid, rows, cols) {
     var $table = $("<table/>");
 
     for (var row = 0; row < rows; row++) {
-        $table.append(new_grid_row(cols));
+        $table.append(new_grid_row(grid, row, cols));
     }
 
     return $table;
 
 };
 
-var new_grid_row = function (cols) {
+var new_grid_row = function (grid, row, cols) {
     var $row = $("<tr/>");
 
     for (var col = 0; col < cols; col++) {
-        $row.append(new_grid_cell());
+        $row.append(new_grid_cell(grid, row, col));
     }
 
     return $row;
 };
 
-var new_grid_cell = function () {
+var new_grid_cell = function (grid, row, col) {
     return $("<td/>", {
-        "class": "unknown"
+        "class": "unknown",
+        "data-name": grid,
+        "data-row": row,
+        "data-cell": col,
     });
 };
 
 
-var set_cell = function (gridId, row, col, newClass) {
-    var selector = "#" + gridId + " tr:eq(" + (row) + ") td:eq(" + (col) + ")";
+var set_cell = function (grid, row, col, newClass) {
+    var selector = "#" + grid + " tr:eq(" + (row) + ") td:eq(" + (col) + ")";
     var $element = $(selector);
 
     $element.removeClass();
     $element.addClass(newClass);
 };
 
+// -------------------------------------------------------------------------------------------------------------------
+
+var activate_ship_selection = function(gridId) {
+
+  var isMouseDown = false;
+   var isHighlighted = false;
+  $("#"+gridId+" td")
+    .mousedown(function () {
+      isMouseDown = true;
+      $(this).toggleClass("ship");
+            isHighlighted = $(this).hasClass("ship");
+
+      return false; // prevent text selection
+    })
+    .mouseover(function () {
+    console.log("X");
+      if (isMouseDown) {
+        $(this).toggleClass("ship", isHighlighted);
+      }
+    })
+        .bind("selectstart", function () {
+          return false;
+        });
+
+          $(document)
+            .mouseup(function () {
+              isMouseDown = false;
+            });
+        });
+}
 
 var set_message = function (message, timeout) {
     $("#msg-connecting").remove();
@@ -86,8 +121,8 @@ var set_message = function (message, timeout) {
 };
 
 var init = function () {
-    $("#grid-opponent").append(fresh_grid(10, 10));
-    $("#grid-shoot").append(fresh_grid(10, 10));
+    $("#grid-opponent").append(fresh_grid("grid-opponent", 10, 10));
+    $("#grid-shoot").append(fresh_grid("grid-shoot", 10, 10));
 
     if (!("WebSocket" in window)) {
         set_message("WebSockets not supported, google it");
@@ -216,13 +251,13 @@ var go_game = function () {
 };
 
 init();
-
-set_cell("grid-shoot", 0, 0, "empty");
-set_cell("grid-shoot", 0, 1, "empty");
-set_cell("grid-shoot", 0, 2, "empty");
-set_cell("grid-shoot", 0, 3, "empty");
-
-set_cell("grid-shoot", 1, 0, "ship");
-set_cell("grid-shoot", 1, 1, "ship");
-set_cell("grid-shoot", 1, 2, "ship");
-set_cell("grid-shoot", 1, 3, "ship");
+//
+//set_cell("grid-shoot", 0, 0, "empty");
+//set_cell("grid-shoot", 0, 1, "empty");
+//set_cell("grid-shoot", 0, 2, "empty");
+//set_cell("grid-shoot", 0, 3, "empty");
+//
+//set_cell("grid-shoot", 1, 0, "ship");
+//set_cell("grid-shoot", 1, 1, "ship");
+//set_cell("grid-shoot", 1, 2, "ship");
+//set_cell("grid-shoot", 1, 3, "ship");
