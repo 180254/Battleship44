@@ -71,15 +71,15 @@ public class GameController extends TextWebSocketHandler {
     }
 
     private void txt(WebSocketSession session, String format, Object... args) {
-        String msgId = idGenerator.nextId();
         String msg = String.format(format, args);
-        LOGGER.info("-> {} @ {} @ {}", msgId, session, msg);
+        LOGGER.info("->  {} @ {}", session.getId(), msg);
 
         try {
             TextMessage textMessage = new TextMessage(msg);
             session.sendMessage(textMessage);
         } catch (IOException e) {
-            LOGGER.warn("SERVER -> USER FAIL: {}", msgId);
+            LOGGER.warn("server to user _fail_");
+            LOGGER.info("->  {} @ {}", session.getId(), msg);
             LOGGER.warn("exception stack", e);
         }
     }
@@ -89,11 +89,13 @@ public class GameController extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        LOGGER.info("<-> {} @ established", session.getId());
         txt(session, "HI_. What you're looking for here?");
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        LOGGER.info("<-> {} @ closed @ {}", session.getId(), status);
         Player player = players.get(session);
         Locker.Sync lock = locker.lock(player);
 
@@ -131,7 +133,7 @@ public class GameController extends TextWebSocketHandler {
         String command = Strings.safeSubstring(payload, 0, COMMAND_LEN);
         String param = Strings.safeSubstring(payload, COMMAND_LEN + 1);
 
-        LOGGER.info("-> {} @ {} @ {}", "_", session, message);
+        LOGGER.info("<-  {} @ {}", session.getId(), message.getPayload());
 
         Player player = players
                 .computeIfAbsent(session, Player::new);
