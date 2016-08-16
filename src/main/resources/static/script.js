@@ -25,79 +25,109 @@ var url_param = function (name) {
 
 // -------------------------------------------------------------------------------------------------------------------
 
-var fresh_grid = function (grid, rows, cols) {
+var fresh_grid = function (grid_name, rows_no, cols_no) {
     var $table = $("<table/>");
 
-    for (var row = 0; row < rows; row++) {
-        $table.append(new_grid_row(grid, row, cols));
+    for (var row_i = 0; row_i < rows_no; row_i++) {
+        var new_row = new_grid_row(grid_name, row_i, cols_no);
+        $table.append(new_row);
     }
 
     return $table;
 
 };
 
-var new_grid_row = function (grid, row, cols) {
+var new_grid_row = function (grid_name, row_i, cols_no) {
     var $row = $("<tr/>");
 
-    for (var col = 0; col < cols; col++) {
-        $row.append(new_grid_cell(grid, row, col));
+    for (var col = 0; col < cols_no; col++) {
+        var new_cell = new_grid_cell(grid_name, row_i, col);
+        $row.append(new_cell);
     }
 
     return $row;
 };
 
-var new_grid_cell = function (grid, row, col) {
+var new_grid_cell = function (grid_name, row_i, col_i) {
     return $("<td/>", {
         "class": "unknown",
-        "data-name": grid,
-        "data-row": row,
-        "data-cell": col,
+        "data-name": grid_name,
+        "data-row-i": row_i,
+        "data-cell-i": col_i
     });
-};
-
-
-var set_cell = function (grid, row, col, newClass) {
-    var selector = "#" + grid + " tr:eq(" + (row) + ") td:eq(" + (col) + ")";
-    var $element = $(selector);
-
-    $element.removeClass();
-    $element.addClass(newClass);
 };
 
 // -------------------------------------------------------------------------------------------------------------------
 
-var activate_ship_selection = function(gridId) {
+var set_cell_class = function (grid_id, row_i, col_i, new_class) {
+    var $element = $(grid_id)
+        .find("tr").eq(row_i)
+        .find("td").eq(col_i);
 
-  var isMouseDown = false;
-   var isHighlighted = false;
-  $("#"+gridId+" td")
-    .mousedown(function () {
-      isMouseDown = true;
-      $(this).toggleClass("ship");
-            isHighlighted = $(this).hasClass("ship");
+    $element.removeClass();
+    $element.addClass(new_class);
+};
 
-      return false; // prevent text selection
-    })
-    .mouseover(function () {
-    console.log("X");
-      if (isMouseDown) {
-        $(this).toggleClass("ship", isHighlighted);
-      }
-    })
-        .bind("selectstart", function () {
-          return false;
+// -------------------------------------------------------------------------------------------------------------------
+
+var ship_selection_activate = function () {
+    var grid_id = "#grid-shoot";
+    var clazz = "ship";
+    var isMouseDown = false;
+    var isHighlighted = false;
+
+    $(grid_id).find("td")
+        .mousedown(function () {
+            isMouseDown = true;
+            $(this).toggleClass(clazz);
+            isHighlighted = $(this).hasClass(clazz);
+            return false;
+        })
+
+        .mouseover(function () {
+            if (isMouseDown) {
+                $(this).toggleClass(clazz, isHighlighted);
+            }
+        })
+
+        .on("selectstart", function () {
+            return false;
         });
 
-          $(document)
-            .mouseup(function () {
-              isMouseDown = false;
-            });
+    $(document)
+        .mouseup(function () {
+            isMouseDown = false;
         });
-}
+};
+
+var ship_selection_deactivate = function () {
+    var grid_id = "#grid-shoot";
+
+    $(grid_id).find("td")
+        .off("mousedown")
+        .off("mouseover")
+        .off("selectstart");
+    $(document).off("mousedown");
+};
+
+var ship_selection_collect = function () {
+    var grid_id = "#grid-shoot";
+    var clazz = "ship";
+
+    return $(grid_id)
+        .find("tr").find("td")
+        .map(function () {
+            return $(this).hasClass(clazz) ? 1 : 0;
+        })
+        .get()
+        .join();
+};
+
+// -------------------------------------------------------------------------------------------------------------------
 
 var set_message = function (message, timeout) {
     $("#msg-connecting").remove();
-    console.log("set: " + message);
+    console.log("set_message: " + message);
 
     if (timeout === undefined) {
         $("#msg-const").text(message);
@@ -120,6 +150,8 @@ var set_message = function (message, timeout) {
     }
 };
 
+// -------------------------------------------------------------------------------------------------------------------
+
 var init = function () {
     $("#grid-opponent").append(fresh_grid("grid-opponent", 10, 10));
     $("#grid-shoot").append(fresh_grid("grid-shoot", 10, 10));
@@ -131,6 +163,28 @@ var init = function () {
 
     go_game();
 };
+
+var go_game = function () {
+    var ws = new WebSocket("ws://" + window.location.host + "/ws");
+
+    ws.onopen = function () {
+        var id = url_param("id") || "NEW";
+        ws.send("GAME " + id)
+    };
+
+    ws.onmessage = function (evt) {
+        var received_msg = evt.data;
+        execute_detect(received_msg);
+        set_message("onmessage: " + received_msg);
+
+    };
+
+    ws.onclose = function () {
+        set_message("onclose");
+    };
+};
+
+// -------------------------------------------------------------------------------------------------------------------
 
 var onMsg_hi = function (payload) {
 
@@ -214,7 +268,7 @@ var functions = {
     "400_": onMsg400
 };
 
-var functions_detect = function (msg) {
+var execute_detect = function (msg) {
     var funcNames = Object.keys(functions);
 
     for (var i = 0; i < funcNames.length; i++) {
@@ -230,34 +284,18 @@ var functions_detect = function (msg) {
     return onMsg_other(payload);
 };
 
-var go_game = function () {
-    var ws = new WebSocket("ws://" + window.location.host + "/ws");
-
-    ws.onopen = function () {
-        var id = url_param("id") || "NEW";
-        ws.send("GAME " + id)
-    };
-
-    ws.onmessage = function (evt) {
-        var received_msg = evt.data;
-        functions_detect(received_msg);
-        set_message("onmessage: " + received_msg);
-
-    };
-
-    ws.onclose = function () {
-        set_message("onclose");
-    };
-};
 
 init();
+
+// -------------------------------------------------------------------------------------------------------------------
+
 //
-//set_cell("grid-shoot", 0, 0, "empty");
-//set_cell("grid-shoot", 0, 1, "empty");
-//set_cell("grid-shoot", 0, 2, "empty");
-//set_cell("grid-shoot", 0, 3, "empty");
+//set_cell_class("grid-shoot", 0, 0, "empty");
+//set_cell_class("grid-shoot", 0, 1, "empty");
+//set_cell_class("grid-shoot", 0, 2, "empty");
+//set_cell_class("grid-shoot", 0, 3, "empty");
 //
-//set_cell("grid-shoot", 1, 0, "ship");
-//set_cell("grid-shoot", 1, 1, "ship");
-//set_cell("grid-shoot", 1, 2, "ship");
-//set_cell("grid-shoot", 1, 3, "ship");
+//set_cell_class("grid-shoot", 1, 0, "ship");
+//set_cell_class("grid-shoot", 1, 1, "ship");
+//set_cell_class("grid-shoot", 1, 2, "ship");
+//set_cell_class("grid-shoot", 1, 3, "ship");
