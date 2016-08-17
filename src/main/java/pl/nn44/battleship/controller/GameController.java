@@ -27,7 +27,6 @@ public class GameController extends TextWebSocketHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GameController.class);
 
-
     public static final int COMMAND_LEN = 4;
     private final Map<String, BiConsumer<Player, String>> commands =
             new ImmutableMap.Builder<String, BiConsumer<Player, String>>()
@@ -90,7 +89,7 @@ public class GameController extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         LOGGER.info("<-> {} @ established", session.getId());
-        txt(session, "HI_. What you're looking for here?");
+        txt(session, "HI_. Welcome.");
     }
 
     @Override

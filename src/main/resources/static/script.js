@@ -99,6 +99,18 @@ var ship_selection_activate = function () {
         .mouseup(function () {
             isMouseDown = false;
         });
+
+    $("#msg-const").find("a").click(function () {
+        ws_send("GRID " + ship_selection_collect());
+    });
+};
+
+var ship_selection_add_okButton = function (text) {
+    $("#msg-const").append($("<a/>", {
+        "text": text,
+        "href": "#",
+        "id": "ship-sel-ok"
+    }));
 };
 
 var ship_selection_deactivate = function () {
@@ -126,28 +138,34 @@ var ship_selection_collect = function () {
 
 // -------------------------------------------------------------------------------------------------------------------
 
-var set_message = function (message, timeout) {
-    $("#msg-connecting").remove();
+var msg_timeout = {
+    "fast": 1000,
+    "default": 2000,
+    "slow": 3000
+};
+var set_message = function (message, timeout, clazz) {
+    var id = timeout
+        ? random_string(7, "a0")
+        : "msg-const";
 
-    if (timeout === undefined) {
-        $("#msg-const").text(message);
+    var span = $("<span/>", {
+        "id": id,
+        "text": message,
+        "class": clazz
+    });
 
-    } else {
-        var id = random_string(7, "a0");
-
-        var span = $("<span/>", {
-            "id": id,
-            "text": message
-        });
-
+    if (timeout) {
         setTimeout(function () {
             $("#" + id).fadeOut("fast", function () {
                 $("#" + id).remove();
             });
         }, timeout);
-
-        $("#message").append(span);
+    } else {
+        $("#msg-const").remove();
     }
+
+    $("#message").append(span);
+
 };
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -157,7 +175,7 @@ var init = function () {
     $("#grid-shoot").append(fresh_grid("grid-shoot", 10, 10));
 
     if (!("WebSocket" in window)) {
-        set_message("WebSockets not supported, google it");
+        set_message("WebSockets is not supported by your browser, google it.");
         return;
     }
 
@@ -169,6 +187,7 @@ var ws_go_game = function () {
     ws = new WebSocket("ws://" + window.location.host + "/ws");
 
     ws.onopen = function () {
+        console.log("ws.onopen");
         var id = url_param("id") || "NEW";
         ws_send("GAME " + id)
     };
@@ -176,14 +195,12 @@ var ws_go_game = function () {
     ws.onmessage = function (evt) {
         var received_msg = evt.data;
         console.log("ws.onmessage: " + received_msg);
-        set_message("ws.onmessage: " + received_msg);
-
         onMsg_auto(received_msg);
     };
 
     ws.onclose = function () {
         console.log("ws.onclose");
-        set_message("ws.onclose");
+        set_message("WebSocket connection lost, reload page to renew connection.");
     };
 };
 
@@ -194,24 +211,38 @@ var ws_send = function (msg) {
 
 // -------------------------------------------------------------------------------------------------------------------
 
-var onMsg_hi = function (payload) {
+var err_translate = function (msg) {
+    return msg;
+};
 
+var get_game_url = function (game_id) {
+    return window.location.origin + "/?id=" + game_id;
+};
+
+// -------------------------------------------------------------------------------------------------------------------
+
+var onMsg_hi = function (payload) {
+    set_message("Hi message: " + payload, msg_timeout.fast);
 };
 
 var onMsg_gameOk = function (payload) {
-
+    $("#game-url").text(get_game_url(payload));
+    set_message("Put your ships on right grid ... ");
+    ship_selection_add_okButton("done?");
+    ship_selection_activate();
 };
 
 var onMsg_gameFail = function (payload) {
-
+    set_message("game-id-error: " + err_translate(payload));
 };
 
-var onMsg_gridOk = function (payload) {
-
+var onMsg_gridOk = function () {
+    ship_selection_deactivate();
+    set_message("Awaiting second player ...");
 };
 
-var onMsg_gridFail = function (payload) {
-
+var onMsg_gridFail = function () {
+    set_message("Grid verification: failed, check again.", msg_timeout.default, "msg-fail")
 };
 
 var onMsg_tourStart = function (payload) {
@@ -242,7 +273,7 @@ var onMsg_1pla = function (payload) {
 
 };
 
-var onMsg_2pla = function (payload) {
+var onMsg_2pla = function () {
 
 };
 
@@ -251,7 +282,7 @@ var onMsg_pong = function (payload) {
 };
 
 var onMsg400 = function (payload) {
-
+    set_message("fail: " + err_translate(payload));
 };
 
 var onMsg_other = function (payload) {
@@ -283,8 +314,8 @@ var onMsg_auto = function (msg) {
         var funcName = funcNames[i];
         var func = functions[funcNames[i]];
 
-        if (msg.lastIndexOf(funcNames, 0) === 0) {
-            var payload = msg.substring(0, funcName.length);
+        if (msg.lastIndexOf(funcName, 0) === 0) {
+            var payload = msg.substring(funcName.length + 1);
             return func(payload);
         }
     }

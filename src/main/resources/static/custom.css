@@ -68,3 +68,20 @@ main {
 .grid.inactive {
     opacity: 0.4;
 }
+
+#info {
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 15px;
+    color: darkgray;
+    clear: both;
+
+    padding-top: 1em;
+}
+
+#ship-sel-ok {
+    color: #024167;
+}
+
+.msg-fail {
+    color: #ab0505;
+}
