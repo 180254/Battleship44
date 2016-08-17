@@ -1,15 +1,17 @@
+"use strict";
+
 // credits: friends @ stackoverflow
 // url: http://stackoverflow.com/a/10727155
 // license: cc by-sa 3.0
 // license url: https://creativecommons.org/licenses/by-sa/3.0/
 var random_string = function (length, chars) {
-    var mask = '';
-    if (chars.indexOf('a') > -1) mask += 'abcdefghijklmnopqrstuvwxyz';
-    if (chars.indexOf('A') > -1) mask += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    if (chars.indexOf('0') > -1) mask += '0123456789';
-    if (chars.indexOf('!') > -1) mask += '~`!@#$%^&*()_+-={}[]:";\'<>?,./|\\';
+    var mask = "";
+    if (chars.indexOf("a") > -1) mask += "abcdefghijklmnopqrstuvwxyz";
+    if (chars.indexOf("A") > -1) mask += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    if (chars.indexOf("0") > -1) mask += "0123456789";
+    if (chars.indexOf("!") > -1) mask += "~`!@#$%^&*()_+-={}[]:\";\'<>?,./|\\";
 
-    var result = '';
+    var result = "";
     for (var i = length; i > 0; --i) {
         result += mask[Math.floor(Math.random() * mask.length)];
     }
@@ -18,9 +20,8 @@ var random_string = function (length, chars) {
 
 //source: http://snipplr.com/view/26662/get-url-parameters-with-jquery--improved/
 var url_param = function (name) {
-    var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
-    if (!results) return null;
-    return results[1];
+    var results = new RegExp("[\\?&]" + name + "=([^&#]*)").exec(window.location.href);
+    return results ? results[1] : null;
 };
 
 // -------------------------------------------------------------------------------------------------------------------
