@@ -258,10 +258,19 @@ public class GameController extends TextWebSocketHandler {
                     txt(tourPlayer, "WON_ YOU");
                     txt(game.getNotTourPlayer(), "WON_ HE");
                     game.nextGame();
+
+                } else {
+                    boolean goodShoot = shoot.stream()
+                            .anyMatch(s -> s.getType() == Cell.Type.SHIP);
+                    if (!goodShoot) {
+                        game.nextTour(random);
+                    }
+
+                    txt(game.getTourPlayer(), "TOUR YOU");
+                    txt(game.getNotTourPlayer(), "TOUR HE");
                 }
             }
         }
-
     }
 
     private void ping(Player player, String param) {
