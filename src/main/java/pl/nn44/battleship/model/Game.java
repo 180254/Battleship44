@@ -116,11 +116,11 @@ public class Game {
         state = State.WAITING;
         tour = null;
 
-        if (players[0] != null) {
-            players[0].setShootGrid(null);
-        }
-        if (players[1] != null) {
-            players[1].setShootGrid(null);
+        for (Player player : players) {
+            if (player != null) {
+                player.setGrid(null);
+                player.setShootGrid(null);
+            }
         }
     }
 
