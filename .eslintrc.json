@@ -11,6 +11,13 @@
     "no-unused-vars": ["warn", {"vars": "all", "args": "all"}],
     "quotes": ["error", "double", {"avoidEscape": true, "allowTemplateLiterals": true}],
     "eqeqeq": ["error"],
-    "func-style": ["error", "expression"]
+    "func-style": [
+      "error",
+      "expression"
+    ],
+    "semi": [
+      "error",
+      "always"
+    ]
   }
 }
