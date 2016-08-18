@@ -114,7 +114,11 @@ public class GameController extends TextWebSocketHandler {
             game.removePlayer(player);
 
             if (secondPlayer != null) {
-                txt(secondPlayer, "1PLA opponent-is-gone " + game.getId());
+                txt(secondPlayer, "1PLA %s",
+                        game.getState() == Game.State.IN_PROGRESS
+                                ? "game-interrupted"
+                                : "game-not-interrupted");
+
                 game.nextGame();
             } else {
                 games.remove(game.getId());
@@ -263,7 +267,7 @@ public class GameController extends TextWebSocketHandler {
                     boolean goodShoot = shoot.stream()
                             .anyMatch(s -> s.getType() == Cell.Type.SHIP);
                     if (!goodShoot) {
-                        game.nextTour(random);
+                        game.nextTour();
                     }
 
                     txt(game.getTourPlayer(), "TOUR YOU");

@@ -82,6 +82,10 @@ public class Game {
                 && players[1].getGrid() != null;
     }
 
+    public void nextTour() {
+        nextTour(null);
+    }
+
     public void nextTour(Random random) {
         tour = tour == null
                 ? random.nextInt(2)
