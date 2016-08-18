@@ -54,18 +54,18 @@ var new_grid_cell = function (grid_name, row_i, col_i) {
         "class": "unknown",
         "data-name": grid_name,
         "data-row-i": row_i,
-        "data-cell-i": col_i
+        "data-col-i": col_i
     });
 };
 
 // -------------------------------------------------------------------------------------------------------------------
 
-var set_cell_class = function (grid_id, row_i, col_i, new_class) {
+var set_cell_class = function (grid_id, row_i, col_i, new_class, remove_old_class) {
     var $element = $(grid_id)
-        .find("tr").eq(row_i)
-        .find("td").eq(col_i);
+    .find("tr").eq(row_i)
+    .find("td").eq(col_i);
 
-    $element.removeClass();
+    if(remove_old_class) $element.removeClass();
     $element.addClass(new_class);
 };
 
@@ -78,27 +78,27 @@ var ship_selection_activate = function () {
     var isHighlighted = false;
 
     $(grid_id).find("td")
-        .mousedown(function () {
-            isMouseDown = true;
-            $(this).toggleClass(clazz);
-            isHighlighted = $(this).hasClass(clazz);
-            return false;
-        })
+    .mousedown(function () {
+        isMouseDown = true;
+        $(this).toggleClass(clazz);
+        isHighlighted = $(this).hasClass(clazz);
+        return false;
+    })
 
-        .mouseover(function () {
-            if (isMouseDown) {
-                $(this).toggleClass(clazz, isHighlighted);
-            }
-        })
+    .mouseover(function () {
+        if (isMouseDown) {
+            $(this).toggleClass(clazz, isHighlighted);
+        }
+    })
 
-        .on("selectstart", function () {
-            return false;
-        });
+    .on("selectstart", function () {
+        return false;
+    });
 
     $(document)
-        .mouseup(function () {
-            isMouseDown = false;
-        });
+    .mouseup(function () {
+        isMouseDown = false;
+    });
 
     $("#msg-const").find("a").click(function () {
         ws_send("GRID " + ship_selection_collect());
@@ -117,9 +117,9 @@ var ship_selection_deactivate = function () {
     var grid_id = "#grid-shoot";
 
     $(grid_id).find("td")
-        .off("mousedown")
-        .off("mouseover")
-        .off("selectstart");
+    .off("mousedown")
+    .off("mouseover")
+    .off("selectstart");
     $(document).off("mousedown");
 };
 
@@ -128,13 +128,68 @@ var ship_selection_collect = function () {
     var clazz = "ship";
 
     return $(grid_id)
-        .find("tr").find("td")
-        .map(function () {
-            return $(this).hasClass(clazz) | 0;
-        })
-        .get()
-        .join();
+    .find("tr").find("td")
+    .map(function () {
+        return $(this).hasClass(clazz) | 0;
+    })
+    .get()
+    .join();
 };
+
+var ship_selection_move = function() {
+    var opponent = $("#grid-opponent").find("td");
+    var shoot = $("#grid-shoot").find("td");
+
+    for(var i = 0; i < shoot.length; i++) {
+        var clazz = shoot.eq(i).attr("class");
+        shoot.eq(i).attr("class", "unknown");
+        opponent.eq(i).attr("class", clazz);
+    }
+};
+
+// -------------------------------------------------------------------------------------------------------------------
+
+var shoot_onetime_activate = function(calllback) {
+    var grid_id = "#grid-shoot";
+    var $cells = $(grid_id).find("td");
+
+    $cells.on("click.shoot", function() {
+        console.log("shot");
+        $cells.off("click.shoot");
+
+        var dis = $(this);
+        var cell = cell_serialize(dis.attr("data-row-i"), dis.attr("data-col-i"));
+        calllback(cell);
+    });
+};
+
+// -------------------------------------------------------------------------------------------------------------------
+
+var cell_serialize = function(row_i, col_i) {
+    // [0,2]
+    return "[" + row_i + "," + col_i   + "]";
+};
+
+var cell_deserialize = function(cell) {
+    // [HIT,0,2]
+    var cell_a = cell.replace(/[\[\]]/g, "");
+    var cell_b = cell_a.split(",");
+
+    return {
+        "clazz": cell_b[0].toLowerCase(),
+        "row_i": cell_b[1],
+        "col_i": cell_b[2]
+    };
+};
+
+var cells_deserialize = function(cells) {
+    // [HIT,0,2],[EMPTY,2,1],[EMPTY,2,2]
+    var cells_ar = cells.split("],");
+    return $.map(cells_ar, function(n) {
+        return cell_deserialize(n) ;
+    });
+};
+
 
 // -------------------------------------------------------------------------------------------------------------------
 
@@ -145,8 +200,8 @@ var msg_timeout = {
 };
 var set_message = function (message, timeout, clazz) {
     var id = timeout
-        ? random_string(7, "a0")
-        : "msg-const";
+    ? random_string(7, "a0")
+    : "msg-const";
 
     var span = $("<span/>", {
         "id": id,
@@ -189,7 +244,7 @@ var ws_go_game = function () {
     ws.onopen = function () {
         console.log("ws.onopen");
         var id = url_param("id") || "NEW";
-        ws_send("GAME " + id)
+        ws_send("GAME " + id);
     };
 
     ws.onmessage = function (evt) {
@@ -206,7 +261,7 @@ var ws_go_game = function () {
 
 var ws_send = function (msg) {
     console.log("ws.send: " + msg);
-    ws.send(msg)
+    ws.send(msg);
 };
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -238,31 +293,41 @@ var onMsg_gameFail = function (payload) {
 
 var onMsg_gridOk = function () {
     ship_selection_deactivate();
+    ship_selection_move();
     set_message("Awaiting second player ...");
 };
 
 var onMsg_gridFail = function () {
-    set_message("Grid verification: failed, check again.", msg_timeout.default, "msg-fail")
+    set_message("Grid verification: failed, check again.", msg_timeout.default, "msg-fail");
 };
 
-var onMsg_tourStart = function (payload) {
-
-};
-
-var onMsg_tourYou = function (payload) {
+var onMsg_tourStart = function () {
 
 };
 
-var onMsg_tourHe = function (payload) {
+var onMsg_tourYou = function () {
+    shoot_onetime_activate(function(pos) {
+        ws_send("SHOT " + pos);
+    });
+    set_message("Your shoot ...");
+};
 
+var onMsg_tourHe = function () {
+    set_message("Opponent shoot ...");
 };
 
 var onMsg_you = function (payload) {
-
+    var cells = cells_deserialize(payload);
+    for(var i = 0; i < cells.length; i++) {
+        set_cell_class("#grid-shoot", cells[i].row_i, cells[i].col_i, cells[i].clazz);
+    }
 };
 
 var onMsg_he = function (payload) {
-
+    var cells = cells_deserialize(payload);
+    for(var i = 0; i < cells.length; i++) {
+        set_cell_class("#grid-opponent", cells[i].row_i, cells[i].col_i, "opponent-shoot");
+    }
 };
 
 var onMsg_won = function (payload) {
@@ -277,7 +342,7 @@ var onMsg_2pla = function () {
 
 };
 
-var onMsg_pong = function (payload) {
+var onMsg_pong = function () {
 
 };
 
@@ -285,7 +350,7 @@ var onMsg400 = function (payload) {
     set_message("fail: " + err_translate(payload));
 };
 
-var onMsg_other = function (payload) {
+var onMsg_other = function () {
 
 };
 
