@@ -23,7 +23,7 @@ main {
 
     padding-top: 5px;
     padding-bottom: 5px;
-    
+
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -36,6 +36,9 @@ main {
 .grid table {
     margin: 0 auto;
     font-weight: bold;
+
+    border-collapse: separate;
+    border-spacing: 1px;
 }
 
 #grid-opponent {
@@ -56,16 +59,29 @@ main {
     height: 40px;
 }
 
+.grid td {
+    text-align: center;
+    vertical-align: bottom;
+}
+
 .grid td.unknown {
-    background-color: #ffffff !important;
+    background-color: #ffffff;
 }
 
 .grid td.empty {
-    background-color: #d6c5d0 !important;
+    background-color: #d6c5d0;
 }
 
 .grid td.ship {
-    background-color: #0b5c53 !important;
+    background-color: #0b5c53;
+}
+
+.grid td.opponent-shoot::after {
+    content: "*";
+
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 21px;
+    color: red;
 }
 
 .grid.inactive {
