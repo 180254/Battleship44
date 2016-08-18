@@ -62,8 +62,8 @@ var new_grid_cell = function (grid_name, row_i, col_i) {
 
 var set_cell_class = function (grid_id, row_i, col_i, new_class, remove_old_class) {
     var $element = $(grid_id)
-    .find("tr").eq(row_i)
-    .find("td").eq(col_i);
+        .find("tr").eq(row_i)
+        .find("td").eq(col_i);
 
     if(remove_old_class) $element.removeClass();
     $element.addClass(new_class);
@@ -73,53 +73,46 @@ var set_cell_class = function (grid_id, row_i, col_i, new_class, remove_old_clas
 
 var ship_selection_activate = function () {
     var grid_id = "#grid-shoot";
-    var clazz = "ship";
     var isMouseDown = false;
     var isHighlighted = false;
 
     $(grid_id).find("td")
-    .mousedown(function () {
-        isMouseDown = true;
-        $(this).toggleClass(clazz);
-        isHighlighted = $(this).hasClass(clazz);
-        return false;
-    })
+        .mousedown(function () {
+            isMouseDown = true;
+            $(this).toggleClass("ship");
+            isHighlighted = $(this).hasClass("ship");
+            $(this).toggleClass("unknown", !isHighlighted);
+            return false;
+        })
 
-    .mouseover(function () {
-        if (isMouseDown) {
-            $(this).toggleClass(clazz, isHighlighted);
-        }
-    })
+        .mouseover(function () {
+            if (isMouseDown) {
+                $(this).toggleClass("ship", isHighlighted);
+                $(this).toggleClass("unknown", !isHighlighted);
+            }
+        })
 
-    .on("selectstart", function () {
-        return false;
-    });
+        .on("selectstart", function () {
+            return false;
+        });
 
     $(document)
-    .mouseup(function () {
-        isMouseDown = false;
-    });
+        .mouseup(function () {
+            isMouseDown = false;
+        });
 
     $("#msg-const").find("a").click(function () {
         ws_send("GRID " + ship_selection_collect());
     });
 };
 
-var ship_selection_add_okButton = function (text) {
-    $("#msg-const").append($("<a/>", {
-        "text": text,
-        "href": "#",
-        "id": "ship-sel-ok"
-    }));
-};
-
 var ship_selection_deactivate = function () {
     var grid_id = "#grid-shoot";
 
     $(grid_id).find("td")
-    .off("mousedown")
-    .off("mouseover")
-    .off("selectstart");
+        .off("mousedown")
+        .off("mouseover")
+        .off("selectstart");
     $(document).off("mousedown");
 };
 
@@ -128,17 +121,17 @@ var ship_selection_collect = function () {
     var clazz = "ship";
 
     return $(grid_id)
-    .find("tr").find("td")
-    .map(function () {
-        return $(this).hasClass(clazz) | 0;
-    })
-    .get()
-    .join();
+        .find("tr").find("td")
+        .map(function () {
+            return $(this).hasClass(clazz) | 0;
+        })
+        .get()
+        .join();
 };
 
 var ship_selection_move = function() {
-    var opponent = $("#grid-opponent").find("td");
     var shoot = $("#grid-shoot").find("td");
+    var opponent = $("#grid-opponent").find("td");
 
     for(var i = 0; i < shoot.length; i++) {
         var clazz = shoot.eq(i).attr("class");
@@ -154,13 +147,33 @@ var shoot_onetime_activate = function(calllback) {
     var $cells = $(grid_id).find("td");
 
     $cells.on("click.shoot", function() {
-        console.log("shot");
         $cells.off("click.shoot");
 
         var dis = $(this);
         var cell = cell_serialize(dis.attr("data-row-i"), dis.attr("data-col-i"));
         calllback(cell);
     });
+};
+
+// -------------------------------------------------------------------------------------------------------------------
+
+var reset_grids = function() {
+    $("#grid-shoot").find("td").attr("class", "unknown");
+    $("#grid-opponent").find("td").attr("class", "unknown");
+};
+
+var reset_activate_button = function(calllback) {
+    var $clickable = $("#game-next-ok");
+
+    $clickable.on("click.ok", function() {
+        $clickable.off("click.ok");
+        calllback();
+    });
+};
+
+var reset_activate = function(callback) {
+    message_append_button("next game?", "game-next-ok");
+    reset_activate_button(callback);
 };
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -190,7 +203,6 @@ var cells_deserialize = function(cells) {
     });
 };
 
-
 // -------------------------------------------------------------------------------------------------------------------
 
 var msg_timeout = {
@@ -198,6 +210,7 @@ var msg_timeout = {
     "default": 2000,
     "slow": 3000
 };
+
 var set_message = function (message, timeout, clazz) {
     var id = timeout
     ? random_string(7, "a0")
@@ -221,6 +234,14 @@ var set_message = function (message, timeout, clazz) {
 
     $("#message").append(span);
 
+};
+
+var message_append_button = function (text, id) {
+    $("#msg-const").append($("<a/>", {
+        "text": text,
+        "href": "#",
+        "id": id
+    }));
 };
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -281,9 +302,13 @@ var onMsg_hi = function (payload) {
 };
 
 var onMsg_gameOk = function (payload) {
-    $("#game-url").text(get_game_url(payload));
+    if(payload) {
+        $("#game-url").text(get_game_url(payload));
+    }
+
+    reset_grids();
     set_message("Put your ships on right grid ... ");
-    ship_selection_add_okButton("done?");
+    message_append_button("done?", "ship-sel-ok");
     ship_selection_activate();
 };
 
@@ -319,27 +344,45 @@ var onMsg_tourHe = function () {
 var onMsg_you = function (payload) {
     var cells = cells_deserialize(payload);
     for(var i = 0; i < cells.length; i++) {
-        set_cell_class("#grid-shoot", cells[i].row_i, cells[i].col_i, cells[i].clazz);
+        set_cell_class("#grid-shoot", cells[i].row_i, cells[i].col_i, cells[i].clazz, true);
     }
 };
 
 var onMsg_he = function (payload) {
     var cells = cells_deserialize(payload);
     for(var i = 0; i < cells.length; i++) {
-        set_cell_class("#grid-opponent", cells[i].row_i, cells[i].col_i, "opponent-shoot");
+        set_cell_class("#grid-opponent", cells[i].row_i, cells[i].col_i, "opponent-shoot", false);
     }
 };
 
 var onMsg_won = function (payload) {
+    var p1 = payload
+        .replace("YOU", "You")
+        .replace("HE", "Opponent");
 
+    set_message("The end. " + p1 + " won. ");
+
+    reset_activate(function() {
+        onMsg_gameOk();
+    });
 };
 
 var onMsg_1pla = function (payload) {
+    var game_interruped = payload === "game-interrupted";
 
+    set_message("Your opponent has gone. ",
+        game_interruped ? null : msg_timeout.slow
+    );
+
+    if(game_interruped) {
+        reset_activate(function() {
+            onMsg_gameOk();
+        });
+    }
 };
 
 var onMsg_2pla = function () {
-
+    set_message("Two players in game.", msg_timeout.slow);
 };
 
 var onMsg_pong = function () {
@@ -393,16 +436,3 @@ var onMsg_auto = function (msg) {
 
 // GO!
 init();
-
-// -------------------------------------------------------------------------------------------------------------------
-
-//
-//set_cell_class("grid-shoot", 0, 0, "empty");
-//set_cell_class("grid-shoot", 0, 1, "empty");
-//set_cell_class("grid-shoot", 0, 2, "empty");
-//set_cell_class("grid-shoot", 0, 3, "empty");
-//
-//set_cell_class("grid-shoot", 1, 0, "ship");
-//set_cell_class("grid-shoot", 1, 1, "ship");
-//set_cell_class("grid-shoot", 1, 2, "ship");
-//set_cell_class("grid-shoot", 1, 3, "ship");
