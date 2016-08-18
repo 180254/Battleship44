@@ -276,7 +276,7 @@ var ws_go_game = function () {
 
     ws.onclose = function () {
         console.log("ws.onclose");
-        set_message("WebSocket connection lost, reload page to renew connection.");
+        onAction_onClose();
     };
 };
 
@@ -297,6 +297,13 @@ var get_game_url = function (game_id) {
 
 // -------------------------------------------------------------------------------------------------------------------
 
+var onAction_onClose = function () {
+    set_message("WebSocket connection lost, reload page to renew connection.");
+    ship_selection_deactivate();
+};
+
+// -------------------------------------------------------------------------------------------------------------------
+
 var onMsg_hi = function (payload) {
     set_message("Hi message: " + payload, msg_timeout.fast);
 };
@@ -313,7 +320,7 @@ var onMsg_gameOk = function (payload) {
 };
 
 var onMsg_gameFail = function (payload) {
-    set_message("game-id-error: " + err_translate(payload));
+    set_message("Game id error: " + err_translate(payload));
 };
 
 var onMsg_gridOk = function () {
@@ -368,13 +375,13 @@ var onMsg_won = function (payload) {
 };
 
 var onMsg_1pla = function (payload) {
-    var game_interruped = payload === "game-interrupted";
+    var game_interrupted = payload === "game-interrupted";
 
     set_message("Your opponent has gone. ",
-        game_interruped ? null : msg_timeout.slow
+        game_interrupted ? null : msg_timeout.slow
     );
 
-    if(game_interruped) {
+    if(game_interrupted) {
         reset_activate(function() {
             onMsg_gameOk();
         });
