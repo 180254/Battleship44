@@ -25,8 +25,29 @@ var utils = {
         return results ? results[1] : null;
     },
 
-    get_url: function(id) {
+    get_url: function (id) {
         return window.location.origin + "/?id=" + id;
+    }
+};
+
+// -------------------------------------------------------------------------------------------------------------------
+
+var events = {
+
+    on: function ($e, action, callback) {
+        $e.on(action, function () {
+            callback($(this));
+        });
+    },
+
+    on_onetime: function ($e, action, callback) {
+        var namespace = utils.random_string(7, "a");
+        var event = action + "." + namespace;
+
+        $e.on(event, function () {
+            $e.off(event);
+            callback($(this));
+        });
     }
 };
 
@@ -34,19 +55,26 @@ var utils = {
 // -------------------------------------------------------------------------------------------------------------------
 
 var clazz = {
-    unknown: "unknown",
-    empty: "empty",
-    ship: "ship",
-    opponent_shoot: "opponent-shoot"
+    cell: {
+        unknown: "unknown",
+        empty: "empty",
+        ship: "ship",
+        opp_shoot: "opponent-shoot"
+    },
+
+    msg: {
+        fail: "msg-fail",
+        important: "msg-important"
+    }
 };
 
 // -------------------------------------------------------------------------------------------------------------------
 
 var grid = {
-    shoot: "grid_shoot",
-    opponent: "grid_opponent",
+    shoot: "grid-shoot",
+    opponent: "grid-opponent",
 
-    fresh: function(grid_id, rows_no, cols_no) {
+    fresh: function (grid_id, rows_no, cols_no) {
         var $table = $("<table/>");
 
         for (var row_i = 0; row_i < rows_no; row_i++) {
@@ -57,7 +85,7 @@ var grid = {
         return $table;
     },
 
-    _new_row: function(grid_id, row_i, cols_no) {
+    _new_row: function (grid_id, row_i, cols_no) {
         var $row = $("<tr/>");
 
         for (var col = 0; col < cols_no; col++) {
@@ -68,9 +96,9 @@ var grid = {
         return $row;
     },
 
-    _new_cell: function(grid_id, row_i, col_i) {
+    _new_cell: function (grid_id, row_i, col_i) {
         return $("<td/>", {
-            "class": clazz.unknown,
+            "class": clazz.cell.unknown,
             "data-grid-id": grid_id,
             "data-row-i": row_i,
             "data-col-i": col_i
@@ -82,16 +110,16 @@ var grid = {
             .find("tr").eq(row_i)
             .find("td").eq(col_i);
 
-        if(remove_old_class) {
+        if (remove_old_class) {
             $element.removeClass();
         }
 
         $element.addClass(new_class);
     },
 
-    reset_both: function() {
-        $("#" + grid.shoot).find("td").attr("class", clazz.unknown);
-        $("#" + grid.opponent).find("td").attr("class", clazz.unknown);
+    reset_both: function () {
+        $("#" + grid.shoot).find("td").attr("class", clazz.cell.unknown);
+        $("#" + grid.opponent).find("td").attr("class", clazz.cell.unknown);
     }
 };
 
@@ -106,16 +134,16 @@ var ship_selection = {
         $("#" + grid.shoot).find("td")
             .mousedown(function () {
                 isMouseDown = true;
-                $(this).toggleClass(clazz.ship);
-                isHighlighted = $(this).hasClass(clazz.ship);
-                $(this).toggleClass(clazz.unknown, !isHighlighted);
+                $(this).toggleClass(clazz.cell.ship);
+                isHighlighted = $(this).hasClass(clazz.cell.ship);
+                $(this).toggleClass(clazz.cell.unknown, !isHighlighted);
                 return false;
             })
 
             .mouseover(function () {
                 if (isMouseDown) {
-                    $(this).toggleClass(clazz.ship, isHighlighted);
-                    $(this).toggleClass(clazz.unknown, !isHighlighted);
+                    $(this).toggleClass(clazz.cell.ship, isHighlighted);
+                    $(this).toggleClass(clazz.cell.unknown, !isHighlighted);
                 }
             })
 
@@ -127,14 +155,9 @@ var ship_selection = {
             .mouseup(function () {
                 isMouseDown = false;
             });
-
-            // TODO: refactor to callback
-        $("#msg-const").find("a").click(function () {
-            ws_send("GRID " + ship_selection._collect());
-        });
     },
 
-    deactivate: function() {
+    deactivate: function () {
         $("#" + grid.shoot).find("td")
             .off("mousedown")
             .off("mouseover")
@@ -142,40 +165,25 @@ var ship_selection = {
         $(document).off("mousedown");
     },
 
-    _collect: function() {
+    collect: function () {
         return $("#" + grid.shoot)
             .find("tr").find("td")
-            .map(function () { return $(this).hasClass(clazz.ship) | 0; })
+            .map(function () {
+                return $(this).hasClass(clazz.cell.ship) | 0;
+            })
             .get()
             .join();
     },
 
-    move: function() {
+    move: function () {
         var shoot = $("#" + grid.shoot).find("td");
         var opponent = $("#" + grid.opponent).find("td");
 
-        for(var i = 0; i < shoot.length; i++) {
-            var clazz = shoot.eq(i).attr("class");
-            shoot.eq(i).attr("class", clazz.unknown);
-            opponent.eq(i).attr("class", clazz);
+        for (var i = 0; i < shoot.length; i++) {
+            var s_clazz = shoot.eq(i).attr("class");
+            shoot.eq(i).attr("class", clazz.cell.unknown);
+            opponent.eq(i).attr("class", s_clazz);
         }
-    }
-};
-
-// -------------------------------------------------------------------------------------------------------------------
-
-var shoot = {
-
-    activate_onetime: function(callback) {
-        var $cells = $("#" + grid.shoot).find("td");
-
-        $cells.on("click.shoot", function() {
-            $cells.off("click.shoot");
-
-            var dis = $(this);
-            var cell = serializer.cell_serialize(dis.attr("data-row-i"), dis.attr("data-col-i"));
-            callback(cell);
-        });
     }
 };
 
@@ -184,12 +192,12 @@ var shoot = {
 var serializer = {
 
     // [0,2]
-    cell_serialize: function(row_i, col_i) {
-        return "[" + row_i + "," + col_i   + "]";
+    cell_serialize: function (row_i, col_i) {
+        return "[" + row_i + "," + col_i + "]";
     },
 
     // [HIT,0,2]
-    cell_deserialize: function(cell) {
+    cell_deserialize: function (cell) {
         var cell_a = cell.replace(/[\[\]]/g, "");
         var cell_b = cell_a.split(",");
 
@@ -201,10 +209,10 @@ var serializer = {
     },
 
     // // [HIT,0,2],[EMPTY,2,1],[EMPTY,2,2]
-    cells_deserialize: function(cells) {
+    cells_deserialize: function (cells) {
         var cells_ar = cells.split("],");
-        return $.map(cells_ar, function(n) {
-            return serializer.cell_deserialize(n) ;
+        return $.map(cells_ar, function (n) {
+            return serializer.cell_deserialize(n);
         });
     }
 };
@@ -216,18 +224,18 @@ var message = {
     msg_const: "msg-const",
 
     timeout: {
-        "fast": 1000,
-        "default": 2000,
-        "slow": 3000
+        fast: 1500,
+        default: 2500,
+        slow: 5000
     },
 
-    set: function (message, timeout, clazz) {
-        var id = timeout ? utils.random_string(7, "a0") : message.msg_const;
+    set: function (text, timeout, css_class) {
+        var id = timeout ? utils.random_string(7, "a") : message.msg_const;
 
         var span = $("<span/>", {
             "id": id,
-            "text": message,
-            "class": clazz
+            "text": text,
+            "class": css_class
         });
 
         if (timeout) {
@@ -237,14 +245,14 @@ var message = {
                 });
             }, timeout);
         } else {
-            $("#" +  message.msg_const).remove();
+            $("#" + message.msg_const).remove();
         }
 
         $("#" + message.msg_div).append(span);
     },
 
     append_link: function (text, id) {
-        $("#" +  message.msg_const).append($("<a/>", {
+        $("#" + message.msg_const).append($("<a/>", {
             "text": text,
             "href": "#",
             "id": id
@@ -256,9 +264,11 @@ var message = {
 
 
 var game = {
-    next_id: "game-next-ok",
+    next_ok: "game-next-ok",
+    ship_selection_ok: "ship-selection-ok",
+    game_info_url: "game-info-url",
 
-    init: function() {
+    init: function () {
         $("#" + grid.shoot).append(grid.fresh(grid.shoot, 10, 10));
         $("#" + grid.opponent).append(grid.fresh(grid.opponent, 10, 10));
 
@@ -267,42 +277,37 @@ var game = {
             return;
         }
 
-        ws_go_game();
-    },
-
-    activate_reset: function(callback) {
-        var $clickable = $("#" + game.next_id);
-
-        $clickable.on("click.ok", function() {
-            $clickable.off("click.ok");
-            callback();
-        });
+        ws.init();
     }
 };
 
 // -------------------------------------------------------------------------------------------------------------------
 
-var ws = undefined;
-var ws_go_game = function () {
-    ws = new WebSocket("ws://" + window.location.host + "/ws");
+var ws = {
+    _ws: null,
 
-    ws.onopen = function () {
-        on_event_actions.onOpen();
-    };
+    init: function () {
+        ws._ws = new WebSocket("ws://" + window.location.host + "/ws");
 
-    ws.onmessage = function (evt) {
-        on_event_actions.onMessage(evt);
-    };
+        ws._ws.onopen = function () {
+            on_event_actions.onOpen();
+        };
 
-    ws.onclose = function () {
-        on_event_actions.onClose();
-    };
+        ws._ws.onmessage = function (evt) {
+            on_event_actions.onMessage(evt);
+        };
+
+        ws._ws.onclose = function () {
+            on_event_actions.onClose();
+        };
+    },
+
+    send: function (msg) {
+        ws._ws.send(msg);
+        on_event_actions.onSend(msg);
+    }
 };
 
-var ws_send = function (msg) {
-    ws.send(msg);
-    on_event_actions.onSend(msg);
-};
 
 // -------------------------------------------------------------------------------------------------------------------
 
@@ -316,25 +321,25 @@ var err = {
 
 var on_event_actions = {
 
-    onOpen:function() {
+    onOpen: function () {
         console.log("ws.onopen");
         var id = utils.url_param("id") || "NEW";
-        ws_send("GAME " + id);
+        ws.send("GAME " + id);
     },
 
-    onMessage: function(evt) {
+    onMessage: function (evt) {
         var received_msg = evt.data;
         console.log("ws.onmessage: " + received_msg);
         on_msg_actions.auto(received_msg);
     },
 
-    onClose: function() {
+    onClose: function () {
         console.log("ws.onclose");
-        message.set("WebSocket connection lost, reload page to renew connection.");
+        message.set("WebSocket connection lost, reload page to renew connection.", "msg-fail");
         ship_selection.deactivate();
     },
 
-    onSend: function(msg) {
+    onSend: function (msg) {
         console.log("ws.send: " + msg);
     }
 };
@@ -347,39 +352,46 @@ var on_msg_actions = {
     },
 
     "GAME OK": function (payload) {
-        if(payload) {
-            $("#game-url").text(utils.set_game_url(payload));
+        if (payload) {
+            $("#" + game.game_info_url).text(utils.get_url(payload));
         }
 
         grid.reset_both();
+
         message.set("Put your ships on right grid ... ");
-        message.append_link("done?", "ship-sel-ok");
+        message.append_link("done?", game.ship_selection_ok);
+
         ship_selection.activate();
+        events.on($("#" + game.ship_selection_ok), "click", function () {
+            ws.send("GRID " + ship_selection.collect());
+        });
     },
 
-    "GAME FAIL":function (payload) {
+    "GAME FAIL": function (payload) {
         message.set("Game id error: " + err.translate(payload));
     },
 
     "GRID OK": function () {
+        message.set("Awaiting second player ...");
+
         ship_selection.deactivate();
         ship_selection.move();
-        message.set("Awaiting second player ...");
     },
 
-    "GRID FAIL": function() {
-            message.set("Grid verification: failed, check again.", message.timeout.default, "msg-fail");
+    "GRID FAIL": function () {
+        message.set("Grid verification: failed, check again.", message.timeout.default, clazz.msg.fail);
     },
 
-    "TOUR START": function() {
+    "TOUR START": function () {
     },
 
     "TOUR YOU": function () {
-        shoot.activate.onetime(function(pos) {
-            ws_send("SHOT " + pos);
-        });
+        message.set("Your shoot ...", null, clazz.msg.important);
 
-        message.set("Your shoot ...");
+        events.on_onetime($("#" + grid.shoot).find("td"), "click", function (dis) {
+            var pos = serializer.cell_serialize(dis.attr("data-row-i"), dis.attr("data-col-i"));
+            ws.send("SHOT " + pos);
+        });
     },
 
     "TOUR HE": function () {
@@ -389,7 +401,7 @@ var on_msg_actions = {
     "YOU_": function (payload) {
         var cells = serializer.cells_deserialize(payload);
 
-        for(var i = 0; i < cells.length; i++) {
+        for (var i = 0; i < cells.length; i++) {
             grid.set_cell(grid.shoot, cells[i].row_i, cells[i].col_i, cells[i].clazz, true);
         }
     },
@@ -397,11 +409,10 @@ var on_msg_actions = {
     "HE__": function (payload) {
         var cells = serializer.cells_deserialize(payload);
 
-        for(var i = 0; i < cells.length; i++) {
-            grid.set_cell(grid.opponent, cells[i].row_i, cells[i].col_i, "opponent-shoot", false);
+        for (var i = 0; i < cells.length; i++) {
+            grid.set_cell(grid.opponent, cells[i].row_i, cells[i].col_i, clazz.opp_shoot, false);
         }
     },
-
 
     "WON_": function (payload) {
         var player = payload
@@ -409,40 +420,39 @@ var on_msg_actions = {
             .replace("HE", "Opponent");
 
         message.set("The end. " + player + " won. ");
+        message.append_link("next game?", game.next_ok);
 
-        message.append_link("next game?", game.next_id);
-        game.activate_reset(function() {
+        events.on_onetime($("#" + game.next_ok), "click", function () {
             on_msg_actions["GAME OK"]();
         });
     },
 
 
-    "1PLA":  function (payload) {
+    "1PLA": function (payload) {
         var game_interrupted = payload === "game-interrupted";
 
         message.set("Your opponent has gone. ",
             game_interrupted ? null : message.timeout.slow
         );
+        message.append_link("next game?", game.next_ok);
 
-        message.append_link("next game?", game.next_id);
-        game.activate_reset(function() {
+        events.on_onetime($("#" + game.next_ok), "click", function () {
             on_msg_actions["GAME OK"]();
-         });
-     },
+        });
+    },
 
-
-    "2PLA": function() {
+    "2PLA": function () {
         message.set("Two players in game.", message.timeout.slow);
     },
 
-    "PONG": function() {
+    "PONG": function () {
     },
 
-    "400_": function(payload) {
+    "400_": function (payload) {
         message.set("Fail: " + err.translate(payload));
     },
 
-    _other: function() {
+    _other: function () {
     },
 
     auto: function (msg) {

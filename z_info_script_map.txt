@@ -2,10 +2,16 @@ utils.random_string(length, chars)
 utils.url_param(name)
 utils.get_url(id)
 
-clazz.unknown
-clazz.empty
-clazz.ship
-clazz.opponent_shoot
+events.on($e, action, callback)
+events.on_onetime($e, action, callback)
+
+clazz.cell.unknown
+clazz.cell.empty
+clazz.cell.ship
+clazz.cell.opp_shoot:
+
+clazz.msg.fail
+clazz.msg.important
 
 grid.shoot
 grid.opponent
@@ -20,8 +26,6 @@ ship_selection.deactivate()
 ship_selection._collect()
 ship_selection.move()
 
-shoot.activate_onetime()
-
 serializer.cell_serialize(row_i, col_i)
 serializer.cell_deserialize(cell)
 serializer.cells_deserialize(cells)
@@ -34,13 +38,15 @@ message.timeout.fast
 message.set(message, timeout, clazz)
 message.append_link(text, id)
 
-game.next_id
+game.next_ok
+game.ship_selection_ok
+game.game_info_url
 game.init()
-game.activate_reset(callback)
 
-ws
-ws_go_game()
+ws._ws
+ws.init()
+ws.send()
 
 err.translate
-on_event_actions
-on_msg_actions
+on_event_actions[...]
+on_msg_actions[...]
