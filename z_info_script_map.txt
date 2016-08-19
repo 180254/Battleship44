@@ -1,0 +1,46 @@
+utils.random_string(length, chars)
+utils.url_param(name)
+utils.get_url(id)
+
+clazz.unknown
+clazz.empty
+clazz.ship
+clazz.opponent_shoot
+
+grid.shoot
+grid.opponent
+grid.fresh(grid_id, rows_no, cols_no)
+grid._new_row(grid_id, row_i, cols_no)
+grid._new_cell(grid_id, row_i, col_i)
+grid.set_cell(grid_id, row_i, col_i, new_class, remove_old_class)
+grid.reset_both()
+
+ship_selection.activate()
+ship_selection.deactivate()
+ship_selection._collect()
+ship_selection.move()
+
+shoot.activate_onetime()
+
+serializer.cell_serialize(row_i, col_i)
+serializer.cell_deserialize(cell)
+serializer.cells_deserialize(cells)
+
+message.msg_div
+message.msg_const
+message.timeout.fast
+message.timeout.default
+message.timeout.fast
+message.set(message, timeout, clazz)
+message.append_link(text, id)
+
+game.next_id
+game.init()
+game.activate_reset(callback)
+
+ws
+ws_go_game()
+
+err.translate
+on_event_actions
+on_msg_actions
