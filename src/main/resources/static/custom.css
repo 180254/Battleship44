@@ -97,10 +97,25 @@ main {
     padding-top: 1em;
 }
 
-#ship-sel-ok {
-    color: #024167;
+#msg-const a {
+    color: #000057;
 }
 
 .msg-fail {
     color: #ab0505;
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 0.0;
+    }
+}
+
+.msg-important {
+    font-weight: bold;
+    animation: blinker 1s linear infinite;
+}
+
+.inactive {
+    opacity: 0.5;
 }

@@ -65,7 +65,9 @@ var clazz = {
     msg: {
         fail: "msg-fail",
         important: "msg-important"
-    }
+    },
+
+    inactive: "inactive"
 };
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -357,6 +359,8 @@ var on_msg_actions = {
         }
 
         grid.reset_both();
+        $("#" + grid.opponent).addClass(clazz.inactive);
+        $("#" + grid.shoot).removeClass(clazz.inactive);
 
         message.set("Put your ships on right grid ... ");
         message.append_link("done?", game.ship_selection_ok);
@@ -372,6 +376,9 @@ var on_msg_actions = {
     },
 
     "GRID OK": function () {
+        $("#" + grid.opponent).removeClass(clazz.inactive);
+        $("#" + grid.shoot).addClass(clazz.inactive);
+
         message.set("Awaiting second player ...");
 
         ship_selection.deactivate();
@@ -386,15 +393,20 @@ var on_msg_actions = {
     },
 
     "TOUR YOU": function () {
+        var $gs = $("#" + grid.shoot);
+        $gs.removeClass(clazz.inactive);
+
         message.set("Your shoot ...", null, clazz.msg.important);
 
-        events.on_onetime($("#" + grid.shoot).find("td"), "click", function (dis) {
+        events.on_onetime($gs.find("td"), "click", function (dis) {
             var pos = serializer.cell_serialize(dis.attr("data-row-i"), dis.attr("data-col-i"));
             ws.send("SHOT " + pos);
         });
+
     },
 
     "TOUR HE": function () {
+        $("#" + grid.shoot).addClass(clazz.inactive);
         message.set("Opponent shoot ...");
     },
 
@@ -415,6 +427,9 @@ var on_msg_actions = {
     },
 
     "WON_": function (payload) {
+        $("#" + grid.opponent).addClass(clazz.inactive);
+        $("#" + grid.shoot).addClass(clazz.inactive);
+
         var player = payload
             .replace("YOU", "You")
             .replace("HE", "Opponent");
@@ -434,7 +449,12 @@ var on_msg_actions = {
         message.set("Your opponent has gone. ",
             game_interrupted ? null : message.timeout.slow
         );
-        message.append_link("next game?", game.next_ok);
+
+        if (game_interrupted) {
+            message.append_link("next game?", game.next_ok);
+            $("#" + grid.opponent).addClass(clazz.inactive);
+            $("#" + grid.shoot).addClass(clazz.inactive);
+        }
 
         events.on_onetime($("#" + game.next_ok), "click", function () {
             on_msg_actions["GAME OK"]();

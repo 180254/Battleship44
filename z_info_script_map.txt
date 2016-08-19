@@ -9,9 +9,9 @@ clazz.cell.unknown
 clazz.cell.empty
 clazz.cell.ship
 clazz.cell.opp_shoot:
-
 clazz.msg.fail
 clazz.msg.important
+clazz.inactive
 
 grid.shoot
 grid.opponent
