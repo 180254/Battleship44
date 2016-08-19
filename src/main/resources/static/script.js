@@ -269,6 +269,7 @@ var game = {
     next_ok: "game-next-ok",
     ship_selection_ok: "ship-selection-ok",
     game_info_url: "game-info-url",
+    game_info_players: "game-info-players",
 
     init: function () {
         $("#" + grid.shoot).append(grid.fresh(grid.shoot, 10, 10));
@@ -357,6 +358,7 @@ var on_msg_actions = {
         if (payload) {
             $("#" + game.game_info_url).text(utils.get_url(payload));
         }
+        $("#" + game.game_info_players).text(1);
 
         grid.reset_both();
         $("#" + grid.opponent).addClass(clazz.inactive);
@@ -444,6 +446,7 @@ var on_msg_actions = {
 
 
     "1PLA": function (payload) {
+        $("#" + game.game_info_players).text(1);
         var game_interrupted = payload === "game-interrupted";
 
         message.set("Your opponent has gone. ",
@@ -462,6 +465,7 @@ var on_msg_actions = {
     },
 
     "2PLA": function () {
+        $("#" + game.game_info_players).text(2);
         message.set("Two players in game.", message.timeout.slow);
     },
 
