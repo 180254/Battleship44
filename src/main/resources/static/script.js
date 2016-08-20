@@ -292,18 +292,10 @@ var ws = {
 
     init: function () {
         ws._ws = new WebSocket("ws://" + window.location.host + "/ws");
-
-        ws._ws.onopen = function () {
-            on_event_actions.onOpen();
-        };
-
-        ws._ws.onmessage = function (evt) {
-            on_event_actions.onMessage(evt);
-        };
-
-        ws._ws.onclose = function () {
-            on_event_actions.onClose();
-        };
+        ws._ws.onopen = on_event_actions.onOpen;
+        ws._ws.onmessage = on_event_actions.onMessage;
+        ws._ws.onclose = on_event_actions.onClose;
+        ws._ws.onerror = on_event_actions.onError;
     },
 
     send: function (msg) {
@@ -325,22 +317,26 @@ var err = {
 
 var on_event_actions = {
 
-    onOpen: function () {
-        console.log("ws.onopen");
+    onOpen: function (evt) {
+        console.log("ws.onopen: " + evt.target.url);
         var id = utils.url_param("id") || "NEW";
         ws.send("GAME " + id);
     },
 
     onMessage: function (evt) {
-        var received_msg = evt.data;
-        console.log("ws.onmessage: " + received_msg);
-        on_msg_actions.auto(received_msg);
+        console.log("ws.onmessage: " + evt.data);
+        on_msg_actions.auto(evt.data);
     },
 
-    onClose: function () {
-        console.log("ws.onclose");
+    onClose: function (evt) {
+        console.log("ws.onclose: " + evt.code + "(" + evt.reason + ")");
         message.set("WebSocket connection lost, reload page to renew connection.", clazz.msg.fail);
         ship_selection.deactivate();
+    },
+
+    onError: function (evt) {
+        console.log("ws.onclose: " + evt.type);
+        message.set("Something go wrong with WebSocket connection. Please try again later.", clazz.msg.fail);
     },
 
     onSend: function (msg) {
