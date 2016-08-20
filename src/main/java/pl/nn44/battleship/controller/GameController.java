@@ -88,7 +88,7 @@ public class GameController extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        LOGGER.info("<-> {} @ established", session.getId());
+        LOGGER.info("<-> {} @ established {}", session.getId(), session.getRemoteAddress());
         txt(session, "HI_. Welcome.");
     }
 
