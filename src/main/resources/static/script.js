@@ -268,9 +268,10 @@ var message = {
 var game = {
     ok_next_game: "ok-game-next-",
     ok_ship_selection: "ok-ship-selection",
-    info_game_url: "game-info-url",
-    info_players_game: "game-info-players",
-    info_players_global: "game-info-players",
+    info_game_url: "info-game-url",
+    info_players_game: "info-players-game",
+    info_players_global: "info-players-global",
+    info_winning_ratio: "info-winning-ratio",
 
     init: function () {
         $("#" + grid.shoot).append(grid.fresh(grid.shoot, 10, 10));
@@ -318,7 +319,7 @@ var err = {
 var on_event_actions = {
 
     onOpen: function (evt) {
-        console.log("ws.onopen: " + evt.target.url);
+        console.log("ws.onopen   : " + evt.target.url);
         var id = utils.url_param("id") || "NEW";
         ws.send("GAME " + id);
     },
@@ -329,18 +330,18 @@ var on_event_actions = {
     },
 
     onClose: function (evt) {
-        console.log("ws.onclose: " + evt.code + "(" + evt.reason + ")");
-        message.set("WebSocket connection lost, reload page to renew connection.", clazz.msg.fail);
+        console.log("ws.onclose  : " + evt.code + "(" + evt.reason + ")");
+        message.set("WebSocket connection lost, reload page to renew connection.", null, clazz.msg.fail);
         ship_selection.deactivate();
     },
 
     onError: function (evt) {
-        console.log("ws.onclose: " + evt.type);
-        message.set("Something go wrong with WebSocket connection. Please try again later.", clazz.msg.fail);
+        console.log("ws.onclose  : " + evt.type);
+        message.set("Something go wrong with WebSocket connection. Please try again later.", null, clazz.msg.fail);
     },
 
     onSend: function (msg) {
-        console.log("ws.send: " + msg);
+        console.log("ws.send     : " + msg);
     }
 };
 
@@ -384,7 +385,7 @@ var on_msg_actions = {
     },
 
     "GRID FAIL": function () {
-        message.set("Grid verification: failed, check again.", message.timeout.default, clazz.msg.fail);
+        message.set("Grid verification: failed, verify ships positions.", message.timeout.default, clazz.msg.fail);
     },
 
     "TOUR START": function () {

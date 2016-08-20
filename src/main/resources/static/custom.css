@@ -119,3 +119,7 @@ main {
 .inactive {
     opacity: 0.5;
 }
+
+.info-td-1 {
+    width: 160px;
+}
