@@ -266,10 +266,11 @@ var message = {
 
 
 var game = {
-    next_ok: "game-next-ok",
-    ship_selection_ok: "ship-selection-ok",
-    game_info_url: "game-info-url",
-    game_info_players: "game-info-players",
+    ok_next_game: "ok-game-next-",
+    ok_ship_selection: "ok-ship-selection",
+    info_game_url: "game-info-url",
+    info_players_game: "game-info-players",
+    info_players_global: "game-info-players",
 
     init: function () {
         $("#" + grid.shoot).append(grid.fresh(grid.shoot, 10, 10));
@@ -338,7 +339,7 @@ var on_event_actions = {
 
     onClose: function () {
         console.log("ws.onclose");
-        message.set("WebSocket connection lost, reload page to renew connection.", "msg-fail");
+        message.set("WebSocket connection lost, reload page to renew connection.", clazz.msg.fail);
         ship_selection.deactivate();
     },
 
@@ -355,20 +356,19 @@ var on_msg_actions = {
     },
 
     "GAME OK": function (payload) {
-        if (payload) {
-            $("#" + game.game_info_url).text(utils.get_url(payload));
-        }
-        $("#" + game.game_info_players).text(1);
-
-        grid.reset_both();
         $("#" + grid.opponent).addClass(clazz.inactive);
         $("#" + grid.shoot).removeClass(clazz.inactive);
 
+        if (payload) $("#" + game.info_game_url).text(utils.get_url(payload));
+        $("#" + game.info_players_game).text(1);
+
+        grid.reset_both();
+
         message.set("Put your ships on right grid ... ");
-        message.append_link("done?", game.ship_selection_ok);
+        message.append_link("done?", game.ok_ship_selection);
 
         ship_selection.activate();
-        events.on($("#" + game.ship_selection_ok), "click", function () {
+        events.on($("#" + game.ok_ship_selection), "click", function () {
             ws.send("GRID " + ship_selection.collect());
         });
     },
@@ -437,16 +437,16 @@ var on_msg_actions = {
             .replace("HE", "Opponent");
 
         message.set("The end. " + player + " won. ");
-        message.append_link("next game?", game.next_ok);
+        message.append_link("next game?", game.ok_next_game);
 
-        events.on_onetime($("#" + game.next_ok), "click", function () {
+        events.on_onetime($("#" + game.ok_next_game), "click", function () {
             on_msg_actions["GAME OK"]();
         });
     },
 
 
     "1PLA": function (payload) {
-        $("#" + game.game_info_players).text(1);
+        $("#" + game.info_players_game).text(1);
         var game_interrupted = payload === "game-interrupted";
 
         message.set("Your opponent has gone. ",
@@ -454,18 +454,18 @@ var on_msg_actions = {
         );
 
         if (game_interrupted) {
-            message.append_link("next game?", game.next_ok);
+            message.append_link("next game?", game.ok_next_game);
             $("#" + grid.opponent).addClass(clazz.inactive);
             $("#" + grid.shoot).addClass(clazz.inactive);
         }
 
-        events.on_onetime($("#" + game.next_ok), "click", function () {
+        events.on_onetime($("#" + game.ok_next_game), "click", function () {
             on_msg_actions["GAME OK"]();
         });
     },
 
     "2PLA": function () {
-        $("#" + game.game_info_players).text(2);
+        $("#" + game.info_players_game).text(2);
         message.set("Two players in game.", message.timeout.slow);
     },
 
