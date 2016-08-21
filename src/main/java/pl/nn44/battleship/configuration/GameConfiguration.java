@@ -42,6 +42,9 @@ import java.util.concurrent.TimeUnit;
 // http://docs.spring.io/spring/docs/current/spring-framework-reference/html/websocket.html
 class GameConfiguration implements WebSocketConfigurer {
 
+    private static final int BYTE = 1024;
+    private static final int KB = 1024;
+
     final GameProperties gm;
 
     @Autowired
@@ -79,7 +82,9 @@ class GameConfiguration implements WebSocketConfigurer {
     @Bean
     HandshakeHandler handshakeHandler() {
         WebSocketPolicy policy = new WebSocketPolicy(WebSocketBehavior.SERVER);
-        policy.setIdleTimeout(TimeUnit.MINUTES.toMillis(5L));
+        policy.setMaxTextMessageSize(2 * KB);
+        policy.setMaxBinaryMessageSize(2 * BYTE);
+        policy.setIdleTimeout(TimeUnit.MINUTES.toMillis(10L));
 
         return new DefaultHandshakeHandler(
                 new JettyRequestUpgradeStrategy(
