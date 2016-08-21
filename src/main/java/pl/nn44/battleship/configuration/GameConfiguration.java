@@ -4,6 +4,7 @@ import org.eclipse.jetty.websocket.api.WebSocketBehavior;
 import org.eclipse.jetty.websocket.api.WebSocketPolicy;
 import org.eclipse.jetty.websocket.server.WebSocketServerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 import org.springframework.web.socket.server.HandshakeHandler;
 import org.springframework.web.socket.server.jetty.JettyRequestUpgradeStrategy;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
+import pl.nn44.battleship.controller.Error0Controller;
 import pl.nn44.battleship.controller.GameController;
 import pl.nn44.battleship.model.Cell;
 import pl.nn44.battleship.model.Coord;
@@ -46,6 +48,11 @@ class GameConfiguration implements WebSocketConfigurer {
     GameConfiguration(GameProperties gm) {
         Assert.notNull(gm);
         this.gm = gm;
+    }
+
+    @Bean
+    ErrorController errorController() {
+        return new Error0Controller();
     }
 
     @Bean
