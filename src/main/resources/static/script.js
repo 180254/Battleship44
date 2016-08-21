@@ -27,6 +27,16 @@ var utils = {
 
     get_url: function (id) {
         return window.location.origin + "/?id=" + id;
+    },
+
+    set: function (el_id, value) {
+        $("#" + el_id).text(value);
+    },
+
+    increment: function (el_id) {
+        var $el = $("#" + el_id);
+        var prev = parseInt($el.text());
+        $el.text(prev + 1);
     }
 };
 
@@ -268,10 +278,6 @@ var message = {
 var game = {
     ok_next_game: "ok-game-next-",
     ok_ship_selection: "ok-ship-selection",
-    info_game_url: "info-game-url",
-    info_players_game: "info-players-game",
-    info_players_global: "info-players-global",
-    info_winning_ratio: "info-winning-ratio",
 
     init: function () {
         $("#" + grid.shoot).append(grid.fresh(grid.shoot, 10, 10));
@@ -284,6 +290,18 @@ var game = {
 
         ws.init();
     }
+};
+
+
+// -------------------------------------------------------------------------------------------------------------------
+
+var info = {
+    game_url: "info-game-url",
+    players_game: "info-players-game",
+    players_global: "info-players-global",
+    winning_me: "info-winning-me",
+    winning_opp: "info-winning-opp"
+
 };
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -356,8 +374,10 @@ var on_msg_actions = {
         $("#" + grid.opponent).addClass(clazz.inactive);
         $("#" + grid.shoot).removeClass(clazz.inactive);
 
-        if (payload) $("#" + game.info_game_url).text(utils.get_url(payload));
-        $("#" + game.info_players_game).text(1);
+        if (payload) {
+            utils.set(info.game_url, utils.get_url(payload));
+            utils.set(info.players_game, 1);
+        }
 
         grid.reset_both();
 
@@ -429,6 +449,8 @@ var on_msg_actions = {
         $("#" + grid.opponent).addClass(clazz.inactive);
         $("#" + grid.shoot).addClass(clazz.inactive);
 
+        utils.increment(payload === "YOU" ? info.winning_me : info.winning_opp);
+
         var player = payload
             .replace("YOU", "You")
             .replace("HE", "Opponent");
@@ -443,7 +465,7 @@ var on_msg_actions = {
 
 
     "1PLA": function (payload) {
-        $("#" + game.info_players_game).text(1);
+        utils.set(info.players_game, 1);
         var game_interrupted = payload === "game-interrupted";
 
         message.set("Your opponent has gone. ",
@@ -462,7 +484,7 @@ var on_msg_actions = {
     },
 
     "2PLA": function () {
-        $("#" + game.info_players_game).text(2);
+        utils.set(info.players_game, 2);
         message.set("Two players in game.", message.timeout.slow);
     },
 

@@ -1,6 +1,8 @@
 utils.random_string(length, chars)
 utils.url_param(name)
 utils.get_url(id)
+utils.set(el_id, value)
+utils.increment(el_id)
 
 events.on($e, action, callback)
 events.on_onetime($e, action, callback)
@@ -38,10 +40,15 @@ message.timeout.fast
 message.set(message, timeout, clazz)
 message.append_link(text, id)
 
-game.next_ok
-game.ship_selection_ok
-game.game_info_url
+game.ok_next_game
+game.ok_ship_selection
 game.init()
+
+info.game_url
+info.players_game
+info.players_global
+info.winning_me
+info.winning_opp
 
 ws._ws
 ws.init()
