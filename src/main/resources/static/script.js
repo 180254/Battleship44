@@ -441,7 +441,7 @@ var on_msg_actions = {
         var cells = serializer.cells_deserialize(payload);
 
         for (var i = 0; i < cells.length; i++) {
-            grid.set_cell(grid.opponent, cells[i].row_i, cells[i].col_i, clazz.opp_shoot, false);
+            grid.set_cell(grid.opponent, cells[i].row_i, cells[i].col_i, clazz.cell.opp_shoot, false);
         }
     },
 
