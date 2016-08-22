@@ -4,6 +4,12 @@ utils.get_url(id)
 utils.set(el_id, value)
 utils.increment(el_id)
 
+title.standard
+title._blink_timeout
+title._blink_interval
+title.set(new_title)
+title.set_blink(new_title, override)
+
 events.on($e, action, callback)
 events.on_onetime($e, action, callback)
 

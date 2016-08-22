@@ -42,6 +42,37 @@ var utils = {
 
 // -------------------------------------------------------------------------------------------------------------------
 
+var title = {
+    standard: document.title,
+    _blink_timeout: 1350,
+    _blink_interval: null,
+
+    set: function(new_title) {
+        title._stop_blink();
+        document.title = new_title;
+    },
+
+    set_blink: function(new_title, override) {
+        if(!title._blink_interval || override) {
+            title._stop_blink();
+
+            var state = 0;
+            title._blink_interval = window.setInterval(function() {
+                document.title = state ? title.standard : new_title;
+                state = (state + 1) % 2;
+            }, title._blink_timeout);
+        }
+    },
+
+    _stop_blink: function() {
+        if(title._blink_interval) {
+            window.clearInterval(title._blink_interval);
+        }
+    }
+};
+
+// -------------------------------------------------------------------------------------------------------------------
+
 var events = {
 
     on: function ($e, action, callback) {
@@ -416,6 +447,7 @@ var on_msg_actions = {
         $gs.removeClass(clazz.inactive);
 
         message.set("Your shoot ...", null, clazz.msg.important);
+        title.set_blink("B44: Your shoot ...", false);
 
         events.on_onetime($gs.find("td"), "click", function (dis) {
             var pos = serializer.cell_serialize(dis.attr("data-row-i"), dis.attr("data-col-i"));
@@ -427,6 +459,7 @@ var on_msg_actions = {
     "TOUR HE": function () {
         $("#" + grid.shoot).addClass(clazz.inactive);
         message.set("Opponent shoot ...");
+        title.set("B44: Opponent shoot ...");
     },
 
     "YOU_": function (payload) {
@@ -461,6 +494,8 @@ var on_msg_actions = {
         events.on_onetime($("#" + game.ok_next_game), "click", function () {
             on_msg_actions["GAME OK"]();
         });
+
+        title.set(title.standard);
     },
 
 
@@ -476,6 +511,8 @@ var on_msg_actions = {
             message.append_link("next game?", game.ok_next_game);
             $("#" + grid.opponent).addClass(clazz.inactive);
             $("#" + grid.shoot).addClass(clazz.inactive);
+
+            title.set(title.standard);
         }
 
         events.on_onetime($("#" + game.ok_next_game), "click", function () {
