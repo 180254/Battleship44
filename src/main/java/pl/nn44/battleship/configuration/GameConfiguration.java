@@ -34,16 +34,12 @@ import pl.nn44.battleship.util.id.IdGenerator;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 @Configuration
 @EnableWebSocket
 @EnableConfigurationProperties
 // http://docs.spring.io/spring/docs/current/spring-framework-reference/html/websocket.html
 class GameConfiguration implements WebSocketConfigurer {
-
-    private static final int BYTE = 1024;
-    private static final int KB = 1024;
 
     final GameProperties gm;
 
@@ -82,9 +78,9 @@ class GameConfiguration implements WebSocketConfigurer {
     @Bean
     HandshakeHandler handshakeHandler() {
         WebSocketPolicy policy = new WebSocketPolicy(WebSocketBehavior.SERVER);
-        policy.setMaxTextMessageSize(2 * KB);
-        policy.setMaxBinaryMessageSize(2 * BYTE);
-        policy.setIdleTimeout(TimeUnit.MINUTES.toMillis(10L));
+        policy.setMaxTextMessageSize(gm.getWs().getPolicyMaxTextMessageSize());
+        policy.setMaxBinaryMessageSize(gm.getWs().getPolicyMaxBinaryMessageSize());
+        policy.setIdleTimeout(gm.getWs().getPolicyIdleTimeout());
 
         return new DefaultHandshakeHandler(
                 new JettyRequestUpgradeStrategy(
@@ -95,8 +91,8 @@ class GameConfiguration implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(webSocketController(), "/ws")
-                .setAllowedOrigins("*")
+        registry.addHandler(webSocketController(), gm.getWs().getConfHandlers())
+                .setAllowedOrigins(gm.getWs().getConfAllowedOrigins())
                 .setHandshakeHandler(handshakeHandler());
     }
 }

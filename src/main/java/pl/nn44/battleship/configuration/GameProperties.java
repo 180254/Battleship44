@@ -10,6 +10,7 @@ public class GameProperties {
     private GridSize gridSize;
     private FleetType fleetType;
     private Impl impl;
+    private Ws ws;
 
     public GridSize getGridSize() {
         return gridSize;
@@ -33,6 +34,14 @@ public class GameProperties {
 
     public void setImpl(Impl impl) {
         this.impl = impl;
+    }
+
+    public Ws getWs() {
+        return ws;
+    }
+
+    public void setWs(Ws ws) {
+        this.ws = ws;
     }
 
     // ---------------------------------------------------------------------------------------------------------------
@@ -115,6 +124,57 @@ public class GameProperties {
 
         public void setLocksNo(int locksNo) {
             this.locksNo = locksNo;
+        }
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+
+    public static class Ws {
+
+        private String[] confHandlers;
+        private String[] confAllowedOrigins;
+        private int policyMaxTextMessageSize;
+        private int policyMaxBinaryMessageSize;
+        private long policyIdleTimeout;
+
+        public String[] getConfHandlers() {
+            return confHandlers;
+        }
+
+        public void setConfHandlers(String[] confHandlers) {
+            this.confHandlers = confHandlers;
+        }
+
+        public String[] getConfAllowedOrigins() {
+            return confAllowedOrigins;
+        }
+
+        public void setConfAllowedOrigins(String[] confAllowedOrigins) {
+            this.confAllowedOrigins = confAllowedOrigins;
+        }
+
+        public int getPolicyMaxTextMessageSize() {
+            return policyMaxTextMessageSize;
+        }
+
+        public void setPolicyMaxTextMessageSize(int policyMaxTextMessageSize) {
+            this.policyMaxTextMessageSize = policyMaxTextMessageSize;
+        }
+
+        public int getPolicyMaxBinaryMessageSize() {
+            return policyMaxBinaryMessageSize;
+        }
+
+        public void setPolicyMaxBinaryMessageSize(int policyMaxBinaryMessageSize) {
+            this.policyMaxBinaryMessageSize = policyMaxBinaryMessageSize;
+        }
+
+        public long getPolicyIdleTimeout() {
+            return policyIdleTimeout;
+        }
+
+        public void setPolicyIdleTimeout(long policyIdleTimeout) {
+            this.policyIdleTimeout = policyIdleTimeout;
         }
     }
 }
