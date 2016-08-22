@@ -65,36 +65,51 @@ public class GameController extends TextWebSocketHandler {
 
     // ---------------------------------------------------------------------------------------------------------------
 
+    private String id(WebSocketSession session) {
+        return com.google.common.base.Strings.padStart(session.getId(), 8, '0');
+    }
     private void txt(Player player, String format, Object... args) {
         txt(player.getSession(), format, args);
     }
 
     private void txt(WebSocketSession session, String format, Object... args) {
         String msg = String.format(format, args);
-        LOGGER.info("->  {} @ {}", session.getId(), msg);
+        LOGGER.info("->  {} @ {}", id(session), msg);
 
         try {
             TextMessage textMessage = new TextMessage(msg);
             session.sendMessage(textMessage);
         } catch (IOException e) {
-            LOGGER.warn("server to user _fail_");
-            LOGGER.info("->  {} @ {}", session.getId(), msg);
-            LOGGER.warn("exception stack", e);
+            LOGGER.warn("<-> server to user _fail_");
+            LOGGER.warn("->  {} @ {}", id(session), msg);
+            LOGGER.warn("<-> exception stack", e);
         }
     }
 
+    private void broadcast(String format, Object... args) {
+        String msg = String.format(format, args);
+        LOGGER.info("->  {} @ {}", "______bc", msg);
+
+        TextMessage textMessage = new TextMessage(msg);
+        players.forEach((s, p) -> {
+            try {
+                s.sendMessage(textMessage);
+            } catch (IOException ignored) {
+            }
+        });
+    }
 
     // ---------------------------------------------------------------------------------------------------------------
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        LOGGER.info("<-> {} @ established {}", session.getId(), session.getRemoteAddress());
+        LOGGER.info("<-> {} @ established {}", id(session), session.getRemoteAddress());
         txt(session, "HI_. Welcome.");
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        LOGGER.info("<-> {} @ closed @ {}", session.getId(), status);
+        LOGGER.info("<-> {} @ closed @ {}", id(session), status);
         Player player = players.get(session);
         Locker.Sync lock = locker.lock(player);
 
@@ -104,6 +119,7 @@ public class GameController extends TextWebSocketHandler {
             }
 
             players.remove(session);
+            broadcast("STAT players=%s", players.size());
 
             Game game = player.getGame();
             if (game == null) {
@@ -166,6 +182,7 @@ public class GameController extends TextWebSocketHandler {
                 player.setGame(game);
                 games.put(game.getId(), game);
                 txt(player, "GAME OK %s", game.getId());
+                broadcast("STAT players=%d", players.size());
 
             } else {
                 Game game = games.get(param);
@@ -182,6 +199,7 @@ public class GameController extends TextWebSocketHandler {
                     txt(player, "GAME OK %s", game.getId());
                     txt(game.getPlayer(0), "2PLA");
                     txt(game.getPlayer(1), "2PLA");
+                    broadcast("STAT players=%d", players.size());
                 }
             }
 

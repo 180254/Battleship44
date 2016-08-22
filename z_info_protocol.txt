@@ -38,6 +38,8 @@
 <- 1PLA game-interrupted
 <- 1PLA game-not-interrupted
 
+<- STAT players=10,reserved=1
+
 -> PING <ping_msg>
 <- PONG <ping_msg>
 
@@ -49,13 +51,14 @@
 HI_.
 GAME
 GRID
-2PLA
 TOUR
 SHOT
 YOU_
 HE__
 WON_
+1PLA
+2PLA
 PING
 PONG
-1PLA
+STAT
 400_

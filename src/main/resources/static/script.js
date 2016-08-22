@@ -331,10 +331,13 @@ var info = {
     players_game: "info-players-game",
     players_global: "info-players-global",
     winning_me: "info-winning-me",
-    winning_opp: "info-winning-opp"
+    winning_opp: "info-winning-opp",
+
+    stat: {
+        "players": "info-players-global"
+    }
 
 };
-
 // -------------------------------------------------------------------------------------------------------------------
 
 var ws = {
@@ -526,6 +529,16 @@ var on_msg_actions = {
     },
 
     "PONG": function () {
+    },
+
+    "STAT": function (payload) {
+        var stats = payload.split(",");
+
+        for(var i = 0; i < stats.length; i++) {
+            var stat = stats[i].split("=");
+            $("#" + info.stat[stat[0]]).text(stat[1]);
+        }
+
     },
 
     "400_": function (payload) {

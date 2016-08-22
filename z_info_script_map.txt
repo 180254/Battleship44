@@ -55,6 +55,7 @@ info.players_game
 info.players_global
 info.winning_me
 info.winning_opp
+info.stat[...]
 
 ws._ws
 ws.init()
