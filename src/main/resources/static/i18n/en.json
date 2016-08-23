@@ -1,3 +1,42 @@
 {
-  "test": "test_test"
+  "ws": {
+    "unable": "WebSocket connection: unable to initialize.",
+    "close": "WebSocket connection: closed, probably idle timeout.",
+    "error": "WebSocket connection: unexpected issue, please try again."
+  },
+  "title": {
+    "standard": "Battleship44",
+    "shoot_me": "B44: Your shoot ...",
+    "shoot_opp": "B44: Opponent shoot ..."
+  },
+  "pre": {
+    "initializing": "Initializing, please wait.",
+    "hi": "Hi message:"
+  },
+  "put": {
+    "info": "Put your ships on right grid. ",
+    "done": "done?",
+    "fail": "Ships positions verification failed. Check your ships."
+  },
+  "tour": {
+    "awaiting": "Awaiting second player ...",
+    "one_player": "One player in game.",
+    "two_players": "Two players in game.",
+    "shoot_me": "Your shoot ...",
+    "shoot_opp": "Opponent shoot..."
+  },
+  "end": {
+    "won_me": "The end. You won.",
+    "won_opp": "The end. Opponent won.",
+    "opp_gone": "Your opponent has gone. ",
+    "next_game": "next game?"
+  },
+  "stats": {
+    "unknown": "unknown",
+    "game_url": "game/url",
+    "game_players": "game/players",
+    "game_ratio": "game/winning ratio",
+    "server_ships": "server/ship sizes",
+    "server_player": "server/players"
+  }
 }

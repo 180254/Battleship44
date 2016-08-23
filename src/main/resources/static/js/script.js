@@ -56,7 +56,6 @@ var localize = {
         return parts.pop().split(";").shift() || null;
     },
 
-
     _get_lang: function () {
         var lang = localize._get_cookie("lang")
             || window.navigator.language
@@ -67,7 +66,8 @@ var localize = {
         var s_lang = localize.supported_lang[0];
         for (var i = 0; i < lang.length; i++) {
             var iso = lang[i].split("-").shift().toLowerCase();
-            if ($.inArray(iso, localize.supported_lang)) {
+            if ($.inArray(iso, localize.supported_lang) !== -1) {
+                console.log("debug: lang - " + iso);
                 s_lang = iso;
                 break;
             }
@@ -77,8 +77,13 @@ var localize = {
     },
 
 
-    init: function () {
+    init: function (callback) {
+        var lang = localize._get_lang();
 
+        $.get("i18n/" + lang + ".json", function (data) {
+            localize.strings = data;
+            if (callback) callback();
+        });
     }
 };
 
@@ -353,15 +358,17 @@ var game = {
     ok_ship_selection: "ok-ship-selection",
 
     init: function () {
-        $("#" + grid.shoot).append(grid.fresh(grid.shoot, 10, 10));
-        $("#" + grid.opponent).append(grid.fresh(grid.opponent, 10, 10));
+        localize.init(function () {
+            $("#" + grid.shoot).append(grid.fresh(grid.shoot, 10, 10));
+            $("#" + grid.opponent).append(grid.fresh(grid.opponent, 10, 10));
 
-        if (!("WebSocket" in window)) {
-            message.set("WebSockets is not supported by your browser, google it.");
-            return;
-        }
+            if (!("WebSocket" in window)) {
+                message.set("WebSockets is not supported by your browser, google it.");
+                return;
+            }
 
-        ws.init();
+            ws.init();
+        });
     }
 };
 
