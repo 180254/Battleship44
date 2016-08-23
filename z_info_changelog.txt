@@ -2,7 +2,7 @@ v1.0
 + first version
 
 v1.1
-+ front: general improvements and refactorings
++ front: general improvements and refactoring
 + front: handle WinSocket onerror event
 + front: info about number of players in current game
 + front: info about current winning ratio
@@ -11,9 +11,9 @@ v1.1
 + back: possible to customize WebSocket conf&policy by .properties file
 
 v1.2
-- front: do i18n strings configurable by json
+- front: do i18n strings configurable by json files
 - front: i10n - add polish lang support
-- back/front: (graph?) info about which ship sizes already shot & to shoot down
+- back/front: info which ship sizes are already shot & still to shoot down
 
 v2.0
 - back/front: fleet-type is now game-level, not server-level

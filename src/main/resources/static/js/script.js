@@ -42,30 +42,72 @@ var utils = {
 
 // -------------------------------------------------------------------------------------------------------------------
 
+var localize = {
+    strings: undefined,
+    supported_lang: ["en"],
+
+    // credits: friends @ stackoverflow
+    // url: http://stackoverflow.com/a/15724300
+    // license: cc by-sa 3.0
+    // license url: https://creativecommons.org/licenses/by-sa/3.0/
+    _get_cookie: function (name) {
+        var value = "; " + document.cookie;
+        var parts = value.split("; " + name + "=");
+        return parts.pop().split(";").shift() || null;
+    },
+
+
+    _get_lang: function () {
+        var lang = localize._get_cookie("lang")
+            || window.navigator.language
+            || window.navigator.userLanguage;
+
+        lang = $.isArray(lang) ? lang : [lang];
+
+        var s_lang = localize.supported_lang[0];
+        for (var i = 0; i < lang.length; i++) {
+            var iso = lang[i].split("-").shift().toLowerCase();
+            if ($.inArray(iso, localize.supported_lang)) {
+                s_lang = iso;
+                break;
+            }
+        }
+
+        return s_lang;
+    },
+
+
+    init: function () {
+
+    }
+};
+
+// -------------------------------------------------------------------------------------------------------------------
+
 var title = {
     standard: document.title,
     _blink_timeout: 1350,
-    _blink_interval: null,
+    _blink_interval: undefined,
 
-    set: function(new_title) {
+    set: function (new_title) {
         title._stop_blink();
         document.title = new_title;
     },
 
-    set_blink: function(new_title, override) {
-        if(!title._blink_interval || override) {
+    set_blink: function (new_title, override) {
+        if (!title._blink_interval || override) {
             title._stop_blink();
 
             var state = 0;
-            title._blink_interval = window.setInterval(function() {
+            title._blink_interval = window.setInterval(function () {
                 document.title = state ? title.standard : new_title;
                 state = (state + 1) % 2;
             }, title._blink_timeout);
         }
     },
 
-    _stop_blink: function() {
-        if(title._blink_interval) {
+    _stop_blink: function () {
+        if (title._blink_interval) {
             window.clearInterval(title._blink_interval);
         }
     }
@@ -534,7 +576,7 @@ var on_msg_actions = {
     "STAT": function (payload) {
         var stats = payload.split(",");
 
-        for(var i = 0; i < stats.length; i++) {
+        for (var i = 0; i < stats.length; i++) {
             var stat = stats[i].split("=");
             $("#" + info.stat[stat[0]]).text(stat[1]);
         }
