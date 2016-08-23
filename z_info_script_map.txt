@@ -21,6 +21,12 @@ clazz.msg.fail
 clazz.msg.important
 clazz.inactive
 
+i18n.strings
+i18n.supported
+i18n.get_lang()
+i18n.set_lang(lang)
+i18n.init(callback)
+
 grid.shoot
 grid.opponent
 grid.fresh(grid_id, rows_no, cols_no)

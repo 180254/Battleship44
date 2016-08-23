@@ -1,3 +1,4 @@
+/*global Cookies*/
 "use strict";
 
 var utils = {
@@ -42,31 +43,21 @@ var utils = {
 
 // -------------------------------------------------------------------------------------------------------------------
 
-var localize = {
+var i18n = {
     strings: undefined,
-    supported_lang: ["en"],
+    supported: ["en"],
 
-    // credits: friends @ stackoverflow
-    // url: http://stackoverflow.com/a/15724300
-    // license: cc by-sa 3.0
-    // license url: https://creativecommons.org/licenses/by-sa/3.0/
-    _get_cookie: function (name) {
-        var value = "; " + document.cookie;
-        var parts = value.split("; " + name + "=");
-        return parts.pop().split(";").shift() || null;
-    },
-
-    _get_lang: function () {
-        var lang = localize._get_cookie("lang")
+    get_lang: function () {
+        var lang = Cookies.get("b44_lang")
             || window.navigator.language
             || window.navigator.userLanguage;
 
         lang = $.isArray(lang) ? lang : [lang];
 
-        var s_lang = localize.supported_lang[0];
+        var s_lang = i18n.supported[0];
         for (var i = 0; i < lang.length; i++) {
             var iso = lang[i].split("-").shift().toLowerCase();
-            if ($.inArray(iso, localize.supported_lang) !== -1) {
+            if ($.inArray(iso, i18n.supported) !== -1) {
                 console.log("debug: lang - " + iso);
                 s_lang = iso;
                 break;
@@ -76,12 +67,15 @@ var localize = {
         return s_lang;
     },
 
+    set_lang: function (lang) {
+        Cookies.set("b44_lang", lang);
+    },
 
     init: function (callback) {
-        var lang = localize._get_lang();
+        var lang = i18n.get_lang();
 
         $.get("i18n/" + lang + ".json", function (data) {
-            localize.strings = data;
+            i18n.strings = data;
             if (callback) callback();
         });
     }
@@ -358,7 +352,7 @@ var game = {
     ok_ship_selection: "ok-ship-selection",
 
     init: function () {
-        localize.init(function () {
+        i18n.init(function () {
             $("#" + grid.shoot).append(grid.fresh(grid.shoot, 10, 10));
             $("#" + grid.opponent).append(grid.fresh(grid.opponent, 10, 10));
 
