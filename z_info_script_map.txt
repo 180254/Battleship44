@@ -25,6 +25,7 @@ title.set_blink(i18n_p, override)
 
 events.on($e, action, callback)
 events.on_onetime($e, action, callback)
+events.off($e, action)
 
 clazz.cell.unknown
 clazz.cell.empty

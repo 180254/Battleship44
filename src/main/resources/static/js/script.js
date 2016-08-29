@@ -196,7 +196,7 @@ var events = {
         });
     },
 
-    remove: function ($e, action) {
+    off: function ($e, action) {
         $e.off(action);
     }
 };
@@ -630,7 +630,7 @@ var on_msg_actions = {
             var $go = $("#" + grid.opponent);
             var $gs = $("#" + grid.shoot);
 
-            events.remove($gs.find("td"), "click"); // remove shoot
+            events.off($gs.find("td"), "click"); // remove shoot action
 
             message.append_link(i18n.p("end.next_game"), game.ok_next_game);
             $go.addClass(clazz.inactive);
