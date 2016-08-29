@@ -194,6 +194,10 @@ var events = {
             $e.off(event);
             callback($(this));
         });
+    },
+
+    remove: function ($e, action) {
+        $e.off(action);
     }
 };
 
@@ -623,9 +627,14 @@ var on_msg_actions = {
         );
 
         if (game_interrupted) {
+            var $go = $("#" + grid.opponent);
+            var $gs = $("#" + grid.shoot);
+
+            events.remove($gs.find("td"), "click"); // remove shoot
+
             message.append_link(i18n.p("end.next_game"), game.ok_next_game);
-            $("#" + grid.opponent).addClass(clazz.inactive);
-            $("#" + grid.shoot).addClass(clazz.inactive);
+            $go.addClass(clazz.inactive);
+            $gs.addClass(clazz.inactive);
 
             title.set(i18n.p("title.standard"));
         }
