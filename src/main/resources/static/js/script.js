@@ -81,9 +81,9 @@ var i18n = {
         }
     },
 
-    do: function (path, params) {
-        var path_a = path.split(".");
-        var params_a = params || [];
+    do: function (i18n_p) {
+        var path_a = i18n_p.path.split(".");
+        var params_a = i18n_p.params || [];
         var text = i18n.strings;
 
         while (path_a.length > 0) {
@@ -99,7 +99,10 @@ var i18n = {
         return text;
     },
 
-    set: function ($e, path, params) {
+    set: function ($e, i18n_p) {
+        var path = i18n_p ? i18n_p.path : null;
+        var params = i18n_p ? i18n_p.params : null;
+
         if (path) $e.data(i18n._attr_path, path);
         else path = $e.data(i18n._attr_path);
 
@@ -109,7 +112,7 @@ var i18n = {
         }
         else params = $e.data(i18n._attr_params) || [];
 
-        $e.text(i18n.do(path, params));
+        $e.text(i18n.do(i18n.p(path, params)));
     },
 
     set_all: function () {
@@ -148,12 +151,12 @@ var title = {
 
     set: function (i18n_p) {
         title._stop_blink();
-        document.title = i18n.do(i18n_p.path, i18n_p.params);
+        document.title = i18n.do(i18n_p);
     },
 
     set_blink: function (i18n_p, override) {
-        var title_standard = i18n.do("title.standard");
-        var new_title = i18n.do(i18n_p.path, i18n_p.params);
+        var title_standard = i18n.do(i18n.p("title.standard"));
+        var new_title = i18n.do(i18n_p);
 
         if (!title._blink_interval || override) {
             title._stop_blink();
@@ -381,7 +384,7 @@ var message = {
             "id": id,
             "class": css_class
         });
-        i18n.set($span, i18n_p.path, i18n_p.params);
+        i18n.set($span, i18n_p);
 
         if (timeout) {
             setTimeout(function () {
@@ -401,7 +404,7 @@ var message = {
             "href": "#",
             "id": id
         });
-        i18n.set($a, i18n_p.path, i18n_p.params);
+        i18n.set($a, i18n_p);
 
         $("#" + message.msg_const).append($a);
     }
@@ -535,7 +538,7 @@ var on_msg_actions = {
     },
 
     "GAME FAIL": function (payload) {
-        message.set(i18n.p("fai.fail", err.translate(payload)));
+        message.set(i18n.p("fail.fail", err.translate(payload)));
     },
 
     "GRID OK": function () {
@@ -651,7 +654,7 @@ var on_msg_actions = {
     },
 
     "400_": function (payload) {
-        message.set(i18n.p("fail", err.translate(payload)));
+        message.set(i18n.p("fail.fail", err.translate(payload)));
     },
 
     _other: function () {

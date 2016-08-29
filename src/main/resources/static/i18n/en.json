@@ -27,7 +27,7 @@
   },
   "end": {
     "won_me": "The end. You won.",
-    "won_opp": "The end. Opponent won.",
+    "won_opp": "The end. Opponent won. ",
     "opp_gone": "Your opponent has gone. ",
     "next_game": "next game?"
   },

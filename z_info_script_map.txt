@@ -11,16 +11,17 @@ i18n.strings
 i18n.supported
 i18n.lang.get()
 i18n.lang.set(code)
-i18n.do(path, params)
-i18n.set($e, path, params)
+i18n.do(i18n_p)
+i18n.set($e, i18n_p)
 i18n.set_all();
+i18n.p(path, params)
 i18n.init(error, callback)
 
 title.standard
 title._blink_timeout
 title._blink_interval
-title.set(new_title)
-title.set_blink(new_title, override)
+title.set(i18n_p)
+title.set_blink(i18n_p, override)
 
 events.on($e, action, callback)
 events.on_onetime($e, action, callback)

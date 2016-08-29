@@ -11,7 +11,7 @@ v1.1
 + back: possible to customize WebSocket conf&policy by .properties file
 
 v1.2
-- front: do i18n strings configurable by json files
++ front: do i18n strings configurable by json files
 - front: i10n - add polish lang support
 - front: possible to change lang (no reload)
 - back/front: info which ship sizes are already shot & still to shoot down
