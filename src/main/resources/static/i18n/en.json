@@ -40,6 +40,6 @@
     "game_players": "game/players",
     "game_ratio": "game/winning ratio",
     "server_ships": "server/ship sizes",
-    "server_player": "server/players"
+    "server_players": "server/players"
   }
 }

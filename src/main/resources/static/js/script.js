@@ -94,6 +94,13 @@ var i18n = {
         $e.text(i18n._do(path, params));
     },
 
+    set_all: function () {
+        $("[data-" + i18n._attr_path + "]").each(function () {
+            console.log($(this));
+            i18n.set($(this));
+        });
+    },
+
     _do: function (path, params) {
         var path_a = path.split(".");
         var params_a = params;
@@ -408,6 +415,8 @@ var game = {
         i18n.init(function () {
             console.log("game.init: i18n.init error");
         }, function () {
+            i18n.set_all();
+
             $("#" + grid.shoot).append(grid.fresh(grid.shoot, 10, 10));
             $("#" + grid.opponent).append(grid.fresh(grid.opponent, 10, 10));
 

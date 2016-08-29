@@ -12,7 +12,8 @@ i18n.supported
 i18n.lang.get()
 i18n.lang.set(code)
 i18n.set($e, path, params)
-i18n.do(path, params)
+i18n.set_all();
+i18n._do(path, params)
 i18n.init(error, callback)
 
 title.standard
