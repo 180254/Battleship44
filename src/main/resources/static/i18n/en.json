@@ -11,7 +11,7 @@
   },
   "pre": {
     "initializing": "Initializing, please wait.",
-    "hi": "Hi message:"
+    "hi": "Hi message: {}"
   },
   "put": {
     "info": "Put your ships on right grid. ",
@@ -30,6 +30,9 @@
     "won_opp": "The end. Opponent won.",
     "opp_gone": "Your opponent has gone. ",
     "next_game": "next game?"
+  },
+  "fail": {
+    "fail": "fail: {}"
   },
   "stats": {
     "unknown": "unknown",

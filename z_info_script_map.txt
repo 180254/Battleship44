@@ -4,6 +4,17 @@ utils.get_url(id)
 utils.set(el_id, value)
 utils.increment(el_id)
 
+i18n._cookie_name
+i18n._attr_path
+i18n._attr_param
+i18n.strings
+i18n.supported
+i18n.lang.get()
+i18n.lang.set(code)
+i18n.set($e, path, params)
+i18n.do(path, params)
+i18n.init(error, callback)
+
 title.standard
 title._blink_timeout
 title._blink_interval
@@ -16,16 +27,10 @@ events.on_onetime($e, action, callback)
 clazz.cell.unknown
 clazz.cell.empty
 clazz.cell.ship
-clazz.cell.opp_shoot:
+clazz.cell.opp_shoot
 clazz.msg.fail
 clazz.msg.important
 clazz.inactive
-
-i18n.strings
-i18n.supported
-i18n.get_lang()
-i18n.set_lang(lang)
-i18n.init(callback)
 
 grid.shoot
 grid.opponent
@@ -49,7 +54,7 @@ message.msg_const
 message.timeout.fast
 message.timeout.default
 message.timeout.fast
-message.set(message, timeout, clazz)
+message.set(i18n_p, timeout, clazz)
 message.append_link(text, id)
 
 game.ok_next_game
@@ -61,12 +66,12 @@ info.players_game
 info.players_global
 info.winning_me
 info.winning_opp
-info.stat[...]
+info.stat[xx]
 
 ws._ws
 ws.init()
 ws.send()
 
 err.translate
-on_event_actions[...]
-on_msg_actions[...]
+on_event_actions[xx]
+on_msg_actions[xx]

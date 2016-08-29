@@ -44,42 +44,93 @@ var utils = {
 // -------------------------------------------------------------------------------------------------------------------
 
 var i18n = {
+    _cookie_name: "b44_lang",
+    _attr_path: "i18n-path",
+    _attr_params: "i18n-params",
     strings: undefined,
     supported: ["en"],
 
-    get_lang: function () {
-        var lang = Cookies.get("b44_lang")
-            || window.navigator.language
-            || window.navigator.userLanguage;
+    lang: {
+        get: function () {
+            //noinspection JSUnresolvedVariable
+            var lang = [].concat(
+                Cookies.get(i18n._cookie_name)
+                || window.navigator.language
+                || window.navigator.languages
+                || window.navigator.userLanguage
+                || window.navigator.systemLanguage
+            );
 
-        lang = $.isArray(lang) ? lang : [lang];
-
-        var s_lang = i18n.supported[0];
-        for (var i = 0; i < lang.length; i++) {
-            var iso = lang[i].split("-").shift().toLowerCase();
-            if ($.inArray(iso, i18n.supported) !== -1) {
-                console.log("debug: lang - " + iso);
-                s_lang = iso;
-                break;
+            var s_lang = i18n.supported[0];
+            for (var i = 0; i < lang.length; i++) {
+                // en-US to en; en_US to en; en to en
+                var iso = lang[i].split(/[-_]/).shift().toLowerCase();
+                if ($.inArray(iso, i18n.supported) !== -1) {
+                    s_lang = iso;
+                    break;
+                }
             }
+
+            console.log("debug: lang.get - " + s_lang);
+            return s_lang;
+        },
+
+        set: function (code) {
+            console.log("debug: lang.set - " + code);
+            Cookies.set(i18n._cookie_name, code);
+        }
+    },
+
+    set: function ($e, path, params) {
+        if (path) $e.data(i18n._attr_path, path);
+        else path = $e.data(i18n._attr_path);
+
+        if (params) {
+            params = [].concat(params);
+            $e.data(i18n._attr_params, params);
+        }
+        else params = $e.data(i18n._attr_params) || [];
+
+        $e.text(i18n._do(path, params));
+    },
+
+    _do: function (path, params) {
+        var path_a = path.split(".");
+        var params_a = params;
+        var text = i18n.strings;
+
+        while (path_a.length > 0) {
+            var i = path_a.shift();
+            text = text[i];
         }
 
-        return s_lang;
+        while (params_a.length > 0) {
+            var k = params_a.shift();
+            text = text.replace("{}", k);
+        }
+
+        return text;
     },
 
-    set_lang: function (lang) {
-        Cookies.set("b44_lang", lang);
+    p: function (path, params) {
+        return {
+            path: path,
+            params: params
+        };
     },
 
-    init: function (callback) {
-        var lang = i18n.get_lang();
+    init: function (error, callback) {
+        var lang = i18n.lang.get();
 
         $.get("i18n/" + lang + ".json", function (data) {
             i18n.strings = data;
             if (callback) callback();
+        }).fail(function () {
+            if (error) error();
         });
     }
 };
+
 
 // -------------------------------------------------------------------------------------------------------------------
 
@@ -313,14 +364,14 @@ var message = {
         slow: 5000
     },
 
-    set: function (text, timeout, css_class) {
+    set: function (i18n_p, timeout, css_class) {
         var id = timeout ? utils.random_string(7, "a") : message.msg_const;
 
-        var span = $("<span/>", {
+        var $span = $("<span/>", {
             "id": id,
-            "text": text,
             "class": css_class
         });
+        i18n.set($span, i18n_p.path, i18n_p.params);
 
         if (timeout) {
             setTimeout(function () {
@@ -332,15 +383,17 @@ var message = {
             $("#" + message.msg_const).remove();
         }
 
-        $("#" + message.msg_div).append(span);
+        $("#" + message.msg_div).append($span);
     },
 
-    append_link: function (text, id) {
-        $("#" + message.msg_const).append($("<a/>", {
-            "text": text,
+    append_link: function (i18n_p, id) {
+        var $a = $("<a/>", {
             "href": "#",
             "id": id
-        }));
+        });
+        i18n.set($a, i18n_p.path, i18n_p.params);
+
+        $("#" + message.msg_const).append($a);
     }
 };
 
@@ -353,11 +406,13 @@ var game = {
 
     init: function () {
         i18n.init(function () {
+            console.log("game.init: i18n.init error");
+        }, function () {
             $("#" + grid.shoot).append(grid.fresh(grid.shoot, 10, 10));
             $("#" + grid.opponent).append(grid.fresh(grid.opponent, 10, 10));
 
             if (!("WebSocket" in window)) {
-                message.set("WebSockets is not supported by your browser, google it.");
+                message.set(i18n.p("ws.unable"));
                 return;
             }
 
@@ -426,13 +481,13 @@ var on_event_actions = {
 
     onClose: function (evt) {
         console.log("ws.onclose  : " + evt.code + "(" + evt.reason + ")");
-        message.set("WebSocket connection lost, reload page to renew connection.", null, clazz.msg.fail);
+        message.set(i18n.p("ws.close"), null, clazz.msg.fail);
         ship_selection.deactivate();
     },
 
     onError: function (evt) {
         console.log("ws.onclose  : " + evt.type);
-        message.set("Something go wrong with WebSocket connection. Please try again later.", null, clazz.msg.fail);
+        message.set(i18n.p("ws.error"), null, clazz.msg.fail);
     },
 
     onSend: function (msg) {
@@ -444,7 +499,7 @@ var on_event_actions = {
 
 var on_msg_actions = {
     "HI_.": function (payload) {
-        message.set("Hi message: " + payload, message.timeout.fast);
+        message.set(i18n.p("pre.hi", payload), message.timeout.fast);
     },
 
     "GAME OK": function (payload) {
@@ -458,8 +513,8 @@ var on_msg_actions = {
 
         grid.reset_both();
 
-        message.set("Put your ships on right grid ... ");
-        message.append_link("done?", game.ok_ship_selection);
+        message.set(i18n.p("put.info"));
+        message.append_link(i18n.p("put.done"), game.ok_ship_selection);
 
         ship_selection.activate();
         events.on($("#" + game.ok_ship_selection), "click", function () {
@@ -468,21 +523,21 @@ var on_msg_actions = {
     },
 
     "GAME FAIL": function (payload) {
-        message.set("Game id error: " + err.translate(payload));
+        message.set(i18n.p("fai.fail", err.translate(payload)));
     },
 
     "GRID OK": function () {
         $("#" + grid.opponent).removeClass(clazz.inactive);
         $("#" + grid.shoot).addClass(clazz.inactive);
 
-        message.set("Awaiting second player ...");
+        message.set(i18n.p("tour.awaiting"));
 
         ship_selection.deactivate();
         ship_selection.move();
     },
 
     "GRID FAIL": function () {
-        message.set("Grid verification: failed, verify ships positions.", message.timeout.default, clazz.msg.fail);
+        message.set(i18n.p("put.fail"), message.timeout.default, clazz.msg.fail);
     },
 
     "TOUR START": function () {
@@ -492,8 +547,8 @@ var on_msg_actions = {
         var $gs = $("#" + grid.shoot);
         $gs.removeClass(clazz.inactive);
 
-        message.set("Your shoot ...", null, clazz.msg.important);
-        title.set_blink("B44: Your shoot ...", false);
+        message.set(i18n.p("tour.shoot_me"), null, clazz.msg.important);
+        title.set_blink(i18n.p("title.shoot_me"), false);
 
         events.on_onetime($gs.find("td"), "click", function (dis) {
             var pos = serializer.cell_serialize(dis.attr("data-row-i"), dis.attr("data-col-i"));
@@ -504,8 +559,8 @@ var on_msg_actions = {
 
     "TOUR HE": function () {
         $("#" + grid.shoot).addClass(clazz.inactive);
-        message.set("Opponent shoot ...");
-        title.set("B44: Opponent shoot ...");
+        message.set(i18n.p("tour.shoot_opp"));
+        title.set(i18n.p("title.shoot_opp"));
     },
 
     "YOU_": function (payload) {
@@ -530,12 +585,11 @@ var on_msg_actions = {
 
         utils.increment(payload === "YOU" ? info.winning_me : info.winning_opp);
 
-        var player = payload
-            .replace("YOU", "You")
-            .replace("HE", "Opponent");
+        payload === "YOU"
+            ? message.set(i18n.p("end.won_me"))
+            : message.set(i18n.p("end.won_opp"));
 
-        message.set("The end. " + player + " won. ");
-        message.append_link("next game?", game.ok_next_game);
+        message.append_link(i18n.p("end.next_game"), game.ok_next_game);
 
         events.on_onetime($("#" + game.ok_next_game), "click", function () {
             on_msg_actions["GAME OK"]();
@@ -549,12 +603,12 @@ var on_msg_actions = {
         utils.set(info.players_game, 1);
         var game_interrupted = payload === "game-interrupted";
 
-        message.set("Your opponent has gone. ",
+        message.set(i18n.p("end.opp_gone"),
             game_interrupted ? null : message.timeout.slow
         );
 
         if (game_interrupted) {
-            message.append_link("next game?", game.ok_next_game);
+            message.append_link(i18n.p("end.next_game"), game.ok_next_game);
             $("#" + grid.opponent).addClass(clazz.inactive);
             $("#" + grid.shoot).addClass(clazz.inactive);
 
@@ -568,7 +622,7 @@ var on_msg_actions = {
 
     "2PLA": function () {
         utils.set(info.players_game, 2);
-        message.set("Two players in game.", message.timeout.slow);
+        message.set(i18n.p("tour.two_players"), message.timeout.slow);
     },
 
     "PONG": function () {
@@ -585,7 +639,7 @@ var on_msg_actions = {
     },
 
     "400_": function (payload) {
-        message.set("Fail: " + err.translate(payload));
+        message.set(i18n.p("fail", err.translate(payload)));
     },
 
     _other: function () {
