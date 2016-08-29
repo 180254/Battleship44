@@ -81,29 +81,9 @@ var i18n = {
         }
     },
 
-    set: function ($e, path, params) {
-        if (path) $e.data(i18n._attr_path, path);
-        else path = $e.data(i18n._attr_path);
-
-        if (params) {
-            params = [].concat(params);
-            $e.data(i18n._attr_params, params);
-        }
-        else params = $e.data(i18n._attr_params) || [];
-
-        $e.text(i18n._do(path, params));
-    },
-
-    set_all: function () {
-        $("[data-" + i18n._attr_path + "]").each(function () {
-            console.log($(this));
-            i18n.set($(this));
-        });
-    },
-
-    _do: function (path, params) {
+    do: function (path, params) {
         var path_a = path.split(".");
-        var params_a = params;
+        var params_a = params || [];
         var text = i18n.strings;
 
         while (path_a.length > 0) {
@@ -117,6 +97,27 @@ var i18n = {
         }
 
         return text;
+    },
+
+    set: function ($e, path, params) {
+        if (path) $e.data(i18n._attr_path, path);
+        else path = $e.data(i18n._attr_path);
+
+        if (params) {
+            params = [].concat(params);
+            $e.data(i18n._attr_params, params);
+        }
+        else params = $e.data(i18n._attr_params) || [];
+
+        $e.text(i18n.do(path, params));
+    },
+
+    set_all: function () {
+        title.set(i18n.p("title.standard"));
+
+        $("[data-" + i18n._attr_path + "]").each(function () {
+            i18n.set($(this));
+        });
     },
 
     p: function (path, params) {
@@ -142,22 +143,24 @@ var i18n = {
 // -------------------------------------------------------------------------------------------------------------------
 
 var title = {
-    standard: document.title,
     _blink_timeout: 1350,
     _blink_interval: undefined,
 
-    set: function (new_title) {
+    set: function (i18n_p) {
         title._stop_blink();
-        document.title = new_title;
+        document.title = i18n.do(i18n_p.path, i18n_p.params);
     },
 
-    set_blink: function (new_title, override) {
+    set_blink: function (i18n_p, override) {
+        var title_standard = i18n.do("title.standard");
+        var new_title = i18n.do(i18n_p.path, i18n_p.params);
+
         if (!title._blink_interval || override) {
             title._stop_blink();
 
             var state = 0;
             title._blink_interval = window.setInterval(function () {
-                document.title = state ? title.standard : new_title;
+                document.title = state ? title_standard : new_title;
                 state = (state + 1) % 2;
             }, title._blink_timeout);
         }
@@ -604,7 +607,7 @@ var on_msg_actions = {
             on_msg_actions["GAME OK"]();
         });
 
-        title.set(title.standard);
+        title.set(i18n.p("title.standard"));
     },
 
 
@@ -621,7 +624,7 @@ var on_msg_actions = {
             $("#" + grid.opponent).addClass(clazz.inactive);
             $("#" + grid.shoot).addClass(clazz.inactive);
 
-            title.set(title.standard);
+            title.set(i18n.p("title.standard"));
         }
 
         events.on_onetime($("#" + game.ok_next_game), "click", function () {
