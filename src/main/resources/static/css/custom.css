@@ -42,7 +42,7 @@ main {
     justify-content: center;
 }
 
-#message span {
+#message span.msg {
     display: block;
 }
 

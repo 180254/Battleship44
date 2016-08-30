@@ -414,9 +414,12 @@ var message = {
 
         var $span = $("<span/>", {
             "id": id,
-            "class": css_class
+            "class": css_class + " msg"
         });
-        i18n.set($span, i18n_p);
+
+        var $span2 = $("<span/>");
+        i18n.set($span2, i18n_p);
+        $span.append($span2);
 
         if (timeout) {
             setTimeout(function () {
