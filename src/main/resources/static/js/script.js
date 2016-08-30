@@ -44,19 +44,19 @@ var utils = {
 // -------------------------------------------------------------------------------------------------------------------
 
 var i18n = {
-    _cookie_name: "b44_lang",
+    _cookie_name: "b44_lang_code",
     _attr_path: "i18n-path",
     _attr_params: "i18n-params",
     strings: undefined,
-    supported: [
-        { lang: "en", country: "us" },
-        { lang: "pl", country: "pl" }
+    supported/*_lang*/: [
+        { code: "en", country: "us" },
+        { code: "pl", country: "pl" }
     ],
 
     lang: {
         get: function () {
             //noinspection JSUnresolvedVariable
-            var lang = [].concat(
+            var user_lang = [].concat(
                 Cookies.get(i18n._cookie_name)
                 || window.navigator.language
                 || window.navigator.languages
@@ -65,12 +65,12 @@ var i18n = {
             );
 
             var s_lang = i18n.supported[0];
-            for (var i = 0; i < lang.length; i++) {
+            for (var i = 0; i < user_lang.length; i++) {
                 // en-US to en; en_US to en; en to en
-                var iso = lang[i].split(/[-_]/).shift().toLowerCase();
+                var iso = user_lang[i].split(/[-_]/).shift().toLowerCase();
 
                 var grep = $.grep(i18n.supported, function(e) {
-                    return e.lang === iso;
+                    return e.code === iso;
                 });
 
                 if (grep.length > 0) {
@@ -79,12 +79,12 @@ var i18n = {
                 }
             }
 
-            console.log("debug: lang.get - " + s_lang);
+            console.log("debug: i18n.lang.get - " + JSON.stringify(s_lang));
             return s_lang;
         },
 
         set: function (code) {
-            console.log("debug: lang.set - " + code);
+            console.log("debug: i18n.lang.set - " + code);
             Cookies.set(i18n._cookie_name, code);
         }
     },
@@ -138,14 +138,20 @@ var i18n = {
         };
     },
 
-    draw_flags: function() {
+    flags: function(callback) {
         var $flags = $("#flags");
 
         for(var i = 0; i< i18n.supported.length; i++) {
                 var $flag = $("<img/>", {
                     src: "flag/" + i18n.supported[i].country + ".png",
-                    alt: i18n.supported[i].lang
+                    alt: i18n.supported[i].code
                 });
+
+                (function($f, lang){
+                    events.on($f, "click", function() {
+                        callback(lang);
+                    });
+                }($flag, i18n.supported[i]));
 
                 $flags.append($flag);
         }
@@ -154,8 +160,9 @@ var i18n = {
     init: function (error, callback) {
         var lang = i18n.lang.get();
 
-        $.get("i18n/" + lang + ".json", function (data) {
+        $.get("i18n/" + lang.code + ".json", function (data) {
             i18n.strings = data;
+            i18n.set_all();
             if (callback) callback();
         }).fail(function () {
             if (error) error();
@@ -443,12 +450,14 @@ var game = {
     ok_ship_selection: "ok-ship-selection",
 
     init: function () {
-        i18n.draw_flags();
-
         i18n.init(function () {
             console.log("game.init: i18n.init error");
+
         }, function () {
-            i18n.set_all();
+            i18n.flags(function(lang) {
+                i18n.lang.set(lang.code);
+                i18n.init();
+            });
 
             $("#" + grid.shoot).append(grid.fresh(grid.shoot, 10, 10));
             $("#" + grid.opponent).append(grid.fresh(grid.opponent, 10, 10));
