@@ -1,9 +1,20 @@
 /*global Cookies*/
 "use strict";
 
+var cache = {};
+
 var $$ = function (el_id) {
-    return $("#" + el_id);
+    if (el_id !== message.msg_const // exception
+        && cache[el_id]) {
+        return cache[el_id];
+
+    } else {
+        cache[el_id] = $("#" + el_id);
+        return cache[el_id];
+    }
 };
+
+// -------------------------------------------------------------------------------------------------------------------
 
 var utils = {
 
