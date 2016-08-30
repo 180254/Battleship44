@@ -1,7 +1,12 @@
 /*global Cookies*/
 "use strict";
 
+var $$ = function (el_id) {
+    return $("#" + el_id);
+};
+
 var utils = {
+
     // credits: friends @ stackoverflow
     // url: http://stackoverflow.com/a/10727155
     // license: cc by-sa 3.0
@@ -30,12 +35,12 @@ var utils = {
         return window.location.origin + "/?id=" + id;
     },
 
-    set: function (el_id, value) {
-        $("#" + el_id).text(value);
+    set_val: function (el_id, value) {
+        $$(el_id).text(value);
     },
 
-    increment: function (el_id) {
-        var $el = $("#" + el_id);
+    increment_val: function (el_id) {
+        var $el = $$(el_id);
         var prev = parseInt($el.text());
         $el.text(prev + 1);
     }
@@ -45,12 +50,13 @@ var utils = {
 
 var i18n = {
     _cookie_name: "b44_lang_code",
-    _attr_path: "data-i18n-path",
-    _attr_params: "data-i18n-params",
+    _data_attr_path: "data-i18n-path",
+    _data_attr_params: "data-i18n-params",
+
     strings: undefined,
     supported/*_lang*/: [
-        { code: "en", country: "us" },
-        { code: "pl", country: "pl" }
+        {code: "en", country: "gb"},
+        {code: "pl", country: "pl"}
     ],
 
     lang: {
@@ -69,9 +75,11 @@ var i18n = {
                 // en-US to en; en_US to en; en to en
                 var iso = user_lang[i].split(/[-_]/).shift().toLowerCase();
 
-                var grep = $.grep(i18n.supported, function(e) {
-                    return e.code === iso;
-                });
+                var grep = (function (iso) {
+                    return $.grep(i18n.supported, function (e) {
+                        return e.code === iso;
+                    });
+                })(iso);
 
                 if (grep.length > 0) {
                     s_lang = grep[0];
@@ -91,7 +99,7 @@ var i18n = {
 
     do: function (i18n_p) {
         var path_a = i18n_p.path.split(".");
-        var params_a = i18n_p.params || [];
+        var params_a = i18n_p.params;
         var text = i18n.strings;
 
         while (path_a.length > 0) {
@@ -111,14 +119,11 @@ var i18n = {
         var path = i18n_p ? i18n_p.path : null;
         var params = i18n_p ? i18n_p.params : null;
 
-        if (path) $e.attr(i18n._attr_path, path);
-        else path = $e.attr(i18n._attr_path);
+        if (path) $e.attr(i18n._data_attr_path, path);
+        else path = $e.attr(i18n._data_attr_path);
 
-        if (params) {
-            params = [].concat(params);
-            $e.attr(i18n._attr_params, params);
-        }
-        else params = $e.attr(i18n._attr_params) || [];
+        if (params) $e.attr(i18n._data_attr_params, JSON.stringify(params));
+        else params = JSON.parse($e.attr(i18n._data_attr_params) || null) || [];
 
         $e.text(i18n.do(i18n.p(path, params)));
     },
@@ -126,34 +131,39 @@ var i18n = {
     set_all: function () {
         title.set(i18n.p("title.standard"));
 
-        $("[" + i18n._attr_path + "]").each(function () {
+        $("[" + i18n._data_attr_path + "]").each(function () {
             i18n.set($(this));
         });
+    },
+
+    unset: function ($e) {
+        $e.removeAttr(i18n._data_attr_path);
+        $e.removeAttr(i18n._data_attr_params);
     },
 
     p: function (path, params) {
         return {
             path: path,
-            params: params
+            params: [].concat(params)
         };
     },
 
-    flags: function(callback) {
-        var $flags = $("#flags");
+    flags: function (callback) {
+        var $flags = $$("flags");
 
-        for(var i = 0; i< i18n.supported.length; i++) {
-                var $flag = $("<img/>", {
-                    src: "flag/" + i18n.supported[i].country + ".png",
-                    alt: i18n.supported[i].code
+        for (var i = 0; i < i18n.supported.length; i++) {
+            var $flag = $("<img/>", {
+                src: "flag/" + i18n.supported[i].country + ".png",
+                alt: i18n.supported[i].code
+            });
+
+            (function ($f, lang) {
+                events.on($f, "click", function () {
+                    callback(lang);
                 });
+            }($flag, i18n.supported[i]));
 
-                (function($f, lang){
-                    events.on($f, "click", function() {
-                        callback(lang);
-                    });
-                }($flag, i18n.supported[i]));
-
-                $flags.append($flag);
+            $flags.append($flag);
         }
     },
 
@@ -286,7 +296,7 @@ var grid = {
     },
 
     set_cell: function (grid_id, row_i, col_i, new_class, remove_old_class) {
-        var $element = $("#" + grid_id)
+        var $element = $$(grid_id)
             .find("tr").eq(row_i)
             .find("td").eq(col_i);
 
@@ -298,8 +308,8 @@ var grid = {
     },
 
     reset_both: function () {
-        $("#" + grid.shoot).find("td").attr("class", clazz.cell.unknown);
-        $("#" + grid.opponent).find("td").attr("class", clazz.cell.unknown);
+        $$(grid.shoot).find("td").attr("class", clazz.cell.unknown);
+        $$(grid.opponent).find("td").attr("class", clazz.cell.unknown);
     }
 };
 
@@ -311,7 +321,7 @@ var ship_selection = {
         var isMouseDown = false;
         var isHighlighted = false;
 
-        $("#" + grid.shoot).find("td")
+        $$(grid.shoot).find("td")
             .mousedown(function () {
                 isMouseDown = true;
                 $(this).toggleClass(clazz.cell.ship);
@@ -338,7 +348,7 @@ var ship_selection = {
     },
 
     deactivate: function () {
-        $("#" + grid.shoot).find("td")
+        $$(grid.shoot).find("td")
             .off("mousedown")
             .off("mouseover")
             .off("selectstart");
@@ -346,7 +356,7 @@ var ship_selection = {
     },
 
     collect: function () {
-        return $("#" + grid.shoot)
+        return $$(grid.shoot)
             .find("tr").find("td")
             .map(function () {
                 return $(this).hasClass(clazz.cell.ship) | 0;
@@ -356,8 +366,8 @@ var ship_selection = {
     },
 
     move: function () {
-        var shoot = $("#" + grid.shoot).find("td");
-        var opponent = $("#" + grid.opponent).find("td");
+        var shoot = $$(grid.shoot).find("td");
+        var opponent = $$(grid.opponent).find("td");
 
         for (var i = 0; i < shoot.length; i++) {
             var s_clazz = shoot.eq(i).attr("class");
@@ -412,26 +422,26 @@ var message = {
     set: function (i18n_p, timeout, css_class) {
         var id = timeout ? utils.random_string(7, "a") : message.msg_const;
 
-        var $span = $("<span/>", {
+        var $span_outer = $("<span/>", {
             "id": id,
             "class": css_class + " msg"
         });
 
-        var $span2 = $("<span/>");
-        i18n.set($span2, i18n_p);
-        $span.append($span2);
+        var $span_inner = $("<span/>");
+        i18n.set($span_inner, i18n_p);
+        $span_outer.append($span_inner);
 
         if (timeout) {
             setTimeout(function () {
-                $("#" + id).fadeOut("fast", function () {
-                    $("#" + id).remove();
+                $$(id).fadeOut("fast", function () {
+                    $$(id).remove();
                 });
             }, timeout);
         } else {
-            $("#" + message.msg_const).remove();
+            $$(message.msg_const).remove();
         }
 
-        $("#" + message.msg_div).append($span);
+        $$(message.msg_div).append($span_outer);
     },
 
     append_link: function (i18n_p, id) {
@@ -441,7 +451,7 @@ var message = {
         });
         i18n.set($a, i18n_p);
 
-        $("#" + message.msg_const).append($a);
+        $$(message.msg_const).append($a);
     }
 };
 
@@ -457,13 +467,13 @@ var game = {
             console.log("game.init: i18n.init error");
 
         }, function () {
-            i18n.flags(function(lang) {
+            i18n.flags(function (lang) {
                 i18n.lang.set(lang.code);
                 i18n.init();
             });
 
-            $("#" + grid.shoot).append(grid.fresh(grid.shoot, 10, 10));
-            $("#" + grid.opponent).append(grid.fresh(grid.opponent, 10, 10));
+            $$(grid.shoot).append(grid.fresh(grid.shoot, 10, 10));
+            $$(grid.opponent).append(grid.fresh(grid.opponent, 10, 10));
 
             if (!("WebSocket" in window)) {
                 message.set(i18n.p("ws.unable"));
@@ -535,13 +545,13 @@ var on_event_actions = {
 
     onClose: function (evt) {
         console.log("ws.onclose  : " + evt.code + "(" + evt.reason + ")");
-        message.set(i18n.p("ws.close"), null, clazz.msg.fail);
+        message.set(i18n.p("ws.close", [evt.code, evt.reason || "?"]), null, clazz.msg.fail);
         ship_selection.deactivate();
     },
 
     onError: function (evt) {
         console.log("ws.onclose  : " + evt.type);
-        message.set(i18n.p("ws.error"), null, clazz.msg.fail);
+        message.set(i18n.p("ws.error", evt.type), null, clazz.msg.fail);
     },
 
     onSend: function (msg) {
@@ -557,12 +567,14 @@ var on_msg_actions = {
     },
 
     "GAME OK": function (payload) {
-        $("#" + grid.opponent).addClass(clazz.inactive);
-        $("#" + grid.shoot).removeClass(clazz.inactive);
+        $$(grid.opponent).addClass(clazz.inactive);
+        $$(grid.shoot).removeClass(clazz.inactive);
 
         if (payload) {
-            utils.set(info.game_url, utils.get_url(payload));
-            utils.set(info.players_game, 1);
+            utils.set_val(info.game_url, utils.get_url(payload));
+            utils.set_val(info.players_game, 1);
+
+            i18n.unset($$(info.game_url));
         }
 
         grid.reset_both();
@@ -571,7 +583,7 @@ var on_msg_actions = {
         message.append_link(i18n.p("put.done"), game.ok_ship_selection);
 
         ship_selection.activate();
-        events.on($("#" + game.ok_ship_selection), "click", function () {
+        events.on($$(game.ok_ship_selection), "click", function () {
             ws.send("GRID " + ship_selection.collect());
         });
     },
@@ -581,8 +593,8 @@ var on_msg_actions = {
     },
 
     "GRID OK": function () {
-        $("#" + grid.opponent).removeClass(clazz.inactive);
-        $("#" + grid.shoot).addClass(clazz.inactive);
+        $$(grid.opponent).removeClass(clazz.inactive);
+        $$(grid.shoot).addClass(clazz.inactive);
 
         message.set(i18n.p("tour.awaiting"));
 
@@ -598,7 +610,7 @@ var on_msg_actions = {
     },
 
     "TOUR YOU": function () {
-        var $gs = $("#" + grid.shoot);
+        var $gs = $$(grid.shoot);
         $gs.removeClass(clazz.inactive);
 
         message.set(i18n.p("tour.shoot_me"), null, clazz.msg.important);
@@ -612,7 +624,7 @@ var on_msg_actions = {
     },
 
     "TOUR HE": function () {
-        $("#" + grid.shoot).addClass(clazz.inactive);
+        $$(grid.shoot).addClass(clazz.inactive);
         message.set(i18n.p("tour.shoot_opp"));
         title.set(i18n.p("title.shoot_opp"));
     },
@@ -634,10 +646,10 @@ var on_msg_actions = {
     },
 
     "WON_": function (payload) {
-        $("#" + grid.opponent).addClass(clazz.inactive);
-        $("#" + grid.shoot).addClass(clazz.inactive);
+        $$(grid.opponent).addClass(clazz.inactive);
+        $$(grid.shoot).addClass(clazz.inactive);
 
-        utils.increment(payload === "YOU" ? info.winning_me : info.winning_opp);
+        utils.increment_val(payload === "YOU" ? info.winning_me : info.winning_opp);
 
         payload === "YOU"
             ? message.set(i18n.p("end.won_me"))
@@ -645,7 +657,7 @@ var on_msg_actions = {
 
         message.append_link(i18n.p("end.next_game"), game.ok_next_game);
 
-        events.on_onetime($("#" + game.ok_next_game), "click", function () {
+        events.on_onetime($$(game.ok_next_game), "click", function () {
             on_msg_actions["GAME OK"]();
         });
 
@@ -654,7 +666,7 @@ var on_msg_actions = {
 
 
     "1PLA": function (payload) {
-        utils.set(info.players_game, 1);
+        utils.set_val(info.players_game, 1);
         var game_interrupted = payload === "game-interrupted";
 
         message.set(i18n.p("end.opp_gone"),
@@ -662,8 +674,8 @@ var on_msg_actions = {
         );
 
         if (game_interrupted) {
-            var $go = $("#" + grid.opponent);
-            var $gs = $("#" + grid.shoot);
+            var $go = $$(grid.opponent);
+            var $gs = $$(grid.shoot);
 
             events.off($gs.find("td"), "click"); // remove shoot action
 
@@ -674,13 +686,13 @@ var on_msg_actions = {
             title.set(i18n.p("title.standard"));
         }
 
-        events.on_onetime($("#" + game.ok_next_game), "click", function () {
+        events.on_onetime($$(game.ok_next_game), "click", function () {
             on_msg_actions["GAME OK"]();
         });
     },
 
     "2PLA": function () {
-        utils.set(info.players_game, 2);
+        utils.set_val(info.players_game, 2);
         message.set(i18n.p("tour.two_players"), message.timeout.slow);
     },
 
@@ -692,7 +704,8 @@ var on_msg_actions = {
 
         for (var i = 0; i < stats.length; i++) {
             var stat = stats[i].split("=");
-            $("#" + info.stat[stat[0]]).text(stat[1]);
+            utils.set_val(info.stat[stat[0]], stat[1]);
+            i18n.unset($$(info.stat[stat[0]]));
         }
 
     },

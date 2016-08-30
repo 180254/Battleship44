@@ -45,20 +45,3 @@
 
 -> <bad_command>
 <- 400_ unknown-command
-
--- commands --
-
-HI_.
-GAME
-GRID
-TOUR
-SHOT
-YOU_
-HE__
-WON_
-1PLA
-2PLA
-PING
-PONG
-STAT
-400_

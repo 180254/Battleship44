@@ -11,13 +11,14 @@ v1.1
 + back: possible to customize WebSocket conf&policy by .properties file
 
 v1.2
-+ front: do i18n strings configurable by json files
-+ front: i10n - add polish lang support
-+ front: possible to change lang (no reload)
-- back/front: info which ship sizes are already shot & still to shoot down
++ front: general improvements and refactoring
++ front: i18n: strings configurable by json files
++ front: i18n: polish lang support
++ front: i18n: possible to change lang without page reload
+- back/front: info which ship sizes are already shot & which are still to shoot down
 
 v1.3
-- back/front: add chat
+- back/front: mini chat in game, between players
 
 v2.0
 - back/front: fleet-type is now game-level, not server-level
