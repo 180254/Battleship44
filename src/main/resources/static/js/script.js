@@ -552,8 +552,32 @@ var ws = {
 // -------------------------------------------------------------------------------------------------------------------
 
 var err = {
+    _ws_code: {
+        // https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
+        1000: "CLOSE_NORMAL",
+        1001: "CLOSE_GOING_AWAY",
+        1002: "CLOSE_PROTOCOL_ERROR",
+        1003: "CLOSE_UNSUPPORTED",
+        1005: "CLOSE_NO_STATUS",
+        1004: "?",
+        1006: "CLOSE_ABNORMAL",
+        1007: "Unsupported Data",
+        1008: "Policy Violation",
+        1009: "CLOSE_TOO_LARGE",
+        1010: "Missing Extension",
+        1011: "Internal Error",
+        1012: "Service Restart",
+        1013: "Try Again Later",
+        1014: "?",
+        1015: "TLS Handshake"
+    },
+
     translate: function (msg) {
         return msg;
+    },
+
+    translate_ws_exit_code: function (ws_exit_code) {
+        return err._ws_code[ws_exit_code];
     }
 };
 
@@ -573,8 +597,10 @@ var on_event_actions = {
     },
 
     onClose: function (evt) {
-        console.log("ws.onclose  : " + evt.code + "(" + evt.reason + ")");
-        message.set(i18n.p("ws.close", [evt.code, evt.reason || "?"]), null, clazz.msg.fail);
+        var reason = evt.reason || err.translate_ws_exit_code(evt.code) || "?";
+
+        console.log("ws.onclose  : " + evt.code + "(" + reason + ")");
+        message.set(i18n.p("ws.close", [evt.code, reason]), null, clazz.msg.fail);
 
         title.set(i18n.p("title.standard"));
         ship_selection.deactivate();
