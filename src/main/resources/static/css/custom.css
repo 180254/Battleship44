@@ -8,6 +8,19 @@ main {
     height: 600px;
 }
 
+#flags {
+    float: right;
+    margin-bottom: 5px;
+}
+
+#flags img {
+    padding-right: 0.5rem;
+}
+
+#flags > :last-child {
+    padding-right: 0 !important;
+}
+
 #message {
     font-family: Verdana, Geneva, sans-serif;
     text-align: center;

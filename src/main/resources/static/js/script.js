@@ -48,7 +48,10 @@ var i18n = {
     _attr_path: "i18n-path",
     _attr_params: "i18n-params",
     strings: undefined,
-    supported: ["en"],
+    supported: [
+        { lang: "en", country: "us" },
+        { lang: "pl", country: "pl" }
+    ],
 
     lang: {
         get: function () {
@@ -65,8 +68,13 @@ var i18n = {
             for (var i = 0; i < lang.length; i++) {
                 // en-US to en; en_US to en; en to en
                 var iso = lang[i].split(/[-_]/).shift().toLowerCase();
-                if ($.inArray(iso, i18n.supported) !== -1) {
-                    s_lang = iso;
+
+                var grep = $.grep(i18n.supported, function(e) {
+                    return e.lang === iso;
+                });
+
+                if (grep.length > 0) {
+                    s_lang = grep[0];
                     break;
                 }
             }
@@ -128,6 +136,19 @@ var i18n = {
             path: path,
             params: params
         };
+    },
+
+    draw_flags: function() {
+        var $flags = $("#flags");
+
+        for(var i = 0; i< i18n.supported.length; i++) {
+                var $flag = $("<img/>", {
+                    src: "flag/" + i18n.supported[i].country + ".png",
+                    alt: i18n.supported[i].lang
+                });
+
+                $flags.append($flag);
+        }
     },
 
     init: function (error, callback) {
@@ -422,6 +443,8 @@ var game = {
     ok_ship_selection: "ok-ship-selection",
 
     init: function () {
+        i18n.draw_flags();
+
         i18n.init(function () {
             console.log("game.init: i18n.init error");
         }, function () {
