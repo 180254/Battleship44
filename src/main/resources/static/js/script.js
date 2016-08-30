@@ -45,8 +45,8 @@ var utils = {
 
 var i18n = {
     _cookie_name: "b44_lang_code",
-    _attr_path: "i18n-path",
-    _attr_params: "i18n-params",
+    _attr_path: "data-i18n-path",
+    _attr_params: "data-i18n-params",
     strings: undefined,
     supported/*_lang*/: [
         { code: "en", country: "us" },
@@ -111,14 +111,14 @@ var i18n = {
         var path = i18n_p ? i18n_p.path : null;
         var params = i18n_p ? i18n_p.params : null;
 
-        if (path) $e.data(i18n._attr_path, path);
-        else path = $e.data(i18n._attr_path);
+        if (path) $e.attr(i18n._attr_path, path);
+        else path = $e.attr(i18n._attr_path);
 
         if (params) {
             params = [].concat(params);
-            $e.data(i18n._attr_params, params);
+            $e.attr(i18n._attr_params, params);
         }
-        else params = $e.data(i18n._attr_params) || [];
+        else params = $e.attr(i18n._attr_params) || [];
 
         $e.text(i18n.do(i18n.p(path, params)));
     },
@@ -126,7 +126,7 @@ var i18n = {
     set_all: function () {
         title.set(i18n.p("title.standard"));
 
-        $("[data-" + i18n._attr_path + "]").each(function () {
+        $("[" + i18n._attr_path + "]").each(function () {
             i18n.set($(this));
         });
     },

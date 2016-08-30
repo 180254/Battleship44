@@ -1,0 +1,45 @@
+{
+  "ws": {
+    "unable": "WebSocket: nie da rady rozpocząć.",
+    "close": "WebSocket: zakończono, prawdpodobnie timeout.",
+    "error": "WebSocket: nieoczekiwany problem, spróbuj ponownie."
+  },
+  "title": {
+    "standard": "Okręty44",
+    "shoot_me": "B44: Your shoot ...",
+    "shoot_opp": "B44: Opponent shoot ..."
+  },
+  "pre": {
+    "initializing": "Inicjowanie, proszę czekać.",
+    "hi": "Powitanie od serwera: {}"
+  },
+  "put": {
+    "info": "Ustaw swoje statki na prawym polu. ",
+    "done": "zrobione?",
+    "fail": "Statki ustawione nieprawidłowo."
+  },
+  "tour": {
+    "awaiting": "Oczekiwanie na drugiego gracza ...",
+    "one_player": "Jeden gracz w grze.",
+    "two_players": "Dwóch graczy w grze.",
+    "shoot_me": "Twój strzał ...",
+    "shoot_opp": "Teraz przeciwnik..."
+  },
+  "end": {
+    "won_me": "Koniec gry. Wygrałeś,",
+    "won_opp": "Koniec gry. Wygrał przeciwnik. ",
+    "opp_gone": "Twój przeciwnik sobie poszedł. ",
+    "next_game": "kolejna gra?"
+  },
+  "fail": {
+    "fail": "błąd: {}"
+  },
+  "stats": {
+    "unknown": "nieznane",
+    "game_url": "gra/adres",
+    "game_players": "gra/liczba graczy",
+    "game_ratio": "gra/wygrane",
+    "server_ships": "serwer/rozmiary statków",
+    "server_players": "serwer/liczba graczy"
+  }
+}
