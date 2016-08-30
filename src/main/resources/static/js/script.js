@@ -575,12 +575,17 @@ var on_event_actions = {
     onClose: function (evt) {
         console.log("ws.onclose  : " + evt.code + "(" + evt.reason + ")");
         message.set(i18n.p("ws.close", [evt.code, evt.reason || "?"]), null, clazz.msg.fail);
+
+        title.set(i18n.p("title.standard"));
         ship_selection.deactivate();
     },
 
     onError: function (evt) {
         console.log("ws.onclose  : " + evt.type);
         message.set(i18n.p("ws.error", evt.type), null, clazz.msg.fail);
+
+        title.set(i18n.p("title.standard"));
+        ship_selection.deactivate();
     },
 
     onSend: function (msg) {
