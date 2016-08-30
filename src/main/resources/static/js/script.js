@@ -140,7 +140,7 @@ var i18n = {
     },
 
     set_all: function () {
-        title.set(i18n.p("title.standard"));
+        title.translate();
 
         $("[" + i18n._data_attr_path + "]").each(function () {
             i18n.set($(this));
@@ -184,6 +184,7 @@ var i18n = {
         $.get("i18n/" + lang.code + ".json", function (data) {
             i18n.strings = data;
             i18n.set_all();
+
             if (callback) callback();
         }).fail(function () {
             if (error) error();
@@ -198,21 +199,25 @@ var title = {
     _blink_timeout: 1350,
     _blink_interval: undefined,
 
+    _current: [], // array of i18n_p
+    _current_t: [], // array of translated i18n_p
+
     set: function (i18n_p) {
         title._stop_blink();
-        document.title = i18n.do(i18n_p);
+        title._current = [i18n_p];
+        title.translate();
     },
 
     set_blink: function (i18n_p, override) {
-        var title_standard = i18n.do(i18n.p("title.standard"));
-        var new_title = i18n.do(i18n_p);
+        title._current = [i18n.p("title.standard"), i18n_p];
+        title.translate();
 
         if (!title._blink_interval || override) {
             title._stop_blink();
 
             var state = 0;
             title._blink_interval = window.setInterval(function () {
-                document.title = state ? title_standard : new_title;
+                document.title = title._current_t[state];
                 state = (state + 1) % 2;
             }, title._blink_timeout);
         }
@@ -221,6 +226,17 @@ var title = {
     _stop_blink: function () {
         if (title._blink_interval) {
             window.clearInterval(title._blink_interval);
+            title._blink_interval = undefined;
+        }
+    },
+
+    translate: function () {
+        title._current_t = title._current.map(function (e) {
+            return i18n.do(e);
+        });
+
+        if (title._current_t.length === 1) {
+            document.title = title._current_t[0];
         }
     }
 };
@@ -478,6 +494,8 @@ var game = {
             console.log("game.init: i18n.init error");
 
         }, function () {
+            title.set(i18n.p("title.standard"));
+
             i18n.flags(function (lang) {
                 i18n.lang.set(lang.code);
                 i18n.init();
