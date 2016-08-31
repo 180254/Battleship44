@@ -15,9 +15,13 @@ v1.2
 + front: i18n: strings configurable by json files
 + front: i18n: polish lang support
 + front: i18n: possible to change lang without page reload
-- back/front: info which ship sizes are already shot & which are still to shoot down
++ front: pointer cursor on all flag, and cross-hair on shoot grid
 
 v1.3
+- front: re-written & refactored js to ECMAScript6 (Chrome52+ tested)
+
+v1.x
+- back/front: info which ship sizes are already shot & which are still to shoot down
 - back/front: mini chat in game, between players
 
 v2.0
