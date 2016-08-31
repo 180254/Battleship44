@@ -349,6 +349,7 @@ var ship_selection = {
         var isHighlighted = false;
 
         $$(grid.shoot).find("td")
+            .addClass("shoot-able")
             .mousedown(function () {
                 isMouseDown = true;
                 $(this).toggleClass(clazz.cell.ship);
@@ -376,6 +377,7 @@ var ship_selection = {
 
     deactivate: function () {
         $$(grid.shoot).find("td")
+            .removeClass("shoot-able")
             .off("mousedown")
             .off("mouseover")
             .off("selectstart");
@@ -676,6 +678,7 @@ var on_msg_actions = {
         message.set(i18n.p("tour.shoot_me"), null, clazz.msg.important);
         title.set_blink(i18n.p("title.shoot_me"), false);
 
+        $gs.find("td").addClass("shoot-able");
         events.on_onetime($gs.find("td"), "click", function (dis) {
             var pos = serializer.cell_serialize(dis.attr("data-row-i"), dis.attr("data-col-i"));
             ws.send("SHOT " + pos);
@@ -685,6 +688,7 @@ var on_msg_actions = {
 
     "TOUR HE": function () {
         $$(grid.shoot).addClass(clazz.inactive);
+        $$(grid.shoot).find("td").removeClass("shoot-able");
         message.set(i18n.p("tour.shoot_opp"));
         title.set(i18n.p("title.shoot_opp"));
     },
@@ -737,6 +741,7 @@ var on_msg_actions = {
             var $go = $$(grid.opponent);
             var $gs = $$(grid.shoot);
 
+            $gs.find("td").removeClass("shoot-able");
             events.off($gs.find("td"), "click"); // remove shoot action
 
             message.append_link(i18n.p("end.next_game"), game.ok_next_game);

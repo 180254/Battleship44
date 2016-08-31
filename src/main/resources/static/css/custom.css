@@ -15,6 +15,7 @@ main {
 #flags {
     float: right;
     margin-bottom: 5px;
+    cursor: pointer;
 }
 
 #flags > img {
@@ -139,4 +140,8 @@ main {
 
 .info-td-1 {
     width: 10rem;
+}
+
+.shoot-able {
+    cursor: crosshair;
 }
