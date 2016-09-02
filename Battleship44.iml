@@ -4,9 +4,8 @@
     <facet type="Spring" name="Spring">
       <configuration>
         <fileset id="fileset" name="Spring Application Context" removed="false">
-          <dependency>spring_boot_pl.nn44.Application</dependency>
-          <file>file://$MODULE_DIR$/src/main/java/pl/nn44/Application.java</file>
           <file>file://$MODULE_DIR$/src/main/java/pl/nn44/battleship/configuration/GameConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/pl/nn44/battleship/Application.java</file>
         </fileset>
       </configuration>
     </facet>

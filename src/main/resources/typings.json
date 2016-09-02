@@ -1,0 +1,10 @@
+{
+  "globalDependencies": {
+    "jquery": "registry:dt/jquery#1.10.0+20160704162008",
+    "jqueryui": "registry:dt/jqueryui#1.11.0+20160727153854",
+    "js-cookie": "registry:dt/js-cookie#2.0.0+20160317120654"
+  },
+  "resolution": {
+    "main": "static/js/app/typings"
+  }
+}
