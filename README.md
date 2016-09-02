@@ -42,7 +42,7 @@ Back-end:
 * [java se runtime environment >=1.8](http://www.oracle.com/technetwork/java/javase/overview/index.html)
 
 ### run-steps
-* go to app directory
+* go to app main directory
 * execute `java -jar target/battleship44-0.1.jar`
 
 ##changelog 
