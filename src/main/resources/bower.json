@@ -22,12 +22,14 @@
   "install": {
     "path": {
       "js": "static/js/lib",
+      "map": "static/js/lib",
       "css": "static/css/lib"
     },
     "sources": {
       "jquery": [
         "bower_components/jquery/dist/jquery.js",
-        "bower_components/jquery/dist/jquery.min.js"
+        "bower_components/jquery/dist/jquery.min.js",
+        "bower_components/jquery/dist/jquery.min.map"
       ],
       "jquery-ui": [
         "bower_components/jquery-ui/jquery-ui.js",
