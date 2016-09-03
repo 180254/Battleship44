@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "removeComments": true,
+    "strictNullChecks": true,
     "target": "es6",
     "sourceMap": true,
-    "removeComments": true,
     "outFile": "src/main/resources/static/js/app.js"
   },
   "files": [

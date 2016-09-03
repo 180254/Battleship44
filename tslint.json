@@ -5,11 +5,23 @@
     "no-unused-variable": false,
     "no-console": false,
     "no-namespace": false,
+    "interface-name": false,
     "variable-name": [
       true,
       "ban-keywords",
       "check-format",
+      "allow-pascal-case",
       "allow-leading-underscore"
+    ],
+    "typedef": [
+      true,
+      "call-signature",
+      "arrow-call-signature",
+      "parameter",
+      "arrow-parameter",
+      "property-declaration",
+      "variable-declaration",
+      "member-variable-declaration"
     ]
   }
 }
