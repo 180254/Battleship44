@@ -4,7 +4,7 @@
 
 * It is `spring boot` application.
 * Back-end uses `maven` as build automation tool & dependency manager. 
-* Front-end uses `npm`  as build automation tool & `bower` and `typings` as dependency manager.
+* Front-end uses `npm` as build automation tool & dependency manager.
 * Front-end is written in `TypeScript2`, and final compiled .js file is `not` provided.
 
 ### compile-dependencies
@@ -26,11 +26,9 @@ Front-end, compilng TS files and dependency JS collecting:
 
 * install all front-end compile-dependencies
 * go to app main directory
-* execute `npm install`
-* execute `npm run bower install`
-* execute `npm run bower-installer`
-* execute `npm run typings install`
-* execute `npm run tsc`
+* execute `npm run install-update`
+* execute `npm run collect-compile`
+* execute `npm run clean-fail` <sub><sup>(optionally, will fail, don't worry)</sup></sub>
 
 Back-end, compiling app:
 

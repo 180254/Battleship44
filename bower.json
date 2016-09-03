@@ -21,9 +21,9 @@
   },
   "install": {
     "path": {
-      "js": "src/main/static/js/lib",
-      "map": "src/main/static/js/lib",
-      "css": "src/main/static/css/lib"
+      "js": "src/main/resources/static/js/lib",
+      "map": "src/main/resources/static/js/lib",
+      "css": "src/main/resources/static/css/lib"
     },
     "sources": {
       "jquery": [
@@ -36,7 +36,7 @@
         "bower_components/jquery-ui/jquery-ui.min.js"
       ],
       "js-cookie": [
-        "bower_components/js.cookie.js"
+        "bower_components/js-cookie/src/js.cookie.js"
       ]
     }
   }
