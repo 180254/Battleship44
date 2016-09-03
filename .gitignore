@@ -4,6 +4,7 @@ node_modules
 typings
 *.js
 *.js.map
+*.log
 
 # Maven
 target/

@@ -2,39 +2,40 @@
 
 ##compile & run
 
-* It is spring boot application. It uses maven as build automation tool.  
-* Front-end is written in TypeScript, and compiled .js file is `not` provided.
+* It is `spring boot` application.
+* Back-end uses `maven` as build automation tool & dependency manager. 
+* Front-end uses `npm`  as build automation tool & `bower` and `typings` as dependency manager.
+* Front-end is written in `TypeScript2`, and final compiled .js file is `not` provided.
 
 ### compile-dependencies
 Back-end compile dependencies:
 
-* [java development kit >=1.8](http://www.oracle.com/technetwork/java/javase/overview/index.html)
-* [maven](https://maven.apache.org/) - wrapper is provided
-* dependencies are listed in `pom.xml` config file  
+* [java development kit](http://www.oracle.com/technetwork/java/javase/overview/index.html) >=1.8
+* [maven](https://maven.apache.org/) >= 3.3 (wrapper is provided)
+
 
 Front-end (TypeScript files) compile dependencies:
 
-* [nodejs](https://nodejs.org/en/)
-* [bower](https://www.npmjs.com/package/bower)
-* [bower-installer](https://www.npmjs.com/package/bower-installer)
-* [typings](https://www.npmjs.com/package/typings)
-* [typescript](https://www.npmjs.com/package/typescript)
+* [nodejs, npm](https://nodejs.org/en/) (probably any version)
+
 
 ### compile-steps
 * first front-end, then back-end
 
-Front-end:  
+Front-end, compilng TS files and dependency JS collecting:  
 
 * install all front-end compile-dependencies
-* go to app src/main/resources directory
-* execute `bower install`
-* execute `bower-installer -r`
-* execute `typings install`
-* execute `tsc`
+* go to app main directory
+* execute `npm install`
+* execute `npm run bower install`
+* execute `npm run bower-installer`
+* execute `npm run typings install`
+* execute `npm run tsc`
 
-Back-end:
+Back-end, compiling app:
 
-* generally, [as any spring boot app](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#build-tool-plugins-maven-packaging)
+* generally steps are [as in any spring boot app](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#build-tool-plugins-maven-packaging)
+* install all back-end compile-dependencies
 * go to app main directory
 * run `mvn clean package`
 

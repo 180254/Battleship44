@@ -21,9 +21,9 @@
   },
   "install": {
     "path": {
-      "js": "static/js/lib",
-      "map": "static/js/lib",
-      "css": "static/css/lib"
+      "js": "src/main/static/js/lib",
+      "map": "src/main/static/js/lib",
+      "css": "src/main/static/css/lib"
     },
     "sources": {
       "jquery": [

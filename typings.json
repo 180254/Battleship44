@@ -5,6 +5,6 @@
     "js-cookie": "registry:dt/js-cookie#2.0.0+20160317120654"
   },
   "resolution": {
-    "main": "static/js/app/typings"
+    "main": "src/main/resources/static/js/app/typings"
   }
 }

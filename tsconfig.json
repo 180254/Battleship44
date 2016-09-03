@@ -1,13 +1,12 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "sourceMap": false,
+    "sourceMap": true,
     "removeComments": true,
-    "preserveConstEnums": true,
-    "outFile": "static/js/app.js"
+    "outFile": "src/main/resources/static/js/app.js"
   },
   "files": [
-    "static/js/app/main.ts"
+    "src/main/resources/static/js/app/app.ts"
   ],
   "compileOnSave": true
 }
