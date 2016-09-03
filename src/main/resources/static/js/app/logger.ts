@@ -1,4 +1,6 @@
-namespace Logger {
+"use strict";
+
+namespace logger {
 
     export enum Level {
         TRACE = 6,
@@ -9,41 +11,41 @@ namespace Logger {
         FATAL = 1,
     }
 
-    export let minLevel: Level = Level.TRACE;
+    export let LEVEL: Level = Level.TRACE;
 
-    export let trace = text => {
-        if (Logger.minLevel >= Level.TRACE) {
+    export function trace(text: string): void {
+        if (logger.LEVEL >= Level.TRACE) {
             console.log(`trace: ${text}`);
         }
-    };
+    }
 
-    export let debug = text => {
-        if (Logger.minLevel >= Level.DEBUG) {
+    export function debug(text: string): void {
+        if (logger.LEVEL >= Level.DEBUG) {
             console.log(`debug: ${text}`);
         }
-    };
+    }
 
-    export let info = text => {
-        if (Logger.minLevel >= Level.INFO) {
+    export function info(text: string): void {
+        if (logger.LEVEL >= Level.INFO) {
             console.log(`info: ${text}`);
         }
-    };
+    }
 
-    export let warn = text => {
-        if (Logger.minLevel >= Level.WARN) {
+    export function warn(text: string): void {
+        if (logger.LEVEL >= Level.WARN) {
             console.log(`warn: ${text}`);
         }
-    };
+    }
 
-    export let error = text => {
-        if (Logger.minLevel >= Level.ERROR) {
+    export function error(text: string): void {
+        if (logger.LEVEL >= Level.ERROR) {
             console.log(`error: ${text}`);
         }
-    };
+    }
 
-    export let fatal = text => {
-        if (Logger.minLevel >= Level.FATAL) {
+    export function fatal(text: string): void {
+        if (logger.LEVEL >= Level.FATAL) {
             console.log(`fatal: ${text}`);
         }
-    };
+    }
 }
