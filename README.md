@@ -44,7 +44,7 @@ Back-end, compiling app:
 
 ### run-steps
 * go to app main directory
-* execute `java -jar target/battleship44-0.1.jar`
+* execute `java -jar target/battleship44-0.0.1.jar`
 
 ##changelog 
 v1.0  

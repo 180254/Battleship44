@@ -5,7 +5,7 @@
 
     <groupId>pl.nn44</groupId>
     <artifactId>battleship</artifactId>
-    <version>0.1</version>
+    <version>0.0.1</version>
     <packaging>jar</packaging>
 
     <name>Battleship44</name>
