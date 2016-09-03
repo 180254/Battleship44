@@ -1,8 +1,8 @@
 {
   "ws": {
     "unable": "WebSocket: unable to initialize.",
-    "close": "WebSocket: connection closed (code: {}, reason: {}).",
-    "error": "WebSocket: connection closed ({})."
+    "close": "WebSocket: connection closed (code: {0}, reason: {1}).",
+    "error": "WebSocket: connection closed ({0})."
   },
   "title": {
     "standard": "Battleship44",
@@ -11,7 +11,7 @@
   },
   "pre": {
     "initializing": "Initializing, please wait …",
-    "hi": "Welcome message: {}"
+    "hi": "Welcome message: {0}"
   },
   "put": {
     "info": "Put your ships on right grid. ",
@@ -32,7 +32,7 @@
     "next_game": "next game?"
   },
   "fail": {
-    "fail": "error: {}"
+    "fail": "error: {0}"
   },
   "stats": {
     "unknown": "unknown",

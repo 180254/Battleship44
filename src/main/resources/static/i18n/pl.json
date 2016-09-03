@@ -1,8 +1,8 @@
 {
   "ws": {
     "unable": "WebSocket: nie da rady rozpocząć.",
-    "close": "WebSocket: połączenie zakończone (kod: {}, powód: {}).",
-    "error": "WebSocket: połączenie zakończone ({})."
+    "close": "WebSocket: połączenie zakończone (kod: {0}, powód: {1}).",
+    "error": "WebSocket: połączenie zakończone ({0})."
   },
   "title": {
     "standard": "Okręty44",
@@ -11,7 +11,7 @@
   },
   "pre": {
     "initializing": "Inicjowanie, proszę czekać …",
-    "hi": "Powitanie od serwera: {}"
+    "hi": "Powitanie od serwera: {0}"
   },
   "put": {
     "info": "Ustaw swoje statki na prawym polu. ",
@@ -32,7 +32,7 @@
     "next_game": "kolejna gra?"
   },
   "fail": {
-    "fail": "błąd: {}"
+    "fail": "błąd: {0}"
   },
   "stats": {
     "unknown": "nieznany",
