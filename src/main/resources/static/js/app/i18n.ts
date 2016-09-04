@@ -140,23 +140,19 @@ namespace i18n {
             logger.trace("i18n.Setter.get/find.prefer/[{0}]".format(userTags));
             logger.trace("i18n.Setter.get/find.supported/[{0}]".format(Conf.supported));
 
-            // try exact tag, as from user data
             for (let userTag of userTags) {
+                // try exact tag, as from user data
                 selected = Conf.supported.find(supTag => userTag.exactlyMatches(supTag));
                 if (selected !== undefined) {
                     logger.debug("i18n.Setter.get/find.exact/[{0}]".format(selected));
                     break;
                 }
-            }
 
-            // or maybe approx tag
-            if (selected === undefined) {
-                for (let userTag of userTags) {
-                    selected = Conf.supported.find(supTag => userTag.approxMatches(supTag));
-                    if (selected !== undefined) {
-                        logger.debug("i18n.Setter.get/find.approx/[{0}]".format(selected));
-                        break;
-                    }
+                // or maybe approx tag
+                selected = Conf.supported.find(supTag => userTag.approxMatches(supTag));
+                if (selected !== undefined) {
+                    logger.debug("i18n.Setter.get/find.approx/[{0}]".format(selected));
+                    break;
                 }
             }
 
