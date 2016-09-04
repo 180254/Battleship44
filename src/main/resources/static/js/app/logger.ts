@@ -1,3 +1,4 @@
+/* tslint:disable:no-console */
 "use strict";
 
 namespace logger {

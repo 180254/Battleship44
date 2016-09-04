@@ -3,7 +3,6 @@
   "rules": {
     "no-reference": false,
     "no-unused-variable": false,
-    "no-console": false,
     "no-namespace": false,
     "interface-name": false,
     "variable-name": [
