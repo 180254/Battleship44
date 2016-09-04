@@ -6,6 +6,7 @@
 * Back-end uses `maven` as build automation tool & dependency manager. 
 * Front-end uses `npm` as build automation tool & dependency manager.
 * Front-end is written in `TypeScript2`, and final compiled .js file is `not` provided.
+* `TS2` to `ES6` compile config is provided. `ES6` to `ES5`, or `minify` configs are not provided.
 
 ### compile-dependencies
 Back-end compile dependencies:
@@ -16,7 +17,7 @@ Back-end compile dependencies:
 
 Front-end (TypeScript files) compile dependencies:
 
-* [nodejs, npm](https://nodejs.org/en/) (probably any version)
+* [nodejs, npm](https://nodejs.org/en/) (v6.3.x/v3.10.x tested, but probably any version)
 
 
 ### compile-steps
@@ -65,7 +66,7 @@ v1.2
 + front: pointer cursor on all flag, and cross-hair on shoot grid  
   
 v1.3  
-- front: re-written & refactored js to TypeScript(compiled as ES6) (Chrome52+ tested)  
+- front: re-written & refactored js to TypeScript(target ES6), Chrome53 tested  
   
 v1.x  
 - back/front: info which ship sizes are already shot & which are still to shoot down  
