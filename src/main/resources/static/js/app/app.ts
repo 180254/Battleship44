@@ -3,9 +3,9 @@
 "use strict";
 
 // config
-logger.LEVEL = logger.Level.TRACE;
+logger.Conf.level = logger.Level.TRACE;
 
-i18n.supported = [
+i18n.Conf.supported = [
     new i18n.Lang("pl", "pl"),
     new i18n.Lang("en", "us"),
 ];

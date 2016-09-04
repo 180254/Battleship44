@@ -10,10 +10,12 @@ interface String {
 }
 
 if (!String.prototype.format) {
-    String.prototype.format = (...replacements: string[]): string => {
-        let args: any = replacements;
-        return this.replace(/{(\d+)}/g, (match: any, index: any) => typeof args[index] !== "undefined"
-            ? args[index]
-            : match);
-    };
+    String.prototype.format =
+        (...replacements: string[]): string => {
+            let args: any = replacements;
+            return this.replace(/{(\d+)}/g, (match: any, index: any) =>
+                typeof args[index] !== "undefined"
+                    ? args[index]
+                    : match);
+        };
 }

@@ -11,40 +11,42 @@ namespace logger {
         FATAL = 1,
     }
 
-    export let LEVEL: Level = Level.TRACE;
+    export class Conf {
+        public static level: Level = Level.TRACE;
+    }
 
     export function trace(text: string): void {
-        if (logger.LEVEL >= Level.TRACE) {
+        if (logger.Conf.level >= Level.TRACE) {
             console.log(`trace: ${text}`);
         }
     }
 
     export function debug(text: string): void {
-        if (logger.LEVEL >= Level.DEBUG) {
+        if (logger.Conf.level >= Level.DEBUG) {
             console.log(`debug: ${text}`);
         }
     }
 
     export function info(text: string): void {
-        if (logger.LEVEL >= Level.INFO) {
+        if (logger.Conf.level >= Level.INFO) {
             console.log(`info: ${text}`);
         }
     }
 
     export function warn(text: string): void {
-        if (logger.LEVEL >= Level.WARN) {
+        if (logger.Conf.level >= Level.WARN) {
             console.log(`warn: ${text}`);
         }
     }
 
     export function error(text: string): void {
-        if (logger.LEVEL >= Level.ERROR) {
+        if (logger.Conf.level >= Level.ERROR) {
             console.log(`error: ${text}`);
         }
     }
 
     export function fatal(text: string): void {
-        if (logger.LEVEL >= Level.FATAL) {
+        if (logger.Conf.level >= Level.FATAL) {
             console.log(`fatal: ${text}`);
         }
     }
