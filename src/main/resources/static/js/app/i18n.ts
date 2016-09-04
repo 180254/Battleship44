@@ -1,5 +1,5 @@
 /// <reference path="typings/index.d.ts" />
-/// <reference path="string.format.ts" />
+/// <reference path="format.ts" />
 /// <reference path="logger.ts" />
 
 "use strict";
@@ -26,7 +26,7 @@ namespace i18n {
         public static dataAttrPath: string = "data-i18n-path";
         public static dataAttrParams: string = "data-i18n-params";
 
-        public static stringsPath: ((langTag: LangTag) => string) = (lt) => "{0}.json".format(lt.toString());
+        public static stringsPath: ((langTag: LangTag) => string) = (lt) => "{0}.json".format(lt);
     }
 
     // ---------------------------------------------------------------------------------------------------------------
@@ -41,10 +41,7 @@ namespace i18n {
 
         constructor(lang: string, region?: string) {
             this._lang = lang.toLowerCase();
-
-            if (region !== undefined) {
-                this._region = region.toLowerCase();
-            }
+            this._region = region && region.toLowerCase();
         }
 
         public static fromString(langTag: string): LangTag {
@@ -101,9 +98,11 @@ namespace i18n {
 
         public toString(): string {
             let result: string = this._lang;
+
             if (this._region !== undefined) {
                 result += "-" + this._region;
             }
+
             return result;
         }
     }
@@ -137,21 +136,21 @@ namespace i18n {
             const userTags: LangTag[] = this._user();
             let selected: LangTag | undefined;
 
-            logger.trace("i18n.Setter.get/find.prefer/[{0}]".format(userTags));
-            logger.trace("i18n.Setter.get/find.supported/[{0}]".format(Conf.supported));
+            logger.trace("i18n.prefer = [{0}]".format(userTags));
+            logger.trace("i18n.supported = [{0}]".format(Conf.supported));
 
             for (let userTag of userTags) {
                 // try exact tag, as from user data
                 selected = Conf.supported.find(supTag => userTag.exactlyMatches(supTag));
                 if (selected !== undefined) {
-                    logger.debug("i18n.Setter.get/find.exact/[{0}]".format(selected));
+                    logger.debug("i18n.get = exact[{0}]".format(selected));
                     break;
                 }
 
                 // or maybe approx tag
                 selected = Conf.supported.find(supTag => userTag.approxMatches(supTag));
                 if (selected !== undefined) {
-                    logger.debug("i18n.Setter.get/find.approx/[{0}]".format(selected));
+                    logger.debug("i18n.get = approx[{0}]".format(selected));
                     break;
                 }
             }
@@ -159,14 +158,14 @@ namespace i18n {
             // or first supported (default)
             if (selected === undefined) {
                 selected = Conf.supported[0];
-                logger.debug("i18n.Setter.get/find.default/[{0}]".format(selected));
+                logger.debug("i18n.get = default[{0}]".format(selected));
             }
 
             return selected;
         }
 
         public static set(langTag: LangTag): void {
-            logger.debug("i18n.String.set/[{0}]".format(langTag));
+            logger.debug("i18n.set = [{0}]".format(langTag));
             Cookies.set(Conf.cookieName, langTag.toString());
         }
     }
