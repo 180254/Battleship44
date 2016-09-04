@@ -6,7 +6,7 @@
 // license url: https://creativecommons.org/licenses/by-sa/3.0/
 
 interface String {
-    format(...replacements: string[]): string;
+    format(...replacements: any[]): string;
 }
 
 if (!String.prototype.format) {

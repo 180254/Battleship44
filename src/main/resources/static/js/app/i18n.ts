@@ -137,14 +137,14 @@ namespace i18n {
             const userTags: LangTag[] = this._user();
             let selected: LangTag | undefined;
 
-            logger.trace("i18n.Setter.get/find.prefer/[{0}]".format(userTags.toString()));
-            logger.trace("i18n.Setter.get/find.supported/[{0}]".format(Conf.supported.toString()));
+            logger.trace("i18n.Setter.get/find.prefer/[{0}]".format(userTags));
+            logger.trace("i18n.Setter.get/find.supported/[{0}]".format(Conf.supported));
 
             // try exact tag, as from user data
             for (let userTag of userTags) {
                 selected = Conf.supported.find(supTag => userTag.exactlyMatches(supTag));
                 if (selected !== undefined) {
-                    logger.debug("i18n.Setter.get/find.exact/[{0}]".format(selected.toString()));
+                    logger.debug("i18n.Setter.get/find.exact/[{0}]".format(selected));
                     break;
                 }
             }
@@ -154,7 +154,7 @@ namespace i18n {
                 for (let userTag of userTags) {
                     selected = Conf.supported.find(supTag => userTag.approxMatches(supTag));
                     if (selected !== undefined) {
-                        logger.debug("i18n.Setter.get/find.approx/[{0}]".format(selected.toString()));
+                        logger.debug("i18n.Setter.get/find.approx/[{0}]".format(selected));
                         break;
                     }
                 }
@@ -163,14 +163,14 @@ namespace i18n {
             // or first supported (default)
             if (selected === undefined) {
                 selected = Conf.supported[0];
-                logger.debug("i18n.Setter.get/find.default/[{0}]".format(selected.toString()));
+                logger.debug("i18n.Setter.get/find.default/[{0}]".format(selected));
             }
 
             return selected;
         }
 
         public static set(langTag: LangTag): void {
-            logger.debug("i18n.String.set/[{0}]".format(langTag.toString()));
+            logger.debug("i18n.String.set/[{0}]".format(langTag));
             Cookies.set(Conf.cookieName, langTag.toString());
         }
     }
