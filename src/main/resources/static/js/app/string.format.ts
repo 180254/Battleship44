@@ -10,12 +10,14 @@ interface String {
 }
 
 if (!String.prototype.format) {
-    String.prototype.format =
-        (...replacements: string[]): string => {
-            let args: any = replacements;
-            return this.replace(/{(\d+)}/g, (match: any, index: any) =>
-                typeof args[index] !== "undefined"
-                    ? args[index]
-                    : match);
-        };
+    // doesn't work with arrow function
+    // http://stackoverflow.com/a/34361380
+    // tslint:disable:only-arrow-functions
+    String.prototype.format = function (): string {
+        const args: IArguments = arguments;
+        return this.replace(/{(\d+)}/g, (match: any, index: any) =>
+            typeof args[index] !== undefined
+                ? args[index]
+                : match);
+    };
 }
