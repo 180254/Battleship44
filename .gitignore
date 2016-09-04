@@ -1,10 +1,12 @@
-bower_components/
 node_modules/
-typings/
+node_bower/
+node_typings/
+typings
 
 *.js
 *.map
 *.log
+!Gruntfile.js
 
 target/
 
