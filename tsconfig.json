@@ -5,11 +5,10 @@
     "removeComments": true,
     "strictNullChecks": true,
     "target": "es6",
-    "sourceMap": true,
-    "outFile": "src/main/resources/static/js/app.js"
+    "outFile": "src/main/resources/static/js/app.js",
+    "sourceMap": true
   },
   "files": [
     "src/main/resources/static/js/app/app.ts"
-  ],
-  "compileOnSave": true
+  ]
 }

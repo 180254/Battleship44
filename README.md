@@ -15,8 +15,8 @@ Supported fleet modes:
 
 Supported & tested browsers:  
 
-* Chrome 53+
-* FF 49+
+* Chrome 53
+* Firefox 49
 
 ##compile & run
 
