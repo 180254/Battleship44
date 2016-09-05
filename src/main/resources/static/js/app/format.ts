@@ -16,7 +16,7 @@ if (!String.prototype.format) {
     String.prototype.format = function (): string {
         const args: IArguments = arguments;
         return this.replace(/{(\d+)}/g, (match: any, index: any) =>
-            typeof args[index] !== undefined
+            typeof args[index] !== "undefined"
                 ? args[index]
                 : match);
     };

@@ -1,4 +1,3 @@
-/// <reference path="typings/index.d.ts" />
 /// <reference path="format.ts" />
 /// <reference path="logger.ts" />
 
@@ -26,7 +25,7 @@ namespace i18n {
         public static dataAttrPath: string = "data-i18n-path";
         public static dataAttrParams: string = "data-i18n-params";
 
-        public static stringsPath: ((langTag: LangTag) => string) = (lt) => "{0}.json".format(lt);
+        public static path: ((langTag: LangTag) => string) = (lt) => "{0}.json".format(lt);
     }
 
     // ---------------------------------------------------------------------------------------------------------------
@@ -114,7 +113,7 @@ namespace i18n {
         // gist: Language detection in javascript
         // https://gist.github.com/ksol/62b489572944ca70b4ba
         private static _user(): LangTag[] {
-            const langTagsStr: string[] = (<string[]> [])
+            const tagStrings: string[] = (<string[]> [])
                 .concat(
                     Cookies.get(Conf.cookieName),
                     window.navigator.language,
@@ -124,8 +123,7 @@ namespace i18n {
                     window.navigator.systemLanguage
                 ).filter(langTagStr => !!langTagStr);
 
-            return langTagsStr
-                .map(langTagStr => LangTag.fromString(langTagStr));
+            return tagStrings.map(tagStr => LangTag.fromString(tagStr));
         }
 
         public static get(): LangTag {
@@ -250,7 +248,7 @@ namespace i18n {
 
         public init(error?: (() => void), callback?: (() => void)): void {
             const langTag: LangTag = i18n.Setter.get();
-            const jsonPath: string = Conf.stringsPath(langTag);
+            const jsonPath: string = Conf.path(langTag);
 
             $.get(jsonPath, data => {
                 this._strings = data;

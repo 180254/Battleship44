@@ -9,7 +9,7 @@ i18n.Conf.supported = [
     new i18n.LangTag("pl", "pl"),
     new i18n.LangTag("en", "us"),
 ];
-i18n.Conf.stringsPath = (lt) => "i18n/{0}.json".format(lt.lang);
+i18n.Conf.path = (lt) => "i18n/{0}.json".format(lt.lang);
 
 // main
 // something, start game
