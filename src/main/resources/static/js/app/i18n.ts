@@ -40,7 +40,7 @@ namespace i18n {
 
         constructor(lang: string, region?: string) {
             this._lang = lang.toLowerCase();
-            this._region = region && region.toLowerCase();
+            this._region = region && region.toUpperCase();
         }
 
         public static fromString(langTag: string): LangTag {
@@ -61,10 +61,11 @@ namespace i18n {
         }
 
         /**
-         * Exact match. It is not equals as doesn't meet equals rules!
+         * Exact match. It is just equals.
          *
          * true  | this: en-us -> other: en-us
-         * true  | this: en-?? -> other: en-??, en-us, en-gb
+         * true  | this: en-?? -> other: en-??
+         * false | this: en-?? -> other: en-us
          * false | this: en-us -> other: en-??, en-gb
          *
          * @param other
@@ -72,9 +73,7 @@ namespace i18n {
          */
         public exactlyMatches(other: LangTag): boolean {
             const langMatches: boolean = this._lang === other._lang;
-            const regionMatches: boolean = this._region !== undefined
-                ? this._region === other._region
-                : true;
+            const regionMatches: boolean = this._region === other._region;
             return langMatches && regionMatches;
         }
 
@@ -116,8 +115,9 @@ namespace i18n {
             const tagStrings: string[] = (<string[]> [])
                 .concat(
                     Cookies.get(Conf.cookieName),
-                    window.navigator.language,
                     window.navigator.languages,
+                    window.navigator.language,
+
                     window.navigator.userLanguage,
                     window.navigator.browserLanguage,
                     window.navigator.systemLanguage
