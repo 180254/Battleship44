@@ -1,9 +1,25 @@
 {
-  "extends": "tslint:latest",
+  "extends": [
+    "tslint:recommended",
+    "./node_modules/tslint-microsoft-contrib/tslint.json"
+  ],
+
+  "rulesDirectory": [
+    "node_modules/tslint-microsoft-contrib"
+  ],
+
   "rules": {
+    "no-for-in-array": false,
+    "restrict-plus-operands": false,
+
+    "linebreak-style": false,
+    "missing-jsdoc": false,
+
     "no-reference": false,
     "no-unused-variable": false,
     "no-namespace": false,
+    "no-invalid-this": false,
+
     "interface-name": false,
     "variable-name": [
       true,
@@ -11,6 +27,7 @@
       "check-format",
       "allow-leading-underscore"
     ],
+
     "typedef": [
       true,
       "call-signature",
@@ -19,6 +36,7 @@
       "variable-declaration",
       "member-variable-declaration"
     ],
+
     "member-ordering": [
       true,
       "variables-before-functions"

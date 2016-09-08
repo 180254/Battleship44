@@ -7,11 +7,11 @@
     "strictNullChecks": true,
 
     "target": "es6",
-    "outFile": "src/main/resources/static/js/app.es6.js",
+    "outFile": "src/main/resources/static/js/app.tests.js",
     "sourceMap": true
   },
 
   "files": [
-    "src/main/resources/static/js/app/app.ts"
+    "src/main/resources/static/js/app/i18n.tests.ts"
   ]
 }

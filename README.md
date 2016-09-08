@@ -1,30 +1,33 @@
 #**Battleship44**  
 
-Just <a href="https://en.wikipedia.org/wiki/Battleship_(game)">battleship</a> html5 game.
+Just <a href="https://en.wikipedia.org/wiki/Battleship_(game)">battleship</a> html5 `game`.
 
-Supported fleet sizes:
+Supported (implemented) `fleet sizes`:
 
 * russian (4, 3, 3, 2, 2, 2, 1, 1, 1, 1)
 * classic one (5, 4, 3, 3, 2)
 * classic two (5, 4, 3, 2, 2, 1, 1)
 
-Supported fleet modes:
+Supported (implemented) `fleet modes`:
 
 * straight fleets
 * curved fleets
 
-Supported & tested browsers:  
+Supported `langs` (translated strings):  
+
+* english  
+* polish  
+
+Supported & tested `browsers`:  
 
 * Chrome 53
-* Firefox 49
 
 ##compile & run
 
 * It is `spring boot` application.
 * Back-end uses `maven` as build automation tool & dependency manager. 
 * Front-end uses `npm` as build automation tool & dependency manager.
-* Front-end is written in `TypeScript2`, and final compiled .js file is `not` provided.
-* `TS2` to `ES6` compile config is provided. `ES6` to `ES5`, or `minify` configs are not provided.
+
 
 ### compile-dependencies
 Back-end compile dependencies:
@@ -47,6 +50,7 @@ Front-end, compilng TS files and dependency JS collecting:
 * go to app main directory
 * execute `npm run install-update`
 * execute `npm run collect-compile`
+* execute `npm run convert-minify`
 
 Back-end, compiling app:
 
@@ -83,8 +87,10 @@ v1.2
 + front: pointer cursor on all flag, and cross-hair on shoot grid  
   
 v1.3  
-- front: re-written & refactored js to TypeScript(target ES6), Chrome53 tested  
-  
+- front: re-written & refactored js to TypeScript  
+- front: source now written with targeting es6, es5 also available (transcompiled)  
+- front: js file is now minified
+ 
 v1.x  
 - back/front: info which ship sizes are already shot & which are still to shoot down  
 - back/front: mini chat in game, between players  

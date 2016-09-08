@@ -15,8 +15,8 @@ if (!String.prototype.format) {
     // tslint:disable:only-arrow-functions
     String.prototype.format = function (): string {
         const args: IArguments = arguments;
-        return this.replace(/{(\d+)}/g, (match: any, index: any) =>
-            typeof args[index] !== "undefined"
+        return this.replace(/{(\d+)}/g, (match: string, index: number) =>
+            args[index] !== undefined
                 ? args[index]
                 : match);
     };

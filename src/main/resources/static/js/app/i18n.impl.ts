@@ -1,12 +1,12 @@
-/// <reference path="format.ts" />
-/// <reference path="logger.ts" />
+/// <reference path="i18n.decl.ts" />
+/// <reference path="string.format.ts" />
+/// <reference path="logger.impl.ts" />
 
 "use strict";
 
 // extend navigator: add not standard lang tags
 // as browsers differently support reporting user lang
-// check i18n.Setter.get()._userLangTags() comment
-// noinspection JSUnusedGlobalSymbols
+// https://gist.github.com/ksol/62b489572944ca70b4ba
 interface Navigator {
     readonly language: string;
     readonly languages: string[];
@@ -19,22 +19,18 @@ interface Navigator {
 
 namespace i18n {
 
-    export class Conf {
+    export class Conf {  // tslint:disable:no-stateless-class
         public static supported: LangTag[] = [];
         public static cookieName: string = "i18n-lang-tag";
         public static dataAttrPath: string = "data-i18n-path";
         public static dataAttrParams: string = "data-i18n-params";
 
-        public static path: ((langTag: LangTag) => string) = (lt) => "{0}.json".format(lt);
+        public static path: ((lang: LangTag) => string) = (lt) => "{0}.json".format(lt);
     }
 
     // ---------------------------------------------------------------------------------------------------------------
 
-    /**
-     * LangTag - lang-region
-     * Examples: en, en-us, en-US
-     */
-    export class LangTag {
+    export class LangTagEx implements LangTag {
         private _lang: string;
         private _region?: string;
 
@@ -43,13 +39,9 @@ namespace i18n {
             this._region = region && region.toUpperCase();
         }
 
-        public static fromString(langTag: string): LangTag {
-            if (langTag.length === 0) {
-                throw new Error(`{langTag}: not a lang tag`);
-            }
-
+        public static FROM_STRING(langTag: string): LangTag {
             const [lang, region]: string[] = langTag.split(/[-_]/);
-            return new LangTag(lang, region);
+            return new LangTagEx(lang, region);
         }
 
         get lang(): string {
@@ -60,58 +52,34 @@ namespace i18n {
             return this._region;
         }
 
-        /**
-         * Exact match. It is just equals.
-         *
-         * true  | this: en-us -> other: en-us
-         * true  | this: en-?? -> other: en-??
-         * false | this: en-?? -> other: en-us
-         * false | this: en-us -> other: en-??, en-gb
-         *
-         * @param other
-         * @returns {boolean}
-         */
         public exactlyMatches(other: LangTag): boolean {
-            const langMatches: boolean = this._lang === other._lang;
-            const regionMatches: boolean = this._region === other._region;
+            const langMatches: boolean = this.lang === other.lang;
+            const regionMatches: boolean = this.region === other.region;
             return langMatches && regionMatches;
         }
 
-        /**
-         * Approx match. It is not equals as doesn't meet equals rules!
-         * Approx = region doesn't matter.
-         *
-         * true  | this: en-us -> other: en-us, en-gb, en-??
-         * true  | this: en-?? -> other: en-??, en-us, en-gb
-         * false | this: en-us -> other: pl-pl, pl-us
-         *
-         * @param other
-         * @returns {boolean}
-         */
         public approxMatches(other: LangTag): boolean {
-            const langMatches: boolean = this._lang === other._lang;
+            const langMatches: boolean = this.lang === other.lang;
             const regionMatches: boolean = true;
             return langMatches && regionMatches;
         }
 
         public toString(): string {
-            let result: string = this._lang;
+            let result: string = this.lang;
 
-            if (this._region !== undefined) {
-                result += "-" + this._region;
+            if (this.region !== undefined) {
+                result += "_" + this.region;
             }
 
             return result;
         }
     }
-
     // ---------------------------------------------------------------------------------------------------------------
 
-    export class Setter {
-
+    export class LangFinderEx implements LangFinder {
         // gist: Language detection in javascript
         // https://gist.github.com/ksol/62b489572944ca70b4ba
-        private static _user(): LangTag[] {
+        public user(): LangTag[] {
             const tagStrings: string[] = (<string[]> [])
                 .concat(
                     Cookies.get(Conf.cookieName),
@@ -123,54 +91,84 @@ namespace i18n {
                     window.navigator.systemLanguage
                 ).filter(langTagStr => !!langTagStr);
 
-            return tagStrings.map(tagStr => LangTag.fromString(tagStr));
+            return tagStrings.map(tagStr => LangTagEx.FROM_STRING(tagStr));
         }
 
-        public static get(): LangTag {
-            if (Conf.supported.length === 0) {
-                throw new Error("let's conf i18n.supported");
+        public server(): i18n.LangTag[] {
+            return i18n.Conf.supported;
+        }
+    }
+
+    export class LangSelectorEx implements LangSelector {
+        public select(finder: i18n.LangFinder): [LangTag, SelectType] {
+            const server: LangTag[] = finder.server();
+            const user: LangTag[] = finder.user();
+
+            if (server.length === 0) {
+                throw new Error("i18n.LangSelector.select.finder.server cannot be empty");
             }
 
-            const userTags: LangTag[] = this._user();
-            let selected: LangTag | undefined;
+            logger.i.trace("i18n.LangSelector.user   = [{0}]".format(user));
+            logger.i.trace("i18n.LangSelector.server = [{0}]".format(server));
 
-            logger.trace("i18n.prefer = [{0}]".format(userTags));
-            logger.trace("i18n.supported = [{0}]".format(Conf.supported));
+            let lang: LangTag | undefined;
+            let lang2: LangTag | undefined;
+            let find: SelectType | undefined = undefined;
 
-            for (let userTag of userTags) {
+            for (const userLang of user) {
                 // try exact tag, as from user data
-                selected = Conf.supported.find(supTag => userTag.exactlyMatches(supTag));
-                if (selected !== undefined) {
-                    logger.debug("i18n.get = exact[{0}]".format(selected));
+                lang = server.find(supLang => userLang.exactlyMatches(supLang));
+                if (lang !== undefined) {
+                    find = SelectType.EXACTLY;
                     break;
                 }
 
                 // or maybe approx tag
-                selected = Conf.supported.find(supTag => userTag.approxMatches(supTag));
-                if (selected !== undefined) {
-                    logger.debug("i18n.get = approx[{0}]".format(selected));
+                lang = server.find(supTag => userLang.approxMatches(supTag));
+                if (lang !== undefined) {
+                    find = SelectType.APPROX;
+
+                    // should prefer general, if same region is not available
+                    const langWithoutRegion: LangTag = new LangTagEx(userLang.lang);
+                    lang2 = server.find(supTag => langWithoutRegion.exactlyMatches(supTag));
+                    if (lang2 !== undefined) {
+                        lang = lang2;
+                        find = SelectType.EXACTLY;
+                    }
+
                     break;
                 }
             }
 
             // or first supported (default)
-            if (selected === undefined) {
-                selected = Conf.supported[0];
-                logger.debug("i18n.get = default[{0}]".format(selected));
+            if (lang === undefined || find === undefined) {
+                lang = server[0];
+                find = SelectType.DEFAULT;
             }
 
-            return selected;
+            logger.i.trace("i18n.LangSelector.select = [{0}, {1}]".format(lang, SelectType[find].toLowerCase()));
+            return [lang, find];
+        }
+    }
+
+    export class LangSetterEx implements LangSetter {
+        public getL(): LangTag {
+            const langFinder: LangFinder = new LangFinderEx();
+            const langSelector: LangSelector = new LangSelectorEx();
+            const result: [LangTag, SelectType] = langSelector.select(langFinder);
+            logger.i.debug("i18n.LangSetter.getL     = [{0}, {1}]".format(result[0], SelectType[result[1]].toLowerCase()));
+            return result[0];
         }
 
-        public static set(langTag: LangTag): void {
-            logger.debug("i18n.set = [{0}]".format(langTag));
-            Cookies.set(Conf.cookieName, langTag.toString());
+        public setL(lang: i18n.LangTag): void {
+            logger.i.debug("i18n.LangSetter.setL = [{0}]".format(lang));
+            Cookies.set(Conf.cookieName, lang.toString());
         }
     }
 
     // ---------------------------------------------------------------------------------------------------------------
 
-    export class KeyEx {
+    export class KeyEx implements Key {
         private _path: string; // some.text.key, ex: my name {0} {1}, call me: {2}
         private _params: string[]; // parameters, ex: ["name", "surname", "100-200"]
 
@@ -194,13 +192,18 @@ namespace i18n {
 
     // ---------------------------------------------------------------------------------------------------------------
 
-    export class Translator {
+    export class TranslatorEx implements Translator {
 
+        private _langSetter: LangSetter;
         private _strings: any = null;
+
+        constructor(langSetter: i18n.LangSetter) {
+            this._langSetter = langSetter;
+        }
 
         public translate(p: KeyEx): string {
             let text: any = this._strings;
-            for (let pp of p.path_arr) {
+            for (const pp of p.path_arr) {
                 if (text.hasOwnProperty(pp)) {
                     text = text[pp];
                 } else {
@@ -211,20 +214,24 @@ namespace i18n {
 
             return typeof text === "string"
                 ? (<string> text).format(...p.params)
-                : this._translateDefault(p);
+                : this.translateDefault(p);
+        }
+
+        public translatable(): JQuery {
+            return $("[{0}]".format(Conf.dataAttrPath));
         }
 
         // noinspection JSMethodCanBeStatic
-        private  _translateDefault(p: KeyEx): string {
+        private translateDefault(p: KeyEx): string {
             return "!{0}[{1}]!".format(p.path, p.params.join(","));
         }
 
-        public set($e: JQuery, p?: KeyEx): void {
-            let path: string = p
+        public setTr($e: JQuery, p?: KeyEx): void {
+            const path: string = p
                 ? p.path
                 : $e.attr(Conf.dataAttrPath);
 
-            let params: string[] = p
+            const params: string[] = p
                 ? p.params
                 : JSON.parse($e.attr(Conf.dataAttrParams) || "[]");
 
@@ -236,23 +243,23 @@ namespace i18n {
             $e.text(this.translate(new KeyEx(path, params)));
         }
 
-        public setAll(): void {
-            $("[{0}]".format(Conf.dataAttrPath)).each((i, elem) => this.set($(elem)));
+        public setAllTr(): void {
+            this.translatable().each((i, elem) => this.setTr($(elem)));
         }
 
         // noinspection JSMethodCanBeStatic
-        public unset($e: JQuery): void {
+        public unsetTr($e: JQuery): void {
             $e.removeAttr(Conf.dataAttrPath);
             $e.removeAttr(Conf.dataAttrParams);
         }
 
         public init(error?: (() => void), callback?: (() => void)): void {
-            const langTag: LangTag = i18n.Setter.get();
+            const langTag: LangTag = this._langSetter.getL();
             const jsonPath: string = Conf.path(langTag);
 
             $.get(jsonPath, data => {
                 this._strings = data;
-                this.setAll();
+                this.setAllTr();
 
                 if (callback) {
                     callback();
