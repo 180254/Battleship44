@@ -1,6 +1,8 @@
 /// <reference path="i18n.impl.ts"/>
 /// <reference types="mocha" />
 
+"use strict";
+
 import LangSelector = i18n.LangSelector;
 import LangSelectorEx = i18n.LangSelectorEx;
 import SelectType = i18n.SelectType;

@@ -27,40 +27,39 @@ namespace logger {
 
         public level: Level = Level.TRACE;
 
-        public trace(text: string): void {
-            if (this.level >= Level.TRACE) {
-                console.log(`trace: ${text}`);
+        private log(level: Level, who: any[], text: string, ...args: any[]): void {
+            if (this.level >= level) {
+                console.log("{0}: {1} {2}".format(
+                    Level[level].toLowerCase(),
+                    who.map(e => e.name !== undefined ? e.name.toString() : e.toString()).join("."),
+                    text.format(...args)
+                ));
             }
         }
 
-        public debug(text: string): void {
-            if (this.level >= Level.DEBUG) {
-                console.log(`debug: ${text}`);
-            }
+        public trace(who: any[], text: string, ...args: any[]): void {
+            this.log(Level.TRACE, who, text, ...args);
+
         }
 
-        public info(text: string): void {
-            if (this.level >= Level.INFO) {
-                console.log(`info: ${text}`);
-            }
+        public debug(who: any[], text: string, ...args: any[]): void {
+            this.log(Level.DEBUG, who, text, ...args);
         }
 
-        public warn(text: string): void {
-            if (this.level >= Level.WARN) {
-                console.log(`warn: ${text}`);
-            }
+        public info(who: any[], text: string, ...args: any[]): void {
+            this.log(Level.INFO, who, text, ...args);
         }
 
-        public error(text: string): void {
-            if (this.level >= Level.ERROR) {
-                console.log(`error: ${text}`);
-            }
+        public warn(who: any[], text: string, ...args: any[]): void {
+            this.log(Level.WARN, who, text, ...args);
         }
 
-        public fatal(text: string): void {
-            if (this.level >= Level.FATAL) {
-                console.log(`fatal: ${text}`);
-            }
+        public error(who: any[], text: string, ...args: any[]): void {
+            this.log(Level.ERROR, who, text, ...args);
+        }
+
+        public fatal(who: any[], text: string, ...args: any[]): void {
+            this.log(Level.FATAL, who, text, ...args);
         }
     }
 

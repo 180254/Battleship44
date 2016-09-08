@@ -1,16 +1,22 @@
 "use strict";
 
+/**
+ * Logger.
+ *
+ * Methods calling example:
+ *  logger.debug([CallerClass, this.callerMethod], "[{0},{1}]", index, element);
+ */
 interface Logger {
 
-    trace(text: string): void;
+    trace(who: any[], text: string, ...args: any[]): void;
 
-    debug(text: string): void;
+    debug(who: any[], text: string, ...args: any[]): void;
 
-    info(text: string): void;
+    info(who: any[], text: string, ...args: any[]): void;
 
-    warn(text: string): void;
+    warn(who: any[], text: string, ...args: any[]): void;
 
-    error(text: string): void;
+    error(who: any[], text: string, ...args: any[]): void;
 
-    fatal(text: string): void;
+    fatal(who: any[], text: string, ...args: any[]): void;
 }

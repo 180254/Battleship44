@@ -1,6 +1,7 @@
 /// <reference path="logger.impl.ts" />
 /// <reference path="i18n.impl.ts" />
-/// <reference path="title.ts" />
+/// <reference path="title.impl.ts" />
+
 "use strict";
 
 // config

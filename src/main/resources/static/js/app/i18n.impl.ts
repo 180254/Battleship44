@@ -105,11 +105,11 @@ namespace i18n {
             const user: LangTag[] = finder.user();
 
             if (server.length === 0) {
-                throw new Error("i18n.LangSelector.select.finder.server cannot be empty");
+                throw new Error("finder.server cannot be empty");
             }
 
-            logger.i.trace("i18n.LangSelector.user   = [{0}]".format(user));
-            logger.i.trace("i18n.LangSelector.server = [{0}]".format(server));
+            logger.i.trace(["i18n", LangSelectorEx, this.select], "user=[{0}]", user);
+            logger.i.trace(["i18n", LangSelectorEx, this.select], "server=[{0}]", server);
 
             let fLang: LangTag | undefined;
             let fLang2: LangTag | undefined;
@@ -154,7 +154,7 @@ namespace i18n {
                 fType = SelectType.DEFAULT;
             }
 
-            logger.i.trace("i18n.LangSelector.select = [{0},{1}]".format(fLang, SelectType[fType].toLowerCase()));
+            logger.i.trace(["i18n", LangSelectorEx, this.select], "select=[{0},{1}]", fLang, SelectType[fType].toLowerCase());
             return [fLang, fType];
         }
     }
@@ -164,13 +164,12 @@ namespace i18n {
             const langFinder: LangFinder = new LangFinderEx();
             const langSelector: LangSelector = new LangSelectorEx();
             const result: [LangTag, SelectType] = langSelector.select(langFinder);
-            logger.i.debug(
-                "i18n.LangSetter.getL     = [{0},{1}]".format(result[0], SelectType[result[1]].toLowerCase()));
+            logger.i.debug(["i18n", LangSetterEx, this.getL], "[{0},{1}]", result[0], SelectType[result[1]].toLowerCase());
             return result[0];
         }
 
         public setL(lang: i18n.LangTag): void {
-            logger.i.debug("i18n.LangSetter.setL = [{0}]".format(lang));
+            logger.i.debug(["i18n", LangSetterEx, this.setL], "[{0}]", lang);
             Cookies.set(Conf.cookieName, lang.toString());
         }
     }
