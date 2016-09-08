@@ -68,7 +68,7 @@ namespace i18n {
             let result: string = this.lang;
 
             if (this.region !== undefined) {
-                result += "_" + this.region;
+                result += "-" + this.region;
             }
 
             return result;
@@ -111,29 +111,37 @@ namespace i18n {
             logger.i.trace("i18n.LangSelector.user   = [{0}]".format(user));
             logger.i.trace("i18n.LangSelector.server = [{0}]".format(server));
 
-            let lang: LangTag | undefined;
-            let lang2: LangTag | undefined;
-            let find: SelectType | undefined = undefined;
+            let fLang: LangTag | undefined;
+            let fLang2: LangTag | undefined;
+            let fType: SelectType | undefined = undefined;
 
             for (const userLang of user) {
                 // try exact tag, as from user data
-                lang = server.find(supLang => userLang.exactlyMatches(supLang));
-                if (lang !== undefined) {
-                    find = SelectType.EXACTLY;
+                fLang = server.find(supLang => userLang.exactlyMatches(supLang));
+                if (fLang !== undefined) {
+                    fType = SelectType.EXACTLY;
                     break;
                 }
 
                 // or maybe approx tag
-                lang = server.find(supTag => userLang.approxMatches(supTag));
-                if (lang !== undefined) {
-                    find = SelectType.APPROX;
+                fLang = server.find(supTag => userLang.approxMatches(supTag));
+                if (fLang !== undefined) {
+                    fType = SelectType.APPROX;
+
+                    // maybe user has exact but on next position?
+                    fLang2 = user.find(userLang => userLang.exactlyMatches(fLang!));
+                    if (fLang2 !== undefined) {
+                        fType = SelectType.EXACTLY;
+                        break;
+                    }
 
                     // should prefer general, if same region is not available
                     const langWithoutRegion: LangTag = new LangTagEx(userLang.lang);
-                    lang2 = server.find(supTag => langWithoutRegion.exactlyMatches(supTag));
-                    if (lang2 !== undefined) {
-                        lang = lang2;
-                        find = SelectType.EXACTLY;
+                    fLang2 = server.find(supTag => langWithoutRegion.exactlyMatches(supTag));
+                    if (fLang2 !== undefined) {
+                        fLang = fLang2;
+                        fType = SelectType.EXACTLY;
+                        break;
                     }
 
                     break;
@@ -141,13 +149,13 @@ namespace i18n {
             }
 
             // or first supported (default)
-            if (lang === undefined || find === undefined) {
-                lang = server[0];
-                find = SelectType.DEFAULT;
+            if (fLang === undefined || fType === undefined) {
+                fLang = server[0];
+                fType = SelectType.DEFAULT;
             }
 
-            logger.i.trace("i18n.LangSelector.select = [{0}, {1}]".format(lang, SelectType[find].toLowerCase()));
-            return [lang, find];
+            logger.i.trace("i18n.LangSelector.select = [{0},{1}]".format(fLang, SelectType[fType].toLowerCase()));
+            return [fLang, fType];
         }
     }
 
@@ -156,7 +164,8 @@ namespace i18n {
             const langFinder: LangFinder = new LangFinderEx();
             const langSelector: LangSelector = new LangSelectorEx();
             const result: [LangTag, SelectType] = langSelector.select(langFinder);
-            logger.i.debug("i18n.LangSetter.getL     = [{0}, {1}]".format(result[0], SelectType[result[1]].toLowerCase()));
+            logger.i.debug(
+                "i18n.LangSetter.getL     = [{0},{1}]".format(result[0], SelectType[result[1]].toLowerCase()));
             return result[0];
         }
 
@@ -187,6 +196,10 @@ namespace i18n {
 
         get params(): string[] {
             return this._params;
+        }
+
+        public toString(): string {
+            return "KeyEx[path={0} params={1}]".format(this.path, this.params.join(","));
         }
     }
 

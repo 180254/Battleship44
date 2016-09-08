@@ -222,5 +222,14 @@ describe("LangSelectorEx", () => {
 
             assertSelectEquals(["en-gb", SelectType.APPROX], result);
         });
+
+        it("should understand complex situation", () => {
+            const result: [LangTag, SelectType] = selector.select(new SimpleLangFinder(
+                "en-gb pl-pl pl en-us en pl]",
+                "pl-pl en-us",
+            ));
+
+            assertSelectEquals(["en-us", SelectType.EXACTLY], result);
+        });
     });
 });
