@@ -5,7 +5,7 @@ module.exports = function (grunt) {
     grunt.initConfig({
 
         copy: {
-            bower: {
+            js: {
                 files: [{
                     expand: true,
                     cwd: "node_bower/jquery/dist/",
@@ -21,6 +21,11 @@ module.exports = function (grunt) {
                     cwd: "node_bower/js-cookie/src/",
                     src: "js.cookie*",
                     dest: "src/main/resources/static/js/lib/js-cookie/"
+                }, {
+                    expand: true,
+                    cwd: "node_modules/babel-polyfill/dist/",
+                    src: "polyfill*",
+                    dest: "src/main/resources/static/js/lib/babel-polyfill/"
                 }]
             }
         },
@@ -65,6 +70,6 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask("cb", ["copy:bower"]);
+    grunt.registerTask("cb", ["copy:js"]);
     grunt.registerTask("cm", ["babel:convert", "babel:minify"]);
 };
