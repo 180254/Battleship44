@@ -18,7 +18,6 @@ import org.springframework.web.socket.server.HandshakeHandler;
 import org.springframework.web.socket.server.jetty.JettyRequestUpgradeStrategy;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 import pl.nn44.battleship.controller.Error0Controller;
-import pl.nn44.battleship.controller.FrontController;
 import pl.nn44.battleship.controller.GameController;
 import pl.nn44.battleship.model.Cell;
 import pl.nn44.battleship.model.Coord;
@@ -50,11 +49,6 @@ class GameConfiguration implements WebSocketConfigurer {
     GameConfiguration(GameProperties gm) {
         Assert.notNull(gm);
         this.gm = gm;
-    }
-
-    @Bean
-    FrontController frontController() {
-        return new FrontController();
     }
 
     @Bean
