@@ -44,7 +44,7 @@ namespace i18n {
     }
 
     export interface LangSelector {
-        select(finder: LangFinder): [LangTag, SelectType];
+        select(): [LangTag, SelectType];
     }
 
     export enum SelectType {
@@ -54,8 +54,8 @@ namespace i18n {
     }
 
     export interface LangSetter {
-        getLT(): LangTag;
-        setLT(langTag: LangTag): void;
+        getLang(): LangTag;
+        setLang(langTag: LangTag): void;
     }
 
     export interface Key {

@@ -8,26 +8,6 @@ namespace i18n {
 
     // ----------------------------------------------------------------------------------------------------------------
 
-    class SimpleLangFinder implements LangFinder {
-        private _user: i18n.LangTag[];
-        private _server: i18n.LangTag[];
-
-        constructor(user: string, server: string) {
-            this._user = user.length ? user.split(" ").map(u => LangTagEx.FROM_STRING(u)) : [];
-            this._server = server.length ? server.split(" ").map(u => LangTagEx.FROM_STRING(u)) : [];
-        }
-
-        public user(): i18n.LangTag[] {
-            return this._user;
-        }
-
-        public server(): i18n.LangTag[] {
-            return this._server;
-        }
-    }
-
-    // ----------------------------------------------------------------------------------------------------------------
-
     function assert(condition: boolean): void {
         if (!condition) {
             throw new Error("condition failed");
@@ -149,81 +129,97 @@ namespace i18n {
     // ----------------------------------------------------------------------------------------------------------------
 
     describe("LangSelectorEx", () => {
-        let selector: LangSelector;
 
-        beforeEach(() => {
-            selector = new LangSelectorEx();
-        });
+        class SimpleLangFinder implements LangFinder {
+            private _user: i18n.LangTag[];
+            private _server: i18n.LangTag[];
+
+            constructor(user: string, server: string) {
+                this._user = user.length ? user.split(" ").map(u => LangTagEx.FROM_STRING(u)) : [];
+                this._server = server.length ? server.split(" ").map(u => LangTagEx.FROM_STRING(u)) : [];
+            }
+
+            public user(): i18n.LangTag[] {
+                return this._user;
+            }
+
+            public server(): i18n.LangTag[] {
+                return this._server;
+            }
+        }
+
+        const doSelect: ((user: string, server: string) => [LangTag, SelectType]) = (user, server) =>
+            new LangSelectorEx(new SimpleLangFinder(
+                user,
+                server
+            )).select();
 
         describe("select", () => {
             it("should select default if none match", () => {
-                const result: [LangTag, SelectType] = selector.select(new SimpleLangFinder(
+                const result: [LangTag, SelectType] = doSelect(
                     "en-us de-de en-gb",
                     "pl-pl",
-                ));
+                );
 
                 assertSelectEquals(["pl-pl", SelectType.DEFAULT], result);
             });
 
             it("should select default if user array is empty", () => {
-                const result: [LangTag, SelectType] = selector.select(new SimpleLangFinder(
+                const result: [LangTag, SelectType] = doSelect(
                     "",
                     "pl-pl en-gb en pl en-us",
-                ));
-
+                );
                 assertSelectEquals(["pl-pl", SelectType.DEFAULT], result);
             });
 
             it("should prefer user lang, even if it is not first in server(1)", () => {
-                const result: [LangTag, SelectType] = selector.select(new SimpleLangFinder(
+                const result: [LangTag, SelectType] = doSelect(
                     "de-de de-us pl-pl",
                     "en-us en-gb en-us pl-pl",
-                ));
+                );
 
                 assertSelectEquals(["pl-pl", SelectType.EXACTLY], result);
             });
 
             it("should prefer user lang, even if it is not first in server(2)", () => {
-                const result: [LangTag, SelectType] = selector.select(new SimpleLangFinder(
+                const result: [LangTag, SelectType] = doSelect(
                     "pl en-us",
                     "en-us en-gb en-us pl-pl",
-                ));
+                );
 
                 assertSelectEquals(["pl-pl", SelectType.APPROX], result);
             });
 
             it("should prefer user lang, even if it is not first in server(3)", () => {
-                const result: [LangTag, SelectType] = selector.select(new SimpleLangFinder(
+                const result: [LangTag, SelectType] = doSelect(
                     "pl-pl",
                     "en-us pl en-gb en-us",
-                ));
-
+                );
                 assertSelectEquals(["pl", SelectType.EXACTLY], result);
             });
 
             it("should prefer general, if same region is not available", () => {
-                const result: [LangTag, SelectType] = selector.select(new SimpleLangFinder(
+                const result: [LangTag, SelectType] = doSelect(
                     "en-us pl-pl",
                     "en-gb en de de-de de-uf pl-pl",
-                ));
-
+                );
                 assertSelectEquals(["en", SelectType.EXACTLY], result);
             });
 
             it("should prefer other region of first preference, instead of exact next preference", () => {
-                const result: [LangTag, SelectType] = selector.select(new SimpleLangFinder(
+                const result: [LangTag, SelectType] = doSelect(
                     "en-us pl-pl",
                     "en-gb pl-pl",
-                ));
+                );
 
                 assertSelectEquals(["en-gb", SelectType.APPROX], result);
             });
 
             it("should understand complex situation", () => {
-                const result: [LangTag, SelectType] = selector.select(new SimpleLangFinder(
+                const result: [LangTag, SelectType] = doSelect(
                     "en-gb pl-pl pl en-us en pl]",
                     "pl-pl en-us",
-                ));
+                );
 
                 assertSelectEquals(["en-us", SelectType.EXACTLY], result);
             });

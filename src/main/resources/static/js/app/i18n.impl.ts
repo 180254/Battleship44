@@ -99,9 +99,15 @@ namespace i18n {
     }
 
     export class LangSelectorEx implements LangSelector {
-        public select(finder: LangFinder): [LangTag, SelectType] {
-            const server: LangTag[] = finder.server();
-            const user: LangTag[] = finder.user();
+        private _finder: LangFinder;
+
+        constructor(finder: LangFinder) {
+            this._finder = finder;
+        }
+
+        public select(): [LangTag, SelectType] {
+            const server: LangTag[] = this._finder.server();
+            const user: LangTag[] = this._finder.user();
 
             if (server.length === 0) {
                 throw new Error("finder.server cannot be empty");
@@ -161,20 +167,24 @@ namespace i18n {
     }
 
     export class LangSetterEx implements LangSetter {
-        public getLT(): LangTag {
-            const langFinder: LangFinder = new LangFinderEx();
-            const langSelector: LangSelector = new LangSelectorEx();
-            const result: [LangTag, SelectType] = langSelector.select(langFinder);
+        private _langSelector: LangSelector;
 
-            logger.i.debug(["i18n", LangSetterEx, this.getLT],
+        constructor(langSelector: i18n.LangSelector) {
+            this._langSelector = langSelector;
+        }
+
+        public getLang(): LangTag {
+            const result: [LangTag, SelectType] = this._langSelector.select();
+
+            logger.i.debug(["i18n", LangSetterEx, this.getLang],
                 "[{0},{1}]", result[0], SelectType[result[1]].toLowerCase()
             );
 
             return result[0];
         }
 
-        public setLT(lang: LangTag): void {
-            logger.i.debug(["i18n", LangSetterEx, this.setLT], "[{0}]", lang);
+        public setLang(lang: LangTag): void {
+            logger.i.debug(["i18n", LangSetterEx, this.setLang], "[{0}]", lang);
             Cookies.set(Conf.cookieName, lang.toString());
         }
     }
@@ -271,7 +281,7 @@ namespace i18n {
         }
 
         public init(error?: (() => void), callback?: (() => void)): void {
-            const langTag: LangTag = this._langSetter.getLT();
+            const langTag: LangTag = this._langSetter.getLang();
             const jsonPath: string = Conf.path(langTag);
 
             $.get(jsonPath, data => {
@@ -288,4 +298,13 @@ namespace i18n {
             });
         }
     }
+    // ---------------------------------------------------------------------------------------------------------------
+
+    class Singleton {
+        public finder: LangFinder = new LangFinderEx();
+        public selector: LangSelector = new LangSelectorEx(this.finder);
+        public setter: LangSetter = new LangSetterEx(this.selector);
+        public translator: Translator = new TranslatorEx(this.setter);
+    }
+    export let i: Singleton = new Singleton();
 }
