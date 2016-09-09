@@ -4,7 +4,7 @@
 namespace i18n {
     "use strict";
 
-    logger.Conf.level = logger.Level.WARN;
+    logger.conf.level = logger.Level.WARN;
 
     // ----------------------------------------------------------------------------------------------------------------
 
@@ -131,8 +131,8 @@ namespace i18n {
     describe("LangSelectorEx", () => {
 
         class SimpleLangFinder implements LangFinder {
-            private _user: i18n.LangTag[];
-            private _server: i18n.LangTag[];
+            private readonly _user: i18n.LangTag[];
+            private readonly _server: i18n.LangTag[];
 
             constructor(user: string, server: string) {
                 this._user = user.length ? user.split(" ").map(u => LangTagEx.FROM_STRING(u)) : [];
@@ -148,11 +148,12 @@ namespace i18n {
             }
         }
 
-        const doSelect: ((user: string, server: string) => [LangTag, SelectType]) = (user, server) =>
-            new LangSelectorEx(new SimpleLangFinder(
-                user,
-                server
-            )).select();
+        const doSelect: ((user: string, server: string) => [LangTag, SelectType]) =
+            (user, server) =>
+                new LangSelectorEx(new SimpleLangFinder(
+                    user,
+                    server
+                )).select();
 
         describe("select", () => {
             it("should select default if none match", () => {

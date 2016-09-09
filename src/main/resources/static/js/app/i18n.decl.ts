@@ -1,5 +1,3 @@
-/// <reference types="jquery" />
-
 namespace i18n {
     "use strict";
 
@@ -8,8 +6,8 @@ namespace i18n {
      * Examples: en, en-US
      */
     export interface LangTag {
-        lang: string;
-        region?: string;
+        readonly lang: string;
+        readonly region?: string;
 
         /**
          * Exact match. It is just equals.
@@ -59,8 +57,8 @@ namespace i18n {
     }
 
     export interface Key {
-        path: string;
-        params: string[];
+        readonly path: string; // some.text.key, ex value: "my name {0} {1}, call me: {2}"
+        readonly params: string[]; // parameters, ex: ["name", "surname", "100-200"]
     }
 
     export interface Translator {

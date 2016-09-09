@@ -3,13 +3,18 @@
 namespace logger {
     "use strict";
 
-    export class Conf { // tslint:disable:no-stateless-class
-        public static set level(value: Level) {
+    class Conf {
+        // noinspection JSMethodCanBeStatic
+        public set level(value: Level) {
             if (logger.i instanceof LoggerEx) {
                 logger.i.level = value;
             }
         }
     }
+
+    export const conf: Conf = new Conf();
+
+    // ---------------------------------------------------------------------------------------------------------------
 
     export enum Level {
         TRACE = 6,
@@ -60,6 +65,8 @@ namespace logger {
             this.log(Level.FATAL, who, text, ...args);
         }
     }
+
+    // ---------------------------------------------------------------------------------------------------------------
 
     export let i: Logger = new LoggerEx();
 }

@@ -6,13 +6,13 @@ namespace app {
     "use strict";
 
     // config
-    logger.Conf.level = logger.Level.TRACE;
+    logger.conf.level = logger.Level.TRACE;
 
-    i18n.Conf.supported = [
+    i18n.conf.supported = [
         new i18n.LangTagEx("pl", "pl"),
         new i18n.LangTagEx("en", "us"),
     ];
-    i18n.Conf.path = (lt) => "i18n/{0}.json".format(lt.lang);
+    i18n.conf.path = (lt) => "i18n/{0}.json".format(lt.lang);
 
     // main
     // something, start game

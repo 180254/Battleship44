@@ -18,20 +18,22 @@ interface Navigator {
 namespace i18n {
     "use strict";
 
-    export class Conf {  // tslint:disable:no-stateless-class
-        public static supported: LangTag[] = [];
-        public static cookieName: string = "i18n-lang-tag";
-        public static dataAttrPath: string = "data-i18n-path";
-        public static dataAttrParams: string = "data-i18n-params";
+    class Conf {
+        public supported: LangTag[] = [];
+        public cookieName: string = "i18n-lang-tag";
+        public dataAttrPath: string = "data-i18n-path";
+        public dataAttrParams: string = "data-i18n-params";
 
-        public static path: ((lang: LangTag) => string) = (lt) => "{0}.json".format(lt);
+        public path: ((lang: LangTag) => string) = (lt) => "{0}.json".format(lt);
     }
+
+    export const conf: Conf = new Conf();
 
     // ---------------------------------------------------------------------------------------------------------------
 
     export class LangTagEx implements LangTag {
-        private _lang: string;
-        private _region?: string;
+        private readonly _lang: string;
+        private readonly _region?: string;
 
         constructor(lang: string, region?: string) {
             this._lang = lang.toLowerCase();
@@ -81,7 +83,7 @@ namespace i18n {
         public user(): LangTag[] {
             const tagStrings: string[] = (<string[]> [])
                 .concat(
-                    Cookies.get(Conf.cookieName),
+                    Cookies.get(conf.cookieName),
                     window.navigator.languages,
                     window.navigator.language,
 
@@ -94,12 +96,12 @@ namespace i18n {
         }
 
         public server(): LangTag[] {
-            return Conf.supported;
+            return conf.supported;
         }
     }
 
     export class LangSelectorEx implements LangSelector {
-        private _finder: LangFinder;
+        private readonly _finder: LangFinder;
 
         constructor(finder: LangFinder) {
             this._finder = finder;
@@ -167,7 +169,7 @@ namespace i18n {
     }
 
     export class LangSetterEx implements LangSetter {
-        private _langSelector: LangSelector;
+        private readonly _langSelector: LangSelector;
 
         constructor(langSelector: i18n.LangSelector) {
             this._langSelector = langSelector;
@@ -185,15 +187,15 @@ namespace i18n {
 
         public setLang(lang: LangTag): void {
             logger.i.debug(["i18n", LangSetterEx, this.setLang], "[{0}]", lang);
-            Cookies.set(Conf.cookieName, lang.toString());
+            Cookies.set(conf.cookieName, lang.toString());
         }
     }
 
     // ---------------------------------------------------------------------------------------------------------------
 
     export class KeyEx implements Key {
-        private _path: string; // some.text.key, ex: my name {0} {1}, call me: {2}
-        private _params: string[]; // parameters, ex: ["name", "surname", "100-200"]
+        private readonly _path: string;
+        private readonly _params: string[];
 
         constructor(path: string, params: string[] | string) {
             this._path = path;
@@ -202,10 +204,6 @@ namespace i18n {
 
         get path(): string {
             return this._path;
-        }
-
-        get path_arr(): string[] {
-            return this._path.split(".");
         }
 
         get params(): string[] {
@@ -221,16 +219,16 @@ namespace i18n {
 
     export class TranslatorEx implements Translator {
 
-        private _langSetter: LangSetter;
-        private _strings: any = null;
+        private readonly _langSetter: LangSetter;
+        private _strings: any;
 
         constructor(langSetter: LangSetter) {
             this._langSetter = langSetter;
         }
 
-        public translate(p: KeyEx): string {
+        public translate(p: Key): string {
             let text: any = this._strings;
-            for (const pp of p.path_arr) {
+            for (const pp of p.path.split(".")) {
                 if (text.hasOwnProperty(pp)) {
                     text = text[pp];
                 } else {
@@ -245,26 +243,26 @@ namespace i18n {
         }
 
         public translatable(): JQuery {
-            return $("[{0}]".format(Conf.dataAttrPath));
+            return $("[{0}]".format(conf.dataAttrPath));
         }
 
         // noinspection JSMethodCanBeStatic
-        private translateDefault(p: KeyEx): string {
+        private translateDefault(p: Key): string {
             return "!{0}[{1}]!".format(p.path, p.params.join(","));
         }
 
-        public setTr($e: JQuery, p?: KeyEx): void {
+        public setTr($e: JQuery, p?: Key): void {
             const path: string = p
                 ? p.path
-                : $e.attr(Conf.dataAttrPath);
+                : $e.attr(conf.dataAttrPath);
 
             const params: string[] = p
                 ? p.params
-                : JSON.parse($e.attr(Conf.dataAttrParams) || "[]");
+                : JSON.parse($e.attr(conf.dataAttrParams) || "[]");
 
             if (p) {
-                $e.attr(Conf.dataAttrPath, p.path);
-                $e.attr(Conf.dataAttrParams, JSON.stringify(p.params));
+                $e.attr(conf.dataAttrPath, p.path);
+                $e.attr(conf.dataAttrParams, JSON.stringify(p.params));
             }
 
             $e.text(this.translate(new KeyEx(path, params)));
@@ -274,15 +272,14 @@ namespace i18n {
             this.translatable().each((i, elem) => this.setTr($(elem)));
         }
 
-        // noinspection JSMethodCanBeStatic
         public unsetTr($e: JQuery): void {
-            $e.removeAttr(Conf.dataAttrPath);
-            $e.removeAttr(Conf.dataAttrParams);
+            $e.removeAttr(conf.dataAttrPath);
+            $e.removeAttr(conf.dataAttrParams);
         }
 
         public init(error?: (() => void), callback?: (() => void)): void {
             const langTag: LangTag = this._langSetter.getLang();
-            const jsonPath: string = Conf.path(langTag);
+            const jsonPath: string = conf.path(langTag);
 
             $.get(jsonPath, data => {
                 this._strings = data;
@@ -306,5 +303,6 @@ namespace i18n {
         public setter: LangSetter = new LangSetterEx(this.selector);
         public translator: Translator = new TranslatorEx(this.setter);
     }
-    export let i: Singleton = new Singleton();
+
+    export const i: Singleton = new Singleton();
 }
