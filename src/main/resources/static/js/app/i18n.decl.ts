@@ -1,8 +1,7 @@
 /// <reference types="jquery" />
 
-"use strict";
-
 namespace i18n {
+    "use strict";
 
     /**
      * LangTag - lang-region
@@ -55,8 +54,8 @@ namespace i18n {
     }
 
     export interface LangSetter {
-        getL(): LangTag;
-        setL(langTag: LangTag): void;
+        getLT(): LangTag;
+        setLT(langTag: LangTag): void;
     }
 
     export interface Key {

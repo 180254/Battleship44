@@ -2,8 +2,6 @@
 /// <reference path="string.format.ts" />
 /// <reference path="logger.impl.ts" />
 
-"use strict";
-
 // extend navigator: add not standard lang tags
 // as browsers differently support reporting user lang
 // https://gist.github.com/ksol/62b489572944ca70b4ba
@@ -18,6 +16,7 @@ interface Navigator {
 // -------------------------------------------------------------------------------------------------------------------
 
 namespace i18n {
+    "use strict";
 
     export class Conf {  // tslint:disable:no-stateless-class
         public static supported: LangTag[] = [];
@@ -94,13 +93,13 @@ namespace i18n {
             return tagStrings.map(tagStr => LangTagEx.FROM_STRING(tagStr));
         }
 
-        public server(): i18n.LangTag[] {
-            return i18n.Conf.supported;
+        public server(): LangTag[] {
+            return Conf.supported;
         }
     }
 
     export class LangSelectorEx implements LangSelector {
-        public select(finder: i18n.LangFinder): [LangTag, SelectType] {
+        public select(finder: LangFinder): [LangTag, SelectType] {
             const server: LangTag[] = finder.server();
             const user: LangTag[] = finder.user();
 
@@ -154,22 +153,28 @@ namespace i18n {
                 fType = SelectType.DEFAULT;
             }
 
-            logger.i.trace(["i18n", LangSelectorEx, this.select], "select=[{0},{1}]", fLang, SelectType[fType].toLowerCase());
+            logger.i.trace(["i18n", LangSelectorEx, this.select],
+                "select=[{0},{1}]", fLang, SelectType[fType].toLowerCase()
+            );
             return [fLang, fType];
         }
     }
 
     export class LangSetterEx implements LangSetter {
-        public getL(): LangTag {
+        public getLT(): LangTag {
             const langFinder: LangFinder = new LangFinderEx();
             const langSelector: LangSelector = new LangSelectorEx();
             const result: [LangTag, SelectType] = langSelector.select(langFinder);
-            logger.i.debug(["i18n", LangSetterEx, this.getL], "[{0},{1}]", result[0], SelectType[result[1]].toLowerCase());
+
+            logger.i.debug(["i18n", LangSetterEx, this.getLT],
+                "[{0},{1}]", result[0], SelectType[result[1]].toLowerCase()
+            );
+
             return result[0];
         }
 
-        public setL(lang: i18n.LangTag): void {
-            logger.i.debug(["i18n", LangSetterEx, this.setL], "[{0}]", lang);
+        public setLT(lang: LangTag): void {
+            logger.i.debug(["i18n", LangSetterEx, this.setLT], "[{0}]", lang);
             Cookies.set(Conf.cookieName, lang.toString());
         }
     }
@@ -209,7 +214,7 @@ namespace i18n {
         private _langSetter: LangSetter;
         private _strings: any = null;
 
-        constructor(langSetter: i18n.LangSetter) {
+        constructor(langSetter: LangSetter) {
             this._langSetter = langSetter;
         }
 
@@ -266,7 +271,7 @@ namespace i18n {
         }
 
         public init(error?: (() => void), callback?: (() => void)): void {
-            const langTag: LangTag = this._langSetter.getL();
+            const langTag: LangTag = this._langSetter.getLT();
             const jsonPath: string = Conf.path(langTag);
 
             $.get(jsonPath, data => {

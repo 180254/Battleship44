@@ -1,9 +1,7 @@
-/* tslint:disable:no-console */
 /// <reference path="logger.decl.ts" />
 
-"use strict";
-
 namespace logger {
+    "use strict";
 
     export class Conf { // tslint:disable:no-stateless-class
         public static set level(value: Level) {
@@ -29,6 +27,7 @@ namespace logger {
 
         private log(level: Level, who: any[], text: string, ...args: any[]): void {
             if (this.level >= level) {
+                // tslint:disable:no-console
                 console.log("{0}: {1} {2}".format(
                     Level[level].toLowerCase(),
                     who.map(e => e.name !== undefined ? e.name.toString() : e.toString()).join("."),
@@ -39,7 +38,6 @@ namespace logger {
 
         public trace(who: any[], text: string, ...args: any[]): void {
             this.log(Level.TRACE, who, text, ...args);
-
         }
 
         public debug(who: any[], text: string, ...args: any[]): void {
