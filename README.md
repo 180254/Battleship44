@@ -38,7 +38,7 @@ Back-end compile dependencies:
 
 Front-end (TypeScript files) compile dependencies:
 
-* [nodejs, npm](https://nodejs.org/en/) (v6.3.x/v3.10.x tested, but probably any version)
+* [nodejs, npm](https://nodejs.org/en/) (v6.3.x/v3.10.x tested, but probably any reasonable version)
 
 
 ### compile-steps
