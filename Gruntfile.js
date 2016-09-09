@@ -30,6 +30,7 @@ module.exports = function (grunt) {
                 options: {
                     presets: ["es2015"],
                     sourceMap: true,
+                    comments: false,
                 },
                 files: [{
                     expand: true,
@@ -47,6 +48,7 @@ module.exports = function (grunt) {
                 options: {
                     presets: ["babili"],
                     sourceMap: true,
+                    comments: false,
                 },
 
                 files: [{
