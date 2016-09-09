@@ -12,19 +12,22 @@ $(function () {
 
     // ---------------------------------------------------------------------------------------------------------------
 
+    // load script info:
+    // #1 Do not set script tag content (text) instead of src attribute - chrome does not load source map then.
+    // #2.1 jQuery is useless as #1 - see jQuery.DOMEval function, it creates script tag with text.
+    // #2.2 Tested&debugged two ways (a,b) - in both DOMEval is used finally.
+    // #2.a $("<script>", {src: src}).appendTo("footer");
+    // #2.b jQuery.ajax({dataType: "script", cache: true, url: src});
+    // #3 Problem discussed at stackoverflow: http://stackoverflow.com/q/15459218
     var load = function (mode, src) {
-        if (mode == "doc") {
+        if (mode == "script") {
+            // no-jQuery explanation:
+            // jQuery.appendTo() cannot be used as chrome does not load source map then
+            // it not just append child if added tag is script
+            // http://stackoverflow.com/a/22572876
             var ref = document.createElement("script");
-            ref.setAttribute("type", "text/javascript");
             ref.setAttribute("src", src);
             document.getElementsByTagName("footer")[0].appendChild(ref);
-
-        } else if (mode == "ajax") {
-            jQuery.ajax({
-                dataType: "script",
-                cache: true,
-                url: src
-            });
         }
     };
 
@@ -39,10 +42,10 @@ $(function () {
             : array[0];
     };
 
-    var modes = ["doc", "ajax"];
+    var modes = ["script"];
     var versions = ["es6", "es6.min", "es5", "es5.min"];
 
-    var modeParam = urlParam("mode");
+    var modeParam = urlParam("m");
     var versionParam = urlParam("v");
 
     var mode = fix(modes, modeParam);
