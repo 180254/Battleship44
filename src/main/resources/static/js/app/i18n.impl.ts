@@ -19,7 +19,7 @@ namespace i18n {
     "use strict";
 
     class Conf {
-        public supported: LangTag[] = [];
+        public supported/*_languages*/: LangTag[] = [];
         public cookieName: string = "i18n-lang-tag";
         public dataAttrPath: string = "data-i18n-path";
         public dataAttrParams: string = "data-i18n-params";
@@ -203,9 +203,9 @@ namespace i18n {
         private readonly _path: string;
         private readonly _params: string[];
 
-        constructor(path: string, params: string[] | string) {
+        constructor(path: string, params: string[] | string | undefined = undefined) {
             this._path = path;
-            this._params = (<string[]> []).concat(params);
+            this._params = (<string[]> []).concat(params || []);
         }
 
         get path(): string {
@@ -227,6 +227,10 @@ namespace i18n {
 
         private readonly _langSetter: LangSetter;
         private _strings: any;
+
+        public readonly onLangChange: event0.Event<number> = {
+            subscribers: [],
+        };
 
         constructor(langSetter: LangSetter) {
             this._langSetter = langSetter;
@@ -290,6 +294,8 @@ namespace i18n {
             $.get(jsonPath, data => {
                 this._strings = data;
                 this.setAllTr();
+
+                this.onLangChange.subscribers.forEach(f => f(0));
 
                 if (callback) {
                     callback();

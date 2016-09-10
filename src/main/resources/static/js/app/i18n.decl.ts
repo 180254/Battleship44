@@ -1,3 +1,5 @@
+///<reference path="event.decl.ts"/>
+
 namespace i18n {
     "use strict";
 
@@ -62,6 +64,8 @@ namespace i18n {
     }
 
     export interface Translator {
+        readonly onLangChange: event0.Event<number>;
+
         translate(p: Key): string;
 
         translatable(): JQuery;
