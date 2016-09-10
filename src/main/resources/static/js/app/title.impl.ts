@@ -21,24 +21,24 @@ namespace title {
 
         private _blinkInterval: number | undefined;
 
-        constructor(translator: i18n.Translator) {
+        public constructor(translator: i18n.Translator) {
             this._translator = translator;
-            this._translator.onLangChange.subscribers.push(() => this.updateTr());
+            this._translator.onLangChange.subscribe(() => this.updateTr());
         }
 
-        public setConst(key: i18n.Key): void {
-            this.removeBlinkInterval();
+        public fixed(key: i18n.Key): void {
+            this.removeBlinking();
 
             this._currentKeys = [key];
             this.updateTr();
         }
 
-        public setBlink(key: i18n.Key, override: boolean): void {
+        public blinking(key: i18n.Key, override: boolean): void {
             this._currentKeys = [conf.standardTitle, key];
             this.updateTr();
 
             if (this._blinkInterval !== undefined || override) {
-                this.removeBlinkInterval();
+                this.removeBlinking();
 
                 let state: number = 0;
                 this._blinkInterval = window.setInterval(() => {
@@ -48,7 +48,7 @@ namespace title {
             }
         }
 
-        private removeBlinkInterval(): void {
+        private removeBlinking(): void {
             if (this._blinkInterval !== undefined) {
                 window.clearInterval(this._blinkInterval);
                 this._blinkInterval = undefined;

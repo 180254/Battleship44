@@ -138,7 +138,7 @@ namespace i18n {
             private readonly _user: i18n.LangTag[];
             private readonly _server: i18n.LangTag[];
 
-            constructor(user: string, server: string) {
+            public constructor(user: string, server: string) {
                 this._user = user.length ? user.split(" ").map(u => LangTagEx.FROM_STRING(u)) : [];
                 this._server = server.length ? server.split(" ").map(u => LangTagEx.FROM_STRING(u)) : [];
             }

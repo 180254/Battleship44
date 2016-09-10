@@ -1,4 +1,4 @@
-///<reference path="event.decl.ts"/>
+///<reference path="event0.decl.ts"/>
 
 namespace i18n {
     "use strict";

@@ -4,7 +4,9 @@ namespace title {
     "use strict";
 
     export interface Title {
-        setConst(key: i18n.Key): void;
-        setBlink(key: i18n.Key, override: boolean): void;
+
+        fixed(key: i18n.Key): void;
+
+        blinking(key: i18n.Key, override: boolean): void;
     }
 }

@@ -12,9 +12,9 @@ namespace app {
         new i18n.LangTagEx("pl", "pl"),
         new i18n.LangTagEx("en", "us"),
     ];
+
     i18n.conf.path = (lt) => "i18n/{0}.json".format(lt.lang);
 
-    // main
-    // something, start game
+    // main, something, start game
     i18n.i.translator.init();
 }

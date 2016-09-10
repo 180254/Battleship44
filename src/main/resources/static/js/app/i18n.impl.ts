@@ -1,6 +1,7 @@
 /// <reference path="i18n.decl.ts" />
 /// <reference path="string.format.ts" />
 /// <reference path="logger.impl.ts" />
+/// <reference path="event0.impl.ts" />
 
 // extend navigator: add not standard lang tags
 // as browsers differently support reporting user lang
@@ -36,7 +37,7 @@ namespace i18n {
         private readonly _lang: string;
         private readonly _region?: string;
 
-        constructor(lang: string, region?: string) {
+        public constructor(lang: string, region?: string) {
             this._lang = lang.toLowerCase();
             this._region = region && region.toUpperCase();
         }
@@ -46,11 +47,11 @@ namespace i18n {
             return new LangTagEx(lang, region);
         }
 
-        get lang(): string {
+        public get lang(): string {
             return this._lang;
         }
 
-        get region(): string | undefined {
+        public get region(): string | undefined {
             return this._region;
         }
 
@@ -106,7 +107,7 @@ namespace i18n {
 
         private readonly _finder: LangFinder;
 
-        constructor(finder: LangFinder) {
+        public constructor(finder: LangFinder) {
             this._finder = finder;
         }
 
@@ -176,7 +177,7 @@ namespace i18n {
 
         private readonly _langSelector: LangSelector;
 
-        constructor(langSelector: i18n.LangSelector) {
+        public constructor(langSelector: i18n.LangSelector) {
             this._langSelector = langSelector;
         }
 
@@ -203,16 +204,16 @@ namespace i18n {
         private readonly _path: string;
         private readonly _params: string[];
 
-        constructor(path: string, params: string[] | string | undefined = undefined) {
+        public constructor(path: string, params: string[] | string | undefined = undefined) {
             this._path = path;
             this._params = (<string[]> []).concat(params || []);
         }
 
-        get path(): string {
+        public get path(): string {
             return this._path;
         }
 
-        get params(): string[] {
+        public get params(): string[] {
             return this._params;
         }
 
@@ -225,15 +226,14 @@ namespace i18n {
 
     export class TranslatorEx implements Translator {
 
-        private readonly _langSetter: LangSetter;
         private _strings: any;
+        private readonly _langSetter: LangSetter;
+        public readonly onLangChange: event0.Event<number>;
 
-        public readonly onLangChange: event0.Event<number> = {
-            subscribers: [],
-        };
-
-        constructor(langSetter: LangSetter) {
+        constructor(langSetter: i18n.LangSetter,
+                    onLangChange: event0.Event<number>) {
             this._langSetter = langSetter;
+            this.onLangChange = onLangChange;
         }
 
         public translate(p: Key): string {
@@ -295,7 +295,7 @@ namespace i18n {
                 this._strings = data;
                 this.setAllTr();
 
-                this.onLangChange.subscribers.forEach(f => f(0));
+                this.onLangChange.publish(0);
 
                 if (callback) {
                     callback();
@@ -314,7 +314,7 @@ namespace i18n {
         public finder: LangFinder = new LangFinderEx();
         public selector: LangSelector = new LangSelectorEx(this.finder);
         public setter: LangSetter = new LangSetterEx(this.selector);
-        public translator: Translator = new TranslatorEx(this.setter);
+        public translator: Translator = new TranslatorEx(this.setter, new event0.EventEx());
     }
 
     export const i: Singleton = new Singleton();
