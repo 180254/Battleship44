@@ -48,8 +48,6 @@ public class ShipFinderTests {
         Assert.assertTrue(surrounding.contains(Coord.c(2, 2)));
         Assert.assertTrue(surrounding.contains(Coord.c(3, 2)));
         Assert.assertTrue(surrounding.contains(Coord.c(3, 1)));
-
-
     }
 
     @Test
@@ -64,6 +62,5 @@ public class ShipFinderTests {
 
         Ship findShip = shipFinder.findShip(Coord.c(2, 0));
         Assert.assertEquals(ships.get(0), findShip);
-
     }
 }

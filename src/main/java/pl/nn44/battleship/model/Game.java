@@ -18,6 +18,7 @@ public class Game {
         id = idGenerator.nextId();
         this.players[0] = player1;
     }
+
     // ---------------------------------------------------------------------------------------------------------------
 
     public String getId() {

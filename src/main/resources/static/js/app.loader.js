@@ -38,8 +38,8 @@ $(function () {
     // returns:
     // * value if validArray.contains(value)
     // * default array value (at index 0) if not
-    var requireValid = function (validArray, value) {
-        return value && validArray.indexOf(value) != -1
+    var requireValid = function (value, validArray) {
+        return value && validArray.indexOf(value) !== -1
             ? value
             : validArray[0];
     };
@@ -50,8 +50,8 @@ $(function () {
     var modeParam = urlParam("m");
     var versionParam = urlParam("v");
 
-    var mode = requireValid(modes, modeParam);
-    var version = requireValid(versions, versionParam);
+    var mode = requireValid(modeParam, modes);
+    var version = requireValid(versionParam, versions);
 
     // ---------------------------------------------------------------------------------------------------------------
 

@@ -63,6 +63,4 @@ public class StraightFleetVerifierTests {
 
         Assert.assertEquals(false, fleetVerifier.verify(grid));
     }
-
-
 }

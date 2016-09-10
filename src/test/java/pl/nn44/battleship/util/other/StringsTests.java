@@ -47,5 +47,4 @@ public class StringsTests {
         org.junit.Assert.assertEquals("ala", subStr);
 
     }
-
 }

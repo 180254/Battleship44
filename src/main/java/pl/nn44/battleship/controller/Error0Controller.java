@@ -35,6 +35,3 @@ public class Error0Controller extends AbstractErrorController {
         return new ResponseEntity<>(message, status);
     }
 }
-
-
-

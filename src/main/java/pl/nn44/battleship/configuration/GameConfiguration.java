@@ -79,6 +79,7 @@ class GameConfiguration implements WebSocketConfigurer {
 
     @Bean
     HandshakeHandler handshakeHandler() {
+
         WebSocketPolicy policy = new WebSocketPolicy(WebSocketBehavior.SERVER);
         policy.setMaxTextMessageSize(gm.getWs().getPolicyMaxTextMessageSize());
         policy.setMaxBinaryMessageSize(gm.getWs().getPolicyMaxBinaryMessageSize());

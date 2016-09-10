@@ -33,7 +33,7 @@
     "babel-cli": "^6.14.0",
     "babili": "^0.0.4",
     "babel-polyfill": "^6.13.0",
-    "babel-preset-babili": "0.0.2",
+    "babel-preset-babili": "^0.0.2",
     "babel-preset-es2015": "^6.14.0",
 
     "bower": "^1.7.9",
@@ -51,8 +51,8 @@
   },
 
   "scripts": {
-    "install-update": "npm install && bower install",
-    "collect-compile": "grunt cb && tsc",
+    "install-update": "npm update && bower update",
+    "collect-compile": "grunt js && tsc",
     "convert-minify": "grunt cm",
     "pretest": "tsc -p tsconfig.tests.json",
     "test": "mocha src/main/resources/static/js/app.tests.js"

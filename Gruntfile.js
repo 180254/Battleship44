@@ -70,6 +70,6 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask("cb", ["copy:js"]);
+    grunt.registerTask("js", ["copy:js"]);
     grunt.registerTask("cm", ["babel:convert", "babel:minify"]);
 };

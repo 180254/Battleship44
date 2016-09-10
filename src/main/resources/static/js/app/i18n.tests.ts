@@ -39,6 +39,7 @@ namespace i18n {
     describe("LangTagEx", () => {
 
         describe("constructor", () => {
+
             it("should create a full-tag", () => {
                 const lang: LangTag = new LangTagEx("en", "US");
                 assertSimpleEquals("en", lang.lang);
@@ -53,6 +54,7 @@ namespace i18n {
         });
 
         describe("construct from string", () => {
+
             it("should create a full-tag, separated with -", () => {
                 const lang: LangTag = LangTagEx.FROM_STRING("en-US");
                 assertSimpleEquals("en", lang.lang);
@@ -104,6 +106,7 @@ namespace i18n {
         });
 
         describe("approxMatches", () => {
+
             it("should equals: same lang, same region", () => {
                 assert(new LangTagEx("en", "US").approxMatches(new LangTagEx("en", "US")));
             });
@@ -131,6 +134,7 @@ namespace i18n {
     describe("LangSelectorEx", () => {
 
         class SimpleLangFinder implements LangFinder {
+
             private readonly _user: i18n.LangTag[];
             private readonly _server: i18n.LangTag[];
 
@@ -156,6 +160,7 @@ namespace i18n {
                 )).select();
 
         describe("select", () => {
+
             it("should select default if none match", () => {
                 const result: [LangTag, SelectType] = doSelect(
                     "en-us de-de en-gb",

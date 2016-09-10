@@ -32,6 +32,7 @@ namespace i18n {
     // ---------------------------------------------------------------------------------------------------------------
 
     export class LangTagEx implements LangTag {
+
         private readonly _lang: string;
         private readonly _region?: string;
 
@@ -75,6 +76,7 @@ namespace i18n {
             return result;
         }
     }
+
     // ---------------------------------------------------------------------------------------------------------------
 
     export class LangFinderEx implements LangFinder {
@@ -101,6 +103,7 @@ namespace i18n {
     }
 
     export class LangSelectorEx implements LangSelector {
+
         private readonly _finder: LangFinder;
 
         constructor(finder: LangFinder) {
@@ -164,11 +167,13 @@ namespace i18n {
             logger.i.trace(["i18n", LangSelectorEx, this.select],
                 "select=[{0},{1}]", fLang, SelectType[fType].toLowerCase()
             );
+
             return [fLang, fType];
         }
     }
 
     export class LangSetterEx implements LangSetter {
+
         private readonly _langSelector: LangSelector;
 
         constructor(langSelector: i18n.LangSelector) {
@@ -194,6 +199,7 @@ namespace i18n {
     // ---------------------------------------------------------------------------------------------------------------
 
     export class KeyEx implements Key {
+
         private readonly _path: string;
         private readonly _params: string[];
 
@@ -295,6 +301,7 @@ namespace i18n {
             });
         }
     }
+
     // ---------------------------------------------------------------------------------------------------------------
 
     class Singleton {

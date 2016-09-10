@@ -68,6 +68,7 @@ public class GameController extends TextWebSocketHandler {
     private String id(WebSocketSession session) {
         return com.google.common.base.Strings.padStart(session.getId(), 8, '0');
     }
+
     private void txt(Player player, String format, Object... args) {
         txt(player.getSession(), format, args);
     }
