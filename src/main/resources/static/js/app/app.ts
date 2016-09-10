@@ -1,6 +1,15 @@
+/// <reference path="string.format.ts" />
+/// <reference path="util.various.ts" />
+/// <reference path="logger.decl.ts" />
 /// <reference path="logger.impl.ts" />
 /// <reference path="i18n.impl.ts" />
+/// <reference path="i18n.impl.ts" />
+/// <reference path="event0.decl.ts" />
+/// <reference path="event0.impl.ts" />
+/// <reference path="title.decl.ts" />
 /// <reference path="title.impl.ts" />
+/// <reference path="event1.decl.ts" />
+/// <reference path="event1.impl.ts" />
 
 namespace app {
     "use strict";
