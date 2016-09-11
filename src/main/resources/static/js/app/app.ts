@@ -10,6 +10,8 @@
 /// <reference path="title.impl.ts" />
 /// <reference path="event1.decl.ts" />
 /// <reference path="event1.impl.ts" />
+/// <reference path="grid.decl.ts" />
+/// <reference path="grid.impl.ts" />
 
 namespace app {
     "use strict";
