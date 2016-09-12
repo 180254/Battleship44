@@ -1,8 +1,19 @@
 /// <reference path="grid.decl.ts" />
 
 namespace grid {
+    "use strict";
+
+    class Conf {
+        public rows: number = 10;
+        public cols: number = 10;
+    }
+
+    export const conf: Conf = new Conf();
+
+    // ---------------------------------------------------------------------------------------------------------------
 
     export class CoordEx implements Coord {
+
         private readonly _row: number;
         private readonly _col: number;
 
@@ -25,35 +36,33 @@ namespace grid {
     }
 
     export class GridsEx implements Grids {
-        private readonly _rows: number;
-        private readonly _cols: number;
 
-        private _shoot: JQuery;
-        private _opponent: JQuery;
+        private _$shoot: JQuery;
+        private _$opponent: JQuery;
 
-        constructor(rows: number, cols: number) {
-            this._rows = rows;
-            this._cols = cols;
+        public get $shoot(): JQuery {
+            return this._$shoot;
         }
 
-        public get shoot(): JQuery {
-            return this._shoot;
+        public get $opponent(): JQuery {
+            return this._$opponent;
         }
 
-        public get opponent(): JQuery {
-            return this._opponent;
+        public init(): void {
+            this._$shoot = this.createGrid("grid-shoot").appendTo("#grid-shoot");
+            this._$opponent = this.createGrid("grid-opponent").appendTo("#grid-opponent");
         }
 
-        public init(callback: () => void): void {
-            this._shoot = this.newGrid("grid-shoot").append("#grid-shoot");
-            this._opponent = this.newGrid("grid-opponent").append("#grid-opponent");
-            callback();
+        public reset(): void {
+            this.$shoot.find("td").attr("class", "unknown");
+            this.$opponent.find("td").attr("class", "unknown");
         }
 
-        public setClass(grid: JQuery, coord: Coord, clazz: string, keepCurrent: boolean): void {
-            const $element: JQuery = grid
-                .find("tr").eq(coord.row)
-                .find("td").eq(coord.row);
+        public setClass($grid: JQuery, coord: Coord, clazz: string, keepCurrent: boolean): void {
+            const $element: JQuery =
+                $grid
+                    .find("tr").eq(coord.row)
+                    .find("td").eq(coord.col);
 
             if (!keepCurrent) {
                 $element.removeClass();
@@ -62,15 +71,10 @@ namespace grid {
             $element.addClass(clazz);
         }
 
-        public reset(): void {
-            this.shoot.find("td").attr("class", "unknown");
-            this.opponent.find("td").attr("class", "unknown");
-        }
-
-        private newGrid(id: string): JQuery {
+        private createGrid(id: string): JQuery {
             const $table: JQuery = $("<table/>");
 
-            for (let rowIt: number = 0; rowIt < this._rows; rowIt += 1) {
+            for (let rowIt: number = 0; rowIt < conf.rows; rowIt += 1) {
                 const newRow: JQuery = this.createRow(id, rowIt);
                 $table.append(newRow);
             }
@@ -78,11 +82,11 @@ namespace grid {
             return $table;
         }
 
-        private createRow(id: string, rowIndex: number): JQuery {
+        private createRow(gridId: string, rowIndex: number): JQuery {
             const $row: JQuery = $("<tr/>");
 
-            for (let colIt: number = 0; colIt < this._cols; colIt += 1) {
-                const newCell: JQuery = this.createCell(id, rowIndex, colIt);
+            for (let colIt: number = 0; colIt < conf.cols; colIt += 1) {
+                const newCell: JQuery = this.createCell(gridId, rowIndex, colIt);
                 $row.append(newCell);
             }
 
@@ -90,10 +94,10 @@ namespace grid {
         }
 
         // tslint:disable:object-literal-key-quotes
-        private createCell(id: string, rowIndex: number, colIndex: number): JQuery {
+        private createCell(gridId: string, rowIndex: number, colIndex: number): JQuery {
             return $("<td/>", {
                 "class": "unknown",
-                "data-grid-id": id,
+                "data-grid-id": gridId,
                 "data-row-i": rowIndex,
                 "data-col-i": colIndex,
             });
@@ -112,7 +116,7 @@ namespace grid {
             let isMouseDown: boolean = false;
             let isHighlighted: boolean = false;
 
-            this._grids.shoot.find("td")
+            this._grids.$shoot.find("td")
                 .addClass("shoot-able")
                 .mousedown(function (): boolean {
                     isMouseDown = true;
@@ -136,7 +140,7 @@ namespace grid {
         }
 
         public deactivate(): void {
-            this._grids.shoot.find("td")
+            this._grids.$shoot.find("td")
                 .removeClass("shoot-able")
                 .off("mousedown")
                 .off("mouseover")
@@ -145,21 +149,20 @@ namespace grid {
         }
 
         public collect(): string {
-            return this._grids.shoot
-                .find("tr").find("td")
+            return this._grids.$shoot.find("tr").find("td")
                 .map(function (): number {
-                    return $(this).hasClass("ship") ? 1 : 0;
+                    return +$(this).hasClass("ship");
                 })
                 .get()
-                .join();
+                .join(",");
         }
 
         public move(): void {
-            const shoot: JQuery = this._grids.shoot.find("td");
-            const opponent: JQuery = this._grids.opponent.find("td");
+            const shoot: JQuery = this._grids.$shoot.find("td");
+            const opponent: JQuery = this._grids.$opponent.find("td");
 
             for (let i: number = 0; i < shoot.length; i += 1) {
-                const shootClass = shoot.eq(i).attr("class");
+                const shootClass: string = shoot.eq(i).attr("class");
                 shoot.eq(i).attr("class", "unknown");
                 opponent.eq(i).attr("class", shootClass);
             }
@@ -169,7 +172,7 @@ namespace grid {
     // --------------------------------------------------------------------------------------------------------------
 
     class Singleton {
-        public grids: Grids = new GridsEx(10, 10);
+        public grids: Grids = new GridsEx();
         public selection: Selection = new SelectionEx(this.grids);
     }
 

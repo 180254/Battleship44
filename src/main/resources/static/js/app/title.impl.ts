@@ -19,7 +19,7 @@ namespace title {
         private _currentKeys: i18n.Key[] = [];
         private _currentTr: string[] = [];
 
-        private _blinkInterval: number | undefined;
+        private _blinkInterval?: number;
 
         public constructor(translator: i18n.Translator) {
             this._translator = translator;

@@ -5,7 +5,7 @@ namespace event0 {
 
     // tslint:disable:export-name
     export class EventEx<T> implements Event<T> {
-        private _subscribers: ((t: T) => void)[] = [];
+        private readonly _subscribers: ((t: T) => void)[] = [];
 
         public subscribe(subscriber: ((t: T) => void)): void {
             this._subscribers.push(subscriber);

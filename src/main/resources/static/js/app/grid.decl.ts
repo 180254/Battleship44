@@ -1,4 +1,5 @@
 namespace grid {
+    "use strict";
 
     export interface Coord {
         readonly row: number;
@@ -6,18 +7,17 @@ namespace grid {
     }
 
     export interface Grids {
-        readonly shoot: JQuery;
-        readonly opponent: JQuery;
+        readonly $shoot: JQuery;
+        readonly $opponent: JQuery;
 
-        init(callback: () => void): void;
-
-        setClass(grid: JQuery, coord: Coord, clazz: string, keepCurrent: boolean): void;
+        init(): void;
 
         reset(): void;
+
+        setClass($grid: JQuery, coord: Coord, clazz: string, keepCurrent: boolean): void;
     }
 
     export interface Selection {
-
         activate(): void;
 
         deactivate(): void;
