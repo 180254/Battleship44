@@ -16,10 +16,12 @@ namespace grid {
 
         private readonly _row: number;
         private readonly _col: number;
+        private readonly _clazz?: string;
 
-        public constructor(row: number, col: number) {
+        public constructor(row: number, col: number, clazz: string | undefined = undefined) {
             this._row = row;
             this._col = col;
+            this._clazz = clazz;
         }
 
         public get row(): number {
@@ -28,6 +30,10 @@ namespace grid {
 
         public get col(): number {
             return this._col;
+        }
+
+        get clazz(): string | undefined {
+            return this._clazz;
         }
 
         public toString(): string {

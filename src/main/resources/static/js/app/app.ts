@@ -15,6 +15,8 @@
 /// <reference path="title.impl.ts" />
 /// <reference path="grid.decl.ts" />
 /// <reference path="grid.impl.ts" />
+/// <reference path="serializer.decl.ts" />
+/// <reference path="serializer.impl.ts" />
 
 namespace app {
     "use strict";

@@ -4,6 +4,7 @@ namespace grid {
     export interface Coord {
         readonly row: number;
         readonly col: number;
+        readonly clazz?: string;
     }
 
     export interface Grids {
