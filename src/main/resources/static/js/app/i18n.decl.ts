@@ -39,11 +39,14 @@ namespace i18n {
     }
 
     export interface LangFinder {
+
         user(): LangTag[];
+
         server(): LangTag[];
     }
 
     export interface LangSelector {
+
         select(): [LangTag, SelectType];
     }
 
@@ -54,7 +57,9 @@ namespace i18n {
     }
 
     export interface LangSetter {
+
         getLang(): LangTag;
+
         setLang(langTag: LangTag): void;
     }
 

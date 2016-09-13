@@ -15,19 +15,19 @@ namespace event1 {
 
     export class EventEx implements Event {
 
-        private _random: random.Random;
+        private readonly _random: random.Random;
 
         public constructor(random: random.Random) {
             this._random = random;
         }
 
-        public on($e: JQuery, action: string, callback: ($c: JQuery) => void): void {
+        public on($e: JQuery, action: string, callback: ($e: JQuery) => void): void {
             $e.on(event, function (): void {
                 callback($(this));
             });
         }
 
-        public onetime($e: JQuery, action: string, callback: ($c: JQuery) => void): void {
+        public onetime($e: JQuery, action: string, callback: ($e: JQuery) => void): void {
             const namespace: string = this._random.str(conf.namespaceLength, conf.namespaceChars);
             const event: string = "{0}.{1}".format(action, namespace);
 

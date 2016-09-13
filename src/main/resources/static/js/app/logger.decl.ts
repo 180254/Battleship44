@@ -8,6 +8,7 @@ namespace logger {
      *  logger.debug([CallerClass, this.callerMethod], "[{0},{1}]", index, element);
      */
     export interface Logger {
+
         trace(who: any[], text: string, ...args: any[]): void;
 
         debug(who: any[], text: string, ...args: any[]): void;

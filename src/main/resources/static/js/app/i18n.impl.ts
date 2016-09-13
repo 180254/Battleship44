@@ -204,7 +204,7 @@ namespace i18n {
         private readonly _path: string;
         private readonly _params: string[];
 
-        public constructor(path: string, params: string[] | string | undefined = undefined) {
+        public constructor(path: string, params?: string[] | string) {
             this._path = path;
             this._params = (<string[]> []).concat(params || []);
         }
@@ -230,8 +230,8 @@ namespace i18n {
         private readonly _langSetter: LangSetter;
         public readonly onLangChange: event0.Event<number>;
 
-        constructor(langSetter: i18n.LangSetter,
-                    onLangChange: event0.Event<number>) {
+        public constructor(langSetter: i18n.LangSetter,
+                           onLangChange: event0.Event<number>) {
             this._langSetter = langSetter;
             this.onLangChange = onLangChange;
         }

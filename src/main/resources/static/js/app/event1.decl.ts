@@ -3,9 +3,9 @@ namespace event1 {
 
     export interface Event {
 
-        on($e: JQuery, action: string, callback: (($c: JQuery) => void)): void;
+        on($e: JQuery, action: string, callback: (($e: JQuery) => void)): void;
 
-        onetime($e: JQuery, action: string, callback: (($c: JQuery) => void)): void;
+        onetime($e: JQuery, action: string, callback: (($e: JQuery) => void)): void;
 
         off($e: JQuery, action: string): void;
     }

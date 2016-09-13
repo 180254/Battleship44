@@ -1,7 +1,7 @@
 namespace grid {
     "use strict";
 
-    export interface Coord {
+    export interface Cell {
         readonly row: number;
         readonly col: number;
         readonly clazz?: string;
@@ -15,10 +15,11 @@ namespace grid {
 
         reset(): void;
 
-        setClass($grid: JQuery, coord: Coord, clazz: string, keepCurrent: boolean): void;
+        setClass($grid: JQuery, cell: Cell, clazz: string, keepCurrent: boolean): void;
     }
 
     export interface Selection {
+
         activate(): void;
 
         deactivate(): void;

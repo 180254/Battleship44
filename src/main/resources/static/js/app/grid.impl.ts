@@ -12,13 +12,13 @@ namespace grid {
 
     // ---------------------------------------------------------------------------------------------------------------
 
-    export class CoordEx implements Coord {
+    export class CellEx implements Cell {
 
         private readonly _row: number;
         private readonly _col: number;
         private readonly _clazz?: string;
 
-        public constructor(row: number, col: number, clazz: string | undefined = undefined) {
+        public constructor(row: number, col: number, clazz?: string) {
             this._row = row;
             this._col = col;
             this._clazz = clazz;
@@ -32,7 +32,7 @@ namespace grid {
             return this._col;
         }
 
-        get clazz(): string | undefined {
+        public get clazz(): string | undefined {
             return this._clazz;
         }
 
@@ -64,11 +64,11 @@ namespace grid {
             this.$opponent.find("td").attr("class", "unknown");
         }
 
-        public setClass($grid: JQuery, coord: Coord, clazz: string, keepCurrent: boolean): void {
+        public setClass($grid: JQuery, cell: Cell, clazz: string, keepCurrent: boolean): void {
             const $element: JQuery =
                 $grid
-                    .find("tr").eq(coord.row)
-                    .find("td").eq(coord.col);
+                    .find("tr").eq(cell.row)
+                    .find("td").eq(cell.col);
 
             if (!keepCurrent) {
                 $element.removeClass();

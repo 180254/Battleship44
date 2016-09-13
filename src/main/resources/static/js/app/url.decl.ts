@@ -7,7 +7,9 @@ namespace url {
     }
 
     export interface Url {
+
         url(...params: UrlParam[]): string;
+
         param(name: string): string | undefined;
     }
 }
