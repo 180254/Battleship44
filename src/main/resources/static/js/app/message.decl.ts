@@ -11,10 +11,10 @@ namespace message {
 
     export interface Message {
 
-        fixed(key: i18n.Key, clazz: string): void;
+        fixed(key: i18n.TrKey, clazz?: string): void;
 
-        fleeting(key: i18n.Key, clazz: string, timeout: number): void;
+        fleeting(key: i18n.TrKey, clazz: string, timeout: number): void;
 
-        appendFixedLink(key: i18n.Key, id: string): void;
+        appendFixedLink(key: i18n.TrKey, id: string): void;
     }
 }

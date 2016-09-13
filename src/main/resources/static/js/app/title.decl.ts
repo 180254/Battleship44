@@ -5,8 +5,8 @@ namespace title {
 
     export interface Title {
 
-        fixed(key: i18n.Key): void;
+        fixed(key: i18n.TrKey): void;
 
-        blinking(key: i18n.Key, override: boolean): void;
+        blinking(key: i18n.TrKey, override: boolean): void;
     }
 }

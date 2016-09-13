@@ -21,7 +21,7 @@ namespace message {
             this._translator = translator;
         }
 
-        private set_(key: i18n.Key, clazz: string, timeout?: number): void {
+        private set_(key: i18n.TrKey, clazz: string, timeout?: number): void {
             const outerId: string =
                 timeout
                     ? "#{0}".format(random.i.str(7, "a"))
@@ -50,15 +50,15 @@ namespace message {
             }
         }
 
-        public fixed(key: i18n.Key, clazz: string): void {
+        public fixed(key: i18n.TrKey, clazz: string): void {
             this.set_(key, clazz);
         }
 
-        public fleeting(key: i18n.Key, clazz: string, timeout: number): void {
+        public fleeting(key: i18n.TrKey, clazz: string, timeout: number): void {
             this.set_(key, clazz, timeout);
         }
 
-        public appendFixedLink(key: i18n.Key, id: string): void {
+        public appendFixedLink(key: i18n.TrKey, id: string): void {
             // tslint:disable:object-literal-key-quotes
             const $a: JQuery = $("<a/>", {
                 "href": "#",

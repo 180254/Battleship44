@@ -191,7 +191,7 @@ namespace i18n {
 
     // ---------------------------------------------------------------------------------------------------------------
 
-    export class KeyEx implements Key {
+    export class TrKeyEx implements TrKey {
 
         public readonly path: string;
         public readonly params: string[];
@@ -220,7 +220,7 @@ namespace i18n {
             this.onLangChange = onLangChange;
         }
 
-        public translate(p: Key): string {
+        public translate(p: TrKey): string {
             let text: any = this._strings;
             for (const pp of p.path.split(".")) {
                 if (text.hasOwnProperty(pp)) {
@@ -241,11 +241,11 @@ namespace i18n {
         }
 
         // noinspection JSMethodCanBeStatic
-        private translateDefault(p: Key): string {
+        private translateDefault(p: TrKey): string {
             return "!{0}[{1}]!".format(p.path, p.params.join(","));
         }
 
-        public setTr($e: JQuery, p?: Key): void {
+        public setTr($e: JQuery, p?: TrKey): void {
             const path: string = p
                 ? p.path
                 : $e.attr(conf.dataAttrPath);
@@ -259,7 +259,7 @@ namespace i18n {
                 $e.attr(conf.dataAttrParams, JSON.stringify(p.params));
             }
 
-            $e.text(this.translate(new KeyEx(path, params)));
+            $e.text(this.translate(new TrKeyEx(path, params)));
         }
 
         public setAllTr(): void {

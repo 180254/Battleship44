@@ -1,5 +1,5 @@
 // app loader. possible to change loaded .js version
-// proper versions: ["es6", "es6.min", "es5", "es5.min"]
+// proper versions: ["es7", "es7.min", "es5", "es5.min"]
 // change version by "v" GET param
 // example: ?v=es5.min
 $(function () {
@@ -45,7 +45,7 @@ $(function () {
     };
 
     var modes = ["script"];
-    var versions = ["es6", "es6.min", "es5", "es5.min"];
+    var versions = ["es7", "es7.min", "es5", "es5.min"];
 
     var modeParam = urlParam("m");
     var versionParam = urlParam("v");

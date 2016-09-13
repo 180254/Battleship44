@@ -4,6 +4,7 @@ namespace random {
     "use strict";
 
     export class RandomEx implements Random {
+
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
         // Any copyright is dedicated to the Public Domain. http://creativecommons.org/publicdomain/zero/1.0/
 
@@ -45,7 +46,7 @@ namespace random {
                 mask += "0123456789";
             }
             if (chars.indexOf("!") > -1) {
-                mask += "~`!@#$%^&*()_+-={}[]:\";\'<>?,./|\\";
+                mask += "~`!@#$%^&*()_+-={}[]:;<>?,.|";
             }
 
             let result: string = "";
@@ -56,8 +57,4 @@ namespace random {
             return result;
         }
     }
-
-    // ---------------------------------------------------------------------------------------------------------------
-
-    export let i: Random = new RandomEx();
 }

@@ -63,7 +63,7 @@ namespace i18n {
         setLang(langTag: LangTag): void;
     }
 
-    export interface Key {
+    export interface TrKey {
         readonly path: string; // some.text.key, ex value: "my name {0} {1}, call me: {2}"
         readonly params: string[]; // parameters, ex: ["name", "surname", "100-200"]
     }
@@ -71,13 +71,13 @@ namespace i18n {
     export interface Translator {
         readonly onLangChange: event0.Event<number>;
 
-        translate(p: Key): string;
+        translate(p: TrKey): string;
 
         translatable(): JQuery;
 
-        setTr($e: JQuery, p?: Key): void;
+        setTr($e: JQuery, p?: TrKey): void;
 
-        setAllTr($e: JQuery, p?: Key): void;
+        setAllTr($e: JQuery, p?: TrKey): void;
 
         unsetTr($e: JQuery): void;
 
