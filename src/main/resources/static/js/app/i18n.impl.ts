@@ -34,25 +34,17 @@ namespace i18n {
 
     export class LangTagEx implements LangTag {
 
-        private readonly _lang: string;
-        private readonly _region?: string;
+        public readonly lang: string;
+        public readonly region?: string;
 
         public constructor(lang: string, region?: string) {
-            this._lang = lang.toLowerCase();
-            this._region = region && region.toUpperCase();
+            this.lang = lang.toLowerCase();
+            this.region = region && region.toUpperCase();
         }
 
         public static FROM_STRING(langTag: string): LangTag {
             const [lang, region]: string[] = langTag.split(/[-_]/);
             return new LangTagEx(lang, region);
-        }
-
-        public get lang(): string {
-            return this._lang;
-        }
-
-        public get region(): string | undefined {
-            return this._region;
         }
 
         public exactlyMatches(other: LangTag): boolean {
@@ -201,20 +193,12 @@ namespace i18n {
 
     export class KeyEx implements Key {
 
-        private readonly _path: string;
-        private readonly _params: string[];
+        public readonly path: string;
+        public readonly params: string[];
 
         public constructor(path: string, params?: string[] | string) {
-            this._path = path;
-            this._params = (<string[]> []).concat(params || []);
-        }
-
-        public get path(): string {
-            return this._path;
-        }
-
-        public get params(): string[] {
-            return this._params;
+            this.path = path;
+            this.params = (<string[]> []).concat(params || []);
         }
 
         public toString(): string {

@@ -14,49 +14,34 @@ namespace grid {
 
     export class CellEx implements Cell {
 
-        private readonly _row: number;
-        private readonly _col: number;
-        private readonly _clazz?: string;
+        public readonly row: number;
+        public readonly col: number;
+        public readonly clazz?: string;
 
         public constructor(row: number, col: number, clazz?: string) {
-            this._row = row;
-            this._col = col;
-            this._clazz = clazz;
-        }
-
-        public get row(): number {
-            return this._row;
-        }
-
-        public get col(): number {
-            return this._col;
-        }
-
-        public get clazz(): string | undefined {
-            return this._clazz;
+            this.row = row;
+            this.col = col;
+            this.clazz = clazz;
         }
 
         public toString(): string {
-            return "CoordEx[row={0} col={1}]".format(this._row, this._col);
+            return "CoordEx[row={0} col={1}]".format(this.row, this.col);
         }
     }
 
     export class GridsEx implements Grids {
 
-        private _$shoot: JQuery;
-        private _$opponent: JQuery;
-
-        public get $shoot(): JQuery {
-            return this._$shoot;
-        }
-
-        public get $opponent(): JQuery {
-            return this._$opponent;
-        }
+        public readonly $shoot: JQuery = $("#grid-shoot");
+        public readonly $opponent: JQuery = $("#grid-opponent");
 
         public init(): void {
-            this._$shoot = this.createGrid("grid-shoot").appendTo("#grid-shoot");
-            this._$opponent = this.createGrid("grid-opponent").appendTo("#grid-opponent");
+            this.createGrid(
+                this.$shoot.attr("id")
+            ).appendTo(this.$shoot);
+
+            this.createGrid(
+                this.$opponent.attr("id")
+            ).appendTo(this.$opponent);
         }
 
         public reset(): void {
@@ -122,7 +107,8 @@ namespace grid {
             let isMouseDown: boolean = false;
             let isHighlighted: boolean = false;
 
-            this._grids.$shoot.find("td")
+            this._grids.$shoot
+                .find("td")
                 .addClass("shoot-able")
                 .mousedown(function (): boolean {
                     isMouseDown = true;
@@ -146,18 +132,21 @@ namespace grid {
         }
 
         public deactivate(): void {
-            this._grids.$shoot.find("td")
+            this._grids.$shoot
+                .find("td")
                 .removeClass("shoot-able")
                 .off("mousedown")
                 .off("mouseover")
                 .off("selectstart");
+
             $(document).off("mousedown");
         }
 
         public collect(): string {
-            return this._grids.$shoot.find("tr").find("td")
+            return this._grids.$shoot
+                .find("tr").find("td")
                 .map(function (): number {
-                    return +$(this).hasClass("ship");
+                    return +($(this).hasClass("ship"));
                 })
                 .get()
                 .join(",");

@@ -3,6 +3,21 @@
 namespace url {
     "use strict";
 
+    export class UrlParamEx implements UrlParam {
+
+        public readonly name: string;
+        public readonly value: string;
+
+        public constructor(name: string, value: string) {
+            this.name = name;
+            this.value = value;
+        }
+
+        public toString(): string {
+            return "UrlParamEx[name={0} value={1}]".format(this.name, this.value);
+        }
+    }
+
     export class UrlEx implements Url {
 
         private readonly _paramRegexp: RegExp = new RegExp("[\\?&]" + name + "=([^&#]*)");

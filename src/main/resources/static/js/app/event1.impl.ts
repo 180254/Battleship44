@@ -4,15 +4,6 @@
 namespace event1 {
     "use strict";
 
-    class Conf {
-        public namespaceLength: number = 7;
-        public namespaceChars: string = "a";
-    }
-
-    export const conf: Conf = new Conf();
-
-    // ---------------------------------------------------------------------------------------------------------------
-
     export class EventEx implements Event {
 
         private readonly _random: random.Random;
@@ -28,7 +19,7 @@ namespace event1 {
         }
 
         public onetime($e: JQuery, action: string, callback: ($e: JQuery) => void): void {
-            const namespace: string = this._random.str(conf.namespaceLength, conf.namespaceChars);
+            const namespace: string = this._random.str(7, "a");
             const event: string = "{0}.{1}".format(action, namespace);
 
             $e.on(event, function (): void {

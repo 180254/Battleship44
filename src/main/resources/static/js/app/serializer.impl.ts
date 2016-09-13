@@ -47,9 +47,9 @@ namespace serializer {
     // --------------------------------------------------------------------------------------------------------------
 
     class Singleton {
-        public cellSerializer: Serializer<grid.Cell, string> = new CellSerializer();
-        public cellDeserializer: Serializer<string, grid.Cell> = new CellDeserializer();
-        public cellsDeserializer: Serializer<string, grid.Cell[]> = new CellsDeserializer(this.cellDeserializer);
+        public cellToStr: Serializer<grid.Cell, string> = new CellSerializer();
+        public strToCell: Serializer<string, grid.Cell> = new CellDeserializer();
+        public strToCells: Serializer<string, grid.Cell[]> = new CellsDeserializer(this.strToCell);
     }
 
     export const i: Singleton = new Singleton();

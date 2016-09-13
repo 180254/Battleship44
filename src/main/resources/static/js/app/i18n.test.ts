@@ -223,7 +223,7 @@ namespace i18n {
 
             it("should understand complex situation", () => {
                 const result: [LangTag, SelectType] = doSelect(
-                    "en-gb pl-pl pl en-us en pl]",
+                    "en-gb pl-pl pl en-us en pl",
                     "pl-pl en-us",
                 );
 

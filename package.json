@@ -55,6 +55,6 @@
     "collect-compile": "grunt js && tsc",
     "convert-minify": "grunt cm",
     "pretest": "tsc -p tsconfig.tests.json",
-    "test": "mocha src/main/resources/static/js/app.tests.js"
+    "test": "mocha src/main/resources/static/js/app.test.js"
   }
 }

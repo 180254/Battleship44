@@ -5,15 +5,6 @@
 namespace message {
     "use strict";
 
-    class Conf {
-        public msgDivId: string = "#message";
-        public msgConstId: string = "#msg-const";
-    }
-
-    export const conf: Conf = new Conf();
-
-    // ---------------------------------------------------------------------------------------------------------------
-
     export class TimeoutEx implements Timeout {
 
         public readonly fast: number = 1500;
@@ -24,19 +15,21 @@ namespace message {
     export class MessageEx implements Message {
 
         private readonly _translator: i18n.Translator;
+        private readonly _msgDiv: JQuery = $("#message");
 
         public constructor(translator: i18n.Translator) {
             this._translator = translator;
         }
 
         private set_(key: i18n.Key, clazz: string, timeout?: number): void {
-            const id: string = timeout
-                ? "#{0}".format(random.i.str(7, "a"))
-                : conf.msgConstId;
+            const outerId: string =
+                timeout
+                    ? "#{0}".format(random.i.str(7, "a"))
+                    : "#msg-const";
 
             // tslint:disable:object-literal-key-quotes
             const $outer: JQuery = $("<span/>", {
-                "id": id,
+                "id": outerId,
                 "class": "{0} msg".format(clazz),
             });
 
@@ -45,24 +38,27 @@ namespace message {
             $outer.append($inner);
 
             if (timeout) {
+                this._msgDiv.append($outer);
                 setTimeout(
-                    () => $(id).fadeOut("fast",
-                        () => $(id).remove()
+                    () => $(outerId).fadeOut("fast",
+                        () => $(outerId).remove()
                     ), timeout);
 
             } else {
-                $(conf.msgConstId).remove();
+                $("#msg-const").remove();
+                this._msgDiv.append($outer);
             }
-
-            // TODO: race condition
-            $(conf.msgDivId).append($outer);
         }
 
         public fixed(key: i18n.Key, clazz: string): void {
             this.set_(key, clazz);
         }
 
-        public appendLink(key: i18n.Key, id: string): void {
+        public fleeting(key: i18n.Key, clazz: string, timeout: number): void {
+            this.set_(key, clazz, timeout);
+        }
+
+        public appendFixedLink(key: i18n.Key, id: string): void {
             // tslint:disable:object-literal-key-quotes
             const $a: JQuery = $("<a/>", {
                 "href": "#",
@@ -71,15 +67,16 @@ namespace message {
 
             this._translator.setTr($a, key);
 
-            $(conf.msgConstId).append($a);
-        }
-
-        public fleeting(key: i18n.Key, clazz: string, timeout: number): void {
-            this.set_(key, clazz, timeout);
+            $("#msg-const").append($a);
         }
     }
 
     // ---------------------------------------------------------------------------------------------------------------
 
-    export let i: Message = new MessageEx(i18n.i.translator);
+    class Singleton {
+        public timeout: Timeout = new TimeoutEx();
+        public m: Message = new MessageEx(i18n.i.translator);
+    }
+
+    export const i: Singleton = new Singleton();
 }

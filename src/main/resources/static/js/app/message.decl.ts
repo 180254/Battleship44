@@ -13,8 +13,8 @@ namespace message {
 
         fixed(key: i18n.Key, clazz: string): void;
 
-        appendLink(key: i18n.Key, id: string): void;
-
         fleeting(key: i18n.Key, clazz: string, timeout: number): void;
+
+        appendFixedLink(key: i18n.Key, id: string): void;
     }
 }
