@@ -7,11 +7,16 @@
     "strictNullChecks": true,
 
     "target": "es6",
-    "outFile": "src/main/resources/static/js/app.es6.js",
-    "sourceMap": true
+    "lib": [
+      "es7",
+      "dom"
+    ],
+    "outFile": "src/main/resources/static/js/app.es7.js",
+    "sourceMap": true,
+    "listFiles": true
   },
 
   "files": [
-    "src/main/resources/static/js/app/app.ts"
+    "src/main/resources/static/js/app/app.entry.ts"
   ]
 }

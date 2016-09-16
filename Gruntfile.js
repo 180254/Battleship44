@@ -33,17 +33,17 @@ module.exports = function (grunt) {
         babel: {
             convert: {
                 options: {
-                    presets: ["es2015"],
+                    presets: ["es2015", "es2016"],
                     sourceMap: true,
                     comments: false,
                 },
                 files: [{
                     expand: true,
                     cwd: "src/main/resources/static/js/",
-                    src: "app.es6.js",
+                    src: "app.es7.js",
                     dest: "src/main/resources/static/js/",
                     rename: function (dest, src) {
-                        return dest + src.replace("es6", "es5");
+                        return dest + src.replace("es7", "es5");
                     }
                 }]
 

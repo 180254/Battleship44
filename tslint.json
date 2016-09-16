@@ -3,7 +3,6 @@
     "tslint:recommended",
     "./node_modules/tslint-microsoft-contrib/tslint.json"
   ],
-
   "rulesDirectory": [
     "node_modules/tslint-microsoft-contrib"
   ],
@@ -14,6 +13,7 @@
 
     "linebreak-style": false,
     "missing-jsdoc": false,
+    "export-name": false,
 
     "no-reference": false,
     "no-unused-variable": false,
@@ -27,6 +27,15 @@
       "check-format",
       "allow-leading-underscore",
       "allow-trailing-underscore"
+    ],
+    "function-name": [
+      true,
+      {
+        "method-regex": "^[a-z][\\w\\d]+$",
+        "private-method-regex": "^_[a-z][\\w\\d]+$",
+        "static-method-regex": "^[A-Z_\\d]+$",
+        "function-regex": "^[a-z][\\w\\d]+$"
+      }
     ],
 
     "typedef": [
