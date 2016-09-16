@@ -16,22 +16,19 @@ namespace title {
 
         public constructor(translator: i18n.Translator) {
             this._translator = translator;
-            this._translator.onLangChange.subscribe(() => this.updateTr());
+            this._translator.onLangChange.subscribe(() => this._updateTr());
         }
 
         public fixed(key: i18n.TrKey): void {
-            this.removeBlinking();
-
-            this._currentTrKeys = [key];
-            this.updateTr();
+            this._removeBlinking();
+            this._updateTr([key]);
         }
 
         public blinking(key: i18n.TrKey, override: boolean): void {
-            this._currentTrKeys = [this.cStandardTitle, key];
-            this.updateTr();
+            this._updateTr([this.cStandardTitle, key]);
 
             if (this._blinkInterval === undefined || override) {
-                this.removeBlinking();
+                this._removeBlinking();
 
                 let state: number = 0;
                 this._blinkInterval = window.setInterval(() => {
@@ -41,15 +38,20 @@ namespace title {
             }
         }
 
-        private removeBlinking(): void {
+        private _removeBlinking(): void {
             if (this._blinkInterval !== undefined) {
                 window.clearInterval(this._blinkInterval);
                 this._blinkInterval = undefined;
             }
         }
 
-        private updateTr(): void {
-            this._currentTr = this._currentTrKeys.map((e) => this._translator.translate(e));
+        private _updateTr(trKeys?: i18n.TrKey[]): void {
+            if (trKeys !== undefined) {
+                this._currentTrKeys = trKeys;
+            }
+
+            this._currentTr = this._currentTrKeys
+                .map((e) => this._translator.translate(e));
 
             if (this._currentTr.length === 1) {
                 document.title = this._currentTr[0];

@@ -21,11 +21,8 @@ namespace grid {
     export interface Selection {
 
         activate(): void;
-
         deactivate(): void;
-
         collect(): string;
-
         move(): void;
     }
 }

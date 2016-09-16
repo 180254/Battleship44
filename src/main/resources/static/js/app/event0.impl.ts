@@ -3,7 +3,6 @@
 namespace event0 {
     "use strict";
 
-    // tslint:disable:export-name
     export class EventEx<T> implements Event<T> {
 
         private readonly _subscribers: Subscriber<T>[] = [];

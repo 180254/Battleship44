@@ -4,6 +4,7 @@ namespace message {
     "use strict";
 
     export interface Timeout {
+
         fast: number;
         default_: number;
         slow: number;
@@ -11,10 +12,10 @@ namespace message {
 
     export interface Message {
 
-        fixed(key: i18n.TrKey, clazz?: string): void;
+        fixed(trKey: i18n.TrKey, clazz?: string): void;
 
-        fleeting(key: i18n.TrKey, clazz: string, timeout: number): void;
+        fleeting(trKey: i18n.TrKey, timeout: number, clazz?: string): void;
 
-        appendFixedLink(key: i18n.TrKey, id: string): void;
+        appendFixedLink(trKey: i18n.TrKey, id: string, clazz?: string): void;
     }
 }

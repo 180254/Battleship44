@@ -1,33 +1,45 @@
 /// <reference path="assert.decl.ts" />
-/// <reference path="string.format.ts" />
-/// <reference path="i18n.impl.ts" />
+/// <reference path="format.decl.ts" />
 
 namespace assert {
+    "use strict";
 
-    export function ok(condition: boolean): void {
-        if (!condition) {
-            throw new Error("condition failed");
+    export class AssertEx implements Assert {
+
+        public ok(condition: boolean, message?: string): void {
+            if (!condition) {
+                throw new Error("(ok) condition failed (message: {0})".format(message));
+            }
         }
-    }
 
-    export function not(condition: boolean): void {
-        if (condition) {
-            throw new Error("condition failed");
+        public not(condition: boolean, message?: string): void {
+            if (condition) {
+                throw new Error("(not) condition failed (message: {0})".format(message));
+            }
         }
-    }
 
-    export function equals(expected: any, actual: any): void {
-        if (expected !== actual) {
-            throw new Error("expected: {0}, actual: {1}".format(expected, actual));
+        public equals(expected: any, actual: any): void {
+            if (expected !== actual) {
+                throw new Error("expected: {0}, actual: {1}".format(expected, actual));
+            }
         }
-    }
 
-    function selectEquals(expected: [string, i18n.SelectType],
-                          actual: [i18n.LangTag, i18n.SelectType]): void {
+        public notEquals(expected: any, actual: any): void {
+            if (expected === actual) {
+                throw new Error("expected not: {0}, actual: {1}".format(expected, actual));
+            }
+        }
 
-        if (!i18n.LangTagEx.FROM_STRING(expected[0]).exactlyMatches(actual[0])
-            || expected[1] !== actual[1]) {
-            throw new Error("expected: {0}, actual: {1}".format(expected, actual));
+        public numEquals(expected: number, actual: number, epsilon: number = 1e-5): void {
+            if (Math.abs(expected - actual) > epsilon) {
+                throw new Error("expected: {0}, actual: {1}, epsilon: {2}".format(expected, actual, epsilon));
+            }
+        }
+
+        public strContains(haystack: string, needle: any): void {
+            if (haystack.indexOf(needle) === -1) {
+                throw new Error("expected: {0} to contain: {1}".format(haystack, needle));
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
 /// <reference path="event1.decl.ts" />
-/// <reference path="string.format.ts" />
+/// <reference path="format.decl.ts" />
 
 namespace event1 {
     "use strict";
@@ -32,8 +32,4 @@ namespace event1 {
             $e.off(action);
         }
     }
-
-    // ---------------------------------------------------------------------------------------------------------------
-
-    export let i: Event = new EventEx(random.i);
 }

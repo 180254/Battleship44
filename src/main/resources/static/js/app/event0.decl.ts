@@ -7,7 +7,6 @@ namespace event0 {
     export interface Event<T> {
 
         publish(value: T): void;
-
         subscribe(subscriber: Subscriber<T>): void;
     }
 }

@@ -1,20 +1,8 @@
 /// <reference path="logger.decl.ts" />
+/// <reference path="format.decl.ts" />
 
 namespace logger {
     "use strict";
-
-    class Conf {
-        // noinspection JSMethodCanBeStatic
-        public set level(value: Level) {
-            if (logger.i instanceof LoggerEx) {
-                logger.i.level = value;
-            }
-        }
-    }
-
-    export const conf: Conf = new Conf();
-
-    // ---------------------------------------------------------------------------------------------------------------
 
     export enum Level {
         TRACE = 6,
@@ -26,47 +14,51 @@ namespace logger {
         NONE = 0
     }
 
+    export let cLevel: Level = Level.TRACE;
+
+    // ---------------------------------------------------------------------------------------------------------------
+
     export class LoggerEx implements Logger {
 
-        public level: Level = Level.TRACE;
+        public cOutput: (str: string) => void = console.log;
+        private readonly _owner: Function;
 
-        private log(level: Level, who: any[], text: string, ...args: any[]): void {
-            if (this.level >= level) {
-                // tslint:disable:no-console
-                console.log("{0}: {1} {2}".format(
+        public constructor(owner: Function) {
+            this._owner = owner;
+        }
+
+        public trace(text: string, ...args: any[]): void {
+            this._log(Level.TRACE, text, ...args);
+        }
+
+        public debug(text: string, ...args: any[]): void {
+            this._log(Level.DEBUG, text, ...args);
+        }
+
+        public info(text: string, ...args: any[]): void {
+            this._log(Level.INFO, text, ...args);
+        }
+
+        public warn(text: string, ...args: any[]): void {
+            this._log(Level.WARN, text, ...args);
+        }
+
+        public error(text: string, ...args: any[]): void {
+            this._log(Level.ERROR, text, ...args);
+        }
+
+        public fatal(text: string, ...args: any[]): void {
+            this._log(Level.FATAL, text, ...args);
+        }
+
+        private _log(level: Level, text: string, ...args: any[]): void {
+            if (cLevel >= level) {
+                this.cOutput("{0}.{1} {2}".format(
                     Level[level].toLowerCase(),
-                    who.map(e => e.name !== undefined ? e.name.toString() : e.toString()).join("."),
+                    this._owner ? this._owner.name : "?",
                     text.format(...args)
                 ));
             }
         }
-
-        public trace(who: any[], text: string, ...args: any[]): void {
-            this.log(Level.TRACE, who, text, ...args);
-        }
-
-        public debug(who: any[], text: string, ...args: any[]): void {
-            this.log(Level.DEBUG, who, text, ...args);
-        }
-
-        public info(who: any[], text: string, ...args: any[]): void {
-            this.log(Level.INFO, who, text, ...args);
-        }
-
-        public warn(who: any[], text: string, ...args: any[]): void {
-            this.log(Level.WARN, who, text, ...args);
-        }
-
-        public error(who: any[], text: string, ...args: any[]): void {
-            this.log(Level.ERROR, who, text, ...args);
-        }
-
-        public fatal(who: any[], text: string, ...args: any[]): void {
-            this.log(Level.FATAL, who, text, ...args);
-        }
     }
-
-    // ---------------------------------------------------------------------------------------------------------------
-
-    export let i: Logger = new LoggerEx();
 }
