@@ -14,6 +14,7 @@
     "linebreak-style": false,
     "missing-jsdoc": false,
     "export-name": false,
+    "object-literal-sort-keys": false,
 
     "no-reference": false,
     "no-unused-variable": false,
