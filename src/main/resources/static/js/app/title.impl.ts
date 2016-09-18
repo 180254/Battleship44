@@ -1,12 +1,15 @@
 /// <reference path="title.decl.ts"/>
-/// <reference path="i18n.impl.ts"/>
+/// <reference path="i18n.decl.ts"/>
 
 namespace title {
     "use strict";
 
     export class TitleEx implements Title {
 
-        public cStandardTitle: i18n.TrKey = new i18n.TrKeyEx("standard.title");
+        public cStandardTitle: i18n.TrKey = {
+            params: [],
+            path: "standard.title",
+        };
         public cBlinkTimeout: number = 1350;
 
         private readonly _translator: i18n.Translator;

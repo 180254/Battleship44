@@ -1,27 +1,17 @@
-/// <reference path="string.format.ts" />
-/// <reference path="url.decl.ts" />
-/// <reference path="url.impl.ts" />
-/// <reference path="random.decl.ts" />
-/// <reference path="random.impl.ts" />
-/// <reference path="event0.decl.ts" />
-/// <reference path="event0.impl.ts" />
-/// <reference path="event1.decl.ts" />
-/// <reference path="event1.impl.ts" />
-/// <reference path="logger.decl.ts" />
-/// <reference path="logger.impl.ts" />
-/// <reference path="i18n.decl.ts" />
-/// <reference path="i18n.impl.ts" />
-/// <reference path="title.decl.ts" />
-/// <reference path="title.impl.ts" />
-/// <reference path="grid.decl.ts" />
-/// <reference path="grid.impl.ts" />
-/// <reference path="serializer.decl.ts" />
-/// <reference path="serializer.impl.ts" />
-/// <reference path="message.decl.ts" />
-/// <reference path="message.impl.ts" />
-/// <reference path="flags.decl.ts" />
-/// <reference path="flags.impl.ts" />
 /// <reference path="app.game.decl.ts" />
+/// <reference path="assert.impl.ts" />
+/// <reference path="event0.impl.ts" />
+/// <reference path="event1.impl.ts" />
+/// <reference path="format.impl.ts" />
+/// <reference path="grid.impl.ts" />
+/// <reference path="i18n.impl.ts" />
+/// <reference path="logger.impl.ts" />
+/// <reference path="message.impl.ts" />
+/// <reference path="random.impl.ts" />
+/// <reference path="serializer.impl.ts" />
+/// <reference path="title.impl.ts" />
+/// <reference path="ui.impl.ts" />
+/// <reference path="url.impl.ts" />
 
 // extend EventTarget; url is given in event on WebSocket open
 interface EventTarget {
@@ -31,35 +21,72 @@ interface EventTarget {
 namespace game {
     "use strict";
 
+    class Singleton {
+
+        public starter: Starter = new StarterEx();
+        public ws: Ws = new WsEx(this.onEvent);
+        public onEvent: OnEvent = new OnEventEx();
+        public onMessage: OnMessage = new OnMessageEx();
+
+        public assert: assert.AssertEx = new assert.AssertEx();
+        public event1: event1.EventEx = new event1.EventEx(this.random);
+        public random: random.RandomEx = new random.RandomEx();
+        public url: url.UrlEx = new url.UrlEx();
+
+        public grids: grid.GridsEx = new grid.GridsEx();
+        public selection: grid.SelectionEx = new grid.SelectionEx(this.grids);
+
+        public langComparison: i18n.LangTagComparisonEx = new i18n.LangTagComparisonEx();
+        public langFinder: i18n.LangFinderEx = new i18n.LangFinderEx();
+        public langSelector: i18n.LangSelectorEx = new i18n.LangSelectorEx(this.langFinder, this.langComparison);
+        public langSetter: i18n.LangSetterEx = new i18n.LangSetterEx(this.langSelector);
+        public translator: i18n.TranslatorEx = new i18n.TranslatorEx(this.langSetter, new event0.EventEx());
+
+        public timeout: message.TimeoutEx = new message.TimeoutEx();
+        public message: message.MessageEx = new message.MessageEx(this.random, this.translator);
+        public title: title.TitleEx = new title.TitleEx(this.translator);
+        public ui: ui.UiEx = new ui.UiEx(this.event1, this.langFinder);
+
+        public cellSer: serializer.CellSerializerEx = new serializer.CellSerializerEx();
+        public cellDeSer: serializer.CellDeserializerEx = new serializer.CellDeserializerEx();
+        public cellsDeSer: serializer.CellsDeserializerEx = new serializer.CellsDeserializerEx(this.cellDeSer);
+
+    }
+
+    export const i: Singleton = new Singleton();
+
+    // ---------------------------------------------------------------------------------------------------------------
     export class StarterEx implements Starter {
+
+        private _logger: logger.Logger = new logger.LoggerEx(StarterEx);
 
         public init(): void {
             // config
-            logger.conf.level = logger.Level.TRACE;
+            logger.cLevel = logger.Level.TRACE;
 
-            i18n.conf.supported = [
+            i.langFinder.cSupported = [
                 new i18n.LangTagEx("pl", "pl"),
                 new i18n.LangTagEx("en", "us"),
             ];
 
-            i18n.conf.path = (lt) => "i18n/{0}.json".format(lt.lang);
+            i.translator.cPath = (lt) => "i18n/{0}.json".format(lt.lang);
 
             // main, something, start game
-            i18n.i.translator.init(() => {
-                    logger.i.debug([app, "init"], "translator init error");
+            i.translator.init(() => {
+                this._logger.debug("translator init error");
 
                 }, () => {
-                    title.i.fixed(new i18n.TrKeyEx("title.standard"));
+                i.title.fixed(new i18n.TrKeyEx("title.standard"));
 
-                    flags.i.init((lang) => {
-                        i18n.i.setter.setLang(lang);
-                        i18n.i.translator.init();
+                i.ui.initFlags((lang) => {
+                    i.langSetter.setLang(lang);
+                    i.translator.init();
                     });
 
-                    grid.i.grids.init();
+                i.grids.init();
 
                     if (!("WebSocket" in window)) {
-                        message.i.m.fixed(new i18n.TrKeyEx("ws.unable"));
+                        i.message.fixed(new i18n.TrKeyEx("ws.unable"));
                         return;
                     }
 
@@ -69,6 +96,8 @@ namespace game {
             );
         }
     }
+
+    // ---------------------------------------------------------------------------------------------------------------
 
     export class WsEx implements Ws {
         private _ws: WebSocket;
@@ -92,32 +121,37 @@ namespace game {
         }
     }
 
+    // ---------------------------------------------------------------------------------------------------------------
+
     export class OnEventEx implements OnEvent {
 
+        private _logger: logger.Logger = new logger.LoggerEx(OnEventEx);
         private _ws: Ws;
-        private _logger: Logger;
-        private _url: Url;
 
         public onOpen(ev: Event): void {
-            this._logger.info([], "ws.onopen   : " + ev.target.url);
-            const id: string = this._url.param("id") || "NEW";
+            this._logger.info("ws.onopen   : " + ev.target.url);
+            const id: string = i.url.param("id") || "NEW";
             this._ws.send("GAME " + id);
         }
 
         public    onMessage(ev: MessageEvent): void {
+            //
         }
 
         public onSend(ev: string): void {
+            //
         }
 
         public  onClose(ev: CloseEvent): void {
+            //
         }
 
         public   onError(ev: Event): void {
+            //
         }
-
-
     }
+
+    // ---------------------------------------------------------------------------------------------------------------
 
     export class MessageEx implements Message {
         public readonly raw: string;
@@ -125,22 +159,12 @@ namespace game {
         public readonly payload: string;
     }
 
+    // ---------------------------------------------------------------------------------------------------------------
+
     export class OnMessageEx implements OnMessage {
         public process(msg: game.Message): void {
+            //
         }
 
     }
-
-    // ---------------------------------------------------------------------------------------------------------------
-
-    class Singleton {
-        public url = new url.UrlEx();
-
-        public starter: Starter = new StarterEx();
-        public ws: Ws = new WsEx(this.onEvent);
-        public onEvent: OnEvent = new OnEventEx();
-        public onMessage: OnMessage = new OnMessageEx();
-    }
-
-    export const i: Singleton = new Singleton();
 }

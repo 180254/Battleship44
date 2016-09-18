@@ -5,9 +5,9 @@ namespace message {
 
     export interface Timeout {
 
-        fast: number;
-        default_: number;
-        slow: number;
+        readonly fast: number;
+        readonly default_: number;
+        readonly slow: number;
     }
 
     export interface Message {

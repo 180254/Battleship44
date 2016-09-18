@@ -3,15 +3,6 @@
 namespace grid {
     "use strict";
 
-    class Conf {
-        public rows: number = 10;
-        public cols: number = 10;
-    }
-
-    export const conf: Conf = new Conf();
-
-    // ---------------------------------------------------------------------------------------------------------------
-
     export class CellEx implements Cell {
 
         public readonly row: number;
@@ -25,21 +16,26 @@ namespace grid {
         }
 
         public toString(): string {
-            return "CoordEx[row={0} col={1}]".format(this.row, this.col);
+            return "CoordEx[row={0} col={1} clazz={2}]".format(this.row, this.col, this.clazz);
         }
     }
 
+    // ---------------------------------------------------------------------------------------------------------------
+
     export class GridsEx implements Grids {
+
+        public cRows: number = 10;
+        public cCols: number = 10;
 
         public readonly $shoot: JQuery = $("#grid-shoot");
         public readonly $opponent: JQuery = $("#grid-opponent");
 
         public init(): void {
-            this.createGrid(
+            this._createGrid(
                 this.$shoot.attr("id")
             ).appendTo(this.$shoot);
 
-            this.createGrid(
+            this._createGrid(
                 this.$opponent.attr("id")
             ).appendTo(this.$opponent);
         }
@@ -62,22 +58,22 @@ namespace grid {
             $element.addClass(clazz);
         }
 
-        private createGrid(id: string): JQuery {
+        private _createGrid(id: string): JQuery {
             const $table: JQuery = $("<table/>");
 
-            for (let rowIt: number = 0; rowIt < conf.rows; rowIt += 1) {
-                const newRow: JQuery = this.createRow(id, rowIt);
+            for (let rowIt: number = 0; rowIt < this.cRows; rowIt += 1) {
+                const newRow: JQuery = this._createRow(id, rowIt);
                 $table.append(newRow);
             }
 
             return $table;
         }
 
-        private createRow(gridId: string, rowIndex: number): JQuery {
+        private _createRow(gridId: string, rowIndex: number): JQuery {
             const $row: JQuery = $("<tr/>");
 
-            for (let colIt: number = 0; colIt < conf.cols; colIt += 1) {
-                const newCell: JQuery = this.createCell(gridId, rowIndex, colIt);
+            for (let colIt: number = 0; colIt < this.cCols; colIt += 1) {
+                const newCell: JQuery = this._createCell(gridId, rowIndex, colIt);
                 $row.append(newCell);
             }
 
@@ -85,7 +81,7 @@ namespace grid {
         }
 
         // tslint:disable:object-literal-key-quotes
-        private createCell(gridId: string, rowIndex: number, colIndex: number): JQuery {
+        private _createCell(gridId: string, rowIndex: number, colIndex: number): JQuery {
             return $("<td/>", {
                 "class": "unknown",
                 "data-grid-id": gridId,
@@ -94,6 +90,8 @@ namespace grid {
             });
         }
     }
+
+    // ---------------------------------------------------------------------------------------------------------------
 
     export class SelectionEx implements Selection {
 
@@ -163,13 +161,4 @@ namespace grid {
             }
         }
     }
-
-    // --------------------------------------------------------------------------------------------------------------
-
-    class Singleton {
-        public grids: Grids = new GridsEx();
-        public selection: Selection = new SelectionEx(this.grids);
-    }
-
-    export const i: Singleton = new Singleton();
 }

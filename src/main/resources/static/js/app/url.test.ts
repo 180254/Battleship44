@@ -1,6 +1,7 @@
 /// <reference path="url.impl.ts"/>
 /// <reference path="assert.impl.ts"/>
 /// <reference path="logger.impl.ts"/>
+/// <reference path="format.impl.ts"/>
 /// <reference types="mocha" />
 
 // tslint:disable:no-http-string
