@@ -1,4 +1,5 @@
 /// <reference path="grid.decl.ts" />
+/// <reference path="format.decl.ts" />
 
 namespace grid {
     "use strict";

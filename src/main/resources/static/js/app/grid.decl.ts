@@ -1,7 +1,6 @@
-namespace grid {
-    "use strict";
+declare namespace grid {
 
-    export interface Cell {
+    interface Cell {
 
         readonly row: number;
         readonly col: number;
@@ -10,7 +9,7 @@ namespace grid {
 
     // ---------------------------------------------------------------------------------------------------------------
 
-    export interface Grids {
+    interface Grids {
         readonly $shoot: JQuery;
         readonly $opponent: JQuery;
 
@@ -22,7 +21,7 @@ namespace grid {
 
     // ---------------------------------------------------------------------------------------------------------------
 
-    export interface Selection {
+    interface Selection {
 
         activate(): void;
         deactivate(): void;

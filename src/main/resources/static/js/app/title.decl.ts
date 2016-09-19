@@ -1,9 +1,8 @@
 /// <reference path="i18n.decl.ts" />
 
-namespace title {
-    "use strict";
+declare namespace title {
 
-    export interface Title {
+    interface Title {
 
         fixed(trKey: i18n.TrKey): void;
 

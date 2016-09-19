@@ -1,5 +1,6 @@
 /// <reference path="serializer.decl.ts" />
 /// <reference path="grid.decl.ts" />
+/// <reference path="format.decl.ts" />
 
 namespace serializer {
     "use strict";
@@ -37,7 +38,7 @@ namespace serializer {
 
         private readonly _coordDeserializer: Serializer<string, grid.Cell>;
 
-        public constructor(coordDeserializer: serializer.Serializer<string, grid.Cell>) {
+        public constructor(coordDeserializer: Serializer<string, grid.Cell>) {
             this._coordDeserializer = coordDeserializer;
         }
 

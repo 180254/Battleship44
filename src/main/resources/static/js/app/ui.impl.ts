@@ -1,6 +1,5 @@
 /// <reference path="ui.decl.ts" />
 /// <reference path="event1.decl.ts" />
-/// <reference types="JQuery" />
 
 namespace ui {
 

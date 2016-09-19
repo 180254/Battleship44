@@ -1,16 +1,15 @@
-namespace game {
-    "use strict";
+declare namespace game {
 
-    export interface Starter {
+    interface Starter {
         init(): void;
     }
 
-    export interface Ws {
+    interface Ws {
         init(): void;
         send(msg: string): void;
     }
 
-    export interface OnEvent {
+    interface OnEvent {
         onOpen(ev: Event): void;
         onMessage(ev: MessageEvent): void;
         onSend(ev: string): void;
@@ -18,13 +17,13 @@ namespace game {
         onError(ev: Event): void;
     }
 
-    export interface Message {
+    interface Message {
         readonly raw: string;
         readonly command: string;
         readonly payload: string;
     }
 
-    export interface OnMessage {
+    interface OnMessage {
         process(msg: Message): void;
     }
 }

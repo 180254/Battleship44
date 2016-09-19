@@ -1,13 +1,12 @@
-namespace url {
-    "use strict";
+declare namespace url {
 
-    export interface Url {
+    interface Url {
 
         param(name: string): string | null;
         url(...params: UrlParam[]): string;
     }
 
-    export interface UrlParam {
+    interface UrlParam {
 
         readonly name: string;
         readonly value: string;

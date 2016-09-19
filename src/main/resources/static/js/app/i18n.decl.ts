@@ -1,13 +1,12 @@
 /// <reference path="event0.decl.ts"/>
 
-namespace i18n {
-    "use strict";
+declare namespace i18n {
 
     /**
      * LangTag - lang-region
      * Examples: en, en-US
      */
-    export interface LangTag {
+    interface LangTag {
 
         readonly lang: string;
         readonly region?: string;
@@ -16,7 +15,7 @@ namespace i18n {
     /**
      * Compare lang tag.
      */
-    export interface LangTagComparison {
+    interface LangTagComparison {
         /**
          * Exact match. It is just equals.
          *
@@ -47,7 +46,7 @@ namespace i18n {
     /**
      * Find languages supported by user & by server.
      */
-    export interface LangFinder {
+    interface LangFinder {
 
         user(): LangTag[];
         server(): LangTag[];
@@ -56,7 +55,7 @@ namespace i18n {
     /**
      * Select best language, which is supported by server, and wanted by user.
      */
-    export interface LangSelector {
+    interface LangSelector {
 
         select(): [LangTag, SelectType];
     }
@@ -67,7 +66,7 @@ namespace i18n {
      * exactly - server LangTag "exactlyMatches" user one
      * default - server default lang
      */
-    export enum SelectType {
+    enum SelectType {
         APPROX = 0,
         EXACTLY = 1,
         DEFAULT = 2
@@ -76,7 +75,7 @@ namespace i18n {
     /**
      * Set lang preference in user data.
      */
-    export interface LangSetter {
+    interface LangSetter {
 
         getLang(): LangTag;
         setLang(langTag: LangTag): void;
@@ -87,7 +86,7 @@ namespace i18n {
      * path   = some.text.key, ex value: "my name {0} {1}, call me: {2}"
      * params = parameters, ex: ["name", "surname", "100-200"]
      */
-    export interface TrKey {
+    interface TrKey {
 
         readonly path: string;
         readonly params: string[];
@@ -96,7 +95,7 @@ namespace i18n {
     /**
      * Translator.
      */
-    export interface Translator {
+    interface Translator {
         readonly onLangChange: event0.Event<number>;
 
         translate(p: TrKey): string;

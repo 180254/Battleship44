@@ -1,7 +1,6 @@
-namespace random {
-    "use strict";
+declare namespace random {
 
-    export interface Random {
+    interface Random {
 
         // Returns a random number between 0 (inclusive) and 1 (exclusive)
         num(): number;

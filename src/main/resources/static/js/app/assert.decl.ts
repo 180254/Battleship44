@@ -1,7 +1,6 @@
-namespace assert {
-    "use strict";
+declare namespace assert {
 
-    export interface Assert {
+    interface Assert {
 
         ok(condition: boolean, message?: string): void;
 

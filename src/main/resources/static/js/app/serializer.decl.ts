@@ -1,5 +1,4 @@
-namespace serializer {
-    "use strict";
+declare namespace serializer {
 
     export interface Serializer<IN, OUT> {
 

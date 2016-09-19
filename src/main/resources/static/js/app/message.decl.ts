@@ -1,16 +1,17 @@
 /// <reference path="i18n.decl.ts" />
 
-namespace message {
-    "use strict";
+declare namespace message {
 
-    export interface Timeout {
+    interface Timeout {
 
         readonly fast: number;
         readonly default_: number;
         readonly slow: number;
     }
 
-    export interface Message {
+    // ---------------------------------------------------------------------------------------------------------------
+
+    interface Message {
 
         fixed(trKey: i18n.TrKey, clazz?: string): void;
 

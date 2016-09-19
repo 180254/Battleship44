@@ -1,10 +1,9 @@
 // publisher-subscriber
-namespace event0 {
-    "use strict";
+declare namespace event0 {
 
-    export type Subscriber<T> = ((t: T) => void);
+    type Subscriber<T> = ((t: T) => void);
 
-    export interface Event<T> {
+    interface Event<T> {
 
         publish(value: T): void;
         subscribe(subscriber: Subscriber<T>): void;

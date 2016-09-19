@@ -23,10 +23,10 @@ namespace game {
 
     class Singleton {
 
-        public starter: Starter = new StarterEx();
-        public ws: Ws = new WsEx(this.onEvent);
-        public onEvent: OnEvent = new OnEventEx();
-        public onMessage: OnMessage = new OnMessageEx();
+        public starter: Starter = new StarterEx(this._ws);
+        private _ws: Ws = new WsEx(this._onEvent);
+        private _onEvent: OnEvent = new OnEventEx();
+        private _onMessage: OnMessage = new OnMessageEx();
 
         public assert: assert.AssertEx = new assert.AssertEx();
         public event1: event1.EventEx = new event1.EventEx(this.random);
@@ -53,12 +53,17 @@ namespace game {
 
     }
 
-    export const i: Singleton = new Singleton();
+    export let i: Singleton = new Singleton();
 
     // ---------------------------------------------------------------------------------------------------------------
     export class StarterEx implements Starter {
 
         private _logger: logger.Logger = new logger.LoggerEx(StarterEx);
+        private _ws: Ws;
+
+        public constructor(ws: game.Ws) {
+            this._ws = ws;
+        }
 
         public init(): void {
             // config
@@ -90,8 +95,7 @@ namespace game {
                         return;
                     }
 
-                    game.i.ws.init();
-
+                this._ws.init();
                 }
             );
         }

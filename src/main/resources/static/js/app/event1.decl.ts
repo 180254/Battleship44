@@ -1,7 +1,6 @@
-namespace event1 {
-    "use strict";
+declare namespace event1 {
 
-    export interface Event {
+    interface Event {
 
         on($e: JQuery, action: string, callback: (($e: JQuery) => void)): void;
 

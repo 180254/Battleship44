@@ -1,8 +1,8 @@
 /// <reference path="i18n.decl.ts"/>
 
-namespace ui {
+declare namespace ui {
 
-    export interface Ui {
+    interface Ui {
 
         initFlags(callback: (e: i18n.LangTag) => void): void;
     }

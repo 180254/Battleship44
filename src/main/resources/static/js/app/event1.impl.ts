@@ -1,5 +1,6 @@
 /// <reference path="event1.decl.ts" />
 /// <reference path="format.decl.ts" />
+/// <reference path="random.decl.ts" />
 
 namespace event1 {
     "use strict";

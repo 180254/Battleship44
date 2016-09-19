@@ -1,7 +1,6 @@
-namespace logger {
-    "use strict";
+declare namespace logger {
 
-    export interface Logger {
+    interface Logger {
 
         trace(text: string, ...args: any[]): void;
         debug(text: string, ...args: any[]): void;
