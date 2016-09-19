@@ -3,7 +3,8 @@
   <component name="TypeScriptCompiler">
     <option name="isCompilerEnabled" value="true" />
     <option name="typeScriptServiceDirectory" value="C:\Program Files\nodejs\node_modules\typescript\lib" />
-    <option name="useConfig" value="true" />
+    <option name="typeScriptCompilerParams" value="--noImplicitAny true --noImplicitReturns true --removeComments true --strictNullChecks true --target es6 --lib es7,dom" />
+    <option name="generateSourceMap" value="false" />
     <option name="useService" value="true" />
     <option name="versionType" value="SERVICE_DIRECTORY" />
   </component>
