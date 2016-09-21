@@ -26,7 +26,7 @@ namespace game {
 
         public starter: Starter = new StarterEx(this._ws);
         private _ws: Ws = new WsEx(this._onEvent);
-        private _onEvent: OnEvent = new OnEventEx();
+        private _onEvent: OnEvent = new OnEventEx(this._ws, this._onMessage);
         private _onMessage: OnMessage = new OnMessageEx();
 
         public assert: assert.AssertEx = new assert.AssertEx();
@@ -77,10 +77,10 @@ namespace game {
 
             // main, something, start game
             i.translator.init(() => {
-                this._logger.debug("translator init error");
+                this._logger.error("translator init error");
 
                 }, () => {
-                i.title.fixed(new i18n.TrKeyEx("title.standard"));
+                i.title.fixed(i.title.cStandardTitle);
 
                 i.ui.initFlags((lang) => {
                     i.langSetter.setLang(lang);
@@ -104,8 +104,8 @@ namespace game {
 
     export class WsEx implements Ws {
 
-        private readonly _onEvent: OnEvent;
         private _ws: WebSocket;
+        private readonly _onEvent: OnEvent;
 
         public constructor(onEvent: OnEvent) {
             this._onEvent = onEvent;
@@ -130,28 +130,76 @@ namespace game {
     export class OnEventEx implements OnEvent {
 
         private readonly _logger: logger.Logger = new logger.LoggerEx(OnEventEx);
-        private readonly _ws: Ws;
 
-        public onOpen(ev: Event): void {
-            this._logger.info("ws.onopen   : " + ev.target.url);
-            const id: string = i.url.param("id").value || "NEW";
-            this._ws.send("GAME " + id);
+        private readonly _ws: Ws;
+        private readonly _onMessage: OnMessage;
+
+        public constructor(ws: game.Ws, onMessage: game.OnMessage) {
+            this._ws = ws;
+            this._onMessage = onMessage;
         }
 
-        public    onMessage(ev: MessageEvent): void {
-            //
+        public onOpen(ev: Event): void {
+            this._logger.debug("ws.onopen   : {0}", ev.target.url);
+            const id: string = i.url.param("id").value || "NEW";
+            this._ws.send("GAME {0}".format(id));
+        }
+
+        public onMessage(ev: MessageEvent): void {
+            this._logger.debug("ws.onmessage: {0}", ev.data);
+            this._onMessage.process(MessageEx.EX(ev));
         }
 
         public onSend(ev: string): void {
-            //
+            this._logger.debug("ws.send     : {0}", ev);
         }
 
-        public  onClose(ev: CloseEvent): void {
-            //
+        public onClose(ev: CloseEvent): void {
+            const reason: string = ev.reason || this._wsCode(ev.code) || "?";
+            this._logger.debug("ws.onclose  : {0}({1})", ev.code, reason);
+
+            i.message.fixed(
+                new i18n.TrKeyEx("ws.close", [ev.code, reason]),
+                "msg-fail"
+            );
+
+            i.title.fixed(i.title.cStandardTitle);
+            i.selection.deactivate();
         }
 
-        public   onError(ev: Event): void {
-            //
+        public onError(ev: Event): void {
+            this._logger.debug("ws.onclose  : {0}", ev.type);
+
+            i.message.fixed(
+                new i18n.TrKeyEx("ws.error", [ev.type]),
+                "msg-fail"
+            );
+
+            i.title.fixed(i.title.cStandardTitle);
+            i.selection.deactivate();
+        }
+
+        // noinspection JSMethodCanBeStatic
+        private _wsCode(exitCode: number): string {
+            // https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
+            return <string> ((<any> {
+                1000: "CLOSE_NORMAL",
+                1001: "CLOSE_GOING_AWAY",
+                1002: "CLOSE_PROTOCOL_ERROR",
+                1003: "CLOSE_UNSUPPORTED",
+                1005: "CLOSE_NO_STATUS",
+                1004: "?",
+                1006: "CLOSE_ABNORMAL",
+                1007: "Unsupported Data",
+                1008: "Policy Violation",
+                1009: "CLOSE_TOO_LARGE",
+                1010: "Missing Extension",
+                1011: "Internal Error",
+                1012: "Service Restart",
+                1013: "Try Again Later",
+                1014: "?",
+                1015: "TLS Handshake",
+            })[exitCode]);
         }
     }
 
@@ -161,6 +209,20 @@ namespace game {
         public readonly raw: string;
         public readonly command: string;
         public readonly payload: string;
+
+        public constructor(raw: string, command: string, payload: string) {
+            this.raw = raw;
+            this.command = command;
+            this.payload = payload;
+        }
+
+        public static EX(ev: MessageEvent): MessageEx {
+            const raw: string = ev.data;
+            const command: string = raw.substring(0, raw.indexOf(" ")) || raw;
+            const payload: string = raw.substring(command.length + 1);
+
+            return new MessageEx(raw, command, payload);
+        }
     }
 
     // ---------------------------------------------------------------------------------------------------------------

@@ -205,11 +205,11 @@ namespace i18n {
     export class TrKeyEx implements TrKey {
 
         public readonly path: string;
-        public readonly params: string[];
+        public readonly params: any[];
 
-        public constructor(path: string, params?: string[] | string) {
+        public constructor(path: string, params?: any[] | any) {
             this.path = path;
-            this.params = (<string[]> []).concat(params || []);
+            this.params = (<any[]> []).concat(params || []);
         }
 
         public toString(): string {

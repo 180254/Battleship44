@@ -87,12 +87,12 @@ declare namespace i18n {
     /**
      * Translate key.
      * path   = some.text.key, ex value: "my name {0} {1}, call me: {2}"
-     * params = parameters, ex: ["name", "surname", "100-200"]
+     * params = parameters, ex: ["name", "surname", 100200]
      */
     interface TrKey {
 
         readonly path: string;
-        readonly params: string[];
+        readonly params: any[];
     }
 
     // ---------------------------------------------------------------------------------------------------------------
