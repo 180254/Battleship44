@@ -1,5 +1,6 @@
 /// <reference path="app.game.decl.ts" />
 /// <reference path="assert.impl.ts" />
+/// <reference path="escape.impl.ts" />
 /// <reference path="event0.impl.ts" />
 /// <reference path="event1.impl.ts" />
 /// <reference path="format.impl.ts" />
@@ -36,9 +37,9 @@ namespace game {
         public grids: grid.GridsEx = new grid.GridsEx();
         public selection: grid.SelectionEx = new grid.SelectionEx(this.grids);
 
-        public langComparison: i18n.LangTagComparisonEx = new i18n.LangTagComparisonEx();
+        public langComp: i18n.LangTagComparisonEx = new i18n.LangTagComparisonEx();
         public langFinder: i18n.LangFinderEx = new i18n.LangFinderEx();
-        public langSelector: i18n.LangSelectorEx = new i18n.LangSelectorEx(this.langFinder, this.langComparison);
+        public langSelector: i18n.LangSelectorEx = new i18n.LangSelectorEx(this.langFinder, this.langComp);
         public langSetter: i18n.LangSetterEx = new i18n.LangSetterEx(this.langSelector);
         public translator: i18n.TranslatorEx = new i18n.TranslatorEx(this.langSetter, new event0.EventEx());
 
@@ -50,7 +51,6 @@ namespace game {
         public cellSer: serializer.CellSerializerEx = new serializer.CellSerializerEx();
         public cellDeSer: serializer.CellDeserializerEx = new serializer.CellDeserializerEx();
         public cellsDeSer: serializer.CellsDeserializerEx = new serializer.CellsDeserializerEx(this.cellDeSer);
-
     }
 
     export let i: Singleton = new Singleton();
@@ -58,15 +58,14 @@ namespace game {
     // ---------------------------------------------------------------------------------------------------------------
     export class StarterEx implements Starter {
 
-        private _logger: logger.Logger = new logger.LoggerEx(StarterEx);
-        private _ws: Ws;
+        private readonly _logger: logger.Logger = new logger.LoggerEx(StarterEx);
+        private readonly _ws: Ws;
 
         public constructor(ws: game.Ws) {
             this._ws = ws;
         }
 
         public init(): void {
-            // config
             logger.cLevel = logger.Level.TRACE;
 
             i.langFinder.cSupported = [
@@ -104,10 +103,11 @@ namespace game {
     // ---------------------------------------------------------------------------------------------------------------
 
     export class WsEx implements Ws {
-        private _ws: WebSocket;
-        private _onEvent: OnEvent;
 
-        constructor(onEvent: OnEvent) {
+        private readonly _onEvent: OnEvent;
+        private _ws: WebSocket;
+
+        public constructor(onEvent: OnEvent) {
             this._onEvent = onEvent;
         }
 
@@ -129,12 +129,12 @@ namespace game {
 
     export class OnEventEx implements OnEvent {
 
-        private _logger: logger.Logger = new logger.LoggerEx(OnEventEx);
-        private _ws: Ws;
+        private readonly _logger: logger.Logger = new logger.LoggerEx(OnEventEx);
+        private readonly _ws: Ws;
 
         public onOpen(ev: Event): void {
             this._logger.info("ws.onopen   : " + ev.target.url);
-            const id: string = i.url.param("id") || "NEW";
+            const id: string = i.url.param("id").value || "NEW";
             this._ws.send("GAME " + id);
         }
 

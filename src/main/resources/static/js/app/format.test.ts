@@ -52,6 +52,13 @@ namespace format {
                 );
             });
 
+            it("should not fail on unused params", () => {
+                assert_.equals(
+                    "/z-x-c-y/",
+                    "/z-x-c-y/".format("1", "2", "3", "4")
+                );
+            });
+
             it("should not fail on missing params - none provided", () => {
                 assert_.equals(
                     "/{0}-{1}-{2}/",

@@ -8,7 +8,9 @@ namespace random {
 
     describe("RandomEx", () => {
 
-        const almostOne: number = 1 - (1e-5);
+        // Math.random returns a number between 0 (inclusive) and 1 (_exclusive_)
+        const ONE_ALMOST: number = 1 - (1e-5);
+
         let assert_: assert.AssertEx;
         let random_: random.RandomEx;
 
@@ -26,10 +28,10 @@ namespace random {
             });
 
             it("should return value - max", () => {
-                random_.cRandom = () => almostOne;
+                random_.cRandom = () => ONE_ALMOST;
                 const result: number = random_.num();
 
-                assert_.numEquals(almostOne, result);
+                assert_.numEquals(ONE_ALMOST, result);
                 assert_.ok(result < 1, "result < 1");
             });
         });
@@ -42,7 +44,7 @@ namespace random {
             });
 
             it("should return value - max", () => {
-                random_.cRandom = () => almostOne;
+                random_.cRandom = () => ONE_ALMOST;
                 const result: number = random_.numArbitrary(-5.4, 7.8);
 
                 assert_.numEquals(7.799, result, 1e-2);
@@ -58,7 +60,7 @@ namespace random {
             });
 
             it("should return value - max", () => {
-                random_.cRandom = () => almostOne;
+                random_.cRandom = () => ONE_ALMOST;
                 assert_.numEquals(6, random_.int(-5, 7));
             });
         });
@@ -71,7 +73,7 @@ namespace random {
             });
 
             it("should return value - max", () => {
-                random_.cRandom = () => almostOne;
+                random_.cRandom = () => ONE_ALMOST;
                 assert_.numEquals(7, random_.intInclusive(-5, 7));
             });
         });

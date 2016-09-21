@@ -12,6 +12,8 @@ declare namespace i18n {
         readonly region?: string;
     }
 
+    // ---------------------------------------------------------------------------------------------------------------
+
     /**
      * Compare lang tag.
      */
@@ -43,6 +45,8 @@ declare namespace i18n {
         approxMatches(one: LangTag, other: LangTag): boolean;
     }
 
+    // ---------------------------------------------------------------------------------------------------------------
+
     /**
      * Find languages supported by user & by server.
      */
@@ -52,25 +56,22 @@ declare namespace i18n {
         server(): LangTag[];
     }
 
+    // ---------------------------------------------------------------------------------------------------------------
+
     /**
      * Select best language, which is supported by server, and wanted by user.
+     *
+     * number:
+     * 0=approx - server LangTag "approxMatches" user's one
+     * 1=exactly - server LangTag "exactlyMatches" user's one
+     * 2=default - server default lang
      */
     interface LangSelector {
 
-        select(): [LangTag, SelectType];
+        select(): [LangTag, number];
     }
 
-    /**
-     * Type of lang selection.
-     * approx - server LangTag "approxMatches" user one
-     * exactly - server LangTag "exactlyMatches" user one
-     * default - server default lang
-     */
-    enum SelectType {
-        APPROX = 0,
-        EXACTLY = 1,
-        DEFAULT = 2
-    }
+    // ---------------------------------------------------------------------------------------------------------------
 
     /**
      * Set lang preference in user data.
@@ -80,6 +81,8 @@ declare namespace i18n {
         getLang(): LangTag;
         setLang(langTag: LangTag): void;
     }
+
+    // ---------------------------------------------------------------------------------------------------------------
 
     /**
      * Translate key.
@@ -91,6 +94,8 @@ declare namespace i18n {
         readonly path: string;
         readonly params: string[];
     }
+
+    // ---------------------------------------------------------------------------------------------------------------
 
     /**
      * Translator.

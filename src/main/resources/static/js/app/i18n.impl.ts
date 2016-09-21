@@ -2,6 +2,7 @@
 /// <reference path="format.decl.ts" />
 /// <reference path="event0.decl.ts" />
 /// <reference path="logger.impl.ts" />
+/// <reference types="js-cookie" />
 
 // extend navigator: add not standard lang tags
 // as browsers differently support reporting user lang
@@ -18,7 +19,6 @@ interface Navigator {
 
 namespace i18n {
     "use strict";
-    import Logger = logger.Logger;
 
     export class LangTagEx implements LangTag {
 
@@ -94,16 +94,26 @@ namespace i18n {
 
     // ---------------------------------------------------------------------------------------------------------------
 
+    export enum SelectType {
+
+        APPROX = 0,
+        EXACTLY = 1,
+        DEFAULT = 2
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+
     export class LangSelectorEx implements LangSelector {
 
         private readonly _logger: logger.Logger = new logger.LoggerEx(LangSelectorEx);
+
         private readonly _finder: LangFinder;
-        private readonly _langTagComparison: LangTagComparison;
+        private readonly _langTagComp: LangTagComparison;
 
         public constructor(finder: LangFinder,
                            langTagComparison: LangTagComparison) {
             this._finder = finder;
-            this._langTagComparison = langTagComparison;
+            this._langTagComp = langTagComparison;
         }
 
         public select(): [LangTag, SelectType] {
@@ -123,19 +133,19 @@ namespace i18n {
 
             for (const userLang of user) {
                 // try exact tag, as from user data
-                fLang = server.find(supLang => this._langTagComparison.exactlyMatches(userLang, supLang));
+                fLang = server.find(supLang => this._langTagComp.exactlyMatches(userLang, supLang));
                 if (fLang !== undefined) {
                     fType = SelectType.EXACTLY;
                     break;
                 }
 
                 // or maybe approx tag
-                fLang = server.find(supTag => this._langTagComparison.approxMatches(userLang, supTag));
+                fLang = server.find(supTag => this._langTagComp.approxMatches(userLang, supTag));
                 if (fLang !== undefined) {
                     fType = SelectType.APPROX;
 
                     // maybe user has exact but on next position?
-                    fLang2 = user.find(userLang => this._langTagComparison.exactlyMatches(userLang, fLang!));
+                    fLang2 = user.find(userLang => this._langTagComp.exactlyMatches(userLang, fLang!));
                     if (fLang2 !== undefined) {
                         fType = SelectType.EXACTLY;
                         break;
@@ -143,7 +153,7 @@ namespace i18n {
 
                     // should prefer general, if same region is not available
                     const langWithoutRegion: LangTag = new LangTagEx(userLang.lang);
-                    fLang2 = server.find(supTag => this._langTagComparison.exactlyMatches(langWithoutRegion, supTag));
+                    fLang2 = server.find(supTag => this._langTagComp.exactlyMatches(langWithoutRegion, supTag));
                     if (fLang2 !== undefined) {
                         fLang = fLang2;
                         fType = SelectType.APPROX; // region was ignored
@@ -212,6 +222,7 @@ namespace i18n {
     export class TranslatorEx implements Translator {
 
         public readonly onLangChange: event0.Event<number>;
+
         public cDataAttrPath: string = "data-i18n-path";
         public cDataAttrParams: string = "data-i18n-params";
 

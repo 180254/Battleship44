@@ -2,6 +2,7 @@
 /// <reference path="assert.impl.ts"/>
 /// <reference path="logger.impl.ts"/>
 /// <reference path="format.impl.ts"/>
+/// <reference path="escape.impl.ts"/>
 /// <reference types="mocha" />
 
 // tslint:disable:no-http-string
@@ -21,11 +22,12 @@ namespace url {
 
         describe("param", () => {
 
-            const verifyParamMethod: ((loc: string, name: string, expValue: string | null) => void) =
+            const verifyParamMethod: ((loc: string, name: string, expValue: string | undefined) => void) =
                 (loc, name, expValue) => {
                     url_.cLocationHref = () => loc;
-                    const result: string | null = url_.param(name);
-                    assert_.equals(expValue, result);
+                    const result: UrlParam = url_.param(name);
+                    assert_.equals(name, result.name);
+                    assert_.equals(expValue, result.value);
                 };
 
             it("should extract param - one provided", () => {
@@ -87,14 +89,14 @@ namespace url {
             it("should not extract param - as not provided (simple)", () => {
                 verifyParamMethod(
                     "http://none.com/?a=a123b&b=1&a123b=c&c=sdf&d=dfd",
-                    "1234", null
+                    "1234", undefined
                 );
             });
 
             it("should not extract param - as not provided, but such value exist", () => {
                 verifyParamMethod(
                     "http://none.com/?a=a123b&b=1&a123b=c&c=sdf&d=dfd",
-                    "sdf", null
+                    "sdf", undefined
                 );
             });
         });
@@ -105,7 +107,7 @@ namespace url {
 
             const verifyUrlMethod: ((origin: string, params: UrlParam[], expected: string) => void) =
                 (origin, params, expected) => {
-                    url_.cLocationOrigin = () => origin;
+                    url_.cLocationPath = () => origin;
                     const result: string = url_.url(...params);
                     assert_.equals(expected, result);
                 };
@@ -144,7 +146,7 @@ namespace url {
                 verifyUrlMethod(
                     "http://none.com",
                     [
-                        new UrlParamEx("key"),
+                        new UrlParamEx("key", ""),
                     ],
                     "http://none.com/?key",
                 );
@@ -154,9 +156,9 @@ namespace url {
                 verifyUrlMethod(
                     "http://none.com",
                     [
-                        new UrlParamEx("key1"),
-                        new UrlParamEx("key2"),
-                        new UrlParamEx("key3"),
+                        new UrlParamEx("key1", ""),
+                        new UrlParamEx("key2", ""),
+                        new UrlParamEx("key3", ""),
                     ],
                     "http://none.com/?key1&key2&key3",
                 );
@@ -166,9 +168,9 @@ namespace url {
                 verifyUrlMethod(
                     "http://none.com",
                     [
-                        new UrlParamEx("key1"),
+                        new UrlParamEx("key1", ""),
                         new UrlParamEx("key2", "value2"),
-                        new UrlParamEx("key3"),
+                        new UrlParamEx("key3", ""),
                     ],
                     "http://none.com/?key1&key2=value2&key3",
                 );
@@ -181,6 +183,46 @@ namespace url {
                         new UrlParamEx("^key%#", "&value="),
                     ],
                     "http://none.com/?%5Ekey%25%23=%26value%3D",
+                );
+            });
+
+            it("should skip - the only undefined-valued UrlParam", () => {
+                verifyUrlMethod(
+                    "http://none.com",
+                    [
+                        new UrlParamEx("a", undefined),
+                    ],
+                    "http://none.com",
+                );
+            });
+
+            it("should skip - undefined-valued but keep other ones", () => {
+                verifyUrlMethod(
+                    "http://none.com",
+                    [
+                        new UrlParamEx("key1", ""),
+                        new UrlParamEx("key2", undefined),
+                        new UrlParamEx("key3", "val"),
+                    ],
+                    "http://none.com/?key1&key3=val",
+                );
+            });
+
+            it("should keep path - expect protocol, path, sub domain, and path without change", () => {
+                verifyUrlMethod(
+                    "https://sub.none.com:33/ala/x/y",
+                    [
+                        new UrlParamEx("key", "1"),
+                    ],
+                    "https://sub.none.com:33/ala/x/y/?key=1",
+                );
+            });
+
+            it("should keep path - also if there is no param", () => {
+                verifyUrlMethod(
+                    "https://sub.none.com:33/ala/x/y",
+                    [],
+                    "https://sub.none.com:33/ala/x/y",
                 );
             });
         });

@@ -7,8 +7,8 @@ namespace title {
     export class TitleEx implements Title {
 
         public cStandardTitle: i18n.TrKey = {
-            params: [],
             path: "standard.title",
+            params: [],
         };
         public cBlinkTimeout: number = 1350;
 

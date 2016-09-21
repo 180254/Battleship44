@@ -4,10 +4,14 @@ declare namespace game {
         init(): void;
     }
 
+    // ---------------------------------------------------------------------------------------------------------------
+
     interface Ws {
         init(): void;
         send(msg: string): void;
     }
+
+    // ---------------------------------------------------------------------------------------------------------------
 
     interface OnEvent {
         onOpen(ev: Event): void;
@@ -17,11 +21,15 @@ declare namespace game {
         onError(ev: Event): void;
     }
 
+    // ---------------------------------------------------------------------------------------------------------------
+
     interface Message {
         readonly raw: string;
         readonly command: string;
         readonly payload: string;
     }
+
+    // ---------------------------------------------------------------------------------------------------------------
 
     interface OnMessage {
         process(msg: Message): void;

@@ -17,7 +17,7 @@ declare namespace random {
         intInclusive(min: number, max: number): number;
 
         // Return a random string
-        // possible chars: aA#!
+        // possible chars: aA0!
         str(length: number, chars: string): string;
     }
 }

@@ -24,7 +24,6 @@ namespace ui {
                 const $flag: JQuery = $("<img/>", {
                     alt: supported[i].lang,
                     src: "flag/" + supported[i].region + ".png",
-
                 });
 
                 this._event1.on($flag, "click", () => callback(supported[i]));

@@ -55,7 +55,7 @@ namespace logger {
             if (cLevel >= level) {
                 this.cOutput("{0}.{1} {2}".format(
                     Level[level].toLowerCase(),
-                    this._owner ? this._owner.name : "?",
+                    this._owner.name ? this._owner.name : "?",
                     text.format(...args)
                 ));
             }
