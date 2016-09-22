@@ -1,7 +1,4 @@
-// app loader. possible to change loaded .js version
-// proper versions: ["es7", "es7.min", "es5", "es5.min"]
-// change version by "v" GET param
-// example: ?v=es5.min
+// change app version. example: ?v=es5-closure.min
 $(function () {
     // code: es5
 
@@ -10,7 +7,8 @@ $(function () {
     // license: cc by-sa 3.0
     // license url: https://creativecommons.org/licenses/by-sa/3.0/
     var urlParam = function (name) {
-        var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+        var nameEsc = name.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+        var results = new RegExp('[\?&]' + nameEsc + '=([^&#]*)').exec(window.location.href);
         return results ? decodeURIComponent(results[1]) : null;
     };
 
@@ -37,7 +35,7 @@ $(function () {
 
     // returns:
     // * value if validArray.contains(value)
-    // * default array value (at index 0) if not
+    // * default value if not
     var requireValid = function (value, validArray) {
         return value && validArray.indexOf(value) !== -1
             ? value
@@ -45,7 +43,7 @@ $(function () {
     };
 
     var modes = ["script"];
-    var versions = ["es7", "es7.min", "es5", "es5.min"];
+    var versions = ["es7-ts", "es7-babel.min", "es5-babel.min", "es5-closure.min"];
 
     var modeParam = urlParam("m");
     var versionParam = urlParam("v");

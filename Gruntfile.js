@@ -1,6 +1,14 @@
 module.exports = function (grunt) {
-
     require('load-grunt-tasks')(grunt);
+
+    var path =
+        (file) => "src/main/resources/static/js" + file;
+
+    var json =
+        path => (
+            grunt.file.isFile(path)
+            && grunt.file.readJSON(path)
+        );
 
     grunt.initConfig({
 
@@ -10,66 +18,72 @@ module.exports = function (grunt) {
                     expand: true,
                     cwd: "node_bower/jquery/dist/",
                     src: "*",
-                    dest: "src/main/resources/static/js/lib/jquery/"
+                    dest: path("/lib/jquery/")
                 }, {
                     expand: true,
                     cwd: "node_bower/jquery-ui/",
                     src: "jquery-ui*",
-                    dest: "src/main/resources/static/js/lib/jquery-ui/"
+                    dest: path("/lib/jquery-ui/")
                 }, {
                     expand: true,
                     cwd: "node_bower/js-cookie/src/",
                     src: "js.cookie*",
-                    dest: "src/main/resources/static/js/lib/js-cookie/"
+                    dest: path("/lib/js-cookie/")
                 }, {
                     expand: true,
                     cwd: "node_modules/babel-polyfill/dist/",
                     src: "polyfill*",
-                    dest: "src/main/resources/static/js/lib/babel-polyfill/"
+                    dest: path("/lib/babel-polyfill/")
                 }]
             }
         },
 
         babel: {
-            convert: {
-                options: {
-                    presets: ["es2015", "es2016"],
-                    sourceMap: true,
-                    comments: false,
-                },
-                files: [{
-                    expand: true,
-                    cwd: "src/main/resources/static/js/",
-                    src: "app.es7.js",
-                    dest: "src/main/resources/static/js/",
-                    rename: function (dest, src) {
-                        return dest + src.replace("es7", "es5");
-                    }
-                }]
-
-            },
-
-            minify: {
+            convert7: {
                 options: {
                     presets: ["babili"],
+                    // passPerPreset: true,
                     sourceMap: true,
+                    inputSourceMap: json(path("/app.es7-ts.js.map")),
                     comments: false,
                 },
-
                 files: [{
                     expand: true,
-                    cwd: "src/main/resources/static/js/",
-                    src: "app.es?.js",
-                    dest: "src/main/resources/static/js/",
+                    cwd: path("/"),
+                    src: "app.es7-ts.js",
+                    dest: path("/"),
                     rename: function (dest, src) {
-                        return dest + src.replace(".js", ".min.js");
+                        return (dest + src)
+                            .replace("es7-ts", "es7-babel")
+                            .replace(".js", ".min.js")
+
                     }
                 }]
+            },
 
-            }
+            convert5: {
+                options: {
+                    presets: ["es2015", "es2016", "babili"],
+                    // passPerPreset: true,
+                    sourceMap: true,
+                    inputSourceMap: json(path("/app.es7-ts.js.map")),
+                    comments: false,
+                },
+                files: [{
+                    expand: true,
+                    cwd: path("/"),
+                    src: "app.es7-ts.js",
+                    dest: path("/"),
+                    rename: function (dest, src) {
+                        return (dest + src)
+                            .replace("es7-ts", "es5-babel")
+                            .replace(".js", ".min.js")
+                    }
+                }]
+            },
         }
     });
 
-    grunt.registerTask("js", ["copy:js"]);
-    grunt.registerTask("cm", ["babel:convert", "babel:minify"]);
+    grunt.registerTask("copy-js", ["copy:js"]);
+    grunt.registerTask("babel-convert", ["babel:convert7", "babel:convert5"]);
 };

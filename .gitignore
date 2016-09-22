@@ -5,6 +5,7 @@ node_bower/
 *.map
 *.log
 !Gruntfile.js
+!Gulpfile.js
 !app.loader.js
 
 target/

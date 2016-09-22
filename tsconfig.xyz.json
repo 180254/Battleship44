@@ -11,7 +11,7 @@
       "es7",
       "dom"
     ],
-    "outFile": "src/main/resources/static/js/app.es7.js",
+    "outFile": "src/main/resources/static/js/app.es7-ts.js",
     "sourceMap": true,
     "listFiles": true
   },

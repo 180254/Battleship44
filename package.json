@@ -31,9 +31,13 @@
     "babel-preset-es2016": "^6.11.3",
     "babili": "^0.0.5",
     "bower": "^1.7.9",
+    "google-closure-compiler-js": "^20160916.0.0",
     "grunt": "^1.0.1",
     "grunt-babel": "^6.0.0",
     "grunt-contrib-copy": "^1.0.0",
+    "gulp": "^3.9.1",
+    "gulp-cli": "^1.2.2",
+    "gulp-sourcemaps": "^2.0.0-alpha",
     "load-grunt-tasks": "^3.5.2",
     "typescript": "^2.0.2"
   },
@@ -45,8 +49,8 @@
   },
   "scripts": {
     "install-update": "npm update && bower update",
-    "collect-compile": "grunt js && tsc -p tsconfig.xyz.json",
-    "convert-minify": "grunt cm",
+    "collect-compile": "grunt copy-js && tsc -p tsconfig.xyz.json",
+    "convert-minify": "grunt babel-convert && gulp closure-convert",
     "pretest": "tsc -p tsconfig.test.json",
     "test": "mocha src/main/resources/static/js/app.test.js"
   }
