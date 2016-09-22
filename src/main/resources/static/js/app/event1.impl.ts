@@ -14,7 +14,7 @@ namespace event1 {
         }
 
         public on($e: JQuery, action: string, callback: ($e: JQuery) => void): void {
-            $e.on(event, function (): void {
+            $e.on(action, function (): void {
                 callback($(this));
             });
         }
