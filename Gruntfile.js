@@ -13,6 +13,15 @@ module.exports = function (grunt) {
     grunt.initConfig({
 
         copy: {
+            types: {
+                files: [{
+                    expand: true,
+                    cwd: "node_modules/@types/",
+                    src: "**",
+                    dest: "node_types"
+                }]
+            },
+
             js: {
                 files: [{
                     expand: true,
@@ -84,6 +93,7 @@ module.exports = function (grunt) {
         }
     });
 
+    grunt.registerTask("copy-types", ["copy:types"]);
     grunt.registerTask("copy-js", ["copy:js"]);
     grunt.registerTask("babel-convert", ["babel:convert7", "babel:convert5"]);
 };

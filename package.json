@@ -48,7 +48,7 @@
     "tslint-microsoft-contrib": "^2.0.10"
   },
   "scripts": {
-    "install-update": "npm update && bower update",
+    "install-update": "npm update && bower update && grunt copy-types",
     "collect-compile": "grunt copy-js && tsc -p tsconfig.xyz.json",
     "convert-minify": "grunt babel-convert && gulp closure-convert",
     "pretest": "tsc -p tsconfig.test.json",
