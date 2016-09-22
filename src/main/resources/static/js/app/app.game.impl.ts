@@ -1,3 +1,6 @@
+/// <reference types="jquery" />
+/// <reference types="jqueryui" />
+/// <reference types="js-cookie" />
 /// <reference path="app.game.decl.ts" />
 /// <reference path="assert.impl.ts" />
 /// <reference path="escape.impl.ts" />
@@ -23,11 +26,6 @@ namespace game {
     "use strict";
 
     class Singleton {
-
-        public starter: Starter = new StarterEx(this._ws);
-        private _ws: Ws = new WsEx(this._onEvent);
-        private _onEvent: OnEvent = new OnEventEx(this._ws, this._onMessage);
-        private _onMessage: OnMessage = new OnMessageEx();
 
         public assert: assert.AssertEx = new assert.AssertEx();
         public event1: event1.EventEx = new event1.EventEx(this.random);
@@ -56,6 +54,7 @@ namespace game {
     export let i: Singleton = new Singleton();
 
     // ---------------------------------------------------------------------------------------------------------------
+
     export class StarterEx implements Starter {
 
         private readonly _logger: logger.Logger = new logger.LoggerEx(StarterEx);
@@ -113,10 +112,10 @@ namespace game {
 
         public init(): void {
             this._ws = new WebSocket("ws://" + window.location.host + "/ws");
-            this._ws.onopen = this._onEvent.onOpen;
-            this._ws.onmessage = this._onEvent.onMessage;
-            this._ws.onclose = this._onEvent.onClose;
-            this._ws.onerror = this._onEvent.onError;
+            this._ws.onopen = (ev: Event) => this._onEvent.onOpen(ev);
+            this._ws.onmessage = (ev: MessageEvent) => this._onEvent.onMessage(ev);
+            this._ws.onclose = (ev: CloseEvent) => this._onEvent.onClose(ev);
+            this._ws.onerror = (ev: Event) => this._onEvent.onError(ev);
         }
 
         public send(msg: string): void {
@@ -131,12 +130,15 @@ namespace game {
 
         private readonly _logger: logger.Logger = new logger.LoggerEx(OnEventEx);
 
-        private readonly _ws: Ws;
+        private _ws: Ws;
         private readonly _onMessage: OnMessage;
 
-        public constructor(ws: game.Ws, onMessage: game.OnMessage) {
-            this._ws = ws;
+        public constructor(onMessage: game.OnMessage) {
             this._onMessage = onMessage;
+        }
+
+        public setWs(ws: Ws): void {
+            this._ws = ws;
         }
 
         public onOpen(ev: Event): void {
@@ -206,6 +208,7 @@ namespace game {
     // ---------------------------------------------------------------------------------------------------------------
 
     export class MessageEx implements Message {
+
         public readonly raw: string;
         public readonly command: string;
         public readonly payload: string;
@@ -227,10 +230,223 @@ namespace game {
 
     // ---------------------------------------------------------------------------------------------------------------
 
+    type Callback<T> = (value: T) => void;
+
     export class OnMessageEx implements OnMessage {
+
+        private _ws: Ws;
+        private readonly _func: Map<string, Callback<string>>;
+
+        public setWs(ws: Ws): void {
+            this._ws = ws;
+        }
+
+        // tslint:disable:max-func-body-length
+        public constructor() {
+
+            this._func = new Map<string, Callback<string>>([
+                ["HI_.", payload => {
+                    // TODO: factory method, i18n.k()?
+                    i.message.fleeting(new i18n.TrKeyEx("pre.hi", payload), i.timeout.fast);
+                }],
+
+                ["GAME OK", payload => {
+                    i.grids.$opponent.addClass("inactive");
+                    i.grids.$shoot.removeClass("inactive");
+
+                    if (payload) {
+                        const $infoGameUrl: JQuery = $("#info-game-url");
+                        i.translator.unsetTr($infoGameUrl);
+                        $infoGameUrl.text(i.url.url(
+                            i.url.param("v"),
+                            new url.UrlParamEx("id", payload),
+                        ));
+
+                        $("#info-players-game").text(1);
+                    }
+
+                    i.grids.reset();
+                    i.message.fixed(new i18n.TrKeyEx("put.info"));
+                    i.message.appendFixedLink(new i18n.TrKeyEx("put.done"), "ok-ship-selection");
+
+                    i.selection.activate();
+                    i.event1.on($("#ok-ship-selection"), "click",
+                        () => this._ws.send("GRID {0}".format(i.selection.collect())));
+                }],
+
+                ["GAME FAIL", payload => {
+                    i.message.fixed(new i18n.TrKeyEx("fail.fail", payload));
+                }],
+
+                ["GRID OK", payload => {
+                    i.grids.$opponent.removeClass("inactive");
+                    i.grids.$shoot.addClass("inactive");
+
+                    i.message.fixed(new i18n.TrKeyEx("tour.awaiting"));
+
+                    i.selection.deactivate();
+                    i.selection.move();
+                }],
+
+                ["GRID FAIL", payload => {
+                    i.message.fleeting(new i18n.TrKeyEx("put.fail"), i.timeout.default_, "msg-fail");
+                }],
+
+                ["TOUR START", payload => {
+                    // none here
+                }],
+
+                ["TOUR YOU", payload => {
+                    i.grids.$shoot.removeClass("inactive");
+
+                    i.message.fixed(new i18n.TrKeyEx("tour.shoot_me"), "msg-important");
+                    i.title.blinking(new i18n.TrKeyEx("title.shoot_me"), false);
+
+                    i.grids.$shoot.find("td").addClass("shoot-able");
+                    i.event1.onetime(i.grids.$shoot.find("td"), "click", $td => {
+                        const pos: string = i.cellSer.convert(
+                            // TODO: create CellEx static constructor from JQuery td
+                            new grid.CellEx(
+                                Number.parseInt($td.attr("data-row-i")), Number.parseInt($td.attr("data-col-i"))
+                            )
+                        );
+
+                        this._ws.send("SHOOT {0}".format(pos));
+                    });
+                }],
+
+                ["TOUR HE", payload => {
+                    i.grids.$shoot.addClass("inactive");
+                    i.grids.$shoot.find("td").removeClass("shoot-able");
+
+                    i.message.fixed(new i18n.TrKeyEx("tour.shoot_opp"));
+                    i.title.fixed(new i18n.TrKeyEx("title.shoot_opp"));
+                }],
+
+                ["YOU_", payload => {
+                    const cells: grid.Cell[] = i.cellsDeSer.convert(payload);
+
+                    cells.forEach((cell) => {
+                        // TODO: fix class?
+                        i.grids.setCellClass(i.grids.$shoot, cell, cell.clazz!, false);
+                    });
+                }],
+
+                ["HE__", payload => {
+                    const cells: grid.Cell[] = i.cellsDeSer.convert(payload);
+
+                    cells.forEach((cell) => {
+                        i.grids.setCellClass(i.grids.$opponent, cell, "opponent-shoot", false);
+                    });
+                }],
+
+                ["WON_", payload => {
+                    i.grids.$opponent.addClass("inactive");
+                    i.grids.$shoot.addClass("inactive");
+
+                    const winning: JQuery = payload === "YOU" ? $("#info-winning-me") : $("#info-winning-opp");
+                    winning.text(Number.parseInt(winning.text()) + 1);
+
+                    payload === "YOU"
+                        ? i.message.fixed(new i18n.TrKeyEx("end.won_me"))
+                        : i.message.fixed(new i18n.TrKeyEx("end.won_opp"));
+
+                    i.message.appendFixedLink(new i18n.TrKeyEx("end.next_game"), "ok-game-next");
+
+                    i.event1.onetime($("#ok-game-next"), "click", () =>
+                        (this._func.get("GAME OK"))!("")
+                    );
+
+                    i.title.fixed(new i18n.TrKeyEx("title.standard"));
+                }],
+
+                ["1PLA", payload => {
+                    $("#info-players-game").text(1);
+                    const gameInterrupted: boolean = payload === "game-interrupted";
+
+                    if (gameInterrupted) {
+                        i.message.fixed(new i18n.TrKeyEx("end.opp_gone"));
+                    } else {
+                        i.message.fleeting(new i18n.TrKeyEx("end.opp_gone"), i.timeout.slow);
+                    }
+
+                    if (gameInterrupted) {
+                        i.grids.$shoot.find("td").removeClass("shoot-able");
+                        i.event1.off(i.grids.$shoot.find("td"), "click"); // remove shoot action
+
+                        i.message.appendFixedLink(new i18n.TrKeyEx("end.next_game"), "ok-game-next");
+
+                        i.grids.$opponent.addClass("inactive");
+                        i.grids.$shoot.addClass("inactive");
+
+                        i.title.fixed(i.title.cStandardTitle);
+                    }
+
+                    i.event1.onetime($("#ok-game-next"), "click", () =>
+                        (this._func.get("GAME OK"))!("")
+                    );
+                }],
+
+                ["2PLA", payload => {
+                    $("#info-players-game").text(2);
+                    i.message.fleeting(new i18n.TrKeyEx("tour.two_players"), i.timeout.slow);
+                }],
+
+                ["PONG", payload => {
+                    // none here
+                }],
+
+                ["STAT", payload => {
+                    // TODO: specify type
+                    const infoStat: any = {
+                        players: "#info-players-global",
+                    };
+
+                    const stats: string[] = payload.split(",");
+
+                    for (let k: number = 0; k < stats.length; k = k + 1) {
+                        const stat: string[] = stats[k].split("=");
+                        $(infoStat[stat[0]]).text(stat[1]);
+                        i.translator.unsetTr($(infoStat[stat[0]]));
+                    }
+                }],
+
+                ["400_", payload => {
+                    i.message.fixed(new i18n.TrKeyEx("fail.fail"), payload);
+                }],
+            ]);
+
+            // -------------------------------------------------------------------------------
+        }
+
         public process(msg: game.Message): void {
-            //
+            // TODO: anti pattern? use map key feature (get)
+            for (const [funcName, func] of this._func) {
+                if (msg.raw.lastIndexOf(funcName, 0) === 0) {
+
+                    return func(
+                        msg.raw.substring(funcName.length + 1)
+                    );
+                }
+            }
         }
 
     }
+
+    // ---------------------------------------------------------------------------------------------------------------
+
+    class SingletonGame {
+
+        private _onMessage: OnMessageEx = new game.OnMessageEx();
+        private _onEvent: OnEventEx = new game.OnEventEx(this._onMessage);
+        private _ws: WsEx = new game.WsEx(this._onEvent);
+        public starter: StarterEx = new game.StarterEx(this._ws);
+
+        public constructor() {
+            this._onEvent.setWs(this._ws);
+            this._onMessage.setWs(this._ws);
+        }
+    }
+
+    export let iGame: SingletonGame = new SingletonGame();
 }

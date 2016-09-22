@@ -3,5 +3,5 @@
 namespace app {
     "use strict";
 
-    game.i.starter.init();
+    game.iGame.starter.init();
 }

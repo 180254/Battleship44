@@ -46,7 +46,7 @@ namespace grid {
             this.$opponent.find("td").attr("class", "unknown");
         }
 
-        public setClass($grid: JQuery, cell: Cell, clazz: string, keepCurrent: boolean): void {
+        public setCellClass($grid: JQuery, cell: Cell, clazz: string, keepCurrent: boolean): void {
             const $element: JQuery =
                 $grid
                     .find("tr").eq(cell.row)

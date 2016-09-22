@@ -1,3 +1,5 @@
+/// <reference types="jquery" />
+
 declare namespace grid {
 
     interface Cell {
@@ -16,7 +18,7 @@ declare namespace grid {
         init(): void;
         reset(): void;
 
-        setClass($grid: JQuery, cell: Cell, clazz: string, keepCurrent: boolean): void;
+        setCellClass($grid: JQuery, cell: Cell, clazz: string, keepCurrent: boolean): void;
     }
 
     // ---------------------------------------------------------------------------------------------------------------
