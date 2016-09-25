@@ -1,0 +1,64 @@
+namespace strings {
+
+    export const _: any = {
+
+        flag: {
+            id: "#flag",
+            clazz: {
+                i: "flag",
+            },
+        },
+
+        message: {
+            id: "#message",
+            id_const: "#message-const",
+
+            clazz: {
+                i: "message",
+                fail: "message-fail",
+                important: "message-important",
+            },
+        },
+
+        grid: {
+            id: "#grid",
+            id_opponent: "#grid-opponent",
+            id_shoot: "#grid-shoot",
+
+            clazz: {
+                i: "grid",
+                inactive: "grid-inactive",
+            },
+        },
+
+        cell: {
+            clazz: {
+                unknown: "cell-unknown",
+                empty: "cell-empty",
+                ship: "cell-ship",
+                shoot: "cell-opp-shoot",
+                shootable: "cell-shoot-able",
+            },
+        },
+
+        info: {
+            id: "#info",
+            id_game_url: "#info-game-url",
+            id_players_game: "#info-players-game",
+            id_players_global: "#info-players-global",
+            id_winning_ratio: "#info-winning-ratio",
+            id_winning_me: "#info-winning-me",
+            id_winning_opp: "#info-winning-opp",
+            id_ship_sizes: "#info-ship-sizes",
+
+            clazz: {
+                td_1: ".info-td-1",
+                td_2: ".info-td-2",
+            },
+        },
+
+        script: {
+            id: "#script",
+        },
+    };
+}

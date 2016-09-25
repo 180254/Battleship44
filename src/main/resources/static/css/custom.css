@@ -12,19 +12,23 @@ main {
     height: 600px;
 }
 
-#flags {
+/* ---------------------------------------------------------------------------------------------------------------- */
+
+#flag {
     float: right;
     margin-bottom: 5px;
     cursor: pointer;
 }
 
-#flags > img {
+#flag > img {
     padding-right: 10px;
 }
 
-#flags > :last-child {
+#flag > :last-child {
     padding-right: 0 !important;
 }
+
+/* ---------------------------------------------------------------------------------------------------------------- */
 
 #message {
     font-family: Verdana, Geneva, sans-serif;
@@ -47,9 +51,30 @@ main {
     justify-content: center;
 }
 
-#message span.msg {
+#message .message {
     display: block;
 }
+
+#message-const a {
+    color: #000057;
+}
+
+.message-fail {
+    color: #ab0505;
+}
+
+.message-important {
+    font-weight: bold;
+    animation: message-blinker 1s linear infinite;
+}
+
+@keyframes message-blinker {
+    50% {
+        opacity: 0.0;
+    }
+}
+
+/* ---------------------------------------------------------------------------------------------------------------- */
 
 .grid table {
     margin: 0 auto;
@@ -82,19 +107,19 @@ main {
     vertical-align: bottom;
 }
 
-.grid td.unknown {
+.grid td.cell-unknown {
     background-color: #ffffff;
 }
 
-.grid td.empty {
+.grid td.cell-empty {
     background-color: #d6c5d0;
 }
 
-.grid td.ship {
+.grid td.cell-ship {
     background-color: #0b5c53;
 }
 
-.grid td.opponent-shoot::after {
+.grid td.cell-opp-shoot::after {
     content: "*";
 
     font-family: Tahoma, Geneva, sans-serif;
@@ -102,9 +127,15 @@ main {
     color: red;
 }
 
-.grid.inactive {
+.cell-shoot-able {
+    cursor: crosshair;
+}
+
+.grid.grid-inactive {
     opacity: 0.4;
 }
+
+/* ---------------------------------------------------------------------------------------------------------------- */
 
 #info {
     font-family: Verdana, Geneva, sans-serif;
@@ -115,33 +146,6 @@ main {
     padding-top: 1rem;
 }
 
-#msg-const a {
-    color: #000057;
-}
-
-.msg-fail {
-    color: #ab0505;
-}
-
-@keyframes blinker {
-    50% {
-        opacity: 0.0;
-    }
-}
-
-.msg-important {
-    font-weight: bold;
-    animation: blinker 1s linear infinite;
-}
-
-.inactive {
-    opacity: 0.5;
-}
-
 .info-td-1 {
     width: 10rem;
-}
-
-.shoot-able {
-    cursor: crosshair;
 }
