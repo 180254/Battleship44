@@ -1,4 +1,4 @@
-// change app version. example: ?v=es5-closure.min
+// change app version. example: ?v=5c
 $(function () {
     // code: es5
 
@@ -21,9 +21,9 @@ $(function () {
     // #2.a $("<script>", {src: src}).appendTo("footer");
     // #2.b jQuery.ajax({dataType: "script", cache: true, url: src});
     // #3 Problem discussed at stackoverflow: http://stackoverflow.com/q/15459218
-    var load = function (mode, src) {
+    var loadScript = function (mode, src) {
         if (mode == "script") {
-            var scripts = document.getElementById("scripts");
+            var scripts = document.getElementById("script");
             var ref = document.createElement("script");
 
             ref.setAttribute("src", src);
@@ -42,16 +42,18 @@ $(function () {
             : validArray[0];
     };
 
+    // ---------------------------------------------------------------------------------------------------------------
+
     var modes = ["script"];
-    var versions = ["es7-ts", "es7-babel.min", "es5-babel.min", "es5-closure.min"];
+    var versions = ["7t", "7b", "5b", "5c"];
+    var versions_ = ["es7-ts", "es7-babel.min", "es5-babel.min", "es5-closure.min"];
 
-    var modeParam = urlParam("m");
-    var versionParam = urlParam("v");
+    var mode = requireValid(urlParam("m"), modes);
+    var version = requireValid(urlParam("v"), versions);
 
-    var mode = requireValid(modeParam, modes);
-    var version = requireValid(versionParam, versions);
+    var version_ = versions_[versions.indexOf(version)];
 
     // ---------------------------------------------------------------------------------------------------------------
 
-    load(mode, "js/app." + version + ".js");
+    loadScript(mode, "js/app." + version_ + ".js");
 });
