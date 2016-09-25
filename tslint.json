@@ -15,12 +15,12 @@
     "missing-jsdoc": false,
     "export-name": false,
     "object-literal-sort-keys": false,
-    "no-backbone-get-set-outside-model": false,
 
     "no-reference": false,
     "no-unused-variable": false,
     "no-namespace": false,
-    "no-invalid-this": false,
+
+    "arrow-parens": true,
 
     "interface-name": false,
     "variable-name": [

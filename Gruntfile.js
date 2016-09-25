@@ -1,10 +1,10 @@
 module.exports = function (grunt) {
     require('load-grunt-tasks')(grunt);
 
-    var path =
+    const path =
         (file) => "src/main/resources/static/js" + file;
 
-    var json =
+    const json =
         path => (
             grunt.file.isFile(path)
             && grunt.file.readJSON(path)

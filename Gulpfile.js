@@ -1,11 +1,11 @@
-var gulp = require('gulp');
-var closure = require("google-closure-compiler-js").gulp();
-var sourcemaps = require('gulp-sourcemaps');
+const gulp = require('gulp');
+const closure = require("google-closure-compiler-js").gulp();
+const sourcemaps = require('gulp-sourcemaps');
 
-var path =
+const path =
     (file) => "src/main/resources/static/js" + file;
 
-var path_ = // src\main\...
+const path_ = // src\main\...
     (file) => path(file).split("/").join("\\");
 
 gulp.task("closure-convert", function () {
