@@ -18,7 +18,7 @@ namespace logger {
         before(() => {
             assert_ = new assert.AssertEx();
             logger_ = new logger.LoggerEx(TestClass);
-            logger_.cOutput = (str) => output = str;
+            logger_.cOutput = (str) => output += str + "\n";
         });
 
         beforeEach(() => {

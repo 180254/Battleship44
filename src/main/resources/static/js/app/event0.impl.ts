@@ -12,7 +12,7 @@ namespace event0 {
         }
 
         public publish(value: T): void {
-            this._subscribers.forEach(subscriber => subscriber(value));
+            this._subscribers.forEach((subscriber) => subscriber(value));
         }
     }
 }

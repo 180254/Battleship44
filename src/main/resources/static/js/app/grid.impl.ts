@@ -1,5 +1,6 @@
 /// <reference path="grid.decl.ts" />
 /// <reference path="format.decl.ts" />
+/// <reference path="strings.decl.ts" />
 
 namespace grid {
     "use strict";
@@ -28,8 +29,8 @@ namespace grid {
         public cRows: number = 10;
         public cCols: number = 10;
 
-        public readonly $shoot: JQuery = $("#grid-shoot");
-        public readonly $opponent: JQuery = $("#grid-opponent");
+        public readonly $shoot: JQuery = $(strings._.grid.id_shoot);
+        public readonly $opponent: JQuery = $(strings._.grid.id_opponent);
 
         public init(): void {
             this._createGrid(
@@ -42,8 +43,9 @@ namespace grid {
         }
 
         public reset(): void {
-            this.$shoot.find("td").attr("class", "unknown");
-            this.$opponent.find("td").attr("class", "unknown");
+            const unknown: string = strings._.cell.clazz.unknown;
+            this.$shoot.find("td").attr("class", unknown);
+            this.$opponent.find("td").attr("class", unknown);
         }
 
         public setCellClass($grid: JQuery, cell: Cell, clazz: string, keepCurrent: boolean): void {
@@ -81,13 +83,15 @@ namespace grid {
             return $row;
         }
 
-        // tslint:disable:object-literal-key-quotes
+        // noinspection JSMethodCanBeStatic
         private _createCell(gridId: string, rowIndex: number, colIndex: number): JQuery {
+            const unknown: string = strings._.cell.clazz.unknown;
+
             return $("<td/>", {
-                "class": "unknown",
-                "data-grid-id": gridId,
-                "data-row-i": rowIndex,
-                "data-col-i": colIndex,
+                ["class"]: unknown,
+                ["data-grid-id"]: gridId,
+                ["data-row-i"]: rowIndex,
+                ["data-col-i"]: colIndex,
             });
         }
     }
@@ -106,21 +110,25 @@ namespace grid {
             let isMouseDown: boolean = false;
             let isHighlighted: boolean = false;
 
+            const shootable: string = strings._.cell.clazz.shootable;
+            const ship: string = strings._.cell.clazz.ship;
+            const unknown: string = strings._.cell.clazz.unknown;
+
             this._grids.$shoot
                 .find("td")
-                .addClass("shoot-able")
+                .addClass(shootable)
                 .mousedown(function (): boolean {
                     isMouseDown = true;
-                    $(this).toggleClass("ship");
-                    isHighlighted = $(this).hasClass("ship");
-                    $(this).toggleClass("unknown", !isHighlighted);
+                    $(this).toggleClass(ship);
+                    isHighlighted = $(this).hasClass(ship);
+                    $(this).toggleClass(unknown, !isHighlighted);
                     return false;
                 })
 
                 .mouseover(function (): void {
                     if (isMouseDown) {
-                        $(this).toggleClass("ship", isHighlighted);
-                        $(this).toggleClass("unknown", !isHighlighted);
+                        $(this).toggleClass(ship, isHighlighted);
+                        $(this).toggleClass(unknown, !isHighlighted);
                     }
                 })
 
@@ -131,9 +139,11 @@ namespace grid {
         }
 
         public deactivate(): void {
+            const shootable: string = strings._.cell.clazz.shootable;
+
             this._grids.$shoot
                 .find("td")
-                .removeClass("shoot-able")
+                .removeClass(shootable)
                 .off("mousedown")
                 .off("mouseover")
                 .off("selectstart");
@@ -142,10 +152,12 @@ namespace grid {
         }
 
         public collect(): string {
+            const ship: string = strings._.cell.clazz.ship;
+
             return this._grids.$shoot
                 .find("tr").find("td")
                 .map(function (): number {
-                    return +($(this).hasClass("ship"));
+                    return +($(this).hasClass(ship));
                 })
                 .get()
                 .join(",");
@@ -154,10 +166,11 @@ namespace grid {
         public move(): void {
             const shoot: JQuery = this._grids.$shoot.find("td");
             const opponent: JQuery = this._grids.$opponent.find("td");
+            const unknown: string = strings._.cell.clazz.unknown;
 
             for (let i: number = 0; i < shoot.length; i += 1) {
                 const shootClass: string = shoot.eq(i).attr("class");
-                shoot.eq(i).attr("class", "unknown");
+                shoot.eq(i).attr("class", unknown);
                 opponent.eq(i).attr("class", shootClass);
             }
         }

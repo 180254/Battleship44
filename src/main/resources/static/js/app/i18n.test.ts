@@ -157,7 +157,7 @@ namespace i18n {
                 );
             });
 
-            it("should equals - same lang: full-tag compared to lang-only-tag ", () => {
+            it("should equals - same lang: full-tag compared to lang-only-tag", () => {
                 assert_.ok(
                     langTagComparison_.approxMatches(
                         new LangTagEx("en", "US"),
@@ -196,8 +196,8 @@ namespace i18n {
             private readonly _server: i18n.LangTag[];
 
             public constructor(user: string, server: string) {
-                this._user = user.length ? user.split(" ").map(u => LangTagEx.FROM_STRING(u)) : [];
-                this._server = server.length ? server.split(" ").map(u => LangTagEx.FROM_STRING(u)) : [];
+                this._user = user.length ? user.split(" ").map((u) => LangTagEx.FROM_STRING(u)) : [];
+                this._server = server.length ? server.split(" ").map((u) => LangTagEx.FROM_STRING(u)) : [];
             }
 
             public user(): i18n.LangTag[] {

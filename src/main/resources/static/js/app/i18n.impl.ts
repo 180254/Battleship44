@@ -67,6 +67,8 @@ namespace i18n {
 
     export class LangFinderEx implements LangFinder {
 
+        private readonly _logger: logger.Logger = new logger.LoggerEx(LangFinderEx);
+
         public cSupported: LangTag[] = [];
         public cCookieName: string = "i18n-lang-tag";
 
@@ -82,12 +84,17 @@ namespace i18n {
                     window.navigator.userLanguage,
                     window.navigator.browserLanguage,
                     window.navigator.systemLanguage
-                ).filter(langTagStr => !!langTagStr);
+                ).filter((langTagStr) => !!langTagStr);
 
-            return tagStrings.map(tagStr => LangTagEx.FROM_STRING(tagStr));
+            const result: LangTag[]
+                = tagStrings.map((tagStr) => LangTagEx.FROM_STRING(tagStr));
+
+            this._logger.trace("user={0}", result);
+            return result;
         }
 
         public server(): LangTag[] {
+            this._logger.trace("server={0}", this.cSupported);
             return this.cSupported;
         }
     }
@@ -124,8 +131,8 @@ namespace i18n {
                 throw new Error("finder.server cannot be empty");
             }
 
-            this._logger.trace("user=[{0}]", user);
-            this._logger.trace("server=[{0}]", server);
+            // this._logger.trace("user=[{0}]", user);
+            // this._logger.trace("server=[{0}]", server);
 
             let fLang: LangTag | undefined;
             let fLang2: LangTag | undefined;
@@ -133,19 +140,19 @@ namespace i18n {
 
             for (const userLang of user) {
                 // try exact tag, as from user data
-                fLang = server.find(supLang => this._langTagComp.exactlyMatches(userLang, supLang));
+                fLang = server.find((supLang) => this._langTagComp.exactlyMatches(userLang, supLang));
                 if (fLang !== undefined) {
                     fType = SelectType.EXACTLY;
                     break;
                 }
 
                 // or maybe approx tag
-                fLang = server.find(supTag => this._langTagComp.approxMatches(userLang, supTag));
+                fLang = server.find((supTag) => this._langTagComp.approxMatches(userLang, supTag));
                 if (fLang !== undefined) {
                     fType = SelectType.APPROX;
 
                     // maybe user has exact but on next position?
-                    fLang2 = user.find(userLang => this._langTagComp.exactlyMatches(userLang, fLang!));
+                    fLang2 = user.find((userLang) => this._langTagComp.exactlyMatches(userLang, fLang!));
                     if (fLang2 !== undefined) {
                         fType = SelectType.EXACTLY;
                         break;
@@ -153,7 +160,7 @@ namespace i18n {
 
                     // should prefer general, if same region is not available
                     const langWithoutRegion: LangTag = new LangTagEx(userLang.lang);
-                    fLang2 = server.find(supTag => this._langTagComp.exactlyMatches(langWithoutRegion, supTag));
+                    fLang2 = server.find((supTag) => this._langTagComp.exactlyMatches(langWithoutRegion, supTag));
                     if (fLang2 !== undefined) {
                         fLang = fLang2;
                         fType = SelectType.APPROX; // region was ignored
@@ -170,7 +177,7 @@ namespace i18n {
                 fType = SelectType.DEFAULT;
             }
 
-            this._logger.trace("select=[{0},{1}]", fLang, SelectType[fType].toLowerCase());
+            this._logger.trace("select={0},{1}", fLang, SelectType[fType].toLowerCase());
             return [fLang, fType];
         }
     }
@@ -179,9 +186,10 @@ namespace i18n {
 
     export class LangSetterEx implements LangSetter {
 
+        private readonly _logger: logger.Logger = new logger.LoggerEx(LangSetterEx);
+
         public cCookieName: string = "i18n-lang-tag";
 
-        private readonly _logger: logger.Logger = new logger.LoggerEx(LangSelectorEx);
         private readonly _langSelector: LangSelector;
 
         public constructor(langSelector: i18n.LangSelector) {
@@ -190,12 +198,12 @@ namespace i18n {
 
         public getLang(): LangTag {
             const result: [LangTag, SelectType] = this._langSelector.select();
-            this._logger.debug("get: [{0},{1}]", result[0], SelectType[result[1]].toLowerCase());
+            this._logger.debug("get={0},{1}", result[0], SelectType[result[1]].toLowerCase());
             return result[0];
         }
 
         public setLang(lang: LangTag): void {
-            this._logger.debug("set: [{0}]", lang);
+            this._logger.debug("set={0}", lang);
             Cookies.set(this.cCookieName, lang.toString());
         }
     }
@@ -215,6 +223,10 @@ namespace i18n {
         public toString(): string {
             return "KeyEx[path={0} params={1}]".format(this.path, this.params.join(","));
         }
+    }
+
+    export function tk(path: string, params?: any[] | any): TrKey {
+        return new TrKeyEx(path, params);
     }
 
     // ---------------------------------------------------------------------------------------------------------------
@@ -292,7 +304,7 @@ namespace i18n {
             const langTag: LangTag = this._langSetter.getLang();
             const jsonPath: string = this.cPath(langTag);
 
-            $.get(jsonPath, data => {
+            $.get(jsonPath, (data) => {
                 this._strings = data;
                 this.setAllTr();
 

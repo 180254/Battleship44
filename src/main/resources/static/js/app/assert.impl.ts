@@ -37,7 +37,7 @@ namespace assert {
         }
 
         public strContains(haystack: string, needle: any): void {
-            if (haystack.indexOf(needle) === -1) {
+            if (!haystack.includes(needle)) {
                 throw new Error("expected: {0} to contain: {1}".format(haystack, needle));
             }
         }

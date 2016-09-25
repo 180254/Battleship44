@@ -1,21 +1,22 @@
 /// <reference path="title.decl.ts"/>
 /// <reference path="i18n.decl.ts"/>
+/// <reference path="logger.impl.ts"/>
 
 namespace title {
     "use strict";
 
     export class TitleEx implements Title {
 
-        public cStandardTitle: i18n.TrKey = {
-            path: "standard.title",
-            params: [],
-        };
+        private readonly _logger: logger.Logger = new logger.LoggerEx(TitleEx);
+
+        public cStandardTitle: i18n.TrKey = {path: "title.standard", params: []};
         public cBlinkTimeout: number = 1350;
 
-        private readonly _translator: i18n.Translator;
         private _currentTrKeys: i18n.TrKey[] = [];
         private _currentTr: string[] = [];
         private _blinkInterval?: number;
+
+        private readonly _translator: i18n.Translator;
 
         public constructor(translator: i18n.Translator) {
             this._translator = translator;
@@ -25,6 +26,8 @@ namespace title {
         public fixed(key: i18n.TrKey): void {
             this._removeBlinking();
             this._updateTr([key]);
+
+            this._logger.trace("fixed={0},{1}", this._currentTrKeys, this._currentTr);
         }
 
         public blinking(key: i18n.TrKey, override: boolean): void {
@@ -39,6 +42,8 @@ namespace title {
                     state = (state + 1) % 2;
                 }, this.cBlinkTimeout);
             }
+
+            this._logger.trace("blinking={0},{1},{2}", this._currentTrKeys, this._currentTr, override);
         }
 
         private _removeBlinking(): void {

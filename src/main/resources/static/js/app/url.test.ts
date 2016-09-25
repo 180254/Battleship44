@@ -22,9 +22,9 @@ namespace url {
 
         describe("param", () => {
 
-            const verifyParamMethod: ((loc: string, name: string, expValue: string | undefined) => void) =
-                (loc, name, expValue) => {
-                    url_.cLocationHref = () => loc;
+            const verifyParamMethod: ((locHref: string, name: string, expValue: string | undefined) => void) =
+                (locHref, name, expValue) => {
+                    url_.cLocationHref = () => locHref;
                     const result: UrlParam = url_.param(name);
                     assert_.equals(name, result.name);
                     assert_.equals(expValue, result.value);
@@ -99,40 +99,42 @@ namespace url {
                     "sdf", undefined
                 );
             });
+
+            it("should not extract param - as not provided, but has misleading path", () => {
+                verifyParamMethod(
+                    "http://none.com/c=d/?a=b",
+                    "c", undefined
+                );
+            });
         });
 
-        // -----------------------------------------------------------------------------------------------------------
+        // --------------------------------------------------------------------------------------------------------
 
         describe("url", () => {
 
-            const verifyUrlMethod: ((origin: string, params: UrlParam[], expected: string) => void) =
-                (origin, params, expected) => {
-                    url_.cLocationPath = () => origin;
+            const verifyUrlMethod: ((locPath: string, params: UrlParam[], expected: string) => void) =
+                (locPath, params, expected) => {
+                    if ((locPath.match(/\//g) || []).length < 3) {
+                        throw new Error("incorrect test. " +
+                            "possible cause: path is 'http://none.com' instead of 'http://none.com/'");
+                    }
+
+                    url_.cLocationPath = () => locPath;
                     const result: string = url_.url(...params);
                     assert_.equals(expected, result);
                 };
 
             it("should accept no params", () => {
                 verifyUrlMethod(
-                    "http://none.com",
+                    "http://none.com/",
                     [],
                     "http://none.com",
                 );
             });
 
-            it("should add - one full param", () => {
-                verifyUrlMethod(
-                    "http://none.com",
-                    [
-                        new UrlParamEx("key", "value"),
-                    ],
-                    "http://none.com/?key=value",
-                );
-            });
-
             it("should add - more than one full param", () => {
                 verifyUrlMethod(
-                    "http://none.com",
+                    "http://none.com/",
                     [
                         new UrlParamEx("key1", "value1"),
                         new UrlParamEx("key2", "value2"),
@@ -144,7 +146,7 @@ namespace url {
 
             it("should add - one name-only param", () => {
                 verifyUrlMethod(
-                    "http://none.com",
+                    "http://none.com/",
                     [
                         new UrlParamEx("key", ""),
                     ],
@@ -154,7 +156,7 @@ namespace url {
 
             it("should add - more than one name-only param", () => {
                 verifyUrlMethod(
-                    "http://none.com",
+                    "http://none.com/",
                     [
                         new UrlParamEx("key1", ""),
                         new UrlParamEx("key2", ""),
@@ -166,7 +168,7 @@ namespace url {
 
             it("should add - mixed types of param", () => {
                 verifyUrlMethod(
-                    "http://none.com",
+                    "http://none.com/",
                     [
                         new UrlParamEx("key1", ""),
                         new UrlParamEx("key2", "value2"),
@@ -178,7 +180,7 @@ namespace url {
 
             it("should add - key&value need be encoded", () => {
                 verifyUrlMethod(
-                    "http://none.com",
+                    "http://none.com/",
                     [
                         new UrlParamEx("^key%#", "&value="),
                     ],
@@ -188,7 +190,7 @@ namespace url {
 
             it("should skip - the only undefined-valued UrlParam", () => {
                 verifyUrlMethod(
-                    "http://none.com",
+                    "http://none.com/",
                     [
                         new UrlParamEx("a", undefined),
                     ],
@@ -198,7 +200,7 @@ namespace url {
 
             it("should skip - undefined-valued but keep other ones", () => {
                 verifyUrlMethod(
-                    "http://none.com",
+                    "http://none.com/",
                     [
                         new UrlParamEx("key1", ""),
                         new UrlParamEx("key2", undefined),
@@ -208,21 +210,29 @@ namespace url {
                 );
             });
 
-            it("should keep path - expect protocol, path, sub domain, and path without change", () => {
+            it("should keep loc path - expect protocol, path, sub domain, and path without change", () => {
                 verifyUrlMethod(
                     "https://sub.none.com:33/ala/x/y",
                     [
                         new UrlParamEx("key", "1"),
                     ],
-                    "https://sub.none.com:33/ala/x/y/?key=1",
+                    "https://sub.none.com:33/ala/x/y?key=1",
                 );
             });
 
-            it("should keep path - also if there is no param", () => {
+            it("should keep loc path - also if there is no param", () => {
                 verifyUrlMethod(
                     "https://sub.none.com:33/ala/x/y",
                     [],
                     "https://sub.none.com:33/ala/x/y",
+                );
+            });
+
+            it("should keep loc path - also if there is no param & pathname", () => {
+                verifyUrlMethod(
+                    "https://sub.none.com:33/",
+                    [],
+                    "https://sub.none.com:33",
                 );
             });
         });

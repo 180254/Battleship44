@@ -13,6 +13,7 @@
 /// <reference path="message.impl.ts" />
 /// <reference path="random.impl.ts" />
 /// <reference path="serializer.impl.ts" />
+/// <reference path="strings.impl.ts" />
 /// <reference path="title.impl.ts" />
 /// <reference path="ui.impl.ts" />
 /// <reference path="url.impl.ts" />
@@ -78,24 +79,23 @@ namespace game {
             i.translator.init(() => {
                 this._logger.error("translator init error");
 
-                }, () => {
+            }, () => {
                 i.title.fixed(i.title.cStandardTitle);
 
                 i.ui.initFlags((lang) => {
                     i.langSetter.setLang(lang);
                     i.translator.init();
-                    });
+                });
 
                 i.grids.init();
 
-                    if (!("WebSocket" in window)) {
-                        i.message.fixed(new i18n.TrKeyEx("ws.unable"));
-                        return;
-                    }
+                if (!("WebSocket" in window)) {
+                    i.message.fixed(new i18n.TrKeyEx("ws.unable"));
+                    return;
+                }
 
                 this._ws.init();
-                }
-            );
+            });
         }
     }
 

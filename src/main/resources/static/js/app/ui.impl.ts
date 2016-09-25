@@ -1,12 +1,15 @@
 /// <reference path="ui.decl.ts" />
 /// <reference path="event1.decl.ts" />
+/// <reference path="strings.decl.ts" />
+/// <reference path="logger.impl.ts" />
 
 namespace ui {
 
     export class UiEx implements Ui {
 
-        public $cFlags: JQuery = $("#flags");
+        private readonly _logger: logger.Logger = new logger.LoggerEx(UiEx);
 
+        private readonly _$flags: JQuery = $(strings._.flag.id);
         private readonly _event1: event1.Event;
         private readonly _langFinder: i18n.LangFinder;
 
@@ -17,18 +20,18 @@ namespace ui {
         }
 
         public initFlags(callback: (e: i18n.LangTag) => void): void {
-            const supported: i18n.LangTag[] = this._langFinder.server();
+            this._langFinder.server()
+                .forEach((lang) => {
+                    const $flag: JQuery = $("<img/>", {
+                        alt: lang.lang,
+                        src: "flag/" + lang.region + ".png",
+                    });
 
-            for (let i: number = 0; i < supported.length; i = i + 1) {
+                    this._event1.on($flag, "click", () => callback(lang));
+                    this._$flags.append($flag);
 
-                const $flag: JQuery = $("<img/>", {
-                    alt: supported[i].lang,
-                    src: "flag/" + supported[i].region + ".png",
+                    this._logger.trace("initFlags={0}", lang);
                 });
-
-                this._event1.on($flag, "click", () => callback(supported[i]));
-                this.$cFlags.append($flag);
-            }
         }
     }
 }

@@ -7,6 +7,6 @@ if (!RegExp.escape) {
     // "Escaping user input to be treated as a literal string within
     // a regular expression can be accomplished by replacement"
 
-    RegExp.escape = str =>
+    RegExp.escape = (str) =>
         str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
 }

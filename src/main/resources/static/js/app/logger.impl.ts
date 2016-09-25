@@ -21,6 +21,7 @@ namespace logger {
     export class LoggerEx implements Logger {
 
         public cOutput: (str: string) => void = console.log;
+
         private readonly _owner: Function;
 
         public constructor(owner: Function) {
@@ -54,8 +55,8 @@ namespace logger {
         private _log(level: Level, text: string, ...args: any[]): void {
             if (cLevel >= level) {
                 this.cOutput("{0}.{1} {2}".format(
-                    Level[level].toLowerCase(),
-                    this._owner.name ? this._owner.name : "?",
+                    Level[level].toLowerCase() || "?",
+                    this._owner.name || "?",
                     text.format(...args)
                 ));
             }

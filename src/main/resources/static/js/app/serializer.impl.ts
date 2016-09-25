@@ -19,9 +19,10 @@ namespace serializer {
     export class CellDeserializerEx implements Serializer<string, grid.Cell> {
 
         public convert(value: string): grid.Cell {
-            const cell: string[] = value
-                .replace(/[\[\]]/g, "")
-                .split(",");
+            const cell: string[] =
+                value
+                    .replace(/[\[\]]/g, "")
+                    .split(",");
 
             return {
                 row: Number.parseInt(cell[1]),

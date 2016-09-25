@@ -1,12 +1,17 @@
 /// <reference path="url.decl.ts"/>
 /// <reference path="format.decl.ts"/>
 /// <reference path="escape.decl.ts"/>
+/// <reference path="logger.impl.ts"/>
 
 namespace url {
     "use strict";
 
     export class UrlEx implements Url {
 
+        private readonly _logger: logger.Logger = new logger.LoggerEx(UrlEx);
+
+        //                window.location
+        // ----------------------------------------------------
         // hash        ""
         // host        "www.nopage.com"
         // hostname    "www.nopage.com"
@@ -32,12 +37,15 @@ namespace url {
                     ? decodeURIComponent(results[1] || "")
                     : undefined;
 
-            return new UrlParamEx(name, value);
+            const result: UrlParamEx = new UrlParamEx(name, value);
+
+            this._logger.trace("param={0}", result);
+            return result;
         }
 
         public url(...params: UrlParam[]): string {
             const par: string = params
-                .filter(p => p.value !== undefined)
+                .filter((p) => p.value !== undefined)
                 .map((p) => {
                         const eName: string = encodeURIComponent(p.name);
                         const eValue: string = encodeURIComponent(p.value!);
@@ -48,9 +56,13 @@ namespace url {
                     }
                 ).join("&");
 
-            return par.length === 0
-                ? this.cLocationPath()
-                : "{0}/?{1}".format(this.cLocationPath(), par);
+            const result: string = "{0}?{1}".format(
+                this.cLocationPath(),
+                par
+            ).replace(/\/?\?$/, "");
+
+            this._logger.trace("url={0}", result);
+            return result;
         }
     }
 

@@ -2,6 +2,8 @@
 /// <reference path="random.decl.ts" />
 /// <reference path="i18n.decl.ts" />
 /// <reference path="format.decl.ts" />
+/// <reference path="strings.decl.ts" />
+/// <reference path="logger.impl.ts" />
 
 namespace message {
     "use strict";
@@ -17,12 +19,13 @@ namespace message {
 
     export class MessageEx implements Message {
 
-        public $cMsgDiv: JQuery = $("#message");
+        private readonly _logger: logger.Logger = new logger.LoggerEx(MessageEx);
 
         private readonly _random: random.Random;
         private readonly _translator: i18n.Translator;
 
-        public $cConstDiv: () => string = () => "#msg-const";
+        private readonly _$MsgDiv: JQuery = $(strings._.message.id);
+        private readonly _$ConstDiv: () => string = () => strings._.message.id_const;
 
         public constructor(random: random.Random,
                            translator: i18n.Translator) {
@@ -32,34 +35,36 @@ namespace message {
 
         public fixed(trKey: i18n.TrKey, clazz?: string): void {
             this._set(trKey, undefined, clazz);
+            this._logger.trace("fixed={0},{1}", trKey, clazz);
         }
 
         public fleeting(trKey: i18n.TrKey, timeout: number, clazz?: string): void {
             this._set(trKey, timeout, clazz);
+            this._logger.trace("fleeting={0},{1},{2}", trKey, timeout, clazz);
         }
 
         public appendFixedLink(trKey: i18n.TrKey, id: string, clazz?: string): void {
-            // tslint:disable:object-literal-key-quotes
             const $a: JQuery = $("<a/>", {
-                "href": "#",
-                "id": id,
-                "class": clazz || "",
+                ["href"]: "#",
+                ["id"]: id,
+                ["class"]: clazz || "",
             });
 
             this._translator.setTr($a, trKey);
-            $(this.$cConstDiv()).append($a);
+            $(this._$ConstDiv()).append($a);
+
+            this._logger.trace("appendFixedLink={0},{1},{2}", trKey, id, clazz);
         }
 
         private _set(key: i18n.TrKey, timeout?: number, clazz?: string): void {
             const outerId: string =
                 timeout
                     ? "#{0}".format(this._random.str(7, "a"))
-                    : this.$cConstDiv();
+                    : this._$ConstDiv();
 
-            // tslint:disable:object-literal-key-quotes
             const $outer: JQuery = $("<span/>", {
-                "id": outerId,
-                "class": "{0} msg".format(clazz || ""),
+                ["id"]: outerId,
+                ["class"]: "{0} msg".format(clazz || ""),
             });
 
             const $inner: JQuery = $("<span/>");
@@ -67,15 +72,15 @@ namespace message {
             $outer.append($inner);
 
             if (timeout) {
-                this.$cMsgDiv.append($outer);
+                this._$MsgDiv.append($outer);
                 setTimeout(
                     () => $(outerId).fadeOut("fast",
                         () => $(outerId).remove()
                     ), timeout);
 
             } else {
-                $(this.$cConstDiv()).remove();
-                this.$cMsgDiv.append($outer);
+                $(this._$ConstDiv()).remove();
+                this._$MsgDiv.append($outer);
             }
         }
     }
