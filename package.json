@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@types/mocha": "^2.2.32",
-    "mocha": "^3.0.2",
+    "mocha": "^3.1.0",
     "tslint": "3.15.1",
     "tslint-microsoft-contrib": "2.0.12"
   },
