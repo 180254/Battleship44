@@ -5,7 +5,7 @@ module.exports = function (grunt) {
         (file) => "src/main/resources/static/js" + file;
 
     const json =
-        path => (
+        (path) => (
             grunt.file.isFile(path)
             && grunt.file.readJSON(path)
         );
@@ -13,7 +13,7 @@ module.exports = function (grunt) {
     grunt.initConfig({
 
         copy: {
-            types: {
+            tsTypes: {
                 files: [{
                     expand: true,
                     cwd: "node_modules/@types/",
@@ -22,7 +22,7 @@ module.exports = function (grunt) {
                 }]
             },
 
-            js: {
+            jsLib: {
                 files: [{
                     expand: true,
                     cwd: "node_bower/jquery/dist/",
@@ -93,7 +93,7 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask("copy-types", ["copy:types"]);
-    grunt.registerTask("copy-js", ["copy:js"]);
+    grunt.registerTask("copy-ts-types", ["copy:tsTypes"]);
+    grunt.registerTask("copy-js-lib", ["copy:jsLib"]);
     grunt.registerTask("babel-convert", ["babel:convert7", "babel:convert5"]);
 };

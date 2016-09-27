@@ -48,8 +48,8 @@
     "tslint-microsoft-contrib": "2.0.12"
   },
   "scripts": {
-    "install-update": "npm update && bower update && grunt copy-types",
-    "collect-compile": "grunt copy-js && tsc -p tsconfig.xyz.json",
+    "install-update": "npm update && bower update && grunt copy-ts-types",
+    "collect-compile": "grunt copy-js-lib && tsc -p tsconfig.xyz.json",
     "convert-minify": "grunt babel-convert && gulp closure-convert",
     "pretest": "tsc -p tsconfig.test.json",
     "test": "mocha src/main/resources/static/js/app.test.js"

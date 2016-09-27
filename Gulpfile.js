@@ -9,10 +9,13 @@ const path_ = // src\main\...
     (file) => path(file).split("/").join("\\");
 
 gulp.task("closure-convert", function () {
-    return gulp.src([path("/app.es7-ts.js")])
+    return gulp
+        .src([path("/app.es7-ts.js")])
+
         .pipe(sourcemaps.init({
             loadMaps: true,
         }))
+
         .pipe(closure({
             compilationLevel: "ADVANCED",
             warningLevel: "DEFAULT",
@@ -30,5 +33,6 @@ gulp.task("closure-convert", function () {
                 .replace(path("/"), "")
                 .replace(path_("/"), ""),
         }))
+
         .pipe(gulp.dest(path("/")));
 });
