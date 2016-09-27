@@ -15,12 +15,11 @@
     "missing-jsdoc": false,
     "export-name": false,
     "object-literal-sort-keys": false,
+    "no-multiline-string": false,
 
     "no-reference": false,
     "no-unused-variable": false,
     "no-namespace": false,
-
-    "arrow-parens": true,
 
     "interface-name": false,
     "variable-name": [
@@ -35,7 +34,7 @@
       {
         "method-regex": "^[a-z][\\w\\d]+$",
         "private-method-regex": "^_[a-z][\\w\\d]+$",
-        "static-method-regex": "^[A-Z_\\d]+$",
+        "static-method-regex": "^[A-Z][\\w\\d]+$",
         "function-regex": "^[a-z][\\w\\d]+$"
       }
     ],
