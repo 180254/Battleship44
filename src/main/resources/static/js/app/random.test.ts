@@ -15,7 +15,7 @@ namespace random {
         let random_: random.RandomEx;
 
         before(() => {
-            logger.cLevel = logger.Level.WARN;
+            logger.LoggerEx.cLevel = logger.Level.WARN;
             assert_ = new assert.AssertEx();
             random_ = new random.RandomEx();
         });

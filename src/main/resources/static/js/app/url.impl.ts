@@ -10,8 +10,6 @@ namespace url {
 
         private readonly _logger: logger.Logger = new logger.LoggerEx(UrlEx);
 
-        //                window.location
-        // ----------------------------------------------------
         // hash        ""
         // host        "www.nopage.com"
         // hostname    "www.nopage.com"

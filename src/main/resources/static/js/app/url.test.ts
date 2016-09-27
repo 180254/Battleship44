@@ -15,7 +15,7 @@ namespace url {
         let url_: url.UrlEx;
 
         before(() => {
-            logger.cLevel = logger.Level.WARN;
+            logger.LoggerEx.cLevel = logger.Level.WARN;
             assert_ = new assert.AssertEx();
             url_ = new url.UrlEx();
         });
@@ -115,8 +115,7 @@ namespace url {
             const verifyUrlMethod: ((locPath: string, params: UrlParam[], expected: string) => void) =
                 (locPath, params, expected) => {
                     if ((locPath.match(/\//g) || []).length < 3) {
-                        throw new Error("incorrect test. " +
-                            "possible cause: path is 'http://none.com' instead of 'http://none.com/'");
+                        throw new Error("incorrect locPath. use 'http://none.com/' instead of 'http://none.com'");
                     }
 
                     url_.cLocationPath = () => locPath;

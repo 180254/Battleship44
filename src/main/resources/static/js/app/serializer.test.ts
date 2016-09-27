@@ -12,7 +12,7 @@ namespace serializer {
         let cellSerializer_: CellSerializerEx;
 
         before(() => {
-            logger.cLevel = logger.Level.WARN;
+            logger.LoggerEx.cLevel = logger.Level.WARN;
             assert_ = new assert.AssertEx();
             cellSerializer_ = new CellSerializerEx();
         });
@@ -37,7 +37,7 @@ namespace serializer {
         let cellDeserializer_: CellDeserializerEx;
 
         before(() => {
-            logger.cLevel = logger.Level.WARN;
+            logger.LoggerEx.cLevel = logger.Level.WARN;
             assert_ = new assert.AssertEx();
             cellDeserializer_ = new CellDeserializerEx();
         });
@@ -58,7 +58,7 @@ namespace serializer {
         let cellsDeserializer_: CellsDeserializerEx;
 
         before(() => {
-            logger.cLevel = logger.Level.WARN;
+            logger.LoggerEx.cLevel = logger.Level.WARN;
             assert_ = new assert.AssertEx();
 
             cellsDeserializer_ = new CellsDeserializerEx(

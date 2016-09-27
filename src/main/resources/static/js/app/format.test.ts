@@ -12,7 +12,7 @@ namespace format {
 
         before(() => {
             assert_ = new assert.AssertEx();
-            logger.cLevel = logger.Level.WARN;
+            logger.LoggerEx.cLevel = logger.Level.WARN;
         });
 
         describe("format", () => {

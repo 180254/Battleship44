@@ -12,7 +12,7 @@ namespace i18n {
         let assert_: assert.AssertEx;
 
         before(() => {
-            logger.cLevel = logger.Level.WARN;
+            logger.LoggerEx.cLevel = logger.Level.WARN;
             assert_ = new assert.AssertEx();
         });
 
@@ -63,7 +63,7 @@ namespace i18n {
         let langTagComparison_: LangTagComparisonEx;
 
         before(() => {
-            logger.cLevel = logger.Level.WARN;
+            logger.LoggerEx.cLevel = logger.Level.WARN;
             assert_ = new assert.AssertEx();
             langTagComparison_ = new LangTagComparisonEx();
 
