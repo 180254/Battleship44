@@ -1,71 +1,28 @@
-// change app version. example: ?v=5c&m=st
+/*                default settings
+ +-------------------------+-------------+--------------+
+ |  sth about js / debug?  |    true     |    false     |
+ +-------------------------+-------------+--------------+
+ | version                 | ES7         | ES5+polyfill |
+ +-------------------------+-------------+--------------+
+ | minified                | no          | yes          |
+ +-------------------------+-------------+--------------+
+ | load source map         | yes         | no           |
+ +-------------------------+-------------+--------------+
+ | console debug msg       | all         | warns        |
+ +-------------------------+-------------+--------------+
+ */
+
+var DEBUG = true;
+
+// app loader
+// - easily change app version (?v=5c)
+// - easily change load mode (?m=ss)
+// - load additional libs for specified ver
 $(function () {
 
-    //         default settings
-    // +-----------------+------+-------+
-    // |   sth / debug?  | true | false |
-    // +-----------------+------+-------+
-    // | js version      | ES7  | ES5   |
-    // +-----------------+------+-------+
-    // | is minified     | no   | yes   |
-    // +-----------------+------+-------+
-    // | load source map | yes  | no    |
-    // +-----------------+------+-------+
-    var debug = true;
-
-    // ---------------------------------------------------------------------------------------------------------------
-
-    var urlParam = function (name) {
-        var nameEsc = name.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
-        var results = new RegExp('[\?&]' + nameEsc + '=([^&#]*)').exec(window.location.href);
-        return results ? decodeURIComponent(results[1]) : null;
-    };
-
-    // ---------------------------------------------------------------------------------------------------------------
-
-    var loadScript = function (mode, src) {
-
-        if (mode === "files-src") {
-            // create tag <files src="xx"></files>
-            // - browser loads source map - useful for debugging
-            var scripts = document.getElementById("files");
-            var ref = document.createElement("files");
-
-            ref.setAttribute("src", src);
-            scripts.appendChild(ref);
-
-            // jQuery alert!
-            // $("<files>", {src: src}).appendTo("#files"); code is misleading
-            // it loads file using xhr, and then execute jQuery.DOMEval method
-            // discussed at stackoverflow: http://stackoverflow.com/q/15459218
-
-            return new $.Deferred().resolve();
-
-        } else if (mode === "files-text") {
-            // create tag <files>code</source>
-            // - browser does _not_ load source map - useful for production
-            // - sourceMappingURL comment need not be removed
-
-            return $.ajax({dataType: "files", cache: true, url: src});
-        }
-    };
-
-    // ---------------------------------------------------------------------------------------------------------------
-
-    // returns:
-    // * value if validArray.contains(value)
-    // * default value if not
-    var requireValid = function (value, validArray, defaultVal) {
-        return value && validArray.indexOf(value) !== -1
-            ? value
-            : defaultVal;
-    };
-
-    // ---------------------------------------------------------------------------------------------------------------
-
     var modes = {
-        "ss": "files-src",
-        "st": "files-text"
+        "ss": "script-src",
+        "st": "script-text"
     };
 
     var scripts = {
@@ -85,28 +42,98 @@ $(function () {
         ],
     };
 
-    var mode = requireValid(urlParam("m"), Object.keys(modes), debug ? "ss" : "st");
-    var files = requireValid(urlParam("v"), Object.keys(scripts), debug ? "7t" : "5b");
+    var defaults = {
+        debug: {
+            mode: "ss",
+            script: "7t"
+        },
+        prod: {
+            mode: "st",
+            script: "5b"
+        }
+    };
+
+    // ---------------------------------------------------------------------------------------------------------------
+
+    var loadScript = function (mode, src) {
+
+        if (mode === "script-src") {
+            // create tag <script src="xx"></script>
+            // - browser loads source map
+            // - useful for debugging
+            var scripts = document.getElementById("script");
+            var ref = document.createElement("script");
+
+            ref.setAttribute("src", src);
+            scripts.appendChild(ref);
+
+            // jQuery alert!
+            // $("<script>", {src: src}).appendTo("#script"); code is misleading
+            // it loads file using xhr, and then execute jQuery.DOMEval method
+            // discussed at stackoverflow: http://stackoverflow.com/q/15459218
+
+            return new $.Deferred().resolve();
+
+        } else if (mode === "script-text") {
+            // create tag <script>code</script>
+            // - browser does _not_ load source map
+            // - sourceMappingURL comment need not be removed
+            // - useful for production
+
+            return $.ajax({dataType: "script", cache: true, url: src});
+        }
+    };
+
+    // ---------------------------------------------------------------------------------------------------------------
+
+    var urlParam = function (name) {
+        var nameEsc = name.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+        var results = new RegExp('[\?&]' + nameEsc + '=([^&#]*)').exec(window.location.href);
+        return results ? decodeURIComponent(results[1]) : null;
+    };
+
+    // ---------------------------------------------------------------------------------------------------------------
+
+    // returns:
+    // * value if validArray.contains(value)
+    // * default value if not
+    var requireValid = function (value, validArray, defaultVal) {
+        return value && validArray.indexOf(value) !== -1
+            ? value
+            : defaultVal;
+    };
+
+    // ---------------------------------------------------------------------------------------------------------------
+
+    var mode = requireValid(
+        urlParam("m"),
+        Object.keys(modes),
+        DEBUG ? defaults.debug.mode : defaults.prod.mode
+    );
+
+    var script = requireValid(
+        urlParam("v"),
+        Object.keys(scripts),
+        DEBUG ? defaults.debug.script : defaults.prod.script
+    );
 
     var mode_ = modes[mode];
-    var files_ = scripts[files];
+    var script_ = scripts[script];
 
     // ---------------------------------------------------------------------------------------------------------------
 
     var deferred = new $.Deferred();
     var pipe = deferred;
 
-    $.each(files_, function (i, val) {
+    $.each(script_, function (i, val) {
         pipe = pipe.pipe(function () {
             return loadScript(mode_, "js/" + val)
                 .then(function () {
-                    if (debug) {
-                        console.log("app.loader(ok): " + val)
+                    if (DEBUG) {
+                        console.log("debug app.loader ok=" + val)
                     }
                 }, function () {
-                    if (debug) {
-                        console.log("app.loader(fail): " + val)
-                    }
+                    console.log("error app.loader fail=" + val)
                 });
         });
     });
