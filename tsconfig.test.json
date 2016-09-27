@@ -11,6 +11,7 @@
       "es7",
       "dom"
     ],
+
     "outFile": "src/main/resources/static/js/app.test.js",
     "sourceMap": true,
     "listFiles": true
