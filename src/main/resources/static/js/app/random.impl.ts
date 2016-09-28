@@ -18,7 +18,7 @@ namespace random {
                     return randomBytes[0] / 0xFFFFFFFF;
                 };
             } else {
-                // did my best to avoid it
+                // tslint: did my best to avoid it
                 // tslint:disable:insecure-random
                 this.cRandom = () => Math.random();
             }

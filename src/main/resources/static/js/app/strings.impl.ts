@@ -1,6 +1,8 @@
+/// <reference path="strings.decl.ts" />
+
 namespace strings {
 
-    export const _: any = {
+    strings._ = {
 
         flag: {
             id: "#flag",

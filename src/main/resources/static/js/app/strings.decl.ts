@@ -1,4 +1,4 @@
 declare namespace strings {
 
-    const _: any;
+    export let _: any;
 }

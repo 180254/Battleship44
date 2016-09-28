@@ -30,7 +30,7 @@ namespace i18n {
             this.region = region && region.toUpperCase();
         }
 
-        public static FROM_STRING(langTag: string): LangTag {
+        public static FromString(langTag: string): LangTag {
             const [lang, region]: string[] = langTag.split(/[-_]/);
             return new LangTagEx(lang, region);
         }
@@ -87,14 +87,14 @@ namespace i18n {
                 ).filter((langTagStr) => !!langTagStr);
 
             const result: LangTag[]
-                = tagStrings.map((tagStr) => LangTagEx.FROM_STRING(tagStr));
+                = tagStrings.map((tagStr) => LangTagEx.FromString(tagStr));
 
-            this._logger.trace("user={0}", result);
+            this._logger.trace("result={0}", result);
             return result;
         }
 
         public server(): LangTag[] {
-            this._logger.trace("server={0}", this.cSupported);
+            this._logger.trace("result={0}", this.cSupported);
             return this.cSupported;
         }
     }
@@ -177,7 +177,7 @@ namespace i18n {
                 fType = SelectType.DEFAULT;
             }
 
-            this._logger.trace("select={0},{1}", fLang, SelectType[fType].toLowerCase());
+            this._logger.trace("result={0},{1}", fLang, SelectType[fType].toLowerCase());
             return [fLang, fType];
         }
     }
@@ -198,12 +198,12 @@ namespace i18n {
 
         public getLang(): LangTag {
             const result: [LangTag, SelectType] = this._langSelector.select();
-            this._logger.debug("get={0},{1}", result[0], SelectType[result[1]].toLowerCase());
+            this._logger.debug("result={0},{1}", result[0], SelectType[result[1]].toLowerCase());
             return result[0];
         }
 
         public setLang(lang: LangTag): void {
-            this._logger.debug("set={0}", lang);
+            this._logger.debug("result={0}", lang);
             Cookies.set(this.cCookieName, lang.toString());
         }
     }
@@ -262,15 +262,14 @@ namespace i18n {
 
             return typeof text === "string"
                 ? (<string> text).format(...p.params)
-                : this._translateDefault(p);
+                : i18n.TranslatorEx._translateDefault(p);
         }
 
         public translatable(): JQuery {
             return $("[{0}]".format(this.cDataAttrPath));
         }
 
-        // noinspection JSMethodCanBeStatic
-        private _translateDefault(p: TrKey): string {
+        private static _translateDefault(p: TrKey): string {
             return "!{0}[{1}]!".format(p.path, p.params.join(","));
         }
 

@@ -6,6 +6,7 @@
 // license url: https://creativecommons.org/licenses/by-sa/3.0/
 
 if (!String.prototype.format) {
+    // tslint: why? is valid & not replaceable
     // tslint:disable:no-invalid-this
     String.prototype.format = function (): string {
         "use strict";

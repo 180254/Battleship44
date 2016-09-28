@@ -21,6 +21,7 @@ namespace logger {
         public cOutput: (str: string) => void = console.log;
 
         private readonly _owner: Function;
+        private static callerRe: RegExp;
 
         public constructor(owner: Function) {
             this._owner = owner;
@@ -52,14 +53,14 @@ namespace logger {
 
         private _log(level: Level, text: string, ...args: any[]): void {
             if (LoggerEx.cLevel >= level) {
-                this.cOutput("{0}.{1}.{2} {3}".format(
+                this.cOutput("{0} {1}.{2} {3}".format(
                     Level[level].toLowerCase() || "?",
                     this._owner.name || "?",
 
                     // _caller depth?
                     // [0] _caller
                     // [1] _log
-                    // [2] debug
+                    // [2] trace/debug/...
                     // [3]
                     logger.LoggerEx._caller(3) || "?",
                     text.format(...args)
@@ -70,24 +71,26 @@ namespace logger {
         // -----------------------------------------------------------------------------------------------------------
 
         private static _caller(depth: number): string | undefined {
-            // x@debugger eval code:1:29
-            // @debugger eval code:1:1
-            const _firefox: string = String.raw`(\w+)@`;
+            if (!this.callerRe) {
+                // x@debugger eval code:1:29
+                // @debugger eval code:1:1
+                const _firefox: string = String.raw`(?:(\w+)@)`;
 
-            // at Test.method (<anonymous>:1:29)
-            // at func (<anonymous>:1:26)
-            // at <anonymous>:1:1
-            const _chrome: string = String.raw`at (?:\w+\.)?(<?\w+>?) ?[\(:]`;
+                // at Test.method (<anonymous>:1:29)
+                // at func (<anonymous>:1:26)
+                // at <anonymous>:1:1
+                const _chrome: string = String.raw`(?:at (?:\w+\.)?(<?\w+>?) ?[\(:])`;
 
-            const callerRe: RegExp = new RegExp(
-                "{0}|{1}".format(_firefox, _chrome));
+                this.callerRe = new RegExp(
+                    "{0}|{1}".format(_firefox, _chrome));
+            }
 
             const stack: string[] =
                 (new Error().stack || "")
                     .replace("Error\n", "") // chrome
                     .split("\n");
 
-            const match: RegExpExecArray | null = callerRe.exec(stack[depth]);
+            const match: RegExpExecArray | null = this.callerRe.exec(stack[depth]);
 
             return match
                 ? match[2]

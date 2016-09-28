@@ -37,7 +37,7 @@ namespace url {
 
             const result: UrlParamEx = new UrlParamEx(name, value);
 
-            this._logger.trace("param={0}", result);
+            this._logger.trace("result={0}", result);
             return result;
         }
 
@@ -59,7 +59,7 @@ namespace url {
                 par
             ).replace(/\/?\?$/, "");
 
-            this._logger.trace("url={0}", result);
+            this._logger.trace("result={0}", result);
             return result;
         }
     }

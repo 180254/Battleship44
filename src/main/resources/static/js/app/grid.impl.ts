@@ -76,15 +76,14 @@ namespace grid {
             const $row: JQuery = $("<tr/>");
 
             for (let colIt: number = 0; colIt < this.cCols; colIt += 1) {
-                const newCell: JQuery = this._createCell(gridId, rowIndex, colIt);
+                const newCell: JQuery = grid.GridsEx._createCell(gridId, rowIndex, colIt);
                 $row.append(newCell);
             }
 
             return $row;
         }
 
-        // noinspection JSMethodCanBeStatic
-        private _createCell(gridId: string, rowIndex: number, colIndex: number): JQuery {
+        private static _createCell(gridId: string, rowIndex: number, colIndex: number): JQuery {
             const unknown: string = strings._.cell.clazz.unknown;
 
             return $("<td/>", {

@@ -36,19 +36,19 @@ namespace i18n {
         describe("construct from string", () => {
 
             it("should create - full-tag, separated with -", () => {
-                const lang: LangTag = LangTagEx.FROM_STRING("en-US");
+                const lang: LangTag = LangTagEx.FromString("en-US");
                 assert_.equals("en", lang.lang);
                 assert_.equals("US", lang.region);
             });
 
             it("should create - full-tag, separated with _", () => {
-                const lang: LangTag = LangTagEx.FROM_STRING("en_US");
+                const lang: LangTag = LangTagEx.FromString("en_US");
                 assert_.equals("en", lang.lang);
                 assert_.equals("US", lang.region);
             });
 
             it("should create - lang-only-tag", () => {
-                const lang: LangTag = LangTagEx.FROM_STRING("en");
+                const lang: LangTag = LangTagEx.FromString("en");
                 assert_.equals("en", lang.lang);
                 assert_.equals(undefined, lang.region);
             });
@@ -196,8 +196,8 @@ namespace i18n {
             private readonly _server: i18n.LangTag[];
 
             public constructor(user: string, server: string) {
-                this._user = user.length ? user.split(" ").map((u) => LangTagEx.FROM_STRING(u)) : [];
-                this._server = server.length ? server.split(" ").map((u) => LangTagEx.FROM_STRING(u)) : [];
+                this._user = user.length ? user.split(" ").map((u) => LangTagEx.FromString(u)) : [];
+                this._server = server.length ? server.split(" ").map((u) => LangTagEx.FromString(u)) : [];
             }
 
             public user(): i18n.LangTag[] {
@@ -221,7 +221,7 @@ namespace i18n {
         const assertSelectEquals: (expected: [string, SelectType], actual: [LangTag, SelectType]) => void =
             (expected, actual) => {
                 if (!langTagComparison.exactlyMatches(
-                        LangTagEx.FROM_STRING(expected[0]),
+                        LangTagEx.FromString(expected[0]),
                         actual[0]
                     )
                     || expected[1] !== actual[1]) {

@@ -1,6 +1,7 @@
 /// <reference path="ui.decl.ts" />
 /// <reference path="event1.decl.ts" />
 /// <reference path="strings.decl.ts" />
+/// <reference path="format.decl.ts" />
 /// <reference path="logger.impl.ts" />
 
 namespace ui {
@@ -21,16 +22,18 @@ namespace ui {
 
         public initFlags(callback: (e: i18n.LangTag) => void): void {
             this._langFinder.server()
-                .forEach((lang) => {
+                .forEach((langTag) => {
+
                     const $flag: JQuery = $("<img/>", {
-                        alt: lang.lang,
-                        src: "flag/" + lang.region + ".png",
+                        ["alt"]: langTag.lang,
+                        ["src"]: "flag/{0}.png".format(langTag.region),
+                        ["class"]: strings._.flag.clazz.i,
                     });
 
-                    this._event1.on($flag, "click", () => callback(lang));
+                    this._event1.on($flag, "click", () => callback(langTag));
                     this._$flags.append($flag);
 
-                    this._logger.trace("initFlags={0}", lang);
+                    this._logger.trace("init={0}", langTag);
                 });
         }
     }

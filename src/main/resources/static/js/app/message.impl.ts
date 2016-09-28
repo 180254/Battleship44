@@ -35,12 +35,12 @@ namespace message {
 
         public fixed(trKey: i18n.TrKey, clazz?: string): void {
             this._set(trKey, undefined, clazz);
-            this._logger.trace("fixed={0},{1}", trKey, clazz);
+            this._logger.trace("state={0},{1}", trKey, clazz);
         }
 
         public fleeting(trKey: i18n.TrKey, timeout: number, clazz?: string): void {
             this._set(trKey, timeout, clazz);
-            this._logger.trace("fleeting={0},{1},{2}", trKey, timeout, clazz);
+            this._logger.trace("state={0},{1},{2}", trKey, timeout, clazz);
         }
 
         public appendFixedLink(trKey: i18n.TrKey, id: string, clazz?: string): void {
@@ -53,7 +53,7 @@ namespace message {
             this._translator.setTr($a, trKey);
             $(this._$ConstDiv()).append($a);
 
-            this._logger.trace("appendFixedLink={0},{1},{2}", trKey, id, clazz);
+            this._logger.trace("state={0},{1},{2}", trKey, id, clazz);
         }
 
         private _set(key: i18n.TrKey, timeout?: number, clazz?: string): void {

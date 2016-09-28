@@ -27,7 +27,10 @@ namespace title {
             this._removeBlinking();
             this._updateTr([key]);
 
-            this._logger.trace("fixed={0},{1}", this._currentTrKeys, this._currentTr);
+            this._logger.trace(
+                "state={0},{1}",
+                this._currentTrKeys, this._currentTr
+            );
         }
 
         public blinking(key: i18n.TrKey, override: boolean): void {
@@ -43,7 +46,10 @@ namespace title {
                 }, this.cBlinkTimeout);
             }
 
-            this._logger.trace("blinking={0},{1},{2}", this._currentTrKeys, this._currentTr, override);
+            this._logger.trace(
+                "state={0},{1},{2}",
+                this._currentTrKeys, this._currentTr, override
+            );
         }
 
         private _removeBlinking(): void {
