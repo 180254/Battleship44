@@ -27,18 +27,18 @@ $(function () {
 
     var scripts = {
         "7t": [
-            "app.es7-ts.js"
+            "js/app.es7-ts.js"
         ],
         "7b": [
-            "app.es7-babel.min.js"
+            "js/app.es7-babel.min.js"
         ],
         "5b": [
-            "lib/babel-polyfill/polyfill.min.js",
-            "app.es5-babel.min.js"
+            "js/lib/babel-polyfill/polyfill.min.js",
+            "js/app.es5-babel.min.js"
         ],
         "5c": [
-            "lib/babel-polyfill/polyfill.min.js",
-            "app.es5-closure.min.js"
+            "js/lib/babel-polyfill/polyfill.min.js",
+            "js/app.es5-closure.min.js"
         ],
     };
 
@@ -127,7 +127,7 @@ $(function () {
 
     $.each(script_, function (i, val) {
         pipe = pipe.pipe(function () {
-            return loadScript(mode_, "js/" + val)
+            return loadScript(mode_, val)
                 .then(function () {
                     if (DEBUG) {
                         console.log("debug app.loader ok=" + val)
