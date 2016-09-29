@@ -1,8 +1,8 @@
 {
   "ws": {
     "unable": "WebSocket: unable to initialize.",
-    "close": "WebSocket: connection closed (code: {0}, reason: {1}).",
-    "error": "WebSocket: connection closed ({0})."
+    "close": "WebSocket: connection closed [{0},{1}].",
+    "error": "WebSocket: connection closed [{0}]."
   },
   "title": {
     "standard": "Battleship44",

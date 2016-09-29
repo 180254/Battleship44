@@ -1,8 +1,8 @@
 {
   "ws": {
     "unable": "WebSocket: nie da rady rozpocząć.",
-    "close": "WebSocket: połączenie zakończone (kod: {0}, powód: {1}).",
-    "error": "WebSocket: połączenie zakończone ({0})."
+    "close": "WebSocket: połączenie zakończone [{0},{1}].",
+    "error": "WebSocket: połączenie zakończone [{0}]."
   },
   "title": {
     "standard": "Okręty44",
