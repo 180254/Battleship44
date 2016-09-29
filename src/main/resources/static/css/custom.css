@@ -57,6 +57,7 @@ main {
 
 #message-const a {
     color: #000057;
+    cursor: pointer;
 }
 
 .message-fail {
