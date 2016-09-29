@@ -17,6 +17,13 @@ namespace grid {
             this.clazz = clazz;
         }
 
+        public static FromElement($cell: JQuery): CellEx {
+            return new CellEx(
+                Number.parseInt($cell.attr("data-row-i")),
+                Number.parseInt($cell.attr("data-col-i"))
+            );
+        }
+
         public toString(): string {
             return "CoordEx[row={0} col={1} clazz={2}]".format(this.row, this.col, this.clazz);
         }

@@ -1,11 +1,12 @@
 /// <reference path="random.decl.ts" />
+/// <reference path="types.decl.ts" />
 
 namespace random {
     "use strict";
 
     export class RandomEx implements Random {
 
-        public cRandom: (() => number);
+        public cRandom: Supplier<number>;
 
         public constructor() {
             if (typeof window === "object"

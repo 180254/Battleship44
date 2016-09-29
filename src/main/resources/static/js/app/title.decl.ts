@@ -4,8 +4,8 @@ declare namespace title {
 
     interface Title {
 
-        fixed(trKey: i18n.TrKey): void;
+        setFixed(trKey: i18n.TrKey): void;
 
-        blinking(trKey: i18n.TrKey, override: boolean): void;
+        setBlinking(trKey: i18n.TrKey, override: boolean): void;
     }
 }

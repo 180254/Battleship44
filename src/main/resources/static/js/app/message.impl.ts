@@ -1,3 +1,4 @@
+/// <reference path="types.decl.ts" />
 /// <reference path="message.decl.ts" />
 /// <reference path="random.decl.ts" />
 /// <reference path="i18n.decl.ts" />
@@ -25,7 +26,7 @@ namespace message {
         private readonly _translator: i18n.Translator;
 
         private readonly _$MsgDiv: JQuery = $(strings._.message.id);
-        private readonly _$ConstDiv: () => string = () => strings._.message.id_const;
+        private readonly _$ConstDiv: Supplier<string> = () => strings._.message.id_const;
 
         public constructor(random: random.Random,
                            translator: i18n.Translator) {
@@ -33,17 +34,17 @@ namespace message {
             this._translator = translator;
         }
 
-        public fixed(trKey: i18n.TrKey, clazz?: string): void {
+        public setFixed(trKey: i18n.TrKey, clazz?: string): void {
             this._set(trKey, undefined, clazz);
             this._logger.trace("state={0},{1}", trKey, clazz);
         }
 
-        public fleeting(trKey: i18n.TrKey, timeout: number, clazz?: string): void {
+        public addFleeting(trKey: i18n.TrKey, timeout: number, clazz?: string): void {
             this._set(trKey, timeout, clazz);
             this._logger.trace("state={0},{1},{2}", trKey, timeout, clazz);
         }
 
-        public appendFixedLink(trKey: i18n.TrKey, id: string, clazz?: string): void {
+        public addFixedLink(trKey: i18n.TrKey, id: string, clazz?: string): void {
             const $a: JQuery = $("<a/>", {
                 ["href"]: "#",
                 ["id"]: id,

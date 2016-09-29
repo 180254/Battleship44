@@ -1,9 +1,10 @@
 /// <reference path="i18n.decl.ts"/>
+/// <reference path="types.decl.ts"/>
 
 declare namespace ui {
 
     interface Ui {
 
-        initFlags(callback: (e: i18n.LangTag) => void): void;
+        initFlags(callback: Callback<i18n.LangTag>): void;
     }
 }

@@ -13,10 +13,10 @@ declare namespace message {
 
     interface Message {
 
-        fixed(trKey: i18n.TrKey, clazz?: string): void;
+        setFixed(trKey: i18n.TrKey, clazz?: string): void;
 
-        fleeting(trKey: i18n.TrKey, timeout: number, clazz?: string): void;
+        addFleeting(trKey: i18n.TrKey, timeout: number, clazz?: string): void;
 
-        appendFixedLink(trKey: i18n.TrKey, id: string, clazz?: string): void;
+        addFixedLink(trKey: i18n.TrKey, id: string, clazz?: string): void;
     }
 }

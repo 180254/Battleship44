@@ -20,6 +20,11 @@ namespace strings {
                 fail: "message-fail",
                 important: "message-important",
             },
+
+            ok: {
+                id_ship_selection: "#ok-ship-selection",
+                id_game_next: "#ok-game-next",
+            },
         },
 
         grid: {
@@ -38,7 +43,7 @@ namespace strings {
                 unknown: "cell-unknown",
                 empty: "cell-empty",
                 ship: "cell-ship",
-                shoot: "cell-opp-shoot",
+                opp_shoot: "cell-opp-shoot",
                 shootable: "cell-shoot-able",
             },
         },

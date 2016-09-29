@@ -3,6 +3,7 @@
 /// <reference types="js-cookie" />
 /// <reference path="app.game.decl.ts" />
 /// <reference path="assert.impl.ts" />
+/// <reference path="debug.decl.ts" />
 /// <reference path="escape.impl.ts" />
 /// <reference path="event0.impl.ts" />
 /// <reference path="event1.impl.ts" />
@@ -15,12 +16,13 @@
 /// <reference path="serializer.impl.ts" />
 /// <reference path="strings.impl.ts" />
 /// <reference path="title.impl.ts" />
+/// <reference path="types.decl.ts" />
 /// <reference path="ui.impl.ts" />
 /// <reference path="url.impl.ts" />
 
 // extend EventTarget; url is given in event on WebSocket open
 interface EventTarget {
-    readonly url: string;
+    readonly url?: string;
 }
 
 namespace game {
@@ -36,9 +38,9 @@ namespace game {
         public grids: grid.GridsEx = new grid.GridsEx();
         public selection: grid.SelectionEx = new grid.SelectionEx(this.grids);
 
-        public langComp: i18n.LangTagComparisonEx = new i18n.LangTagComparisonEx();
+        public langTagCmp: i18n.LangTagComparisonEx = new i18n.LangTagComparisonEx();
         public langFinder: i18n.LangFinderEx = new i18n.LangFinderEx();
-        public langSelector: i18n.LangSelectorEx = new i18n.LangSelectorEx(this.langFinder, this.langComp);
+        public langSelector: i18n.LangSelectorEx = new i18n.LangSelectorEx(this.langFinder, this.langTagCmp);
         public langSetter: i18n.LangSetterEx = new i18n.LangSetterEx(this.langSelector);
         public translator: i18n.TranslatorEx = new i18n.TranslatorEx(this.langSetter, new event0.EventEx());
 
@@ -52,7 +54,7 @@ namespace game {
         public cellsDeSer: serializer.CellsDeserializerEx = new serializer.CellsDeserializerEx(this.cellDeSer);
     }
 
-    export let i: Singleton = new Singleton();
+    const i: Singleton = new Singleton();
 
     // ---------------------------------------------------------------------------------------------------------------
 
@@ -61,40 +63,42 @@ namespace game {
         private readonly _logger: logger.Logger = new logger.LoggerEx(StarterEx);
         private readonly _ws: Ws;
 
-        public constructor(ws: game.Ws) {
+        public constructor(ws: Ws) {
             this._ws = ws;
         }
 
         public init(): void {
-            logger.cLevel = logger.Level.TRACE;
+            logger.LoggerEx.cLevel =
+                DEBUG
+                    ? logger.Level.TRACE
+                    : logger.Level.WARN;
 
             i.langFinder.cSupported = [
                 new i18n.LangTagEx("pl", "pl"),
                 new i18n.LangTagEx("en", "us"),
             ];
 
-            i.translator.cPath = (lt) => "i18n/{0}.json".format(lt.lang);
+            i.translator.cPath = (langTag) => "i18n/{0}.json".format(langTag.lang);
 
-            // main, something, start game
             i.translator.init(() => {
-                this._logger.error("translator init error");
+                this._logger.error("i.translator.init error");
 
             }, () => {
-                i.title.fixed(i.title.cStandardTitle);
+                i.title.setFixed(i.title.cStandardTitle);
 
-                i.ui.initFlags((lang) => {
-                    i.langSetter.setLang(lang);
-                    i.translator.init();
+                i.ui.initFlags((langTag) => {
+                    i.langSetter.setLang(langTag);
+                    i.translator.init(
+                        () => this._logger.error("langTag.change fail={0}", langTag),
+                        () => this._logger.debug("langTag.change ok={0}", langTag),
+                    );
                 });
 
                 i.grids.init();
 
-                if (!("WebSocket" in window)) {
-                    i.message.fixed(new i18n.TrKeyEx("ws.unable"));
-                    return;
-                }
-
-                this._ws.init();
+                ("WebSocket" in window)
+                    ? this._ws.init()
+                    : i.message.setFixed(i18n.tk("ws.unable"));
             });
         }
     }
@@ -130,10 +134,31 @@ namespace game {
 
         private readonly _logger: logger.Logger = new logger.LoggerEx(OnEventEx);
 
+        // https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
+        private readonly _closeReason: Map<number, string> =
+            new Map<number, string>([
+                [1000, "CLOSE_NORMAL"],
+                [1001, "CLOSE_GOING_AWAY"],
+                [1002, "CLOSE_PROTOCOL_ERROR"],
+                [1003, "CLOSE_UNSUPPORTED"],
+                [1005, "CLOSE_NO_STATUS"],
+                [1004, "?"],
+                [1006, "CLOSE_ABNORMAL"],
+                [1007, "Unsupported Data"],
+                [1008, "Policy Violation"],
+                [1009, "CLOSE_TOO_LARGE"],
+                [1010, "Missing Extension"],
+                [1011, "Internal Error"],
+                [1012, "Service Restart"],
+                [1013, "Try Again Later"],
+                [1014, "?"],
+                [1015, "TLS Handshake"],
+            ]);
+
         private _ws: Ws;
         private readonly _onMessage: OnMessage;
 
-        public constructor(onMessage: game.OnMessage) {
+        public constructor(onMessage: OnMessage) {
             this._onMessage = onMessage;
         }
 
@@ -142,66 +167,47 @@ namespace game {
         }
 
         public onOpen(ev: Event): void {
-            this._logger.debug("ws.onopen   : {0}", ev.target.url);
+            this._logger.debug("url={0}", ev.target.url);
             const id: string = i.url.param("id").value || "NEW";
             this._ws.send("GAME {0}".format(id));
         }
 
         public onMessage(ev: MessageEvent): void {
-            this._logger.debug("ws.onmessage: {0}", ev.data);
-            this._onMessage.process(MessageEx.EX(ev));
+            this._logger.debug("data={0}", ev.data);
+            this._onMessage.process(MessageEx.Ex(ev));
         }
 
         public onSend(ev: string): void {
-            this._logger.debug("ws.send     : {0}", ev);
+            this._logger.debug("send={0}", ev);
         }
 
         public onClose(ev: CloseEvent): void {
-            const reason: string = ev.reason || this._wsCode(ev.code) || "?";
-            this._logger.debug("ws.onclose  : {0}({1})", ev.code, reason);
+            const reason: string = ev.reason || this._closeReason.get(ev.code) || "?";
+            this._logger.debug("close={0}({1})", ev.code, reason);
 
-            i.message.fixed(
-                new i18n.TrKeyEx("ws.close", [ev.code, reason]),
-                "msg-fail"
+            i.message.setFixed(
+                i18n.tk("ws.close", [ev.code, reason]),
+                strings._.message.clazz.fail,
+            );
+            i.title.setFixed(
+                i.title.cStandardTitle
             );
 
-            i.title.fixed(i.title.cStandardTitle);
             i.selection.deactivate();
         }
 
         public onError(ev: Event): void {
-            this._logger.debug("ws.onclose  : {0}", ev.type);
+            this._logger.debug("close={0}", ev.type);
 
-            i.message.fixed(
-                new i18n.TrKeyEx("ws.error", [ev.type]),
-                "msg-fail"
+            i.message.setFixed(
+                i18n.tk("ws.error", [ev.type]),
+                strings._.message.clazz.fail,
+            );
+            i.title.setFixed(
+                i.title.cStandardTitle
             );
 
-            i.title.fixed(i.title.cStandardTitle);
             i.selection.deactivate();
-        }
-
-        // noinspection JSMethodCanBeStatic
-        private _wsCode(exitCode: number): string {
-            // https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
-            return <string> ((<any> {
-                1000: "CLOSE_NORMAL",
-                1001: "CLOSE_GOING_AWAY",
-                1002: "CLOSE_PROTOCOL_ERROR",
-                1003: "CLOSE_UNSUPPORTED",
-                1005: "CLOSE_NO_STATUS",
-                1004: "?",
-                1006: "CLOSE_ABNORMAL",
-                1007: "Unsupported Data",
-                1008: "Policy Violation",
-                1009: "CLOSE_TOO_LARGE",
-                1010: "Missing Extension",
-                1011: "Internal Error",
-                1012: "Service Restart",
-                1013: "Try Again Later",
-                1014: "?",
-                1015: "TLS Handshake",
-            })[exitCode]);
         }
     }
 
@@ -219,18 +225,24 @@ namespace game {
             this.payload = payload;
         }
 
-        public static EX(ev: MessageEvent): MessageEx {
+        public static Ex(ev: MessageEvent): MessageEx {
             const raw: string = ev.data;
             const command: string = raw.substring(0, raw.indexOf(" ")) || raw;
             const payload: string = raw.substring(command.length + 1);
 
             return new MessageEx(raw, command, payload);
         }
+
+        public static Sub(topCommand: string, topPayload: string, subCommand: string): MessageEx {
+            return new MessageEx(
+                "{0} {1}".format(topCommand, topPayload),
+                "{0} {1}".format(topCommand, subCommand),
+                topPayload.substring(subCommand.length + 1)
+            );
+        }
     }
 
     // ---------------------------------------------------------------------------------------------------------------
-
-    type Callback<T> = (value: T) => void;
 
     export class OnMessageEx implements OnMessage {
 
@@ -241,55 +253,108 @@ namespace game {
             this._ws = ws;
         }
 
+        // tslint: it contains map of func
         // tslint:disable:max-func-body-length
         public constructor() {
 
             this._func = new Map<string, Callback<string>>([
                 ["HI_.", payload => {
-                    // TODO: factory method, i18n.k()?
-                    i.message.fleeting(new i18n.TrKeyEx("pre.hi", payload), i.timeout.fast);
+                    i.message.addFleeting(
+                        i18n.tk("pre.hi", payload),
+                        i.timeout.fast
+                    );
+                }],
+
+                ["GAME", payload => {
+                    if (payload.startsWith("OK")) {
+                        this.process(MessageEx.Sub("GAME", payload, "OK"));
+                    }
+
+                    if (payload.startsWith("FAIL")) {
+                        this.process(MessageEx.Sub("GAME", payload, "FAIL"));
+                    }
                 }],
 
                 ["GAME OK", payload => {
-                    i.grids.$opponent.addClass("inactive");
-                    i.grids.$shoot.removeClass("inactive");
+                    i.grids.$opponent.addClass(strings._.grid.clazz.inactive);
+                    i.grids.$shoot.removeClass(strings._.grid.clazz.inactive);
 
                     if (payload) {
-                        const $infoGameUrl: JQuery = $("#info-game-url");
-                        i.translator.unsetTr($infoGameUrl);
-                        $infoGameUrl.text(i.url.url(
+                        const $gameUrl: JQuery = $(strings._.info.id_game_url);
+
+                        i.translator.unsetTr($gameUrl);
+                        $gameUrl.text(i.url.url(
                             i.url.param("v"),
                             new url.UrlParamEx("id", payload),
                         ));
 
-                        $("#info-players-game").text(1);
+                        $(strings._.info.id_players_game).text(1);
                     }
 
                     i.grids.reset();
-                    i.message.fixed(new i18n.TrKeyEx("put.info"));
-                    i.message.appendFixedLink(new i18n.TrKeyEx("put.done"), "ok-ship-selection");
+
+                    i.message.setFixed(
+                        i18n.tk("put.info")
+                    );
+                    i.message.addFixedLink(
+                        i18n.tk("put.done"),
+                        strings._.message.ok.id_ship_selection.substring(1)
+                    );
 
                     i.selection.activate();
-                    i.event1.on($("#ok-ship-selection"), "click",
-                        () => this._ws.send("GRID {0}".format(i.selection.collect())));
+                    i.event1.on($(strings._.message.ok.id_ship_selection), "click",
+                        () => this._ws.send("GRID {0}".format(i.selection.collect()))
+                    );
                 }],
 
                 ["GAME FAIL", payload => {
-                    i.message.fixed(new i18n.TrKeyEx("fail.fail", payload));
+                    i.message.setFixed(
+                        i18n.tk("fail.fail", payload)
+                    );
+                }],
+
+                ["GRID", payload => {
+                    if (payload.startsWith("OK")) {
+                        this.process(MessageEx.Sub("GRID", payload, "OK"));
+                    }
+
+                    if (payload.startsWith("FAIL")) {
+                        this.process(MessageEx.Sub("GRID", payload, "FAIL"));
+                    }
                 }],
 
                 ["GRID OK", payload => {
-                    i.grids.$opponent.removeClass("inactive");
-                    i.grids.$shoot.addClass("inactive");
+                    i.grids.$opponent.removeClass(strings._.grid.clazz.inactive);
+                    i.grids.$shoot.addClass(strings._.grid.clazz.inactive);
 
-                    i.message.fixed(new i18n.TrKeyEx("tour.awaiting"));
+                    i.message.setFixed(
+                        i18n.tk("tour.awaiting")
+                    );
 
                     i.selection.deactivate();
                     i.selection.move();
                 }],
 
                 ["GRID FAIL", payload => {
-                    i.message.fleeting(new i18n.TrKeyEx("put.fail"), i.timeout.default_, "msg-fail");
+                    i.message.addFleeting(
+                        i18n.tk("put.fail"),
+                        i.timeout.default_,
+                        strings._.message.clazz.fail
+                    );
+                }],
+
+                ["TOUR", payload => {
+                    if (payload.startsWith("START")) {
+                        this.process(MessageEx.Sub("TOUR", payload, "START"));
+                    }
+
+                    if (payload.startsWith("YOU")) {
+                        this.process(MessageEx.Sub("TOUR", payload, "YOU"));
+                    }
+
+                    if (payload.startsWith("HE")) {
+                        this.process(MessageEx.Sub("TOUR", payload, "HE"));
+                    }
                 }],
 
                 ["TOUR START", payload => {
@@ -297,18 +362,22 @@ namespace game {
                 }],
 
                 ["TOUR YOU", payload => {
-                    i.grids.$shoot.removeClass("inactive");
+                    i.grids.$shoot.removeClass(strings._.grid.clazz.inactive);
 
-                    i.message.fixed(new i18n.TrKeyEx("tour.shoot_me"), "msg-important");
-                    i.title.blinking(new i18n.TrKeyEx("title.shoot_me"), false);
+                    i.message.setFixed(
+                        i18n.tk("tour.shoot_me"),
+                        strings._.message.clazz.important
+                    );
+                    i.title.setBlinking(
+                        i18n.tk("title.shoot_me"),
+                        false
+                    );
 
-                    i.grids.$shoot.find("td").addClass("shoot-able");
-                    i.event1.onetime(i.grids.$shoot.find("td"), "click", $td => {
+                    const $cells: JQuery = i.grids.$shoot.find("td");
+                    $cells.addClass(strings._.cell.clazz.shootable);
+                    i.event1.onetime($cells, "click", $td => {
                         const pos: string = i.cellSer.convert(
-                            // TODO: create CellEx static constructor from JQuery td
-                            new grid.CellEx(
-                                Number.parseInt($td.attr("data-row-i")), Number.parseInt($td.attr("data-col-i"))
-                            )
+                            grid.CellEx.FromElement($td)
                         );
 
                         this._ws.send("SHOOT {0}".format(pos));
@@ -316,19 +385,29 @@ namespace game {
                 }],
 
                 ["TOUR HE", payload => {
-                    i.grids.$shoot.addClass("inactive");
-                    i.grids.$shoot.find("td").removeClass("shoot-able");
+                    i.grids.$shoot.addClass(strings._.grid.clazz.inactive);
+                    i.grids.$shoot.find("td").removeClass(strings._.cell.clazz.shootable);
 
-                    i.message.fixed(new i18n.TrKeyEx("tour.shoot_opp"));
-                    i.title.fixed(new i18n.TrKeyEx("title.shoot_opp"));
+                    i.message.setFixed(
+                        i18n.tk("tour.shoot_opp")
+                    );
+                    i.title.setFixed(
+                        i18n.tk("title.shoot_opp")
+                    );
                 }],
 
                 ["YOU_", payload => {
                     const cells: grid.Cell[] = i.cellsDeSer.convert(payload);
+                    const clazzMap: Map<string, string> = new Map([
+                        ["hit", strings._.cell.clazz.ship],
+                        ["empty", strings._.cell.clazz.empty],
+                    ]);
 
                     cells.forEach((cell) => {
-                        // TODO: fix class?
-                        i.grids.setCellClass(i.grids.$shoot, cell, cell.clazz!, false);
+                        i.grids.setCellClass(
+                            i.grids.$shoot, cell,
+                            clazzMap.get(cell.clazz!) || "", false
+                        );
                     });
                 }],
 
@@ -336,60 +415,77 @@ namespace game {
                     const cells: grid.Cell[] = i.cellsDeSer.convert(payload);
 
                     cells.forEach((cell) => {
-                        i.grids.setCellClass(i.grids.$opponent, cell, "opponent-shoot", false);
+                        i.grids.setCellClass(
+                            i.grids.$opponent, cell,
+                            strings._.cell.clazz.opp_shoot, false
+                        );
                     });
                 }],
 
                 ["WON_", payload => {
-                    i.grids.$opponent.addClass("inactive");
-                    i.grids.$shoot.addClass("inactive");
+                    i.grids.$opponent.addClass(strings._.grid.clazz.inactive);
+                    i.grids.$shoot.addClass(strings._.grid.clazz.inactive);
 
-                    const winning: JQuery = payload === "YOU" ? $("#info-winning-me") : $("#info-winning-opp");
+                    const winning: JQuery = payload === "YOU"
+                        ? $(strings._.info.id_winning_me)
+                        : $(strings._.info.id_winning_opp);
                     winning.text(Number.parseInt(winning.text()) + 1);
 
                     payload === "YOU"
-                        ? i.message.fixed(new i18n.TrKeyEx("end.won_me"))
-                        : i.message.fixed(new i18n.TrKeyEx("end.won_opp"));
+                        ? i.message.setFixed(i18n.tk("end.won_me"))
+                        : i.message.setFixed(i18n.tk("end.won_opp"));
 
-                    i.message.appendFixedLink(new i18n.TrKeyEx("end.next_game"), "ok-game-next");
-
-                    i.event1.onetime($("#ok-game-next"), "click", () =>
-                        (this._func.get("GAME OK"))!("")
+                    i.message.addFixedLink(
+                        i18n.tk("end.next_game"),
+                        strings._.message.ok.id_game_next.substring(1)
+                    );
+                    i.event1.onetime($(strings._.message.ok.id_game_next), "click", () =>
+                        this.process(new MessageEx("", "GAME OK", ""))
                     );
 
-                    i.title.fixed(new i18n.TrKeyEx("title.standard"));
+                    i.title.setFixed(
+                        i18n.tk("title.standard")
+                    );
                 }],
 
                 ["1PLA", payload => {
-                    $("#info-players-game").text(1);
-                    const gameInterrupted: boolean = payload === "game-interrupted";
+                    $(strings._.info.id_players_game).text(1);
 
-                    if (gameInterrupted) {
-                        i.message.fixed(new i18n.TrKeyEx("end.opp_gone"));
-                    } else {
-                        i.message.fleeting(new i18n.TrKeyEx("end.opp_gone"), i.timeout.slow);
-                    }
+                    const interrupted: boolean = payload === "game-interrupted";
 
-                    if (gameInterrupted) {
-                        i.grids.$shoot.find("td").removeClass("shoot-able");
+                    (interrupted)
+                        ? i.message.setFixed(i18n.tk("end.opp_gone"))
+                        : i.message.addFleeting(i18n.tk("end.opp_gone"), i.timeout.slow);
+
+                    if (interrupted) {
+                        i.grids.$shoot.find("td").removeClass(strings._.cell.clazz.shootable);
                         i.event1.off(i.grids.$shoot.find("td"), "click"); // remove shoot action
 
-                        i.message.appendFixedLink(new i18n.TrKeyEx("end.next_game"), "ok-game-next");
+                        i.message.addFixedLink(
+                            i18n.tk("end.next_game"),
+                            strings._.message.ok.id_game_next
+                        );
 
-                        i.grids.$opponent.addClass("inactive");
-                        i.grids.$shoot.addClass("inactive");
+                        i.grids.$opponent.addClass(strings._.grid.clazz.inactive);
+                        i.grids.$shoot.addClass(strings._.grid.clazz.inactive);
 
-                        i.title.fixed(i.title.cStandardTitle);
+                        i.title.setFixed(
+                            i.title.cStandardTitle
+                        );
                     }
 
-                    i.event1.onetime($("#ok-game-next"), "click", () =>
-                        (this._func.get("GAME OK"))!("")
+                    i.event1.onetime($(strings._.message.ok.id_game_next), "click", () =>
+                        this.process(new MessageEx("", "GAME OK", ""))
                     );
                 }],
 
                 ["2PLA", payload => {
-                    $("#info-players-game").text(2);
-                    i.message.fleeting(new i18n.TrKeyEx("tour.two_players"), i.timeout.slow);
+                    $(strings._.info.id_players_game).text(2);
+
+                    i.message.addFleeting(
+                        i18n.tk("tour.two_players"),
+                        i.timeout.slow,
+                    );
                 }],
 
                 ["PONG", payload => {
@@ -397,37 +493,36 @@ namespace game {
                 }],
 
                 ["STAT", payload => {
-                    // TODO: specify type
                     const infoStat: any = {
-                        players: "#info-players-global",
+                        ["players"]: strings._.info.id_players_global,
                     };
 
                     const stats: string[] = payload.split(",");
 
-                    for (let k: number = 0; k < stats.length; k = k + 1) {
-                        const stat: string[] = stats[k].split("=");
-                        $(infoStat[stat[0]]).text(stat[1]);
-                        i.translator.unsetTr($(infoStat[stat[0]]));
-                    }
+                    stats.forEach((stat) => {
+                        const [key, value]: string[] = stat.split("=");
+                        $(infoStat[key]).text(value);
+                        i.translator.unsetTr($(infoStat[key]));
+                    });
                 }],
 
                 ["400_", payload => {
-                    i.message.fixed(new i18n.TrKeyEx("fail.fail"), payload);
+                    i.message.setFixed(
+                        i18n.tk("fail.fail"),
+                        payload
+                    );
                 }],
             ]);
 
             // -------------------------------------------------------------------------------
         }
 
-        public process(msg: game.Message): void {
-            // TODO: anti pattern? use map key feature (get)
-            for (const [funcName, func] of this._func) {
-                if (msg.raw.lastIndexOf(funcName, 0) === 0) {
+        public process(msg: Message): void {
+            const callback: Callback<string> | undefined
+                = this._func.get(msg.command);
 
-                    return func(
-                        msg.raw.substring(funcName.length + 1)
-                    );
-                }
+            if (callback !== undefined) {
+                callback(msg.payload);
             }
         }
 
@@ -437,14 +532,14 @@ namespace game {
 
     class SingletonGame {
 
-        private _onMessage: OnMessageEx = new game.OnMessageEx();
-        private _onEvent: OnEventEx = new game.OnEventEx(this._onMessage);
-        private _ws: WsEx = new game.WsEx(this._onEvent);
-        public starter: StarterEx = new game.StarterEx(this._ws);
+        private _onMessage: OnMessageEx = new OnMessageEx();
+        private _onEvent: OnEventEx = new OnEventEx(this._onMessage);
+        private _ws: WsEx = new WsEx(this._onEvent);
+        public starter: StarterEx = new StarterEx(this._ws);
 
         public constructor() {
-            this._onEvent.setWs(this._ws);
             this._onMessage.setWs(this._ws);
+            this._onEvent.setWs(this._ws);
         }
     }
 

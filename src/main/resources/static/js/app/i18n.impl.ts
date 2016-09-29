@@ -241,7 +241,7 @@ namespace i18n {
         private _strings: any;
         private readonly _langSetter: LangSetter;
 
-        public cPath: ((lang: LangTag) => string) = (lt) => "{0}.json".format(lt);
+        public cPath: Changer<LangTag, string> = (lt) => "{0}.json".format(lt);
 
         public constructor(langSetter: i18n.LangSetter,
                            onLangChange: event0.Event<number>) {
@@ -299,7 +299,7 @@ namespace i18n {
             $e.removeAttr(this.cDataAttrParams);
         }
 
-        public init(error?: (() => void), callback?: (() => void)): void {
+        public init(error?: Action, callback?: Action): void {
             const langTag: LangTag = this._langSetter.getLang();
             const jsonPath: string = this.cPath(langTag);
 

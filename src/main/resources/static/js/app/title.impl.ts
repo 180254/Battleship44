@@ -23,7 +23,7 @@ namespace title {
             this._translator.onLangChange.subscribe(() => this._updateTr());
         }
 
-        public fixed(key: i18n.TrKey): void {
+        public setFixed(key: i18n.TrKey): void {
             this._removeBlinking();
             this._updateTr([key]);
 
@@ -33,7 +33,7 @@ namespace title {
             );
         }
 
-        public blinking(key: i18n.TrKey, override: boolean): void {
+        public setBlinking(key: i18n.TrKey, override: boolean): void {
             this._updateTr([this.cStandardTitle, key]);
 
             if (this._blinkInterval === undefined || override) {

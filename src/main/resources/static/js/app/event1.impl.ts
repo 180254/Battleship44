@@ -13,13 +13,13 @@ namespace event1 {
             this._random = random;
         }
 
-        public on($e: JQuery, action: string, callback: ($e: JQuery) => void): void {
+        public on($e: JQuery, action: string, callback: Callback<JQuery>): void {
             $e.on(action, function (): void {
                 callback($(this));
             });
         }
 
-        public onetime($e: JQuery, action: string, callback: ($e: JQuery) => void): void {
+        public onetime($e: JQuery, action: string, callback: Callback<JQuery>): void {
             const namespace: string = this._random.str(7, "a");
             const event: string = "{0}.{1}".format(action, namespace);
 

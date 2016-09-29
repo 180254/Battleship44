@@ -1,6 +1,7 @@
 /// <reference path="url.decl.ts"/>
 /// <reference path="format.decl.ts"/>
 /// <reference path="escape.decl.ts"/>
+/// <reference path="types.decl.ts"/>
 /// <reference path="logger.impl.ts"/>
 
 namespace url {
@@ -19,8 +20,8 @@ namespace url {
         // port        ""
         // protocol    "http:"
         // search      "?test=1"
-        public cLocationHref: (() => string) = () => window.location.href;
-        public cLocationPath: (() => string) = () => window.location.origin + window.location.pathname;
+        public cLocationHref: Supplier<string> = () => window.location.href;
+        public cLocationPath: Supplier<string> = () => window.location.origin + window.location.pathname;
 
         // credits/source: http://snipplr.com/view/26662/get-url-parameters-with-jquery--improved/
         public param(name: string): UrlParam {

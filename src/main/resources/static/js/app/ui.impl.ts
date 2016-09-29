@@ -20,7 +20,7 @@ namespace ui {
             this._langFinder = langFinder;
         }
 
-        public initFlags(callback: (e: i18n.LangTag) => void): void {
+        public initFlags(callback: Callback<i18n.LangTag>): void {
             this._langFinder.server()
                 .forEach((langTag) => {
 

@@ -1,3 +1,4 @@
+/// <reference path="types.decl.ts"/>
 /// <reference path="event0.decl.ts"/>
 
 declare namespace i18n {
@@ -110,6 +111,6 @@ declare namespace i18n {
         setAllTr($e: JQuery, p?: TrKey): void;
         unsetTr($e: JQuery): void;
 
-        init(error?: (() => void), callback?: (() => void)): void;
+        init(error?: Action, callback?: Action): void;
     }
 }
