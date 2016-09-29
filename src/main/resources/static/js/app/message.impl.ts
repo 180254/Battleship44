@@ -47,7 +47,7 @@ namespace message {
         public addFixedLink(trKey: i18n.TrKey, id: string, clazz?: string): void {
             const $a: JQuery = $("<a/>", {
                 ["href"]: "#",
-                ["id"]: id,
+                ["id"]: id.substring(1),
                 ["class"]: clazz || "",
             });
 
@@ -64,7 +64,7 @@ namespace message {
                     : this._$ConstDiv();
 
             const $outer: JQuery = $("<span/>", {
-                ["id"]: outerId,
+                ["id"]: outerId.substring(1),
                 ["class"]: "{0} msg".format(clazz || ""),
             });
 

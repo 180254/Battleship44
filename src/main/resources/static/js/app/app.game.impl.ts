@@ -31,8 +31,8 @@ namespace game {
     class Singleton {
 
         public assert: assert.AssertEx = new assert.AssertEx();
-        public event1: event1.EventEx = new event1.EventEx(this.random);
         public random: random.RandomEx = new random.RandomEx();
+        public event1: event1.EventEx = new event1.EventEx(this.random);
         public url: url.UrlEx = new url.UrlEx();
 
         public grids: grid.GridsEx = new grid.GridsEx();
@@ -298,7 +298,7 @@ namespace game {
                     );
                     i.message.addFixedLink(
                         i18n.tk("put.done"),
-                        strings._.message.ok.id_ship_selection.substring(1)
+                        strings._.message.ok.id_ship_selection
                     );
 
                     i.selection.activate();
@@ -380,7 +380,7 @@ namespace game {
                             grid.CellEx.FromElement($td)
                         );
 
-                        this._ws.send("SHOOT {0}".format(pos));
+                        this._ws.send("SHOT {0}".format(pos));
                     });
                 }],
 
@@ -399,7 +399,7 @@ namespace game {
                 ["YOU_", payload => {
                     const cells: grid.Cell[] = i.cellsDeSer.convert(payload);
                     const clazzMap: Map<string, string> = new Map([
-                        ["hit", strings._.cell.clazz.ship],
+                        ["ship", strings._.cell.clazz.ship],
                         ["empty", strings._.cell.clazz.empty],
                     ]);
 
@@ -417,7 +417,7 @@ namespace game {
                     cells.forEach((cell) => {
                         i.grids.setCellClass(
                             i.grids.$opponent, cell,
-                            strings._.cell.clazz.opp_shoot, false
+                            strings._.cell.clazz.opp_shoot, true
                         );
                     });
                 }],
@@ -437,7 +437,7 @@ namespace game {
 
                     i.message.addFixedLink(
                         i18n.tk("end.next_game"),
-                        strings._.message.ok.id_game_next.substring(1)
+                        strings._.message.ok.id_game_next
                     );
                     i.event1.onetime($(strings._.message.ok.id_game_next), "click", () =>
                         this.process(new MessageEx("", "GAME OK", ""))
@@ -508,8 +508,7 @@ namespace game {
 
                 ["400_", payload => {
                     i.message.setFixed(
-                        i18n.tk("fail.fail"),
-                        payload
+                        i18n.tk("fail.fail", payload),
                     );
                 }],
             ]);

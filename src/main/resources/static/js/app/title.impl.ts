@@ -9,7 +9,7 @@ namespace title {
 
         private readonly _logger: logger.Logger = new logger.LoggerEx(TitleEx);
 
-        public cStandardTitle: i18n.TrKey = {path: "title.standard", params: []};
+        public cStandardTitle: i18n.TrKey = {path: "title.standard", params: [], toString: () => "title.standard[]"};
         public cBlinkTimeout: number = 1350;
 
         private _currentTrKeys: i18n.TrKey[] = [];
