@@ -129,7 +129,7 @@ v2.1
 ← `TOUR HE`  
   
 → `SHOT [0,2]`  
-← `YOU_ [HIT,0,2],[EMPTY,2,1],[EMPTY,2,2]`  
+← `YOU_ [SHIP,0,2],[EMPTY,2,1],[EMPTY,2,2]`  
 ← `HE__ [EMPTY,2,7]`  
 ← `400_ no-game-set`  
 ← `400_ game-waiting`  
