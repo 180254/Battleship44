@@ -32,12 +32,20 @@ gulp.task("closure-convert", function () {
                     )
                 },
                 {
-                    src: "var DEBUG;" +
-                    "function Cookies() {}; " +
-                    "Cookies.get = function(name) {};" +
-                    "Cookies.set = function(name, value) {};" +
-                    "String.prototype.format = function(value) {};" +
-                    "RegExp.prototype.escape = function(str) {};"
+                    src: `var DEBUG;
+                    function Cookies() {}; 
+                    Cookies.get = function(name) {};
+                    Cookies.set = function(name, value) {}
+                    /**
+                     * @param {...*} varArgs
+                     */
+                    String.prototype.format = function(varArgs) {};
+                    RegExp.prototype.escape = function(str) {};
+                    window.navigator.language = '';
+                    window.navigator.languages = [];
+                    window.navigator.userLanguage = '';
+                    window.navigator.browserLanguage = '';
+                    window.navigator.systemLanguage = '';`
                 },
             ]
         }))
