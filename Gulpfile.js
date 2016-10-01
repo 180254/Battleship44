@@ -22,7 +22,8 @@ gulp.task("closure-convert", function () {
             warningLevel: "VERBOSE",
             languageIn: "ECMASCRIPT6_TYPED",
             languageOut: "ECMASCRIPT5_STRICT",
-            outputWrapper: "(function(){\n%output%\n}).call(this)",
+            // outputWrapper: "(function(){\n%output%\n}).call(this)",
+            outputWrapper: "%output%",
             jsOutputFile: "app.es5-closure.min.js",
             createSourceMap: true,
             externs: [

@@ -1,7 +1,12 @@
 {
   "compilerOptions": {
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+
     "noImplicitAny": true,
     "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitUseStrict": true,
 
     "removeComments": true,
     "strictNullChecks": true,
