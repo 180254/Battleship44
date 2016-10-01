@@ -33,6 +33,16 @@ namespace logger {
                 assert_.strContains(output, "debug");
             });
 
+            it("should provide in output - marked level for >=warn", () => {
+                logger_.warn("xyz");
+                assert_.strContains(output, "%%%___warn___%%%");
+            });
+
+            it("should not provide in output - marked level for <warn", () => {
+                logger_.info("xyz");
+                assert_.strContains(output, "%%%___");
+            });
+
             it("should provide in output - given text", () => {
                 logger_.debug("xyz");
                 assert_.strContains(output, "xyz");

@@ -41,5 +41,11 @@ namespace assert {
                 throw new Error("expected: {0} to contain: {1}".format(haystack, needle));
             }
         }
+
+        public strNotContains(haystack: string, needle: any): void {
+            if (haystack.includes(needle)) {
+                throw new Error("expected: {0} to not contain: {1}".format(haystack, needle));
+            }
+        }
     }
 }

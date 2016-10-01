@@ -54,7 +54,14 @@ namespace logger {
 
         private _log(level: Level, text: string, ...args: any[]): void {
             if (LoggerEx.cLevel >= level) {
-                this.cOutput("{0} {1}.{2} {3}".format(
+
+                const marker: string =
+                    LoggerEx.cLevel >= logger.Level.WARN
+                        ? "%%%___{0}___%%%"
+                        : "{0}";
+                const outputFormat: string = marker + " {1}.{2} {3}";
+
+                this.cOutput(outputFormat.format(
                     Level[level].toLowerCase() || "?",
                     this._owner.name || "?",
 

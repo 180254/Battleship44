@@ -13,7 +13,10 @@ declare namespace grid {
 
     interface Grids {
         readonly $shoot: JQuery;
+        readonly $shootCells: JQuery;
+
         readonly $opponent: JQuery;
+        readonly $opponentCells: JQuery;
 
         init(): void;
         reset(): void;

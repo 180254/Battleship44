@@ -14,7 +14,9 @@ namespace event1 {
         }
 
         public on($e: JQuery, action: string, callback: Callback<JQuery>): void {
-            $e.on(action, function (): void {
+
+            // tslint:disable:no-reserved-keywords // tslint-bug #261
+            $e.on(action, function (this: Element): void {
                 callback($(this));
             });
         }
@@ -23,7 +25,8 @@ namespace event1 {
             const namespace: string = this._random.str(7, "a");
             const event: string = "{0}.{1}".format(action, namespace);
 
-            $e.on(event, function (): void {
+            // tslint:disable:no-reserved-keywords // tslint-bug #261
+            $e.on(event, function (this: Element): void {
                 $e.off(event);
                 callback($(this));
             });

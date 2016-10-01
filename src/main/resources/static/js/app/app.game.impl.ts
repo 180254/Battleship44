@@ -89,8 +89,8 @@ namespace game {
                 i.ui.initFlags((langTag) => {
                     i.langSetter.setLang(langTag);
                     i.translator.init(
-                        () => this._logger.error("langTag.change fail={0}", langTag),
-                        () => this._logger.debug("langTag.change ok={0}", langTag),
+                        () => this._logger.error("lang.change fail={0}", langTag),
+                        () => this._logger.debug("lang.change ok={0}", langTag),
                     );
                 });
 
@@ -233,18 +233,24 @@ namespace game {
             return new MessageEx(raw, command, payload);
         }
 
-        public static Sub(topCommand: string, topPayload: string, subCommand: string): MessageEx {
+        public static Sub(command: string, payload: string, subCommand: string): MessageEx {
             return new MessageEx(
-                "{0} {1}".format(topCommand, topPayload),
-                "{0} {1}".format(topCommand, subCommand),
-                topPayload.substring(subCommand.length + 1)
+                "{0} {1}".format(command, payload),
+                "{0} {1}".format(command, subCommand),
+                payload.substring(subCommand.length + 1)
             );
+        }
+
+        public toString(): string {
+            return "MessageEx[raw={0} command={1} payload={2}]".format(this.raw, this.command, this.payload);
         }
     }
 
     // ---------------------------------------------------------------------------------------------------------------
 
     export class OnMessageEx implements OnMessage {
+
+        private readonly _logger: logger.Logger = new logger.LoggerEx(OnMessageEx);
 
         private _ws: Ws;
         private readonly _func: Map<string, Callback<string>>;
@@ -253,8 +259,7 @@ namespace game {
             this._ws = ws;
         }
 
-        // tslint: it contains map of func
-        // tslint:disable:max-func-body-length
+        // tslint:disable:max-func-body-length // map of func
         public constructor() {
 
             this._func = new Map<string, Callback<string>>([
@@ -267,11 +272,17 @@ namespace game {
 
                 ["GAME", payload => {
                     if (payload.startsWith("OK")) {
-                        this.process(MessageEx.Sub("GAME", payload, "OK"));
-                    }
+                        this.process(
+                            MessageEx.Sub("GAME", payload, "OK")
+                        );
 
-                    if (payload.startsWith("FAIL")) {
-                        this.process(MessageEx.Sub("GAME", payload, "FAIL"));
+                    } else if (payload.startsWith("FAIL")) {
+                        this.process(
+                            MessageEx.Sub("GAME", payload, "FAIL")
+                        );
+
+                    } else {
+                        this._logger.error("unknown_func={0},{1}", "GAME", payload);
                     }
                 }],
 
@@ -285,6 +296,8 @@ namespace game {
                         i.translator.unsetTr($gameUrl);
                         $gameUrl.text(i.url.url(
                             i.url.param("v"),
+                            i.url.param("m"),
+                            i.url.param("d"),
                             new url.UrlParamEx("id", payload),
                         ));
 
@@ -315,11 +328,17 @@ namespace game {
 
                 ["GRID", payload => {
                     if (payload.startsWith("OK")) {
-                        this.process(MessageEx.Sub("GRID", payload, "OK"));
-                    }
+                        this.process(
+                            MessageEx.Sub("GRID", payload, "OK")
+                        );
 
-                    if (payload.startsWith("FAIL")) {
-                        this.process(MessageEx.Sub("GRID", payload, "FAIL"));
+                    } else if (payload.startsWith("FAIL")) {
+                        this.process(
+                            MessageEx.Sub("GRID", payload, "FAIL")
+                        );
+
+                    } else {
+                        this._logger.error("unknown_func={0},{1}", "GRID", payload);
                     }
                 }],
 
@@ -345,15 +364,22 @@ namespace game {
 
                 ["TOUR", payload => {
                     if (payload.startsWith("START")) {
-                        this.process(MessageEx.Sub("TOUR", payload, "START"));
-                    }
+                        this.process(
+                            MessageEx.Sub("TOUR", payload, "START")
+                        );
 
-                    if (payload.startsWith("YOU")) {
-                        this.process(MessageEx.Sub("TOUR", payload, "YOU"));
-                    }
+                    } else if (payload.startsWith("YOU")) {
+                        this.process(
+                            MessageEx.Sub("TOUR", payload, "YOU")
+                        );
 
-                    if (payload.startsWith("HE")) {
-                        this.process(MessageEx.Sub("TOUR", payload, "HE"));
+                    } else if (payload.startsWith("HE")) {
+                        this.process(
+                            MessageEx.Sub("TOUR", payload, "HE")
+                        );
+
+                    } else {
+                        this._logger.error("unknown_func={0},{1}", "TOUR", payload);
                     }
                 }],
 
@@ -373,7 +399,8 @@ namespace game {
                         false
                     );
 
-                    const $cells: JQuery = i.grids.$shoot.find("td");
+                    const $cells: JQuery = i.grids.$shootCells;
+
                     $cells.addClass(strings._.cell.clazz.shootable);
                     i.event1.onetime($cells, "click", $td => {
                         const pos: string = i.cellSer.convert(
@@ -386,7 +413,7 @@ namespace game {
 
                 ["TOUR HE", payload => {
                     i.grids.$shoot.addClass(strings._.grid.clazz.inactive);
-                    i.grids.$shoot.find("td").removeClass(strings._.cell.clazz.shootable);
+                    i.grids.$shootCells.removeClass(strings._.cell.clazz.shootable);
 
                     i.message.setFixed(
                         i18n.tk("tour.shoot_opp")
@@ -398,6 +425,7 @@ namespace game {
 
                 ["YOU_", payload => {
                     const cells: grid.Cell[] = i.cellsDeSer.convert(payload);
+
                     const clazzMap: Map<string, string> = new Map([
                         ["ship", strings._.cell.clazz.ship],
                         ["empty", strings._.cell.clazz.empty],
@@ -458,8 +486,8 @@ namespace game {
                         : i.message.addFleeting(i18n.tk("end.opp_gone"), i.timeout.slow);
 
                     if (interrupted) {
-                        i.grids.$shoot.find("td").removeClass(strings._.cell.clazz.shootable);
-                        i.event1.off(i.grids.$shoot.find("td"), "click"); // remove shoot action
+                        i.grids.$shootCells.removeClass(strings._.cell.clazz.shootable);
+                        i.event1.off(i.grids.$shootCells, "click"); // remove shoot action
 
                         i.message.addFixedLink(
                             i18n.tk("end.next_game"),
@@ -501,8 +529,10 @@ namespace game {
 
                     stats.forEach((stat) => {
                         const [key, value]: string[] = stat.split("=");
-                        $(infoStat[key]).text(value);
-                        i.translator.unsetTr($(infoStat[key]));
+                        const $infoStatKey: JQuery = $(infoStat[key]);
+
+                        $infoStatKey.text(value);
+                        i.translator.unsetTr($infoStatKey);
                     });
                 }],
 
@@ -510,6 +540,8 @@ namespace game {
                     i.message.setFixed(
                         i18n.tk("fail.fail", payload),
                     );
+
+                    this._logger.error("400_={0}", payload);
                 }],
             ]);
 
@@ -522,6 +554,8 @@ namespace game {
 
             if (callback !== undefined) {
                 callback(msg.payload);
+            } else {
+                this._logger.error("unknown={0}", msg);
             }
         }
 

@@ -131,9 +131,6 @@ namespace i18n {
                 throw new Error("finder.server cannot be empty");
             }
 
-            // this._logger.trace("user=[{0}]", user);
-            // this._logger.trace("server=[{0}]", server);
-
             let fLang: LangTag | undefined;
             let fLang2: LangTag | undefined;
             let fType: SelectType | undefined = undefined;

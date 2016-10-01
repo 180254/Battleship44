@@ -13,5 +13,7 @@ declare namespace assert {
         numEquals(expected: number, actual: number, epsilon: number): void;
 
         strContains(haystack: string, needle: any): void;
+
+        strNotContains(haystack: string, needle: any): void;
     }
 }

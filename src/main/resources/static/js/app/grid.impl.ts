@@ -37,7 +37,10 @@ namespace grid {
         public cCols: number = 10;
 
         public readonly $shoot: JQuery = $(strings._.grid.id_shoot);
+        public $shootCells: JQuery;
+
         public readonly $opponent: JQuery = $(strings._.grid.id_opponent);
+        public $opponentCells: JQuery;
 
         public init(): void {
             this._createGrid(
@@ -47,12 +50,15 @@ namespace grid {
             this._createGrid(
                 this.$opponent.attr("id")
             ).appendTo(this.$opponent);
+
+            this.$shootCells = this.$shoot.find("td");
+            this.$opponentCells = this.$opponent.find("td");
         }
 
         public reset(): void {
             const unknown: string = strings._.cell.clazz.unknown;
-            this.$shoot.find("td").attr("class", unknown);
-            this.$opponent.find("td").attr("class", unknown);
+            this.$shootCells .attr("class", unknown);
+            this.$opponentCells.attr("class", unknown);
         }
 
         public setCellClass($grid: JQuery, cell: Cell, clazz: string, keepCurrent: boolean): void {
@@ -120,10 +126,11 @@ namespace grid {
             const ship: string = strings._.cell.clazz.ship;
             const unknown: string = strings._.cell.clazz.unknown;
 
-            this._grids.$shoot
-                .find("td")
+            this._grids.$shootCells
                 .addClass(shootable)
-                .mousedown(function (): boolean {
+
+                // tslint:disable:no-reserved-keywords // tslint-bug #261
+                .mousedown(function (this: Element): boolean {
                     isMouseDown = true;
                     $(this).toggleClass(ship);
                     isHighlighted = $(this).hasClass(ship);
@@ -131,7 +138,8 @@ namespace grid {
                     return false;
                 })
 
-                .mouseover(function (): void {
+                // tslint:disable:no-reserved-keywords // tslint-bug #261
+                .mouseover(function (this: Element): void {
                     if (isMouseDown) {
                         $(this).toggleClass(ship, isHighlighted);
                         $(this).toggleClass(unknown, !isHighlighted);
@@ -162,7 +170,7 @@ namespace grid {
 
             return this._grids.$shoot
                 .find("tr").find("td")
-                .map(function (): number {
+                .map(function (this: Element): number {
                     return +($(this).hasClass(ship));
                 })
                 .get()
@@ -170,8 +178,8 @@ namespace grid {
         }
 
         public move(): void {
-            const shoot: JQuery = this._grids.$shoot.find("td");
-            const opponent: JQuery = this._grids.$opponent.find("td");
+            const shoot: JQuery = this._grids.$shootCells;
+            const opponent: JQuery = this._grids.$opponentCells;
             const unknown: string = strings._.cell.clazz.unknown;
 
             for (let i: number = 0; i < shoot.length; i += 1) {

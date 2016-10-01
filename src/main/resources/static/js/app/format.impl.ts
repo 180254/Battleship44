@@ -6,9 +6,10 @@
 // license url: https://creativecommons.org/licenses/by-sa/3.0/
 
 if (!String.prototype.format) {
-    // tslint: why? is valid & not replaceable
-    // tslint:disable:no-invalid-this
-    String.prototype.format = function (): string {
+
+    // tslint:disable:no-invalid-this // no idea, bug?
+    // tslint:disable:no-reserved-keywords // tslint-bug #261
+    String.prototype.format = function (this: string): string {
         "use strict";
         const args: IArguments = arguments;
         return this.replace(/{(\d+)}/g, (match: string, index: number) =>
