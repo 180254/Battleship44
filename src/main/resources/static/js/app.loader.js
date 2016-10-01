@@ -1,3 +1,5 @@
+// es5
+
 /*                default settings
  +-------------------------+-------------+--------------+
  |  sth about js / debug?  |    true     |    false     |
@@ -17,6 +19,7 @@ var DEBUG = true;
 // app loader
 // - easily change app version (?v=5c)
 // - easily change load mode (?m=ss)
+// - easily change debug flag (?d=1)
 // - load additional libs for specified ver
 $(function () {
 
@@ -105,6 +108,16 @@ $(function () {
 
     // ---------------------------------------------------------------------------------------------------------------
 
+    var debug = requireValid(
+        urlParam("d"),
+        ["1", "0"],
+        DEBUG
+    );
+
+    DEBUG = !!+debug; // convert to boolean; may be "0", "1", 0, 1, false, true
+
+    // ---------------------------------------------------------------------------------------------------------------
+
     var mode = requireValid(
         urlParam("m"),
         Object.keys(modes),
@@ -116,6 +129,7 @@ $(function () {
         Object.keys(scripts),
         DEBUG ? defaults.debug.script : defaults.prod.script
     );
+
 
     var mode_ = modes[mode];
     var script_ = scripts[script];
