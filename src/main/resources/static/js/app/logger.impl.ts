@@ -55,14 +55,13 @@ namespace logger {
         private _log(level: Level, text: string, ...args: any[]): void {
             if (LoggerEx.cLevel >= level) {
 
-                const marker: string =
-                    LoggerEx.cLevel >= logger.Level.WARN
-                        ? "%%%___{0}___%%%"
-                        : "{0}";
-                const outputFormat: string = marker + " {1}.{2} {3}";
+                const level_: string =
+                    (level <= logger.Level.WARN)
+                        ? Level[level].toUpperCase() || "?"
+                        : Level[level].toLowerCase() || "?";
 
-                this.cOutput(outputFormat.format(
-                    Level[level].toLowerCase() || "?",
+                this.cOutput("{0} | {1}.{2} | {3}".format(
+                    level_,
                     this._owner.name || "?",
 
                     // _caller depth?

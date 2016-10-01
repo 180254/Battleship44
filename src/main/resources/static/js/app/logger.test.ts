@@ -28,19 +28,15 @@ namespace logger {
 
         describe("debug", () => {
 
-            it("should provide in output - level", () => {
-                logger_.debug("xyz");
-                assert_.strContains(output, "debug");
-            });
-
             it("should provide in output - marked level for >=warn", () => {
                 logger_.warn("xyz");
-                assert_.strContains(output, "%%%___warn___%%%");
+                assert_.strContains(output, "WARN");
             });
 
-            it("should not provide in output - marked level for <warn", () => {
+            it("should provide in output - not marked level for <warn", () => {
                 logger_.info("xyz");
-                assert_.strContains(output, "%%%___");
+                assert_.strContains(output, "info");
+                assert_.strNotContains(output, "INFO");
             });
 
             it("should provide in output - given text", () => {

@@ -144,10 +144,10 @@ $(function () {
             return loadScript(mode_, val)
                 .then(function () {
                     if (DEBUG) {
-                        console.log("debug app.loader ok=" + val)
+                        console.log("debug | app.loader | ok=" + val)
                     }
                 }, function () {
-                    console.log("error app.loader fail=" + val)
+                    console.log("ERROR | app.loader | fail=" + val)
                 });
         });
     });
