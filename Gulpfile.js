@@ -1,7 +1,8 @@
-const gulp = require('gulp');
+const gulp = require("gulp");
 const closure = require("google-closure-compiler-js").gulp();
-const sourcemaps = require('gulp-sourcemaps');
-const fs = require('fs');
+const sourcemaps = require("gulp-sourcemaps");
+const replace = require("gulp-replace");
+const fs = require("fs");
 
 const path =
     (file) => "src/main/resources/static/js" + file;
@@ -12,6 +13,10 @@ const path_ = // src\main\...
 gulp.task("closure-convert", function () {
     return gulp
         .src([path("/app.es7-ts.js")])
+
+        // "Non const enums breaking Closure Compiler Advanced" ts issue fix
+        // https://github.com/Microsoft/TypeScript/issues/2655#issuecomment-146268149
+        .pipe(replace(/(\w+)\[(\1)\["([^"]*)"] = (\d+)] = "(\3)";/g, "$1[$1.$3 = $4] = \"$3\";"))
 
         .pipe(sourcemaps.init({
             loadMaps: true,
@@ -42,11 +47,11 @@ gulp.task("closure-convert", function () {
                      */
                     String.prototype.format = function(varArgs) {};
                     RegExp.prototype.escape = function(str) {};
-                    window.navigator.language = '';
-                    window.navigator.languages = [];
-                    window.navigator.userLanguage = '';
-                    window.navigator.browserLanguage = '';
-                    window.navigator.systemLanguage = '';`
+                    window.navigator.language = "";
+                    window.navigator.languages = [""];
+                    window.navigator.userLanguage = "";
+                    window.navigator.browserLanguage = "";
+                    window.navigator.systemLanguage = "";`
                 },
             ]
         }))

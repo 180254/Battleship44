@@ -37,6 +37,7 @@
     "grunt-contrib-copy": "^1.0.0",
     "gulp": "^3.9.1",
     "gulp-cli": "^1.2.2",
+    "gulp-replace": "^0.5.4",
     "gulp-sourcemaps": "^2.0.0-alpha",
     "load-grunt-tasks": "^3.5.2",
     "typescript": "^2.0.3"
