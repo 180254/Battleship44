@@ -2,6 +2,10 @@
 
 Just <a href="https://en.wikipedia.org/wiki/Battleship_(game)">battleship</a> html5 `game`.
 
+<img src="screenshots/0.png" alt="screenshot" width="700"/>
+
+##features
+
 Supported (implemented) `fleet sizes`:
 
 * russian (4, 3, 3, 2, 2, 2, 1, 1, 1, 1)
@@ -18,16 +22,22 @@ Supported `langs` (translated strings):
 * english  
 * polish  
 
-Supported & tested `browsers`:  
+Supported (?tested?) `browsers`:  
 
-* Chrome 53
+* ES7 (default in debug mode): Chrome 53, Firefox 51
+* ES5 (default in production mode): any modern browser <sub>ie11 is not modern</sub>
+
+##configuration
+* set the mode by changing debug flag (src/main/resources/static/js/app.loader.js)  
+* set your favorite fleet sizes/mode in .properties (src/main/resources/application.properties)
 
 ##compile & run
 
-* It is `spring boot` application.
+* It is `spring boot` application.  
+* Back-end is written in `Java 8`.  
+* Front-end is written in `html5+TypeScript2`.
 * Back-end uses `maven` as build automation tool & dependency manager. 
 * Front-end uses `npm` as build automation tool & dependency manager.
-
 
 ### compile-dependencies
 Back-end compile dependencies:
@@ -35,11 +45,9 @@ Back-end compile dependencies:
 * [java development kit](http://www.oracle.com/technetwork/java/javase/overview/index.html) >=1.8
 * [maven](https://maven.apache.org/) >= 3.3 (wrapper is provided)
 
-
 Front-end (TypeScript files) compile dependencies:
 
-* [nodejs, npm](https://nodejs.org/en/) (v6.3.x/v3.10.x tested, but probably any reasonable version)
-
+* [nodejs, npm](https://nodejs.org/en/) (v6.x/v3.10.x tested)
 
 ### compile-steps
 * first front-end, then back-end
@@ -87,19 +95,17 @@ v1.2
 + front: pointer cursor on all flag, and cross-hair on shoot grid  
   
 v1.3  
-- front: re-written & refactored js to TypeScript  
-- front: source now written with targeting es6, es5 also available (transcompiled)  
-- front: js file is now minified
++ front: re-written & refactored js to TypeScript2  
++ front: source now written with targeting es7, es5 also available (transcompiled)  
++ front: js file is now minified  
++ back: controller fix (commit/b23803f28d790c34e47c8b8d2cf753f07860c15d)
  
-v1.x  
+vX.Y  
+- back/front: dynamic info from server about fleet sizes (was hardcoded in html file)  
 - back/front: info which ship sizes are already shot & which are still to shoot down  
 - back/front: mini chat in game, between players  
-  
-v2.0  
 - back/front: fleet-type is now game-level, not server-level  
 - back/front: grid-size is now game-level, not server-level  
-  
-v2.1  
 - back/front: able to set custom (game-level) fleet-type (sizes) & grid-size  
 
 ##protocol
@@ -149,3 +155,9 @@ v2.1
   
 → `<bad_command>`  
 ← `400_ unknown-command`  
+
+##documentation
+  
+* protocol  
+* code  
+* comments
