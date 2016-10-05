@@ -1,4 +1,4 @@
-package selenium;
+package selenium.helper;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-// helper methods tested on chrome 53
+// selenium tests on more than one tab
+// code is/may be not general: tested on chrome 53
 public class TabHelper {
 
     private final WebDriver driver;
@@ -38,16 +39,8 @@ public class TabHelper {
         );
     }
 
-    public void reset() {
-        List<String> handles = handles();
-
-        while (handles.size() != 1) {
-            String handle = handles.get(0);
-            driver.switchTo().window(handle);
-
-            sendKeys(Keys.CONTROL + "w");
-            handles = handles(); // wtf #1
-        }
+    public void clear() {
+        driver.get("about:blank");
     }
 
     private void sendKeys(String keys) {
