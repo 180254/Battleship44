@@ -131,12 +131,18 @@ public class GameController extends TextWebSocketHandler {
             game.removePlayer(player);
 
             if (secondPlayer != null) {
+                boolean gameInterrupted
+                        = game.getState() == Game.State.IN_PROGRESS;
+
                 txt(secondPlayer, "1PLA %s",
-                        game.getState() == Game.State.IN_PROGRESS
+                        gameInterrupted
                                 ? "game-interrupted"
                                 : "game-not-interrupted");
 
-                game.nextGame();
+                if (gameInterrupted) {
+                    game.nextGame();
+                }
+
             } else {
                 games.remove(game.getId());
             }
