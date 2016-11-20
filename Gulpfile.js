@@ -31,6 +31,8 @@ gulp.task("closure-convert", function () {
             outputWrapper: "%output%",
             jsOutputFile: "app.es5-closure.min.js",
             createSourceMap: true,
+            rewritePolyfills: false,
+
             externs: [
                 {
                     src: fs.readFileSync(

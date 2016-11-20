@@ -51,12 +51,11 @@ module.exports = function (grunt) {
             convert7: {
                 options: {
                     presets: ["babili"],
-                    // passPerPreset: true,
+                    passPerPreset: true,
                     sourceMap: true,
                     inputSourceMap: json(path("/app.es7-ts.js.map")),
                     comments: false,
-                },
-                files: [{
+
                     expand: true,
                     cwd: path("/"),
                     src: "app.es7-ts.js",
@@ -67,18 +66,17 @@ module.exports = function (grunt) {
                             .replace(".js", ".min.js")
 
                     }
-                }]
+                },
             },
 
             convert5: {
                 options: {
                     presets: ["es2015", "es2016", "babili"],
-                    // passPerPreset: true,
+                  	passPerPreset: true,
                     sourceMap: true,
                     inputSourceMap: json(path("/app.es7-ts.js.map")),
                     comments: false,
-                },
-                files: [{
+
                     expand: true,
                     cwd: path("/"),
                     src: "app.es7-ts.js",
@@ -88,7 +86,8 @@ module.exports = function (grunt) {
                             .replace("es7-ts", "es5-babel")
                             .replace(".js", ".min.js")
                     }
-                }]
+                },
+               
             },
         }
     });
