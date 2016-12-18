@@ -29,14 +29,14 @@ Supported (?tested?) `browsers`:
 
 ## **architecture**
 
-* Back-end (`BE`) and front-end (`FE`) may be runned separately (two servers: `run-s`)  
-* or FE may be copied into BE and run together (one server: `run-t`).
+* back-end (`BE`) and front-end (`FE`) may be runned separately (two servers: `run-s`)  
+* or FE may be copied into BE and run together (one server: `run-t`)
 
 ## **front-end**
 
 ### info-general
-* FE is written in `html5+TypeScript2`.
-* FE uses `npm` as build automation tool & dependency manager.
+* FE is written in `html5+TypeScript2`
+* FE uses `npm` as build automation tool & dependency manager
 
 ### info-configuration
 * set the FE mode by changing DEBUG flag (static/js/app.loader.js)  
@@ -64,9 +64,9 @@ Supported (?tested?) `browsers`:
 ## **back-end**
 
 ### info-general
-* It is `spring boot` application.  
-* BE is written in `Java 8`.  
-* BE uses `maven` as build automation tool & dependency manager. 
+* it is `spring boot` application
+* BE is written in `Java 8`
+* BE uses `maven` as build automation tool & dependency manager
 
 ### info-configuration
 * set your favorite fleet sizes/mode in .properties (src/main/resources/application.properties)
