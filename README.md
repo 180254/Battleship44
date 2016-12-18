@@ -29,8 +29,8 @@ Supported (?tested?) `browsers`:
 
 ## **architecture**
 
-* back-end (`BE`) and front-end (`FE`) may be runned separately (two servers: `run-s`)  
-* or FE may be copied into BE and run together (one server: `run-t`)
+* back-end (`BE`) and front-end (`FE`) may be runned separately (two servers: `run.s`)  
+* or FE may be copied into BE and run together (one server: `run.t`)
 
 ## **front-end**
 
@@ -40,7 +40,8 @@ Supported (?tested?) `browsers`:
 
 ### info-configuration
 * set the FE mode by changing DEBUG flag (static/js/app.loader.js)  
-* (`run-s`) set the BE address by changing API_WS_URL var (static/js/app.loader.js)
+* (`run.s`) set the BE address by changing API_WS_URL var (static/js/app.loader.js)
+* (`run.s`) set the FE default listening port by changing var (server.js)
 
 ### compile-dependencies
 * [nodejs, npm](https://nodejs.org/en/) >=?
@@ -53,13 +54,13 @@ Supported (?tested?) `browsers`:
 * execute `npm run convert-minify`
 
 ### run-dependencies
-* (`run-s`) [nodejs, npm](https://nodejs.org/en/) >=?
-* (`run-t`) none
+* (`run.s`) [nodejs, npm](https://nodejs.org/en/) >=?
+* (`run.t`) none
 
 ### run-steps
-* (`run-s`) go to app main directory
-* (`run-s`) execute `npm update` (one-time action)
-* (`run-s`) execute `npm start`
+* (`run.s`) go to app main directory
+* (`run.s`) execute `npm update` (one-time action)
+* (`run.s`) execute `npm start`
 
 ## **back-end**
 
@@ -70,18 +71,19 @@ Supported (?tested?) `browsers`:
 
 ### info-configuration
 * set your favorite fleet sizes/mode in .properties (src/main/resources/application.properties)
+* set the BE default listening port in .properties (src/main/resources/application.properties)
 
 ### compile-dependencies
 * [java development kit](http://www.oracle.com/technetwork/java/javase/overview/index.html) >=1.8
 * [maven](https://maven.apache.org/) >= 3.3 (wrapper is provided)
 
 ### compile-steps
-* (`run-s`) compile FE first
+* (`run.s`) compile FE first
 * generally steps are [as in any spring boot app](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#build-tool-plugins-maven-packaging)
 * install all BE compile-dependencies
 * go to app main directory
-* (`run-s`) run `mvn clean package`
-* (`run-t`) run `mvn clean package -Pfe`
+* (`run.s`) run `mvn clean package`
+* (`run.t`) run `mvn clean package -Pfe`
 
 ### run-dependencies
 * [java se runtime environment >=1.8](http://www.oracle.com/technetwork/java/javase/overview/index.html)
@@ -116,6 +118,9 @@ v1.3
 + front: js file is now minified  
 + back: controller fix (commit/b23803f28d790c34e47c8b8d2cf753f07860c15d)
  
+v1.4
++ general: separated front-end/back-end codes, now may be runned separately  
+  
 vX.Y  
 - back/front: dynamic info from server about fleet sizes (was hardcoded in html file)  
 - back/front: info which ship sizes are already shot & which are still to shoot down  
