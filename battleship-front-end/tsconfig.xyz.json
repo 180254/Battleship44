@@ -2,27 +2,22 @@
   "compilerOptions": {
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
-
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noImplicitUseStrict": true,
-
     "removeComments": true,
     "strictNullChecks": true,
-
     "target": "es6",
     "lib": [
       "es7",
       "dom"
     ],
-
-    "outFile": "src/main/resources/static/js/app.es7-ts.js",
+    "outFile": "static/js/app.es7-ts.js",
     "sourceMap": true,
     "listFiles": true
   },
-
   "files": [
-    "src/main/resources/static/js/app/app.entry.ts"
+    "static/js/app/app.entry.ts"
   ]
 }

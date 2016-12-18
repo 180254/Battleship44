@@ -8,6 +8,7 @@ node_types/
 !Gruntfile.js
 !Gulpfile.js
 !app.loader.js
+!server.js
 
 .idea/workspace.xml
 .idea/tasks.xml

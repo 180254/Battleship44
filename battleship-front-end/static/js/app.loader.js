@@ -14,7 +14,8 @@
  +-------------------------+-------------+--------------+
  */
 
-var DEBUG = true;
+var DEBUG = false;
+var API_WS_URL = window.location.host;
 
 // app loader
 // - easily change app version (?v=5c)

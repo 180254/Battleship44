@@ -2,8 +2,8 @@
 /// <reference types="jqueryui" />
 /// <reference types="js-cookie" />
 /// <reference path="app.game.decl.ts" />
+/// <reference path="app.loader.decl.ts" />
 /// <reference path="assert.impl.ts" />
-/// <reference path="debug.decl.ts" />
 /// <reference path="escape.impl.ts" />
 /// <reference path="event0.impl.ts" />
 /// <reference path="event1.impl.ts" />
@@ -115,7 +115,7 @@ namespace game {
         }
 
         public init(): void {
-            this._ws = new WebSocket("ws://" + window.location.host + "/ws");
+            this._ws = new WebSocket("ws://" + API_WS_URL + "/ws");
             this._ws.onopen = (ev: Event) => this._onEvent.onOpen(ev);
             this._ws.onmessage = (ev: MessageEvent) => this._onEvent.onMessage(ev);
             this._ws.onclose = (ev: CloseEvent) => this._onEvent.onClose(ev);

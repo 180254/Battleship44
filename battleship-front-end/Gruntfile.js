@@ -2,7 +2,7 @@ module.exports = function (grunt) {
     require('load-grunt-tasks')(grunt);
 
     const path =
-        (file) => "src/main/resources/static/js" + file;
+        (file) => "static/js" + file;
 
     const json =
         (path) => (
@@ -72,7 +72,7 @@ module.exports = function (grunt) {
             convert5: {
                 options: {
                     presets: ["es2015", "es2016", "babili"],
-                  	passPerPreset: true,
+                    passPerPreset: true,
                     sourceMap: true,
                     inputSourceMap: json(path("/app.es7-ts.js.map")),
                     comments: false,
@@ -87,7 +87,7 @@ module.exports = function (grunt) {
                             .replace(".js", ".min.js")
                     }
                 },
-               
+
             },
         }
     });

@@ -6,21 +6,17 @@
   "rulesDirectory": [
     "node_modules/tslint-microsoft-contrib"
   ],
-
   "rules": {
     "no-for-in-array": false,
     "restrict-plus-operands": false,
-
     "linebreak-style": false,
     "missing-jsdoc": false,
     "export-name": false,
     "object-literal-sort-keys": false,
     "no-multiline-string": false,
-
     "no-reference": false,
     "no-unused-variable": false,
     "no-namespace": false,
-
     "interface-name": false,
     "variable-name": [
       true,
@@ -38,7 +34,6 @@
         "function-regex": "^[a-z][\\w\\d]+$"
       }
     ],
-
     "typedef": [
       true,
       "call-signature",
@@ -47,7 +42,6 @@
       "variable-declaration",
       "member-variable-declaration"
     ],
-
     "member-ordering": [
       true,
       "variables-before-functions"

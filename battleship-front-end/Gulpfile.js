@@ -5,7 +5,7 @@ const replace = require("gulp-replace");
 const fs = require("fs");
 
 const path =
-    (file) => "src/main/resources/static/js" + file;
+    (file) => "static/js" + file;
 
 const path_ = // src\main\...
     (file) => path(file).split("/").join("\\");
@@ -36,11 +36,12 @@ gulp.task("closure-convert", function () {
             externs: [
                 {
                     src: fs.readFileSync(
-                        "node_modules/google-closure-compiler-js/contrib/externs/jquery-1.12_and_2.2.js", "utf8"
+                        "node_modules/google-closure-compiler-js/contrib/externs/jquery-3.1.js", "utf8"
                     )
                 },
                 {
                     src: `var DEBUG;
+                    var API_WS_URL;
                     function Cookies() {}; 
                     Cookies.get = function(name) {};
                     Cookies.set = function(name, value) {}
