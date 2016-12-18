@@ -40,6 +40,28 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>fe</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                    </resource>
+                    <resource>
+                        <directory>../battleship-front-end</directory>
+                        <includes>
+                            <include>static/**</include>
+                        </includes>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
