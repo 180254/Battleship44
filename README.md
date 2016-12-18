@@ -1,10 +1,10 @@
-#**Battleship44**  
+# **Battleship44**
 
 Just <a href="https://en.wikipedia.org/wiki/Battleship_(game)">battleship</a> html5 `game`.
 
 <img src="screenshots/0.png" alt="screenshot" width="700"/>
 
-##features
+## features
 
 Supported (implemented) `fleet sizes`:
 
@@ -27,45 +27,61 @@ Supported (?tested?) `browsers`:
 * ES7 (default in debug mode): Chrome 53, Firefox 51
 * ES5 (default in production mode): any modern browser <sub>ie11 is not modern</sub>
 
-##configuration
-* set the mode by changing debug flag (src/main/resources/static/js/app.loader.js)  
-* set your favorite fleet sizes/mode in .properties (src/main/resources/application.properties)
+## **architecture**
 
-##compile & run
+* Back-end (`BE`) and front-end (`FE`) may be runned separately (two servers: `run-s`)  
+* or FE may be copied into BE and run together (one server: `run-t`).
 
-* It is `spring boot` application.  
-* Back-end is written in `Java 8`.  
-* Front-end is written in `html5+TypeScript2`.
-* Back-end uses `maven` as build automation tool & dependency manager. 
-* Front-end uses `npm` as build automation tool & dependency manager.
+## **front-end**
+
+### info-general
+* FE is written in `html5+TypeScript2`.
+* FE uses `npm` as build automation tool & dependency manager.
+
+### info-configuration
+* set the FE mode by changing DEBUG flag (static/js/app.loader.js)  
+* (`run-s`) set the BE address by changing API_WS_URL var (static/js/app.loader.js)
 
 ### compile-dependencies
-Back-end compile dependencies:
-
-* [java development kit](http://www.oracle.com/technetwork/java/javase/overview/index.html) >=1.8
-* [maven](https://maven.apache.org/) >= 3.3 (wrapper is provided)
-
-Front-end (TypeScript files) compile dependencies:
-
-* [nodejs, npm](https://nodejs.org/en/) (v6.x/v3.10.x tested)
+* [nodejs, npm](https://nodejs.org/en/) >=?
 
 ### compile-steps
-* first front-end, then back-end
-
-Front-end, compilng TS files and dependency JS collecting:  
-
-* install all front-end compile-dependencies
+* install all FE compile-dependencies
 * go to app main directory
 * execute `npm run install-update`
 * execute `npm run collect-compile`
 * execute `npm run convert-minify`
 
-Back-end, compiling app:
+### run-dependencies
+* (`run-s`) [nodejs, npm](https://nodejs.org/en/) >=?
+* (`run-t`) none
 
+### run-steps
+* (`run-s`) go to app main directory
+* (`run-s`) execute `npm update` (one-time action)
+* (`run-s`) execute `npm start`
+
+## **back-end**
+
+### info-general
+* It is `spring boot` application.  
+* BE is written in `Java 8`.  
+* BE uses `maven` as build automation tool & dependency manager. 
+
+### info-configuration
+* set your favorite fleet sizes/mode in .properties (src/main/resources/application.properties)
+
+### compile-dependencies
+* [java development kit](http://www.oracle.com/technetwork/java/javase/overview/index.html) >=1.8
+* [maven](https://maven.apache.org/) >= 3.3 (wrapper is provided)
+
+### compile-steps
+* (`run-s`) compile FE first
 * generally steps are [as in any spring boot app](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#build-tool-plugins-maven-packaging)
-* install all back-end compile-dependencies
+* install all BE compile-dependencies
 * go to app main directory
-* run `mvn clean package`
+* (`run-s`) run `mvn clean package`
+* (`run-t`) run `mvn clean package -Pfe`
 
 ### run-dependencies
 * [java se runtime environment >=1.8](http://www.oracle.com/technetwork/java/javase/overview/index.html)
@@ -74,7 +90,7 @@ Back-end, compiling app:
 * go to app main directory
 * execute `java -jar target/battleship44-0.0.1.jar`
 
-##changelog 
+## changelog 
 v1.0  
 + first version  
   
@@ -108,7 +124,7 @@ vX.Y
 - back/front: grid-size is now game-level, not server-level  
 - back/front: able to set custom (game-level) fleet-type (sizes) & grid-size  
 
-##protocol
+## protocol
 
 → `TO__ SERVER`  
 ← `FROM SERVER`  
@@ -156,7 +172,7 @@ vX.Y
 → `<bad_command>`  
 ← `400_ unknown-command`  
 
-##documentation
+## documentation
   
 * protocol  
 * code  
