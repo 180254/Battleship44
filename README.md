@@ -59,7 +59,6 @@ Supported (?tested?) `browsers`:
 
 ### run-steps
 * (`run.s`) go to app main directory
-* (`run.s`) execute `npm update` (one-time action)
 * (`run.s`) execute `npm start`
 
 ## **back-end**
