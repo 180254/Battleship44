@@ -77,7 +77,7 @@ Supported (?tested?) `browsers`:
 * [maven](https://maven.apache.org/) >= 3.3 (wrapper is provided)
 
 ### compile-steps
-* (`run.s`) compile FE first
+* (`run.t`) compile FE first
 * generally steps are [as in any spring boot app](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#build-tool-plugins-maven-packaging)
 * install all BE compile-dependencies
 * go to app main directory
