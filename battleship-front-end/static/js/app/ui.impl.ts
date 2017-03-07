@@ -26,7 +26,7 @@ namespace ui {
 
                     const $flag: JQuery = $("<img/>", {
                         ["alt"]: langTag.lang,
-                        ["src"]: "flag/{0}.png".format(langTag.region),
+                        ["src"]: "flag/{0}.png".format((langTag.region || "").toLowerCase()),
                         ["class"]: strings._.flag.clazz.i,
                     });
 
