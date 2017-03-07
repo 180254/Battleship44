@@ -118,8 +118,11 @@ v1.3
 + back: controller fix (commit/b23803f28d790c34e47c8b8d2cf753f07860c15d)
  
 v1.4
-+ general: separated front-end/back-end codes, now may be runned separately  
-  
++ general: separated front-end/back-end codes, now may be run separately
++ front bug fix: WebSocket connenction on HTTPS didn't work
++ front bug fix: URL to flags were incorrectly written (uppercase)
++ back: application property may be now overridden by system property (-D) 
+ 
 vX.Y  
 - back/front: dynamic info from server about fleet sizes (was hardcoded in html file)  
 - back/front: info which ship sizes are already shot & which are still to shoot down  
