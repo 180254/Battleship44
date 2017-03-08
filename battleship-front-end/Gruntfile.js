@@ -55,7 +55,8 @@ module.exports = function (grunt) {
                     sourceMap: true,
                     inputSourceMap: json(path("/app.es7-ts.js.map")),
                     comments: false,
-
+                },
+                files: [{
                     expand: true,
                     cwd: path("/"),
                     src: "app.es7-ts.js",
@@ -66,7 +67,7 @@ module.exports = function (grunt) {
                             .replace(".js", ".min.js")
 
                     }
-                },
+                }],
             },
 
             convert5: {
@@ -76,7 +77,8 @@ module.exports = function (grunt) {
                     sourceMap: true,
                     inputSourceMap: json(path("/app.es7-ts.js.map")),
                     comments: false,
-
+                },
+                files: [{
                     expand: true,
                     cwd: path("/"),
                     src: "app.es7-ts.js",
@@ -86,7 +88,7 @@ module.exports = function (grunt) {
                             .replace("es7-ts", "es5-babel")
                             .replace(".js", ".min.js")
                     }
-                },
+                }],
 
             },
         }
