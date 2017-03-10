@@ -51,7 +51,7 @@ module.exports = function (grunt) {
             convert7: {
                 options: {
                     presets: ["babili"],
-                    passPerPreset: true,
+                    passPerPreset: false,
                     sourceMap: true,
                     inputSourceMap: json(path("/app.es7-ts.js.map")),
                     comments: false,
@@ -73,7 +73,7 @@ module.exports = function (grunt) {
             convert5: {
                 options: {
                     presets: ["es2015", "es2016", "babili"],
-                    passPerPreset: true,
+                    passPerPreset: false,
                     sourceMap: true,
                     inputSourceMap: json(path("/app.es7-ts.js.map")),
                     comments: false,
