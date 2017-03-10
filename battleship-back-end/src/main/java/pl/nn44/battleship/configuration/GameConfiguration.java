@@ -1,8 +1,5 @@
 package pl.nn44.battleship.configuration;
 
-import org.eclipse.jetty.websocket.api.WebSocketBehavior;
-import org.eclipse.jetty.websocket.api.WebSocketPolicy;
-import org.eclipse.jetty.websocket.server.WebSocketServerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
@@ -14,9 +11,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
-import org.springframework.web.socket.server.HandshakeHandler;
-import org.springframework.web.socket.server.jetty.JettyRequestUpgradeStrategy;
-import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
+import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
 import pl.nn44.battleship.controller.Error0Controller;
 import pl.nn44.battleship.controller.GameController;
 import pl.nn44.battleship.model.Cell;
@@ -47,7 +42,7 @@ class GameConfiguration implements WebSocketConfigurer {
 
     @Autowired
     GameConfiguration(GameProperties gm) {
-        Assert.notNull(gm);
+        Assert.notNull(gm, "GameProperties must not be null.");
         this.gm = gm;
     }
 
@@ -78,25 +73,19 @@ class GameConfiguration implements WebSocketConfigurer {
     }
 
     @Bean
-    HandshakeHandler handshakeHandler() {
+    ServletServerContainerFactoryBean createWebSocketContainer() {
 
-        WebSocketPolicy policy = new WebSocketPolicy(WebSocketBehavior.SERVER);
-        policy.setMaxTextMessageSize(gm.getWs().getPolicyMaxTextMessageSize());
-        policy.setMaxBinaryMessageSize(gm.getWs().getPolicyMaxBinaryMessageSize());
-        policy.setIdleTimeout(gm.getWs().getPolicyIdleTimeout());
-
-        return new DefaultHandshakeHandler(
-                new JettyRequestUpgradeStrategy(
-                        new WebSocketServerFactory(policy)
-                )
-        );
+        ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
+        container.setMaxTextMessageBufferSize(gm.getWs().getPolicyMaxTextMessageSize());
+        container.setMaxBinaryMessageBufferSize(gm.getWs().getPolicyMaxBinaryMessageSize());
+        container.setMaxSessionIdleTimeout(gm.getWs().getPolicyIdleTimeout());
+        return container;
     }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(webSocketController(), gm.getWs().getConfHandlers())
-                .setAllowedOrigins(gm.getWs().getConfAllowedOrigins())
-                .setHandshakeHandler(handshakeHandler());
+                .setAllowedOrigins(gm.getWs().getConfAllowedOrigins());
     }
 
     @Bean

@@ -1,6 +1,5 @@
 package selenium;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 import org.openqa.selenium.WebDriver;
@@ -12,6 +11,7 @@ import selenium.helper.ElementHelper;
 import selenium.helper.GeneralHelper;
 import selenium.helper.TabHelper;
 
+import javax.annotation.Nonnull;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -66,7 +66,7 @@ public class AppTest {
     public void a01_runs() {
         driver.get(APP_URL);
 
-        wait.until((@NotNull WebDriver wd) ->
+        wait.until((@Nonnull WebDriver wd) ->
                 !eh.id_one("info-game-url").getText().equals("?_text_?"));
 
         th.create();
@@ -93,7 +93,7 @@ public class AppTest {
         eh.cell_one("grid-shoot", 0, 1).click();
 
         eh.id_one("ok-ship-selection").click();
-        wait.until((@NotNull WebDriver wd) -> eh.tr_list("put.fail").size() > 0);
+        wait.until((@Nonnull WebDriver wd) -> eh.tr_list("put.fail").size() > 0);
 
         eh.cell_one("grid-shoot", 0, 1).click(); //r
     }
@@ -104,7 +104,7 @@ public class AppTest {
         eh.cell_one("grid-shoot", 8, 8).click();
 
         eh.id_one("ok-ship-selection").click();
-        wait.until((@NotNull WebDriver wd) -> eh.tr_list("put.fail").size() > 0);
+        wait.until((@Nonnull WebDriver wd) -> eh.tr_list("put.fail").size() > 0);
 
         eh.cell_one("grid-shoot", 8, 8).click(); //r
         gh.clickProperShips(); //r
@@ -115,7 +115,7 @@ public class AppTest {
         gh.clickProperShips();
 
         eh.id_one("ok-ship-selection").click();
-        wait.until((@NotNull WebDriver wd) -> eh.tr_list("tour.awaiting").size() > 0);
+        wait.until((@Nonnull WebDriver wd) -> eh.tr_list("tour.awaiting").size() > 0);
     }
 
     @Test
@@ -124,11 +124,11 @@ public class AppTest {
 
         th.switchTo(1);
         driver.get(gameUrl);
-        wait.until((@NotNull WebDriver wd) -> eh.id_list("grid-shoot td").size() > 0);
+        wait.until((@Nonnull WebDriver wd) -> eh.id_list("grid-shoot td").size() > 0);
 
         th.clear();
         th.switchTo(0);
-        wait.until((@NotNull WebDriver wd) -> eh.tr_list("end.opp_gone").size() > 0);
+        wait.until((@Nonnull WebDriver wd) -> eh.tr_list("end.opp_gone").size() > 0);
     }
 
     @Test
@@ -137,11 +137,11 @@ public class AppTest {
 
         th.switchTo(1);
         driver.get(gameUrl);
-        wait.until((@NotNull WebDriver wd) -> eh.id_list("grid-shoot table").size() > 0);
+        wait.until((@Nonnull WebDriver wd) -> eh.id_list("grid-shoot table").size() > 0);
 
         gh.clickProperShips();
         eh.id_one("ok-ship-selection").click();
-        wait.until((@NotNull WebDriver wd) -> eh.tr_list("tour.shoot_me").size() > 0
+        wait.until((@Nonnull WebDriver wd) -> eh.tr_list("tour.shoot_me").size() > 0
                 || eh.tr_list("tour.shoot_opp").size() > 0);
     }
 
@@ -164,7 +164,7 @@ public class AppTest {
     public void a09_msgUserGoneGameInterrupted() {
         th.clear();
         th.switchTo(0);
-        wait.until((@NotNull WebDriver wd) -> eh.tr_list("end.next_game").size() > 0);
+        wait.until((@Nonnull WebDriver wd) -> eh.tr_list("end.next_game").size() > 0);
         eh.id_one("ok-game-next").click();
     }
 
@@ -174,7 +174,7 @@ public class AppTest {
 
         th.switchTo(1);
         driver.get(gameUrl);
-        wait.until((@NotNull WebDriver wd) -> eh.id_list("grid-shoot table").size() > 0);
+        wait.until((@Nonnull WebDriver wd) -> eh.id_list("grid-shoot table").size() > 0);
 
         for (int i = 0; i < 5; i++) {
             System.out.println("GAME=" + i);
@@ -187,7 +187,7 @@ public class AppTest {
             gh.clickProperShips();
             eh.id_one("ok-ship-selection").click();
 
-            wait.until((@NotNull WebDriver wd) -> eh.tr_list("tour.shoot_me").size() > 0
+            wait.until((@Nonnull WebDriver wd) -> eh.tr_list("tour.shoot_me").size() > 0
                     || eh.tr_list("tour.shoot_opp").size() > 0);
 
             if (i == 0) { // one bad click
@@ -209,7 +209,7 @@ public class AppTest {
 
             for (int s = 0; s < 2; s++) {
                 th.switchTo(s);
-                wait.until((@NotNull WebDriver wd) -> eh.tr_list("end.next_game").size() > 0);
+                wait.until((@Nonnull WebDriver wd) -> eh.tr_list("end.next_game").size() > 0);
                 eh.id_one("ok-game-next").click();
             }
         }

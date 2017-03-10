@@ -1,7 +1,6 @@
 package pl.nn44.battleship.util.other;
 
-import org.jetbrains.annotations.NotNull;
-
+import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -25,7 +24,7 @@ public class FastLock implements Lock {
     }
 
     @Override
-    public boolean tryLock(long time, @NotNull TimeUnit unit)
+    public boolean tryLock(long time, @Nonnull TimeUnit unit)
             throws InterruptedException {
 
         return true;
@@ -35,7 +34,7 @@ public class FastLock implements Lock {
     public void unlock() {
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Condition newCondition() {
         throw new UnsupportedOperationException();

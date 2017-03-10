@@ -1,6 +1,6 @@
 package pl.nn44.battleship.util.other;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public class Arrays {
 
