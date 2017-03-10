@@ -115,7 +115,7 @@ namespace game {
         }
 
         public init(): void {
-            const protocol: string = location.protocol == 'https:' ? "wss:" : "ws";
+            const protocol: string = location.protocol === "https:" ? "wss:" : "ws:";
             this._ws = new WebSocket(protocol + "//" + API_WS_URL + "/ws");
             this._ws.onopen = (ev: Event) => this._onEvent.onOpen(ev);
             this._ws.onmessage = (ev: MessageEvent) => this._onEvent.onMessage(ev);
