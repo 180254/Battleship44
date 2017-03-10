@@ -1,6 +1,6 @@
 # **Battleship44**
 
-Just <a href="https://en.wikipedia.org/wiki/Battleship_(game)">battleship</a> html5 `game`.
+Just <a href="https://en.wikipedia.org/wiki/Battleship_(game)">battleship</a> html5 `game`. Perhaps available <a href="https://battleship.nn44.pl/">online</a>.  
 
 <img src="screenshots/0.png" alt="screenshot" width="700"/>
 
@@ -36,7 +36,7 @@ Supported (?tested?) `browsers`:
 
 ### info-general
 * FE is written in `html5+TypeScript2`
-* FE uses `npm` as build automation tool & dependency manager
+* FE uses `npm`, `bower` as build automation tool & dependency manager
 
 ### info-configuration
 * set the FE mode by changing DEBUG flag (static/js/app.loader.js)  
@@ -44,7 +44,7 @@ Supported (?tested?) `browsers`:
 * (`run.s`) set the FE default listening port by changing var (server.js)
 
 ### compile-dependencies
-* [nodejs, npm](https://nodejs.org/en/) >=?
+* [nodejs, npm](https://nodejs.org/en/) >=?, <=?
 
 ### compile-steps
 * install all FE compile-dependencies
@@ -89,7 +89,8 @@ Supported (?tested?) `browsers`:
 
 ### run-steps
 * go to app main directory
-* execute `java -jar target/battleship44-0.0.1.jar`
+* application properties ([spring boot](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#common-application-properties), [application.properties](/battleship-back-end/src/main/resources/application.properties)) may be overridden in a standard way (-D)
+* execute `java -jar -Dserver.port=80 target/battleship44-0.0.1.jar`
 
 ## changelog 
 v1.0  
@@ -124,6 +125,7 @@ v1.4
 + back: application property may be now overridden by system property (-D) 
  
 vX.Y  
+- "availability broadcasting" - look for a waiting player
 - back/front: dynamic info from server about fleet sizes (was hardcoded in html file)  
 - back/front: info which ship sizes are already shot & which are still to shoot down  
 - back/front: mini chat in game, between players  
