@@ -1,6 +1,7 @@
 package pl.nn44.battleship.util.other;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
@@ -24,10 +25,10 @@ public class SuppliersTests {
         }
 
         for (int i = 0; i < 9; i++) {
-            org.junit.Assert.assertSame(results[i], results[i + 1]);
+            Assertions.assertSame(results[i], results[i + 1]);
         }
 
 
-        org.junit.Assert.assertEquals(1, counter.get());
+        Assertions.assertEquals(1, counter.get());
     }
 }

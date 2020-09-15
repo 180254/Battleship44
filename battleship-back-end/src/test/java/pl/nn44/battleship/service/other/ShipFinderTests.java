@@ -1,7 +1,7 @@
 package pl.nn44.battleship.service.other;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import pl.nn44.battleship.model.Coord;
 import pl.nn44.battleship.model.Grid;
 import pl.nn44.battleship.model.Ship;
@@ -20,13 +20,13 @@ public class ShipFinderTests {
         ShipFinder shipFinder = ShipFinder.forGrid(grid);
         List<Ship> ships = shipFinder.ships();
 
-        Assert.assertEquals(1, ships.size());
-        Assert.assertEquals(3, ships.get(0).getSize());
+        Assertions.assertEquals(1, ships.size());
+        Assertions.assertEquals(3, ships.get(0).getSize());
 
         List<Coord> coords = ships.get(0).getCoords();
-        Assert.assertTrue(coords.contains(Coord.c(1, 0)));
-        Assert.assertTrue(coords.contains(Coord.c(2, 0)));
-        Assert.assertTrue(coords.contains(Coord.c(2, 1)));
+        Assertions.assertTrue(coords.contains(Coord.c(1, 0)));
+        Assertions.assertTrue(coords.contains(Coord.c(2, 0)));
+        Assertions.assertTrue(coords.contains(Coord.c(2, 1)));
     }
 
     @Test
@@ -41,13 +41,13 @@ public class ShipFinderTests {
         List<Ship> ships = shipFinder.ships();
         List<Coord> surrounding = shipFinder.surrounding(ships.get(0));
 
-        Assert.assertEquals(6, surrounding.size());
-        Assert.assertTrue(surrounding.contains(Coord.c(1, 0)));
-        Assert.assertTrue(surrounding.contains(Coord.c(1, 1)));
-        Assert.assertTrue(surrounding.contains(Coord.c(1, 2)));
-        Assert.assertTrue(surrounding.contains(Coord.c(2, 2)));
-        Assert.assertTrue(surrounding.contains(Coord.c(3, 2)));
-        Assert.assertTrue(surrounding.contains(Coord.c(3, 1)));
+        Assertions.assertEquals(6, surrounding.size());
+        Assertions.assertTrue(surrounding.contains(Coord.c(1, 0)));
+        Assertions.assertTrue(surrounding.contains(Coord.c(1, 1)));
+        Assertions.assertTrue(surrounding.contains(Coord.c(1, 2)));
+        Assertions.assertTrue(surrounding.contains(Coord.c(2, 2)));
+        Assertions.assertTrue(surrounding.contains(Coord.c(3, 2)));
+        Assertions.assertTrue(surrounding.contains(Coord.c(3, 1)));
     }
 
     @Test
@@ -61,6 +61,6 @@ public class ShipFinderTests {
         List<Ship> ships = shipFinder.ships();
 
         Ship findShip = shipFinder.findShip(Coord.c(2, 0));
-        Assert.assertEquals(ships.get(0), findShip);
+        Assertions.assertEquals(ships.get(0), findShip);
     }
 }

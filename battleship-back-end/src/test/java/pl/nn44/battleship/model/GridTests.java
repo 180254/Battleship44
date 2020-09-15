@@ -1,7 +1,7 @@
 package pl.nn44.battleship.model;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -37,8 +37,8 @@ public class GridTests {
         Coord cellCord = new Coord(0, 0);
         Cell cell = grid.getCell(cellCord);
 
-        Assert.assertSame(Cell.Type.getByCode(0), cell.getType());
-        Assert.assertSame(cellCord, cell.getCoord());
+        Assertions.assertSame(Cell.Type.getByCode(0), cell.getType());
+        Assertions.assertSame(cellCord, cell.getCoord());
     }
 
     @Test
@@ -49,8 +49,8 @@ public class GridTests {
         Coord cellCord = new Coord(2, 1);
         Cell cell = grid.getCell(cellCord);
 
-        Assert.assertSame(Cell.Type.getByCode(1), cell.getType());
-        Assert.assertSame(cellCord, cell.getCoord());
+        Assertions.assertSame(Cell.Type.getByCode(1), cell.getType());
+        Assertions.assertSame(cellCord, cell.getCoord());
     }
 
     @Test
@@ -61,8 +61,8 @@ public class GridTests {
         Coord cellCord = new Coord(2, 2);
         Cell cell = grid.getCell(cellCord);
 
-        Assert.assertSame(Cell.Type.getByCode(1), cell.getType());
-        Assert.assertSame(cellCord, cell.getCoord());
+        Assertions.assertSame(Cell.Type.getByCode(1), cell.getType());
+        Assertions.assertSame(cellCord, cell.getCoord());
     }
 
     @Test
@@ -73,8 +73,8 @@ public class GridTests {
         Coord cellCord = new Coord(1, 0);
         Cell cell = grid.getCell(cellCord);
 
-        Assert.assertSame(Cell.Type.getByCode(0), cell.getType());
-        Assert.assertSame(cellCord, cell.getCoord());
+        Assertions.assertSame(Cell.Type.getByCode(0), cell.getType());
+        Assertions.assertSame(cellCord, cell.getCoord());
     }
 
     @Test
@@ -85,8 +85,8 @@ public class GridTests {
         Coord cellCord = new Coord(1, 1);
         Cell cell = grid.getCell(cellCord);
 
-        Assert.assertSame(Cell.Type.getByCode(1), cell.getType());
-        Assert.assertSame(cellCord, cell.getCoord());
+        Assertions.assertSame(Cell.Type.getByCode(1), cell.getType());
+        Assertions.assertSame(cellCord, cell.getCoord());
     }
 
     @Test
@@ -98,10 +98,10 @@ public class GridTests {
         List<Cell> neighbours = grid.getNeighboursPlus(coord);
         List<Coord> coordNeighbours = coord.neighboursPlus();
 
-        Assert.assertSame(4, neighbours.size());
+        Assertions.assertSame(4, neighbours.size());
 
         for (Cell neighbour : neighbours) {
-            Assert.assertTrue(coordNeighbours.contains(neighbour.getCoord()));
+            Assertions.assertTrue(coordNeighbours.contains(neighbour.getCoord()));
         }
     }
 
@@ -113,10 +113,10 @@ public class GridTests {
         Coord coord = new Coord(0, 1);
         List<Cell> neighbours = grid.getNeighboursPlus(coord);
 
-        Assert.assertSame(3, neighbours.size());
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 0))));
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 2))));
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 1))));
+        Assertions.assertSame(3, neighbours.size());
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 0))));
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 2))));
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 1))));
     }
 
     @Test
@@ -127,10 +127,10 @@ public class GridTests {
         Coord coord = new Coord(1, 0);
         List<Cell> neighbours = grid.getNeighboursPlus(coord);
 
-        Assert.assertSame(3, neighbours.size());
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 0))));
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(2, 0))));
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 1))));
+        Assertions.assertSame(3, neighbours.size());
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 0))));
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(2, 0))));
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 1))));
     }
 
     @Test
@@ -141,10 +141,10 @@ public class GridTests {
         Coord coord = new Coord(1, 2);
         List<Cell> neighbours = grid.getNeighboursPlus(coord);
 
-        Assert.assertSame(3, neighbours.size());
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 2))));
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(2, 2))));
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 1))));
+        Assertions.assertSame(3, neighbours.size());
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 2))));
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(2, 2))));
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 1))));
     }
 
     @Test
@@ -155,10 +155,10 @@ public class GridTests {
         Coord coord = new Coord(2, 1);
         List<Cell> neighbours = grid.getNeighboursPlus(coord);
 
-        Assert.assertSame(3, neighbours.size());
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(2, 0))));
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(2, 2))));
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 1))));
+        Assertions.assertSame(3, neighbours.size());
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(2, 0))));
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(2, 2))));
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 1))));
     }
 
     @Test
@@ -169,9 +169,9 @@ public class GridTests {
         Coord coord = new Coord(0, 0);
         List<Cell> neighbours = grid.getNeighboursPlus(coord);
 
-        Assert.assertSame(2, neighbours.size());
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 0))));
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 1))));
+        Assertions.assertSame(2, neighbours.size());
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 0))));
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 1))));
     }
 
     @Test
@@ -182,9 +182,9 @@ public class GridTests {
         Coord coord = new Coord(0, 3);
         List<Cell> neighbours = grid.getNeighboursPlus(coord);
 
-        Assert.assertSame(2, neighbours.size());
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 2))));
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 3))));
+        Assertions.assertSame(2, neighbours.size());
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 2))));
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 3))));
     }
 
     @Test
@@ -195,9 +195,9 @@ public class GridTests {
         Coord coord = new Coord(2, 0);
         List<Cell> neighbours = grid.getNeighboursPlus(coord);
 
-        Assert.assertSame(2, neighbours.size());
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 0))));
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(2, 1))));
+        Assertions.assertSame(2, neighbours.size());
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 0))));
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(2, 1))));
     }
 
     @Test
@@ -208,9 +208,9 @@ public class GridTests {
         Coord coord = new Coord(2, 3);
         List<Cell> neighbours = grid.getNeighboursPlus(coord);
 
-        Assert.assertSame(2, neighbours.size());
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 3))));
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(2, 2))));
+        Assertions.assertSame(2, neighbours.size());
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 3))));
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(2, 2))));
     }
 
     @Test
@@ -222,10 +222,10 @@ public class GridTests {
         List<Cell> neighbours = grid.getNeighboursX(coord);
         List<Coord> coordNeighbours = coord.neighboursX();
 
-        Assert.assertSame(4, neighbours.size());
+        Assertions.assertSame(4, neighbours.size());
 
         for (Cell neighbour : neighbours) {
-            Assert.assertTrue(coordNeighbours.contains(neighbour.getCoord()));
+            Assertions.assertTrue(coordNeighbours.contains(neighbour.getCoord()));
         }
     }
 
@@ -237,9 +237,9 @@ public class GridTests {
         Coord coord = new Coord(0, 1);
         List<Cell> neighbours = grid.getNeighboursX(coord);
 
-        Assert.assertSame(2, neighbours.size());
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 0))));
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 2))));
+        Assertions.assertSame(2, neighbours.size());
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 0))));
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 2))));
     }
 
     @Test
@@ -250,9 +250,9 @@ public class GridTests {
         Coord coord = new Coord(1, 3);
         List<Cell> neighbours = grid.getNeighboursX(coord);
 
-        Assert.assertSame(2, neighbours.size());
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 2))));
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(2, 2))));
+        Assertions.assertSame(2, neighbours.size());
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 2))));
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(2, 2))));
 
     }
 
@@ -264,9 +264,9 @@ public class GridTests {
         Coord coord = new Coord(1, 0);
         List<Cell> neighbours = grid.getNeighboursX(coord);
 
-        Assert.assertSame(2, neighbours.size());
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 1))));
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(2, 1))));
+        Assertions.assertSame(2, neighbours.size());
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(0, 1))));
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(2, 1))));
     }
 
     @Test
@@ -277,9 +277,9 @@ public class GridTests {
         Coord coord = new Coord(2, 2);
         List<Cell> neighbours = grid.getNeighboursX(coord);
 
-        Assert.assertSame(2, neighbours.size());
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 1))));
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 3))));
+        Assertions.assertSame(2, neighbours.size());
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 1))));
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 3))));
     }
 
     @Test
@@ -290,8 +290,8 @@ public class GridTests {
         Coord coord = new Coord(0, 0);
         List<Cell> neighbours = grid.getNeighboursX(coord);
 
-        Assert.assertSame(1, neighbours.size());
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 1))));
+        Assertions.assertSame(1, neighbours.size());
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 1))));
     }
 
     @Test
@@ -302,8 +302,8 @@ public class GridTests {
         Coord coord = new Coord(0, 3);
         List<Cell> neighbours = grid.getNeighboursX(coord);
 
-        Assert.assertSame(1, neighbours.size());
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 2))));
+        Assertions.assertSame(1, neighbours.size());
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 2))));
     }
 
     @Test
@@ -314,8 +314,8 @@ public class GridTests {
         Coord coord = new Coord(2, 0);
         List<Cell> neighbours = grid.getNeighboursX(coord);
 
-        Assert.assertSame(1, neighbours.size());
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 1))));
+        Assertions.assertSame(1, neighbours.size());
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 1))));
     }
 
     @Test
@@ -326,8 +326,8 @@ public class GridTests {
         Coord coord = new Coord(2, 3);
         List<Cell> neighbours = grid.getNeighboursX(coord);
 
-        Assert.assertSame(1, neighbours.size());
-        Assert.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 2))));
+        Assertions.assertSame(1, neighbours.size());
+        Assertions.assertTrue(neighbours.contains(grid.getCell(new Coord(1, 2))));
     }
 
 }

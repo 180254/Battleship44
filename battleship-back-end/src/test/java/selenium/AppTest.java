@@ -1,7 +1,7 @@
 package selenium;
 
-import org.junit.*;
-import org.junit.runners.MethodSorters;
+
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -12,25 +12,20 @@ import selenium.helper.GeneralHelper;
 import selenium.helper.TabHelper;
 
 import javax.annotation.Nonnull;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-@Ignore("selenium test." +
+@Disabled("selenium test." +
         "- ignored while building." +
-        "- remember to set your CHROME_DRIVER_PATH." +
         "- NOT a unit test. this is not even a 'real' test." +
         "- run whole test class, test are interdependent." +
         "- this test contains automated game flows/cases." +
         "- need to be verified by tester." +
         "- watch execution and verify if it seems to work." +
         "- race condition included.")
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.Alphanumeric.class)
 public class AppTest {
 
     static final String APP_URL = "http://localhost/";
-
-    // http://chromedriver.storage.googleapis.com/index.html
-    static final String CHROME_DRIVER_PATH = "C:\\chromedriver.exe";
 
     static WebDriver driver;
     static Wait<WebDriver> wait;
@@ -38,11 +33,8 @@ public class AppTest {
     static ElementHelper eh;
     static GeneralHelper gh;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
-        Properties props = System.getProperties();
-        props.setProperty("webdriver.chrome.driver", CHROME_DRIVER_PATH);
-
         driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
@@ -52,12 +44,12 @@ public class AppTest {
         gh = new GeneralHelper(eh);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         driver.quit();
     }
 
-    @After
+    @AfterEach
     public void after() {
         gh.sleep(2000);
     }
@@ -200,12 +192,10 @@ public class AppTest {
                 }
             }
 
-            if (eh.tr_list("tour.shoot_me").size() > 0) {
-                gh.clickProperShips();
-            } else {
+            if (eh.tr_list("tour.shoot_me").size() <= 0) {
                 th.switchTo(0);
-                gh.clickProperShips();
             }
+            gh.clickProperShips();
 
             for (int s = 0; s < 2; s++) {
                 th.switchTo(s);

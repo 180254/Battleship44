@@ -1,7 +1,7 @@
 package pl.nn44.battleship.service.verifier;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import pl.nn44.battleship.configuration.GameProperties;
 import pl.nn44.battleship.model.Grid;
 
@@ -25,7 +25,7 @@ public class StraightFleetVerifierTests {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         });
 
-        Assert.assertEquals(true, fleetVerifier.verify(grid));
+        Assertions.assertTrue(fleetVerifier.verify(grid));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class StraightFleetVerifierTests {
                 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
         });
 
-        Assert.assertEquals(true, fleetVerifier.verify(grid));
+        Assertions.assertTrue(fleetVerifier.verify(grid));
     }
 
     @Test
@@ -61,6 +61,6 @@ public class StraightFleetVerifierTests {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         });
 
-        Assert.assertEquals(false, fleetVerifier.verify(grid));
+        Assertions.assertFalse(fleetVerifier.verify(grid));
     }
 }

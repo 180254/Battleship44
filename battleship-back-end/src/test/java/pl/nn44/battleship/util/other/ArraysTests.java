@@ -1,6 +1,7 @@
 package pl.nn44.battleship.util.other;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ArraysTests {
 
@@ -10,7 +11,7 @@ public class ArraysTests {
         Integer find = 4;
 
         int pos = Arrays.indexOf(find, array);
-        org.junit.Assert.assertEquals(0, pos);
+        Assertions.assertEquals(0, pos);
     }
 
     @Test
@@ -19,7 +20,7 @@ public class ArraysTests {
         Integer find = 1;
 
         int pos = Arrays.indexOf(find, array);
-        org.junit.Assert.assertEquals(3, pos);
+        Assertions.assertEquals(3, pos);
     }
 
     @Test
@@ -28,7 +29,7 @@ public class ArraysTests {
         Integer find = 0;
 
         int pos = Arrays.indexOf(find, array);
-        org.junit.Assert.assertEquals(1, pos);
+        Assertions.assertEquals(1, pos);
 
     }
 
@@ -38,7 +39,7 @@ public class ArraysTests {
         Integer find = 40;
 
         int pos = Arrays.indexOf(find, array);
-        org.junit.Assert.assertEquals(-1, pos);
+        Assertions.assertEquals(-1, pos);
     }
 
     @Test
@@ -46,6 +47,6 @@ public class ArraysTests {
         Integer[] array = {4, 0, 5, null, 3, 1};
 
         int pos = Arrays.indexOf(null, array);
-        org.junit.Assert.assertEquals(3, pos);
+        Assertions.assertEquals(3, pos);
     }
 }

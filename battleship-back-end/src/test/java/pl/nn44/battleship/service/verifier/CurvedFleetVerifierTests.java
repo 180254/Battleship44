@@ -1,7 +1,7 @@
 package pl.nn44.battleship.service.verifier;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import pl.nn44.battleship.configuration.GameProperties.FleetType;
 import pl.nn44.battleship.model.Grid;
 
@@ -18,7 +18,7 @@ public class CurvedFleetVerifierTests {
                 0, 0, 0
         });
 
-        Assert.assertEquals(false, fleetVerifier.verify(grid));
+        Assertions.assertFalse(fleetVerifier.verify(grid));
     }
 
     @Test
@@ -29,7 +29,7 @@ public class CurvedFleetVerifierTests {
                 0, 0, 0
         });
 
-        Assert.assertEquals(false, fleetVerifier.verify(grid));
+        Assertions.assertFalse(fleetVerifier.verify(grid));
     }
 
     @Test
@@ -47,7 +47,7 @@ public class CurvedFleetVerifierTests {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         });
 
-        Assert.assertEquals(true, fleetVerifier.verify(grid));
+        Assertions.assertTrue(fleetVerifier.verify(grid));
     }
 
     @Test
@@ -65,7 +65,7 @@ public class CurvedFleetVerifierTests {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         });
 
-        Assert.assertEquals(false, fleetVerifier.verify(grid));
+        Assertions.assertFalse(fleetVerifier.verify(grid));
     }
 
     @Test
@@ -83,7 +83,7 @@ public class CurvedFleetVerifierTests {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         });
 
-        Assert.assertEquals(true, fleetVerifier.verify(grid));
+        Assertions.assertTrue(fleetVerifier.verify(grid));
     }
 
     @Test
@@ -101,7 +101,7 @@ public class CurvedFleetVerifierTests {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         });
 
-        Assert.assertEquals(false, fleetVerifier.verify(grid));
+        Assertions.assertFalse(fleetVerifier.verify(grid));
     }
 
     @Test
@@ -119,7 +119,7 @@ public class CurvedFleetVerifierTests {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         });
 
-        Assert.assertEquals(false, fleetVerifier.verify(grid));
+        Assertions.assertFalse(fleetVerifier.verify(grid));
     }
 
     @Test
@@ -137,6 +137,6 @@ public class CurvedFleetVerifierTests {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         });
 
-        Assert.assertEquals(false, fleetVerifier.verify(grid));
+        Assertions.assertFalse(fleetVerifier.verify(grid));
     }
 }

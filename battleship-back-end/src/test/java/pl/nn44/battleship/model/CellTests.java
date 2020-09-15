@@ -1,7 +1,7 @@
 package pl.nn44.battleship.model;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class CellTests {
 
@@ -11,7 +11,7 @@ public class CellTests {
 
         for (Cell.Type type : cellTypes) {
             Cell.Type typeByCode = Cell.Type.getByCode(type.getCode());
-            Assert.assertSame(type, typeByCode);
+            Assertions.assertSame(type, typeByCode);
         }
     }
 }

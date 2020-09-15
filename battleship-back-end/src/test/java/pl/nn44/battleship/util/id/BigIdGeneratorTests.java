@@ -1,7 +1,7 @@
 package pl.nn44.battleship.util.id;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 import java.util.regex.Pattern;
@@ -21,7 +21,7 @@ public class BigIdGeneratorTests {
             String nextId = idGenerator.nextId();
 
             String msg = "len = " + i + ", id = " + nextId;
-            Assert.assertEquals(msg, i, nextId.length());
+            Assertions.assertEquals(i, nextId.length(), msg);
         }
     }
 
@@ -32,7 +32,7 @@ public class BigIdGeneratorTests {
             String nextId = idGenerator.nextId();
 
             String msg = "len = " + i + ", id = " + nextId;
-            Assert.assertTrue(msg, pattern.matcher(nextId).matches());
+            Assertions.assertTrue(pattern.matcher(nextId).matches(), msg);
         }
     }
 }

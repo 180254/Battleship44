@@ -1,7 +1,7 @@
 package pl.nn44.battleship.service.serializer;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import pl.nn44.battleship.model.Cell;
 import pl.nn44.battleship.model.Coord;
 
@@ -19,7 +19,7 @@ public class CellSerializerTests {
         List<Cell> cells = new ArrayList<>();
         String serialize = cellSerializer.serialize(cells);
 
-        Assert.assertEquals("", serialize);
+        Assertions.assertEquals("", serialize);
     }
 
     @Test
@@ -28,7 +28,7 @@ public class CellSerializerTests {
         List<Cell> cells = Collections.singletonList(cell);
         String serialize = cellSerializer.serialize(cells);
 
-        Assert.assertEquals("[SHIP,10,7]", serialize);
+        Assertions.assertEquals("[SHIP,10,7]", serialize);
     }
 
     @Test
@@ -39,7 +39,7 @@ public class CellSerializerTests {
         List<Cell> cells = Arrays.asList(cell1, cell2);
         String serialize = cellSerializer.serialize(cells);
 
-        Assert.assertEquals("[EMPTY,10,7],[SHIP,5,4]", serialize);
+        Assertions.assertEquals("[EMPTY,10,7],[SHIP,5,4]", serialize);
     }
 
     @Test
@@ -50,6 +50,6 @@ public class CellSerializerTests {
         List<Cell> cells = Arrays.asList(cell1, cell2, cell1, cell1);
         String serialize = cellSerializer.serialize(cells);
 
-        Assert.assertEquals("[EMPTY,10,7],[SHIP,5,4],[EMPTY,10,7],[EMPTY,10,7]", serialize);
+        Assertions.assertEquals("[EMPTY,10,7],[SHIP,5,4],[EMPTY,10,7],[EMPTY,10,7]", serialize);
     }
 }
