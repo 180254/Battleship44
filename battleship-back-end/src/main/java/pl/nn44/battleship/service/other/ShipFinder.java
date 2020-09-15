@@ -77,13 +77,12 @@ public class ShipFinder {
     }
 
     private List<Coord> calculateSurrounding(Ship ship) {
-        List<Coord> surrounding = ship.getCoords().stream()
+        return ship.getCoords().stream()
                 .flatMap(c -> grid.getNeighbours(c).stream())
                 .map(Cell::getCoord)
                 .filter(c -> !ship.getCoords().contains(c))
                 .distinct()
-                .collect(Collectors.toList());
-        return Collections.unmodifiableList(surrounding);
+                .collect(Collectors.toUnmodifiableList());
     }
 
     // ---------------------------------------------------------------------------------------------------------------

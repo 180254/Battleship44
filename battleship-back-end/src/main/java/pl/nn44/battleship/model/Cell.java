@@ -66,7 +66,7 @@ public class Cell {
         EMPTY(0),
         SHIP(1);
 
-        private int code;
+        private final int code;
 
         Type(int code) {
             this.code = code;

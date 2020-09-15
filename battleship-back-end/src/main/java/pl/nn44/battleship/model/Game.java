@@ -61,14 +61,12 @@ public class Game {
         return slotIndex != -1;
     }
 
-    public boolean removePlayer(Player player) {
+    public void removePlayer(Player player) {
         int playerIndex = Arrays.indexOf(player, players);
 
         if (playerIndex != -1) {
             players[playerIndex] = null;
         }
-
-        return playerIndex != -1;
     }
 
     public Player secondPlayer(Player player) {

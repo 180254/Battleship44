@@ -53,7 +53,7 @@ public class GameProperties {
 
         public enum Mode {
             CURVED,
-            STRAIGHT;
+            STRAIGHT
         }
 
         public enum Sizes {

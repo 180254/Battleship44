@@ -1,7 +1,8 @@
 package pl.nn44.battleship.controller;
 
-import org.springframework.boot.autoconfigure.web.AbstractErrorController;
-import org.springframework.boot.autoconfigure.web.DefaultErrorAttributes;
+import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
+import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +27,7 @@ public class Error0Controller extends AbstractErrorController {
     @RequestMapping(produces = {"text/plain"})
     public ResponseEntity<String> errorPlain(HttpServletRequest request) {
         HttpStatus status = getStatus(request);
-        Map<String, Object> errorAttributes = getErrorAttributes(request, false);
+        Map<String, Object> errorAttributes = getErrorAttributes(request, ErrorAttributeOptions.defaults());
 
         String message = MessageFormat.format("{0} {1}",
                 errorAttributes.get("status"),

@@ -14,6 +14,7 @@ import pl.nn44.battleship.service.verifier.FleetVerifier;
 import pl.nn44.battleship.util.id.IdGenerator;
 import pl.nn44.battleship.util.other.Strings;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -103,13 +104,13 @@ public class GameController extends TextWebSocketHandler {
     // ---------------------------------------------------------------------------------------------------------------
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(@Nonnull WebSocketSession session) {
         LOGGER.info("<-> {} @ established {}", id(session), session.getRemoteAddress());
         txt(session, "HI_. Welcome.");
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+    public void afterConnectionClosed(@Nonnull WebSocketSession session, @Nonnull CloseStatus status) {
         LOGGER.info("<-> {} @ closed @ {}", id(session), status);
         Player player = players.get(session);
         Locker.Sync lock = locker.lock(player);
@@ -154,7 +155,7 @@ public class GameController extends TextWebSocketHandler {
     // ---------------------------------------------------------------------------------------------------------------
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) {
         String payload = message.getPayload();
         String command = Strings.safeSubstring(payload, 0, COMMAND_LEN);
         String param = Strings.safeSubstring(payload, COMMAND_LEN + 1);
@@ -232,7 +233,7 @@ public class GameController extends TextWebSocketHandler {
         } else {
             Optional<Grid> grid = gridSerializer.deserialize(param);
 
-            if (!grid.isPresent()) {
+            if (grid.isEmpty()) {
                 txt(player, "GRID FAIL");
 
             } else if (!fleetVerifier.verify(grid.get())) {
@@ -272,7 +273,7 @@ public class GameController extends TextWebSocketHandler {
         } else {
             Optional<Coord> coord = coordSerializer.deserialize(param);
 
-            if (!coord.isPresent()) {
+            if (coord.isEmpty()) {
                 txt(player, "400_ bad-shoot");
 
             } else {

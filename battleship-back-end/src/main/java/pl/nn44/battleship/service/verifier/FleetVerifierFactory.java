@@ -9,14 +9,14 @@ import java.util.Map;
 
 public class FleetVerifierFactory {
 
-    private static Map<FleetType.Sizes, int[]> SIZES_TO_ARG =
+    private final static Map<FleetType.Sizes, int[]> SIZES_TO_ARG =
             ImmutableMap.<FleetType.Sizes, int[]>builder()
                     .put(FleetType.Sizes.RUSSIAN, new int[]{4, 3, 3, 2, 2, 2, 1, 1, 1, 1})
                     .put(FleetType.Sizes.CLASSIC_ONE, new int[]{5, 4, 3, 3, 2})
                     .put(FleetType.Sizes.CLASSIC_TWO, new int[]{5, 4, 3, 2, 2, 1, 1})
                     .build();
 
-    private static Map<FleetType.Mode, Class<? extends FleetVerifier>> MODES_TO_VERIFIER_CLASS =
+    private final static Map<FleetType.Mode, Class<? extends FleetVerifier>> MODES_TO_VERIFIER_CLASS =
             ImmutableMap.<FleetType.Mode, Class<? extends FleetVerifier>>builder()
                     .put(FleetType.Mode.STRAIGHT, StraightFleetVerifier.class)
                     .put(FleetType.Mode.CURVED, CurvedFleetVerifier.class)

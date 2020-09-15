@@ -1,10 +1,8 @@
 package pl.nn44.battleship.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.ErrorController;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
-import org.springframework.boot.context.embedded.MimeMappings;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.Assert;
@@ -89,11 +87,7 @@ class GameConfiguration implements WebSocketConfigurer {
     }
 
     @Bean
-    EmbeddedServletContainerCustomizer servletCustomizer() {
-        return container -> {
-            MimeMappings mappings = new MimeMappings(MimeMappings.DEFAULT);
-            mappings.add("map", "application/json");
-            container.setMimeMappings(mappings);
-        };
+    ServletCustomizer servletCustomizer() {
+        return new ServletCustomizer();
     }
 }
