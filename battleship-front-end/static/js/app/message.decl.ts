@@ -1,22 +1,17 @@
-/// <reference path="i18n.decl.ts" />
+import {TrKey} from './i18n.decl';
 
-declare namespace message {
+export interface Timeout {
+  readonly fast: number;
+  readonly default_: number;
+  readonly slow: number;
+}
 
-    interface Timeout {
+// ---------------------------------------------------------------------------------------------------------------
 
-        readonly fast: number;
-        readonly default_: number;
-        readonly slow: number;
-    }
+export interface Message {
+  setFixed(trKey: TrKey, clazz?: string): void;
 
-    // ---------------------------------------------------------------------------------------------------------------
+  addFleeting(trKey: TrKey, timeout: number, clazz?: string): void;
 
-    interface Message {
-
-        setFixed(trKey: i18n.TrKey, clazz?: string): void;
-
-        addFleeting(trKey: i18n.TrKey, timeout: number, clazz?: string): void;
-
-        addFixedLink(trKey: i18n.TrKey, id: string, clazz?: string): void;
-    }
+  addFixedLink(trKey: TrKey, id: string, clazz?: string): void;
 }

@@ -1,36 +1,38 @@
-/// <reference types="jquery" />
+export interface Cell {
+  readonly row: number;
+  readonly col: number;
+  readonly clazz?: string;
+}
 
-declare namespace grid {
+// ---------------------------------------------------------------------------------------------------------------
 
-    interface Cell {
+export interface Grids {
+  readonly $shoot: JQuery;
+  readonly $shootCells: JQuery;
 
-        readonly row: number;
-        readonly col: number;
-        readonly clazz?: string;
-    }
+  readonly $opponent: JQuery;
+  readonly $opponentCells: JQuery;
 
-    // ---------------------------------------------------------------------------------------------------------------
+  init(): void;
 
-    interface Grids {
-        readonly $shoot: JQuery;
-        readonly $shootCells: JQuery;
+  reset(): void;
 
-        readonly $opponent: JQuery;
-        readonly $opponentCells: JQuery;
+  setCellClass(
+    $grid: JQuery,
+    cell: Cell,
+    clazz: string,
+    keepCurrent: boolean
+  ): void;
+}
 
-        init(): void;
-        reset(): void;
+// ---------------------------------------------------------------------------------------------------------------
 
-        setCellClass($grid: JQuery, cell: Cell, clazz: string, keepCurrent: boolean): void;
-    }
+export interface Selection {
+  activate(): void;
 
-    // ---------------------------------------------------------------------------------------------------------------
+  deactivate(): void;
 
-    interface Selection {
+  collect(): string;
 
-        activate(): void;
-        deactivate(): void;
-        collect(): string;
-        move(): void;
-    }
+  move(): void;
 }

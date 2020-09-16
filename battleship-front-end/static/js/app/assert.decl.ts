@@ -1,19 +1,15 @@
-declare namespace assert {
+export interface Assert {
+  ok(condition: boolean, message?: string): void;
 
-    interface Assert {
+  not(condition: boolean, message?: string): void;
 
-        ok(condition: boolean, message?: string): void;
+  equals(expected: any, actual: any): void;
 
-        not(condition: boolean, message?: string): void;
+  notEquals(expected: any, actual: any): void;
 
-        equals(expected: any, actual: any): void;
+  numEquals(expected: number, actual: number, epsilon: number): void;
 
-        notEquals(expected: any, actual: any): void;
+  strContains(haystack: string, needle: any): void;
 
-        numEquals(expected: number, actual: number, epsilon: number): void;
-
-        strContains(haystack: string, needle: any): void;
-
-        strNotContains(haystack: string, needle: any): void;
-    }
+  strNotContains(haystack: string, needle: any): void;
 }

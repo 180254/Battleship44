@@ -1,71 +1,65 @@
-/// <reference path="strings.decl.ts" />
+export const strings = {
+  flag: {
+    id: '#flag',
+    clazz: {
+      i: 'flag',
+    },
+  },
 
-namespace strings {
+  message: {
+    id: '#message',
+    id_const: '#message-const',
 
-    strings._ = {
+    clazz: {
+      i: 'message',
+      fail: 'message-fail',
+      important: 'message-important',
+    },
 
-        flag: {
-            id: "#flag",
-            clazz: {
-                i: "flag",
-            },
-        },
+    ok: {
+      id_ship_selection: '#ok-ship-selection',
+      id_game_next: '#ok-game-next',
+    },
+  },
 
-        message: {
-            id: "#message",
-            id_const: "#message-const",
+  grid: {
+    id: '#grid',
+    id_opponent: '#grid-opponent',
+    id_shoot: '#grid-shoot',
 
-            clazz: {
-                i: "message",
-                fail: "message-fail",
-                important: "message-important",
-            },
+    clazz: {
+      i: 'grid',
+      inactive: 'grid-inactive',
+    },
+  },
 
-            ok: {
-                id_ship_selection: "#ok-ship-selection",
-                id_game_next: "#ok-game-next",
-            },
-        },
+  cell: {
+    clazz: {
+      unknown: 'cell-unknown',
+      empty: 'cell-empty',
+      ship: 'cell-ship',
+      opp_shoot: 'cell-opp-shoot',
+      shootable: 'cell-shoot-able',
+    },
+  },
 
-        grid: {
-            id: "#grid",
-            id_opponent: "#grid-opponent",
-            id_shoot: "#grid-shoot",
+  info: {
+    id: '#info',
+    id_game_url: '#info-game-url',
+    id_players_game: '#info-players-game',
+    id_players_global: '#info-players-global',
+    id_winning_ratio: '#info-winning-ratio',
+    id_winning_me: '#info-winning-me',
+    id_winning_opp: '#info-winning-opp',
+    id_ship_sizes: '#info-ship-sizes',
 
-            clazz: {
-                i: "grid",
-                inactive: "grid-inactive",
-            },
-        },
+    clazz: {
+      td_1: '.info-td-1',
+      td_2: '.info-td-2',
+    },
+  },
 
-        cell: {
-            clazz: {
-                unknown: "cell-unknown",
-                empty: "cell-empty",
-                ship: "cell-ship",
-                opp_shoot: "cell-opp-shoot",
-                shootable: "cell-shoot-able",
-            },
-        },
-
-        info: {
-            id: "#info",
-            id_game_url: "#info-game-url",
-            id_players_game: "#info-players-game",
-            id_players_global: "#info-players-global",
-            id_winning_ratio: "#info-winning-ratio",
-            id_winning_me: "#info-winning-me",
-            id_winning_opp: "#info-winning-opp",
-            id_ship_sizes: "#info-ship-sizes",
-
-            clazz: {
-                td_1: ".info-td-1",
-                td_2: ".info-td-2",
-            },
-        },
-
-        script: {
-            id: "#script",
-        },
-    };
-}
+  script: {
+    id: '#script',
+  },
+};

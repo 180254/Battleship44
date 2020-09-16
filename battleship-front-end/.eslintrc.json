@@ -1,0 +1,10 @@
+{
+  "extends": "./node_modules/gts/",
+  "env": {
+    "node": false,
+    "browser": true,
+    "mocha": true,
+    "jquery": true,
+    "es2020": true
+  }
+}

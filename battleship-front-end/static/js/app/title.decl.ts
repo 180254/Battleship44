@@ -1,11 +1,7 @@
-/// <reference path="i18n.decl.ts" />
+import {TrKey} from './i18n.decl';
 
-declare namespace title {
+export interface Title {
+  setFixed(trKey: TrKey): void;
 
-    interface Title {
-
-        setFixed(trKey: i18n.TrKey): void;
-
-        setBlinking(trKey: i18n.TrKey, override: boolean): void;
-    }
+  setBlinking(trKey: TrKey, override: boolean): void;
 }

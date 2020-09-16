@@ -1,13 +1,9 @@
-/// <reference path="types.decl.ts" />
+import {Callback} from './types.decl';
 
-// publisher-subscriber
-declare namespace event0 {
+export type Subscriber<T> = Callback<T>;
 
-    type Subscriber<T> = Callback<T>;
+export interface Event<T> {
+  publish(value: T): void;
 
-    interface Event<T> {
-
-        publish(value: T): void;
-        subscribe(subscriber: Subscriber<T>): void;
-    }
+  subscribe(subscriber: Subscriber<T>): void;
 }

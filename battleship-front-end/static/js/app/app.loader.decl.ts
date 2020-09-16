@@ -1,2 +1,2 @@
-declare const DEBUG: boolean;
-declare const API_WS_URL: string;
+export declare const DEBUG: boolean;
+export declare const API_WS_URL: string;

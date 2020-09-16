@@ -1,0 +1,12 @@
+{
+  "extends": "./node_modules/gts/tsconfig-google.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "module": "es2020",
+    "lib": [
+      "dom",
+      "es2020"
+    ],
+    "target": "es2020"
+  }
+}

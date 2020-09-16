@@ -1,10 +1,6 @@
-/// <reference path="i18n.decl.ts"/>
-/// <reference path="types.decl.ts"/>
+import {Callback} from './types.decl';
+import {LangTag} from './i18n.decl';
 
-declare namespace ui {
-
-    interface Ui {
-
-        initFlags(callback: Callback<i18n.LangTag>): void;
-    }
+export interface Ui {
+  initFlags(callback: Callback<LangTag>): void;
 }

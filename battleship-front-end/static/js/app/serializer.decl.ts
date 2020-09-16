@@ -1,7 +1,3 @@
-declare namespace serializer {
-
-    interface Serializer<IN, OUT> {
-
-        convert(value: IN): OUT;
-    }
+export interface Serializer<IN, OUT> {
+  convert(value: IN): OUT;
 }
