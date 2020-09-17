@@ -12,7 +12,7 @@ import * as $ from 'jquery';
 import {Logger} from './logger.decl';
 import {LoggerEx} from './logger.impl';
 import {Event} from './event0.decl';
-import * as Cookies from "js-cookie";
+import * as Cookies from 'js-cookie';
 
 // extend navigator: add not standard lang tags
 // as browsers differently support reporting user lang
@@ -82,7 +82,7 @@ export class LangFinderEx implements LangFinder {
   // https://gist.github.com/ksol/62b489572944ca70b4ba
   public user(): LangTag[] {
     const tagStrings: string[] = ([] as string[])
-  .concat(
+      .concat(
         Cookies.get(this.cCookieName)!,
         window.navigator.languages,
         window.navigator.language,

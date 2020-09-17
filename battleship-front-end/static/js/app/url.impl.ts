@@ -2,7 +2,7 @@ import {Url, UrlParam} from './url.decl';
 import {Logger} from './logger.decl';
 import {LoggerEx} from './logger.impl';
 import {Supplier} from './types.decl';
-import './escape.decl';
+import './escape.impl';
 
 export class UrlEx implements Url {
   private readonly _logger: Logger = new LoggerEx(UrlEx);

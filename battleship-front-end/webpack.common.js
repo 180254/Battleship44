@@ -1,6 +1,5 @@
 /* eslint-disable node/no-unpublished-require */
 
-const CopyPlugin = require('copy-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const path = require('path');
 
@@ -51,28 +50,6 @@ module.exports = conf => {
         },
       ],
     },
-    externals: {
-      jquery: 'jquery',
-      'js-cookie': 'js-cookie',
-    },
-    plugins: [
-      new CleanWebpackPlugin(),
-      new CopyPlugin({
-        patterns: [
-          {
-            from: './node_modules/jquery/dist/jquery.slim.min.js',
-            to: 'jquery.slim.min.js',
-          },
-          {
-            from: './node_modules/jquery-ui-dist/jquery-ui.min.js',
-            to: 'jquery-ui.min.js',
-          },
-          {
-            from: './node_modules/cookies-js/dist/cookies.min.js',
-            to: 'cookies.min.js',
-          },
-        ],
-      }),
-    ],
+    plugins: [new CleanWebpackPlugin()],
   };
 };

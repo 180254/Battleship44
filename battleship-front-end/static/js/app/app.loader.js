@@ -1,7 +1,11 @@
-window.API_WS_URL = window.location.host;
+/* This app is not running in env environment. How to disable? */
+/* eslint-disable node/no-unsupported-features/es-syntax */
 
+window.API_WS_URL = 'localhost:8080';
+window.DEBUG = true;
+import * as $ from 'jquery';
 // app loader
-// - easily change app version (?v=app.dist.js)
+// - easily change app version (?v=dist)
 // - easily change load mode (?m=script-src)
 // - easily change debug flag (?d=1)
 // - load additional libs for specified ver
@@ -11,7 +15,7 @@ $(() => {
     'script-text': 'script-text',
   };
   const scripts = {
-    dist: ['app.dist.js'],
+    dist: ['js/dist/app.dist.js'],
   };
 
   const defaults = {
@@ -115,3 +119,5 @@ $(() => {
 
   deferred.resolve();
 });
+
+export {};

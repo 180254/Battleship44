@@ -1,6 +1,6 @@
 import {Logger} from './logger.decl';
 import {Callback} from './types.decl';
-import './format.decl';
+import './format.impl';
 
 export enum Level {
   TRACE = 6,
