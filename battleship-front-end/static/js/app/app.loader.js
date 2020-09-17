@@ -17,7 +17,7 @@ $(() => {
       appsKey: 'dist',
     },
     prod: {
-      loadScriptMode: 'script-text',
+      loadScriptMode: 'script-src',
       appsKey: 'dist',
     },
   };

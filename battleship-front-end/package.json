@@ -43,6 +43,7 @@
     "gts": "^2.0.2",
     "mocha": "^8.1.3",
     "string-replace-loader": "^2.3.0",
+    "terser-webpack-plugin": "^4.2.1",
     "ts-loader": "^8.0.3",
     "typescript": "^3.9.7",
     "webpack": "^4.44.1",

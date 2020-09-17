@@ -221,7 +221,7 @@ export class LangSetterEx implements LangSetter {
 
   public setLang(lang: LangTag): void {
     this._logger.debug('result={0}', lang);
-    Cookies.set(this.cCookieName, lang.toString());
+    Cookies.set(this.cCookieName, lang.toString(), {sameSite: 'Strict'});
   }
 }
 
