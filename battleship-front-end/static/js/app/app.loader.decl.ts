@@ -1,2 +1,8 @@
-export declare const DEBUG: boolean;
-export declare const API_WS_URL: string;
+declare global {
+  // noinspection JSUnusedGlobalSymbols // bug? it is used
+  interface Window {
+    DEBUG: boolean;
+    API_WS_URL: string;
+  }
+}
+export {};

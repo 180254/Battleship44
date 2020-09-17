@@ -3,13 +3,13 @@ export interface Assert {
 
   not(condition: boolean, message?: string): void;
 
-  equals(expected: any, actual: any): void;
+  equals<T>(expected: T, actual: T): void;
 
-  notEquals(expected: any, actual: any): void;
+  notEquals<T>(expected: T, actual: T): void;
 
   numEquals(expected: number, actual: number, epsilon: number): void;
 
-  strContains(haystack: string, needle: any): void;
+  strContains(haystack: string, needle: string): void;
 
-  strNotContains(haystack: string, needle: any): void;
+  strNotContains(haystack: string, needle: string): void;
 }

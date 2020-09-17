@@ -1,16 +1,14 @@
-let DEBUG = false;
-// eslint-disable-next-line no-unused-vars
-const API_WS_URL = window.location.host;
+window.API_WS_URL = window.location.host;
 
 // app loader
-// - easily change app version (?v=5c)
-// - easily change load mode (?m=ss)
+// - easily change app version (?v=app.dist.js)
+// - easily change load mode (?m=script-src)
 // - easily change debug flag (?d=1)
 // - load additional libs for specified ver
 $(() => {
   const modes = {
-    ss: 'script-src',
-    st: 'script-text',
+    'script-src': 'script-src',
+    'script-text': 'script-text',
   };
   const scripts = {
     dist: ['app.dist.js'],
@@ -59,11 +57,8 @@ $(() => {
   // ---------------------------------------------------------------------------------------------------------------
 
   const urlParam = function (name) {
-    const nameEsc = name.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1');
-    const results = new RegExp('[?&]' + nameEsc + '=([^&#]*)').exec(
-      window.location.href
-    );
-    return results ? decodeURIComponent(results[1]) : null;
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    return urlSearchParams.get(name);
   };
 
   // ---------------------------------------------------------------------------------------------------------------
@@ -77,22 +72,22 @@ $(() => {
 
   // ---------------------------------------------------------------------------------------------------------------
 
-  const debug = requireValid(urlParam('d'), ['1', '0'], DEBUG);
+  const debug = requireValid(urlParam('d'), ['1', '0'], window.DEBUG);
 
-  DEBUG = !!+debug; // convert to boolean; may be "0", "1", 0, 1, false, true
+  window.DEBUG = !!+debug; // convert to boolean; may be "0", "1", 0, 1, false, true
 
   // ---------------------------------------------------------------------------------------------------------------
 
   const mode = requireValid(
     urlParam('m'),
     Object.keys(modes),
-    DEBUG ? defaults.debug.mode : defaults.prod.mode
+    window.DEBUG ? defaults.debug.mode : defaults.prod.mode
   );
 
   const script = requireValid(
     urlParam('v'),
     Object.keys(scripts),
-    DEBUG ? defaults.debug.script : defaults.prod.script
+    window.DEBUG ? defaults.debug.script : defaults.prod.script
   );
 
   const mode_ = modes[mode];
@@ -107,7 +102,7 @@ $(() => {
     pipe = pipe.pipe(() => {
       return loadScript(mode_, val).then(
         () => {
-          if (DEBUG) {
+          if (window.DEBUG) {
             console.log('debug | app.loader | ok=' + val);
           }
         },

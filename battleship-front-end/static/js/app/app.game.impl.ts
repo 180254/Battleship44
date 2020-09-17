@@ -30,10 +30,10 @@ import {EventEx as EventEx0} from './event0.impl';
 import {EventEx as EventEx1} from './event1.impl';
 import {AssertEx} from './assert.impl';
 import {RandomEx} from './random.impl';
-import {API_WS_URL} from './app.loader.decl';
 
 declare global {
   // extend EventTarget; url is given in event on WebSocket open
+  // noinspection JSUnusedGlobalSymbols // bug? it is used
   interface EventTarget {
     readonly url?: string;
   }
@@ -131,7 +131,7 @@ export class WsEx implements Ws {
 
   public init(): void {
     const protocol: string = location.protocol === 'https:' ? 'wss:' : 'ws:';
-    this._ws = new WebSocket(protocol + '//' + API_WS_URL + '/ws');
+    this._ws = new WebSocket(protocol + '//' + window.API_WS_URL + '/ws');
     this._ws.onopen = (ev: Event) => this._onEvent.onOpen(ev);
     this._ws.onmessage = (ev: MessageEvent) => this._onEvent.onMessage(ev);
     this._ws.onclose = (ev: CloseEvent) => this._onEvent.onClose(ev);
@@ -354,7 +354,7 @@ export class OnMessageEx implements OnMessage {
 
       [
         'GRID OK',
-        payload => {
+        () => {
           i.grids.$opponent.removeClass(strings.grid.clazz.inactive);
           i.grids.$shoot.addClass(strings.grid.clazz.inactive);
 
@@ -367,7 +367,7 @@ export class OnMessageEx implements OnMessage {
 
       [
         'GRID FAIL',
-        payload => {
+        () => {
           i.message.addFleeting(
             tk('put.fail'),
             i.timeout.default_,
@@ -393,14 +393,14 @@ export class OnMessageEx implements OnMessage {
 
       [
         'TOUR START',
-        payload => {
+        () => {
           // none here
         },
       ],
 
       [
         'TOUR YOU',
-        payload => {
+        () => {
           i.grids.$shoot.removeClass(strings.grid.clazz.inactive);
 
           i.message.setFixed(
@@ -422,7 +422,7 @@ export class OnMessageEx implements OnMessage {
 
       [
         'TOUR HE',
-        payload => {
+        () => {
           i.grids.$shoot.addClass(strings.grid.clazz.inactive);
           i.grids.$shootCells.removeClass(strings.cell.clazz.shootable);
 
@@ -530,7 +530,7 @@ export class OnMessageEx implements OnMessage {
 
       [
         '2PLA',
-        payload => {
+        () => {
           $(strings.info.id_players_game).text(2);
 
           i.message.addFleeting(tk('tour.two_players'), i.timeout.slow);
@@ -539,7 +539,7 @@ export class OnMessageEx implements OnMessage {
 
       [
         'PONG',
-        payload => {
+        () => {
           // none here
         },
       ],
@@ -547,8 +547,8 @@ export class OnMessageEx implements OnMessage {
       [
         'STAT',
         payload => {
-          const infoStat: any = {
-            ['players']: strings.info.id_players_global,
+          const infoStat: {[key: string]: string} = {
+            players: strings.info.id_players_global,
           };
 
           const stats: string[] = payload.split(',');

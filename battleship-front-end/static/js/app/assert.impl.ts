@@ -13,13 +13,13 @@ export class AssertEx implements Assert {
     }
   }
 
-  public equals(expected: any, actual: any): void {
+  public equals<T>(expected: T, actual: T): void {
     if (expected !== actual) {
       throw new Error('expected: {0}, actual: {1}'.format(expected, actual));
     }
   }
 
-  public notEquals(expected: any, actual: any): void {
+  public notEquals<T>(expected: T, actual: T): void {
     if (expected === actual) {
       throw new Error(
         'expected not: {0}, actual: {1}'.format(expected, actual)
@@ -39,13 +39,13 @@ export class AssertEx implements Assert {
     }
   }
 
-  public strContains(haystack: string, needle: any): void {
+  public strContains(haystack: string, needle: string): void {
     if (!haystack.includes(needle)) {
       throw new Error('expected: {0} to contain: {1}'.format(haystack, needle));
     }
   }
 
-  public strNotContains(haystack: string, needle: any): void {
+  public strNotContains(haystack: string, needle: string): void {
     if (haystack.includes(needle)) {
       throw new Error(
         'expected: {0} to not contain: {1}'.format(haystack, needle)
