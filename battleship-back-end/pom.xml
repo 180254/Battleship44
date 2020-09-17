@@ -71,7 +71,7 @@
 
     <profiles>
         <profile>
-            <id>fe</id>
+            <id>front-as-resources</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
