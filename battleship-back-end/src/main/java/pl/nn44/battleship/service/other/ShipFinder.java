@@ -16,107 +16,99 @@ import java.util.stream.Collectors;
 
 public class ShipFinder {
 
-    private final Grid grid;
-    private final Supplier<List<Ship>> ships = Suppliers.memoize(this::calculateShips);
-    private final ConcurrentMap<Ship, List<Coord>> surrounding = new ConcurrentHashMap<>();
+  private final Grid grid;
+  private final Supplier<List<Ship>> ships = Suppliers.memoize(this::calculateShips);
+  private final ConcurrentMap<Ship, List<Coord>> surrounding = new ConcurrentHashMap<>();
 
-    private ShipFinder(Grid grid) {
-        this.grid = grid;
+  private ShipFinder(Grid grid) {
+    this.grid = grid;
+  }
+
+  public static ShipFinder forGrid(Grid grid) {
+    return new ShipFinder(grid);
+  }
+
+  public List<Ship> ships() {
+    return ships.get();
+  }
+
+  public List<Coord> surrounding(Ship ship) {
+    return surrounding.computeIfAbsent(ship, this::calculateSurrounding);
+  }
+
+  public Ship findShip(Coord coord) {
+    Ship find = null;
+
+    for (Ship ship : ships.get()) {
+      if (ship.getCoords().contains(coord)) {
+        find = ship;
+        break;
+      }
     }
 
-    public static ShipFinder forGrid(Grid grid) {
-        return new ShipFinder(grid);
-    }
+    return find;
+  }
 
-    // ---------------------------------------------------------------------------------------------------------------
+  private List<Ship> calculateShips() {
+    List<Ship> ships = new ArrayList<>();
 
-    public List<Ship> ships() {
-        return ships.get();
-    }
+    for (int rowNo = 0; rowNo < grid.getRowsNo(); rowNo++) {
+      for (int colNo = 0; colNo < grid.getColsNo(); colNo++) {
 
-    public List<Coord> surrounding(Ship ship) {
-        return surrounding.computeIfAbsent(ship, this::calculateSurrounding);
-    }
+        Coord coord = Coord.c(rowNo, colNo);
+        Cell cell = grid.getCell(coord);
 
-    public Ship findShip(Coord coord) {
-        Ship find = null;
+        if (cell.getType() == Cell.Type.SHIP) {
+          if (!isShipCoord(ships, coord)) {
 
-        for (Ship ship : ships.get()) {
-            if (ship.getCoords().contains(coord)) {
-                find = ship;
-                break;
-            }
+            List<Coord> shipCoords = collectShipCoords(coord);
+            Ship ship = new Ship(shipCoords);
+            ships.add(ship);
+          }
         }
-
-        return find;
+      }
     }
 
-    // ---------------------------------------------------------------------------------------------------------------
+    return Collections.unmodifiableList(ships);
+  }
 
-    private List<Ship> calculateShips() {
-        List<Ship> ships = new ArrayList<>();
+  private List<Coord> calculateSurrounding(Ship ship) {
+    return ship.getCoords().stream()
+        .flatMap(c -> grid.getNeighbours(c).stream())
+        .map(Cell::getCoord)
+        .filter(c -> !ship.getCoords().contains(c))
+        .distinct()
+        .collect(Collectors.toUnmodifiableList());
+  }
 
-        for (int rowNo = 0; rowNo < grid.getRowsNo(); rowNo++) {
-            for (int colNo = 0; colNo < grid.getColsNo(); colNo++) {
+  private List<Coord> collectShipCoords(Coord startCoord) {
+    return collectShipCoords(startCoord, new ArrayList<>(), new ArrayList<>());
+  }
 
-                Coord coord = Coord.c(rowNo, colNo);
-                Cell cell = grid.getCell(coord);
+  private List<Coord> collectShipCoords(Coord startCoord,
+                                        List<Coord> ship_int,
+                                        List<Coord> checked_int) {
 
-                if (cell.getType() == Cell.Type.SHIP) {
-                    if (!isShipCoord(ships, coord)) {
-
-                        List<Coord> shipCoords = collectShipCoords(coord);
-                        Ship ship = new Ship(shipCoords);
-                        ships.add(ship);
-                    }
-                }
-            }
-        }
-
-        return Collections.unmodifiableList(ships);
+    if (checked_int.contains(startCoord)) {
+      return ship_int;
     }
 
-    private List<Coord> calculateSurrounding(Ship ship) {
-        return ship.getCoords().stream()
-                .flatMap(c -> grid.getNeighbours(c).stream())
-                .map(Cell::getCoord)
-                .filter(c -> !ship.getCoords().contains(c))
-                .distinct()
-                .collect(Collectors.toUnmodifiableList());
+    checked_int.add(startCoord);
+
+    if (grid.getCell(startCoord).getType() == Cell.Type.SHIP) {
+      ship_int.add(startCoord);
+
+      for (Cell neighbourCell : grid.getNeighboursPlus(startCoord)) {
+        collectShipCoords(neighbourCell.getCoord(), ship_int, checked_int);
+      }
     }
 
-    // ---------------------------------------------------------------------------------------------------------------
+    return ship_int;
+  }
 
-    private List<Coord> collectShipCoords(Coord startCoord) {
-        return collectShipCoords(startCoord, new ArrayList<>(), new ArrayList<>());
-    }
-
-    private List<Coord> collectShipCoords(Coord startCoord,
-                                          List<Coord> ship_int,
-                                          List<Coord> checked_int) {
-
-        if (checked_int.contains(startCoord)) {
-            return ship_int;
-        }
-
-        checked_int.add(startCoord);
-
-        if (grid.getCell(startCoord).getType() == Cell.Type.SHIP) {
-            ship_int.add(startCoord);
-
-            for (Cell neighbourCell : grid.getNeighboursPlus(startCoord)) {
-                collectShipCoords(neighbourCell.getCoord(), ship_int, checked_int);
-            }
-        }
-
-        return ship_int;
-    }
-
-    // ---------------------------------------------------------------------------------------------------------------
-
-    private boolean isShipCoord(List<Ship> ships, Coord coord) {
-        return ships.stream()
-                .flatMap(s -> s.getCoords().stream())
-                .anyMatch(shipCoord -> shipCoord.equals(coord));
-    }
+  private boolean isShipCoord(List<Ship> ships, Coord coord) {
+    return ships.stream()
+        .flatMap(s -> s.getCoords().stream())
+        .anyMatch(shipCoord -> shipCoord.equals(coord));
+  }
 }

@@ -17,22 +17,22 @@ import java.util.Random;
 // changes[1] - customizable number of characters in result id (instead of bits)
 public class BigIdGenerator implements IdGenerator {
 
-    private final static int NUMBER_BASE = 32;
-    private final static int BIT_PER_CHAR = IntMath.log2(NUMBER_BASE, RoundingMode.UNNECESSARY);
+  private final static int NUMBER_BASE = 32;
+  private final static int BIT_PER_CHAR = IntMath.log2(NUMBER_BASE, RoundingMode.UNNECESSARY);
 
-    private final Random random;
-    private final int chars;
-    private final int bits;
+  private final Random random;
+  private final int chars;
+  private final int bits;
 
-    public BigIdGenerator(Random random, int chars) {
-        this.random = random;
-        this.chars = chars;
-        this.bits = chars * BIT_PER_CHAR;
-    }
+  public BigIdGenerator(Random random, int chars) {
+    this.random = random;
+    this.chars = chars;
+    this.bits = chars * BIT_PER_CHAR;
+  }
 
-    @Override
-    public String nextId() {
-        String nextId = new BigInteger(bits, random).toString(NUMBER_BASE);
-        return Strings.padStart(nextId, chars, '0');
-    }
+  @Override
+  public String nextId() {
+    String nextId = new BigInteger(bits, random).toString(NUMBER_BASE);
+    return Strings.padStart(nextId, chars, '0');
+  }
 }

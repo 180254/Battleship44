@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 
 public class Arrays {
 
-    public static <T> int indexOf(@Nullable T needle, T[] haystack) {
-        return java.util.Arrays.asList(haystack).indexOf(needle);
-    }
+  public static <T> int indexOf(@Nullable T needle, T[] haystack) {
+    return java.util.Arrays.asList(haystack).indexOf(needle);
+  }
 }

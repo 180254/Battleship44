@@ -8,74 +8,70 @@ import java.util.List;
 
 public class ShootGrid extends Grid {
 
-    private final Grid opponentGrid;
-    private final ShipFinder opShipFinder;
+  private final Grid opponentGrid;
+  private final ShipFinder opShipFinder;
 
-    public ShootGrid(Grid opponentGrid) {
-        super(
-                opponentGrid.getRowsNo(), opponentGrid.getColsNo(),
-                new int[opponentGrid.getSize()]);
+  public ShootGrid(Grid opponentGrid) {
+    super(
+        opponentGrid.getRowsNo(), opponentGrid.getColsNo(),
+        new int[opponentGrid.getSize()]);
 
-        this.opponentGrid = opponentGrid;
-        this.opShipFinder = ShipFinder.forGrid(opponentGrid);
+    this.opponentGrid = opponentGrid;
+    this.opShipFinder = ShipFinder.forGrid(opponentGrid);
 
-        Arrays.fill(this.cells, Cell.Type.UNKNOWN.getCode());
-    }
+    Arrays.fill(this.cells, Cell.Type.UNKNOWN.getCode());
+  }
 
-    /**
-     * @param coord coord
-     * @return list of changed cells
-     */
-    public List<Cell> shoot(Coord coord) {
-        List<Cell> changedCell = new ArrayList<>();
-        Cell.Type opponentCell = opponentGrid.getCell(coord).getType();
+  /**
+   * @param coord coord
+   * @return list of changed cells
+   */
+  public List<Cell> shoot(Coord coord) {
+    List<Cell> changedCell = new ArrayList<>();
+    Cell.Type opponentCell = opponentGrid.getCell(coord).getType();
 
-        if (opponentCell == Cell.Type.SHIP) {
-            this.setCell(coord, Cell.Type.SHIP);
+    if (opponentCell == Cell.Type.SHIP) {
+      this.setCell(coord, Cell.Type.SHIP);
 
-            Ship opponentShip = opShipFinder.findShip(coord);
-            if (isShipSink(opponentShip)) {
+      Ship opponentShip = opShipFinder.findShip(coord);
+      if (isShipSink(opponentShip)) {
 
-                for (Coord surroundCoord : opShipFinder.surrounding(opponentShip)) {
-                    this.setCell(surroundCoord, Cell.Type.EMPTY);
-                    changedCell.add(this.getCell(surroundCoord));
-                }
-            }
-
-        } else {
-            this.setCell(coord, Cell.Type.EMPTY);
+        for (Coord surroundCoord : opShipFinder.surrounding(opponentShip)) {
+          this.setCell(surroundCoord, Cell.Type.EMPTY);
+          changedCell.add(this.getCell(surroundCoord));
         }
+      }
 
-        changedCell.add(this.getCell(coord));
-        return changedCell;
+    } else {
+      this.setCell(coord, Cell.Type.EMPTY);
     }
 
-    public boolean allShotDown() {
-        return opShipFinder.ships().stream().allMatch(this::isShipSink);
-    }
+    changedCell.add(this.getCell(coord));
+    return changedCell;
+  }
 
-    // ---------------------------------------------------------------------------------------------------------------
+  public boolean allShotDown() {
+    return opShipFinder.ships().stream().allMatch(this::isShipSink);
+  }
 
-    private boolean isShipSink(Ship ship) {
-        return ship.getCoords().stream()
-                .map(this::getCell)
-                .allMatch(c -> c.getType() == Cell.Type.SHIP);
-    }
+  private boolean isShipSink(Ship ship) {
+    return ship.getCoords().stream()
+        .map(this::getCell)
+        .allMatch(c -> c.getType() == Cell.Type.SHIP);
+  }
 
-    // ---------------------------------------------------------------------------------------------------------------
+  @Override
+  public boolean equals(Object o) {
+    return super.equals(o);
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return super.toString();
-    }
+  @Override
+  public String toString() {
+    return super.toString();
+  }
 }

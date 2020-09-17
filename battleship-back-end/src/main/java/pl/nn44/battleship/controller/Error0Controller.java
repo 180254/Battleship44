@@ -15,24 +15,24 @@ import java.util.Map;
 @RequestMapping("/error")
 public class Error0Controller extends AbstractErrorController {
 
-    public Error0Controller() {
-        super(new DefaultErrorAttributes(), Collections.emptyList());
-    }
+  public Error0Controller() {
+    super(new DefaultErrorAttributes(), Collections.emptyList());
+  }
 
-    @Override
-    public String getErrorPath() {
-        return "";
-    }
+  @Override
+  public String getErrorPath() {
+    return "";
+  }
 
-    @RequestMapping(produces = {"text/plain"})
-    public ResponseEntity<String> errorPlain(HttpServletRequest request) {
-        HttpStatus status = getStatus(request);
-        Map<String, Object> errorAttributes = getErrorAttributes(request, ErrorAttributeOptions.defaults());
+  @RequestMapping(produces = {"text/plain"})
+  public ResponseEntity<String> errorPlain(HttpServletRequest request) {
+    HttpStatus status = getStatus(request);
+    Map<String, Object> errorAttributes = getErrorAttributes(request, ErrorAttributeOptions.defaults());
 
-        String message = MessageFormat.format("{0} {1}",
-                errorAttributes.get("status"),
-                errorAttributes.get("error"));
+    String message = MessageFormat.format("{0} {1}",
+        errorAttributes.get("status"),
+        errorAttributes.get("error"));
 
-        return new ResponseEntity<>(message, status);
-    }
+    return new ResponseEntity<>(message, status);
+  }
 }

@@ -4,5 +4,5 @@ import pl.nn44.battleship.model.Grid;
 
 public interface FleetVerifier {
 
-    boolean verify(Grid grid);
+  boolean verify(Grid grid);
 }

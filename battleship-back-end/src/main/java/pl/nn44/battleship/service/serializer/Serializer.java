@@ -4,7 +4,7 @@ import java.util.Optional;
 
 public interface Serializer<T, R> {
 
-    R serialize(T obj);
+  R serialize(T obj);
 
-    Optional<T> deserialize(R ser);
+  Optional<T> deserialize(R ser);
 }

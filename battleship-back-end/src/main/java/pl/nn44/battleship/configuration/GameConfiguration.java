@@ -36,58 +36,58 @@ import java.util.Random;
 // http://docs.spring.io/spring/docs/current/spring-framework-reference/html/websocket.html
 class GameConfiguration implements WebSocketConfigurer {
 
-    final GameProperties gm;
+  final GameProperties gm;
 
-    @Autowired
-    GameConfiguration(GameProperties gm) {
-        Assert.notNull(gm, "GameProperties must not be null.");
-        this.gm = gm;
-    }
+  @Autowired
+  GameConfiguration(GameProperties gm) {
+    Assert.notNull(gm, "GameProperties must not be null.");
+    this.gm = gm;
+  }
 
-    @Bean
-    ErrorController errorController() {
-        return new Error0Controller();
-    }
+  @Bean
+  ErrorController errorController() {
+    return new Error0Controller();
+  }
 
-    @Bean
-    GameController webSocketController() {
+  @Bean
+  GameController webSocketController() {
 
-        Random random = new SecureRandom();
-        Locker locker = new LockerImpl(gm.getImpl().getLocksNo());
-        IdGenerator idGenerator = new BigIdGenerator(random, gm.getImpl().getIdLen());
-        FleetVerifier fleetVerifier = FleetVerifierFactory.forTypeFromGm(gm);
-        Serializer<Grid, String> gridSerializer = new GridSerializer(gm);
-        Serializer<Coord, String> coordSerializer = new CoordSerializer();
-        Serializer<List<Cell>, String> cellSerializer = new CellSerializer();
+    Random random = new SecureRandom();
+    Locker locker = new LockerImpl(gm.getImpl().getLocksNo());
+    IdGenerator idGenerator = new BigIdGenerator(random, gm.getImpl().getIdLen());
+    FleetVerifier fleetVerifier = FleetVerifierFactory.forTypeFromGm(gm);
+    Serializer<Grid, String> gridSerializer = new GridSerializer(gm);
+    Serializer<Coord, String> coordSerializer = new CoordSerializer();
+    Serializer<List<Cell>, String> cellSerializer = new CellSerializer();
 
-        return new GameController(
-                random,
-                locker,
-                idGenerator,
-                fleetVerifier,
-                gridSerializer,
-                coordSerializer,
-                cellSerializer);
-    }
+    return new GameController(
+        random,
+        locker,
+        idGenerator,
+        fleetVerifier,
+        gridSerializer,
+        coordSerializer,
+        cellSerializer);
+  }
 
-    @Bean
-    ServletServerContainerFactoryBean createWebSocketContainer() {
+  @Bean
+  ServletServerContainerFactoryBean createWebSocketContainer() {
 
-        ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
-        container.setMaxTextMessageBufferSize(gm.getWs().getPolicyMaxTextMessageSize());
-        container.setMaxBinaryMessageBufferSize(gm.getWs().getPolicyMaxBinaryMessageSize());
-        container.setMaxSessionIdleTimeout(gm.getWs().getPolicyIdleTimeout());
-        return container;
-    }
+    ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
+    container.setMaxTextMessageBufferSize(gm.getWs().getPolicyMaxTextMessageSize());
+    container.setMaxBinaryMessageBufferSize(gm.getWs().getPolicyMaxBinaryMessageSize());
+    container.setMaxSessionIdleTimeout(gm.getWs().getPolicyIdleTimeout());
+    return container;
+  }
 
-    @Override
-    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(webSocketController(), gm.getWs().getConfHandlers())
-                .setAllowedOrigins(gm.getWs().getConfAllowedOrigins());
-    }
+  @Override
+  public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+    registry.addHandler(webSocketController(), gm.getWs().getConfHandlers())
+        .setAllowedOrigins(gm.getWs().getConfAllowedOrigins());
+  }
 
-    @Bean
-    ServletCustomizer servletCustomizer() {
-        return new ServletCustomizer();
-    }
+  @Bean
+  ServletCustomizer servletCustomizer() {
+    return new ServletCustomizer();
+  }
 }

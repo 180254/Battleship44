@@ -11,39 +11,39 @@ import java.util.regex.Pattern;
 
 public class GridSerializer implements Serializer<Grid, String> {
 
-    private final String validCodes = String.format("%d%d", Cell.Type.EMPTY.getCode(), Cell.Type.SHIP.getCode());
-    private final Pattern pattern = Pattern.compile("[" + validCodes + "](,[" + validCodes + "])*");
+  private final String validCodes = String.format("%d%d", Cell.Type.EMPTY.getCode(), Cell.Type.SHIP.getCode());
+  private final Pattern pattern = Pattern.compile("[" + validCodes + "](,[" + validCodes + "])*");
 
-    private final GameProperties gameProps;
-    private final int gameSize;
+  private final GameProperties gameProps;
+  private final int gameSize;
 
-    public GridSerializer(GameProperties gameProps) {
-        this.gameProps = gameProps;
+  public GridSerializer(GameProperties gameProps) {
+    this.gameProps = gameProps;
 
-        GameProperties.GridSize gridSize = gameProps.getGridSize();
-        this.gameSize = gridSize.getRows() * gridSize.getCols();
+    GameProperties.GridSize gridSize = gameProps.getGridSize();
+    this.gameSize = gridSize.getRows() * gridSize.getCols();
+  }
+
+  @Override
+  public String serialize(Grid obj) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Optional<Grid> deserialize(String ser) {
+    if (!pattern.matcher(ser).matches()) {
+      return Optional.empty();
     }
 
-    @Override
-    public String serialize(Grid obj) {
-        throw new UnsupportedOperationException();
+    String[] split = ser.split(",");
+    int[] codes = Arrays.stream(split).mapToInt(Integer::parseInt).toArray();
+
+    if (codes.length != gameSize) {
+      return Optional.empty();
     }
 
-    @Override
-    public Optional<Grid> deserialize(String ser) {
-        if (!pattern.matcher(ser).matches()) {
-            return Optional.empty();
-        }
+    Grid grid = GridFactory.sizeFromEnv(gameProps, codes);
+    return Optional.of(grid);
 
-        String[] split = ser.split(",");
-        int[] codes = Arrays.stream(split).mapToInt(Integer::parseInt).toArray();
-
-        if (codes.length != gameSize) {
-            return Optional.empty();
-        }
-
-        Grid grid = GridFactory.sizeFromEnv(gameProps, codes);
-        return Optional.of(grid);
-
-    }
+  }
 }
