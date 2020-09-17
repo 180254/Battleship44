@@ -1,5 +1,5 @@
 import {Callback} from './types.decl';
-import {Message, OnEvent, OnMessage, Starter, Ws} from './app.game';
+import {Message, OnEvent, OnMessage, Starter, Ws} from './app.game.decl';
 import {MessageEx as MessageEx2, TimeoutEx} from './message.impl';
 
 import {
@@ -85,7 +85,7 @@ export class StarterEx implements Starter {
   }
 
   public init(): void {
-    LoggerEx.cLevel = Level.DEBUG ? Level.TRACE : Level.WARN;
+    LoggerEx.cLevel = window.MODE === 'dev' ? Level.TRACE : Level.WARN;
 
     i.langFinder.cSupported = [
       new LangTagEx('pl', 'pl'),
@@ -131,7 +131,9 @@ export class WsEx implements Ws {
 
   public init(): void {
     const protocol: string = location.protocol === 'https:' ? 'wss:' : 'ws:';
-    this._ws = new WebSocket(protocol + '//' + window.API_WS_URL + '/ws');
+    const wsUrl =
+      window.BACKEND || protocol + '//' + window.location.host + '/ws';
+    this._ws = new WebSocket(wsUrl);
     this._ws.onopen = (ev: Event) => this._onEvent.onOpen(ev);
     this._ws.onmessage = (ev: MessageEvent) => this._onEvent.onMessage(ev);
     this._ws.onclose = (ev: CloseEvent) => this._onEvent.onClose(ev);

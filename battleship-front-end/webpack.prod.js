@@ -6,6 +6,8 @@ const {merge} = require('webpack-merge');
 module.exports = merge(
   common({
     browserlist: ['defaults'],
+    code_mode: 'prod',
+    code_backend: process.env.BACKEND || '',
   }),
   {
     mode: 'production',

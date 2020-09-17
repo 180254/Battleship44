@@ -1,41 +1,34 @@
-/* This app is not running in env environment. How to disable? */
 /* eslint-disable node/no-unsupported-features/es-syntax */
 
-window.API_WS_URL = 'localhost:8080';
-window.DEBUG = true;
 import * as $ from 'jquery';
+
+window.BACKEND = 'CONFIG_BACKEND';
+window.MODE = 'CONFIG_MODE';
+
 // app loader
-// - easily change app version (?v=dist)
-// - easily change load mode (?m=script-src)
-// - easily change debug flag (?d=1)
+// - easily change mode (?mode=dev, ?mode=prod)
+// - easily change app version (?app=dist)
+// - easily change load script mode (?load=script-src, ?load=script-text)
 // - load additional libs for specified ver
 $(() => {
   const modes = {
-    'script-src': 'script-src',
-    'script-text': 'script-text',
-  };
-  const scripts = {
-    dist: ['js/dist/app.dist.js'],
-  };
-
-  const defaults = {
-    debug: {
-      mode: 'script-src',
-      script: 'dist',
+    dev: {
+      loadScriptMode: 'script-src',
+      appsKey: 'dist',
     },
     prod: {
-      mode: 'script-text',
-      script: 'dist',
+      loadScriptMode: 'script-text',
+      appsKey: 'dist',
     },
   };
 
+  const apps = {
+    dist: ['js/dist/app.dist.js'],
+  };
   // ---------------------------------------------------------------------------------------------------------------
 
-  const loadScript = function (mode, src) {
-    if (mode === 'script-src') {
-      // create tag <script src="xx"></script>
-      // - browser loads source map
-      // - useful for debugging
+  const loadScript = function (loadScriptMode, src) {
+    if (loadScriptMode === 'script-src') {
       const scripts = document.getElementById('script');
       const ref = document.createElement('script');
 
@@ -47,20 +40,16 @@ $(() => {
       // it loads file using xhr, and then execute jQuery.DOMEval method
       // discussed at stackoverflow: http://stackoverflow.com/q/15459218
 
+      // noinspection JSValidateTypes
       return new $.Deferred().resolve();
-    } else if (mode === 'script-text') {
-      // create tag <script>code</script>
-      // - browser does _not_ load source map
-      // - sourceMappingURL comment need not be removed
-      // - useful for production
-
+    } else if (loadScriptMode === 'script-text') {
       return $.ajax({dataType: 'script', cache: true, url: src});
     }
   };
 
   // ---------------------------------------------------------------------------------------------------------------
 
-  const urlParam = function (name) {
+  const getUrlParam = function (name) {
     const urlSearchParams = new URLSearchParams(window.location.search);
     return urlSearchParams.get(name);
   };
@@ -76,37 +65,31 @@ $(() => {
 
   // ---------------------------------------------------------------------------------------------------------------
 
-  const debug = requireValid(urlParam('d'), ['1', '0'], window.DEBUG);
+  const paramMode = requireValid(getUrlParam('mode'), ['dev', 'prod'], 'prod');
 
-  window.DEBUG = !!+debug; // convert to boolean; may be "0", "1", 0, 1, false, true
+  const paramApp = requireValid(
+    getUrlParam('app'),
+    Object.keys(apps),
+    modes[paramMode].appsKey
+  );
+
+  const paramLoad = requireValid(
+    getUrlParam('load'),
+    ['script-src', 'script-text'],
+    modes[paramMode].loadScriptMode
+  );
 
   // ---------------------------------------------------------------------------------------------------------------
 
-  const mode = requireValid(
-    urlParam('m'),
-    Object.keys(modes),
-    window.DEBUG ? defaults.debug.mode : defaults.prod.mode
-  );
-
-  const script = requireValid(
-    urlParam('v'),
-    Object.keys(scripts),
-    window.DEBUG ? defaults.debug.script : defaults.prod.script
-  );
-
-  const mode_ = modes[mode];
-  const script_ = scripts[script];
-
-  // ---------------------------------------------------------------------------------------------------------------
-
+  // noinspection JSValidateTypes
   const deferred = new $.Deferred();
   let pipe = deferred;
 
-  $.each(script_, (i, val) => {
+  $.each(apps[paramApp], (i, val) => {
     pipe = pipe.pipe(() => {
-      return loadScript(mode_, val).then(
+      return loadScript(paramLoad, val).then(
         () => {
-          if (window.DEBUG) {
+          if (window.MODE) {
             console.log('debug | app.loader | ok=' + val);
           }
         },

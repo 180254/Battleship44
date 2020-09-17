@@ -1,7 +1,7 @@
 /* eslint-disable node/no-unpublished-require */
 
-const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const path = require('path');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 
 module.exports = conf => {
   const babel_loader_options = {
@@ -45,6 +45,20 @@ module.exports = conf => {
             {
               loader: 'babel-loader',
               options: babel_loader_options,
+            },
+            {
+              loader: 'string-replace-loader',
+              options: {
+                search: 'CONFIG_MODE',
+                replace: conf['code_mode'],
+              },
+            },
+            {
+              loader: 'string-replace-loader',
+              options: {
+                search: 'CONFIG_BACKEND',
+                replace: conf['code_backend'],
+              },
             },
           ],
         },

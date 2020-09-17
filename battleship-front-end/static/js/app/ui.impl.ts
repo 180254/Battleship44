@@ -21,11 +21,13 @@ export class UiEx implements Ui {
 
   public initFlags(callback: Callback<LangTag>): void {
     this._langFinder.server().forEach(langTag => {
-      const $flag: JQuery = $('<img alt="" src=""/>', {
-        ['alt']: langTag.lang,
-        ['src']: 'flag/{0}.png'.format((langTag.region || '').toLowerCase()),
-        ['class']: strings.flag.clazz.i,
-      });
+      const $flag: JQuery = $(document.createElement('img'));
+      $flag.attr('alt', langTag.lang);
+      $flag.attr(
+        'src',
+        'flag/{0}.png'.format((langTag.region || '').toLowerCase())
+      );
+      $flag.attr('class', strings.flag.clazz.i);
 
       this._event1.on($flag, 'click', () => callback(langTag));
       this._$flags.append($flag);
