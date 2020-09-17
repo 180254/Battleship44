@@ -1,5 +1,7 @@
 package pl.nn44.battleship.configuration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -36,10 +38,13 @@ import java.util.Random;
 // http://docs.spring.io/spring/docs/current/spring-framework-reference/html/websocket.html
 class GameConfiguration implements WebSocketConfigurer {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(GameConfiguration.class);
+
   final GameProperties gm;
 
   @Autowired
   GameConfiguration(GameProperties gm) {
+    LOGGER.info("{}", gm);
     Assert.notNull(gm, "GameProperties must not be null.");
     this.gm = gm;
   }
@@ -76,7 +81,7 @@ class GameConfiguration implements WebSocketConfigurer {
     ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
     container.setMaxTextMessageBufferSize(gm.getWs().getPolicyMaxTextMessageSize());
     container.setMaxBinaryMessageBufferSize(gm.getWs().getPolicyMaxBinaryMessageSize());
-    container.setMaxSessionIdleTimeout(gm.getWs().getPolicyIdleTimeout());
+    container.setMaxSessionIdleTimeout(gm.getWs().getPolicyIdleTimeoutMs());
     return container;
   }
 

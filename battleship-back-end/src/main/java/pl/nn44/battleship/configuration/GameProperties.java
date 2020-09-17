@@ -3,6 +3,9 @@ package pl.nn44.battleship.configuration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.StringJoiner;
+
 @ConfigurationProperties(prefix = "game")
 @Component
 public class GameProperties {
@@ -75,6 +78,14 @@ public class GameProperties {
       CLASSIC_ONE,
       CLASSIC_TWO,
     }
+
+    @Override
+    public String toString() {
+      return new StringJoiner(", ", FleetType.class.getSimpleName() + "[", "]")
+          .add("mode=" + mode)
+          .add("sizes=" + sizes)
+          .toString();
+    }
   }
 
   public static class GridSize {
@@ -96,6 +107,14 @@ public class GameProperties {
 
     public void setCols(int cols) {
       this.cols = cols;
+    }
+
+    @Override
+    public String toString() {
+      return new StringJoiner(", ", GridSize.class.getSimpleName() + "[", "]")
+          .add("rows=" + rows)
+          .add("cols=" + cols)
+          .toString();
     }
   }
 
@@ -119,6 +138,14 @@ public class GameProperties {
     public void setLocksNo(int locksNo) {
       this.locksNo = locksNo;
     }
+
+    @Override
+    public String toString() {
+      return new StringJoiner(", ", Impl.class.getSimpleName() + "[", "]")
+          .add("idLen=" + idLen)
+          .add("locksNo=" + locksNo)
+          .toString();
+    }
   }
 
   public static class Ws {
@@ -127,7 +154,7 @@ public class GameProperties {
     private String[] confAllowedOrigins;
     private int policyMaxTextMessageSize;
     private int policyMaxBinaryMessageSize;
-    private long policyIdleTimeout;
+    private long policyIdleTimeoutMs;
 
     public String[] getConfHandlers() {
       return confHandlers;
@@ -161,12 +188,33 @@ public class GameProperties {
       this.policyMaxBinaryMessageSize = policyMaxBinaryMessageSize;
     }
 
-    public long getPolicyIdleTimeout() {
-      return policyIdleTimeout;
+    public long getPolicyIdleTimeoutMs() {
+      return policyIdleTimeoutMs;
     }
 
-    public void setPolicyIdleTimeout(long policyIdleTimeout) {
-      this.policyIdleTimeout = policyIdleTimeout;
+    public void setPolicyIdleTimeoutMs(long policyIdleTimeoutMs) {
+      this.policyIdleTimeoutMs = policyIdleTimeoutMs;
     }
+
+    @Override
+    public String toString() {
+      return new StringJoiner(", ", Ws.class.getSimpleName() + "[", "]")
+          .add("confHandlers=" + Arrays.toString(confHandlers))
+          .add("confAllowedOrigins=" + Arrays.toString(confAllowedOrigins))
+          .add("policyMaxTextMessageSize=" + policyMaxTextMessageSize)
+          .add("policyMaxBinaryMessageSize=" + policyMaxBinaryMessageSize)
+          .add("policyIdleTimeoutMs=" + policyIdleTimeoutMs)
+          .toString();
+    }
+  }
+
+  @Override
+  public String toString() {
+    return new StringJoiner(", ", GameProperties.class.getSimpleName() + "[", "]")
+        .add("gridSize=" + gridSize)
+        .add("fleetType=" + fleetType)
+        .add("impl=" + impl)
+        .add("ws=" + ws)
+        .toString();
   }
 }
