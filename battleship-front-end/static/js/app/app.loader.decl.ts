@@ -1,8 +1,4 @@
-declare global {
-  // noinspection JSUnusedGlobalSymbols // bug? it is used
-  interface Window {
-    BACKEND: string;
-    MODE: 'dev' | 'string';
-  }
+export class Environment {
+  public static BACKEND = 'CONFIG_BACKEND';
+  public static MODE = 'CONFIG_MODE';
 }
-export {};

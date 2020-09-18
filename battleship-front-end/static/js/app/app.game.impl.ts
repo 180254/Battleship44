@@ -18,7 +18,7 @@ import {CellEx, GridsEx, SelectionEx} from './grid.impl';
 import {UrlEx, UrlParamEx} from './url.impl';
 import {Level, LoggerEx} from './logger.impl';
 import {Logger} from './logger.decl';
-import './app.loader.decl';
+import {Environment} from './app.loader.decl';
 import {
   CellDeserializerEx,
   CellsDeserializerEx,
@@ -85,7 +85,8 @@ export class StarterEx implements Starter {
   }
 
   public init(): void {
-    LoggerEx.cLevel = window.MODE === 'dev' ? Level.TRACE : Level.WARN;
+    LoggerEx.cLevel =
+      Environment.MODE === 'development' ? Level.TRACE : Level.WARN;
 
     i.langFinder.cSupported = [
       new LangTagEx('pl', 'pl'),
@@ -132,7 +133,7 @@ export class WsEx implements Ws {
   public init(): void {
     const protocol: string = location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl =
-      window.BACKEND || protocol + '//' + window.location.host + '/ws';
+      Environment.BACKEND || protocol + '//' + window.location.host + '/ws';
     this._ws = new WebSocket(wsUrl);
     this._ws.onopen = (ev: Event) => this._onEvent.onOpen(ev);
     this._ws.onmessage = (ev: MessageEvent) => this._onEvent.onMessage(ev);
