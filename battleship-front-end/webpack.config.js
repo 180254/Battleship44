@@ -38,40 +38,48 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.m?(ts|js)$/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: [
-              [
-                '@babel/preset-env',
-                {
-                  targets: webpack_config.browserslist,
-                  // Note: These optimizations will be enabled by default in Babel 8
-                  bugfixes: true,
-                  //A normal mode follows the semantics of ECMAScript 6 as closely as possible.
-                  //A loose mode produces simpler ES5 code.
-                  loose: true,
-                  // Outputs to console.log the polyfills and transform plugins enabled
-                  debug: true,
-                  // Adds specific imports for polyfills when they are used in each file.
-                  useBuiltIns: 'usage',
-                  corejs: {version: 3, proposals: false},
-                },
-              ],
-            ],
-            cacheDirectory: true,
+        test: /\.(ts|js)$/,
+        use: [
+          {
+            loader: 'cache-loader',
           },
-        },
-        exclude: [path.resolve(__dirname, './node_modules/core-js/')],
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                [
+                  '@babel/preset-env',
+                  {
+                    targets: webpack_config.browserslist,
+                    // Note: These optimizations will be enabled by default in Babel 8
+                    bugfixes: true,
+                    //A normal mode follows the semantics of ECMAScript 6 as closely as possible.
+                    //A loose mode produces simpler ES5 code.
+                    loose: true,
+                    // Outputs to console.log the polyfills and transform plugins enabled
+                    debug: true,
+                    // Adds specific imports for polyfills (core-js@3) when they are used in each file.
+                    useBuiltIns: 'usage',
+                    corejs: {version: 3},
+                  },
+                ],
+              ],
+              cacheDirectory: true,
+            },
+          },
+        ],
+        exclude: [
+          // Babels adds some core-js polyfills. Do not process that polyfills. It breaks app.
+          path.resolve(__dirname, './node_modules/core-js/'),
+        ],
       },
       {
-        test: /\.m?ts$/,
+        test: /\.ts$/,
         use: [{loader: 'ts-loader'}],
-        exclude: [],
+        exclude: [path.resolve(__dirname, './node_modules/')],
       },
       {
-        test: /\.m?(ts|js)$/,
+        test: /\.(ts|js)$/,
         use: [
           {
             loader: 'string-replace-loader',
@@ -88,7 +96,7 @@ module.exports = {
             },
           },
         ],
-        exclude: [],
+        exclude: [path.resolve(__dirname, './node_modules/')],
       },
     ],
   },
