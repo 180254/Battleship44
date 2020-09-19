@@ -1,8 +1,7 @@
-import {Random} from './random.decl';
-import {Supplier} from './types.decl';
+import {Supplier} from './functional-interfaces';
 
-export class RandomEx implements Random {
-  public cRandom: Supplier<number>;
+export class Random {
+  public random0to1: Supplier<number>;
 
   public constructor() {
     if (
@@ -10,52 +9,47 @@ export class RandomEx implements Random {
       window.crypto &&
       window.crypto.getRandomValues
     ) {
-      this.cRandom = () => {
+      this.random0to1 = () => {
+        // credits: friends @ stackoverflow
+        // url: https://stackoverflow.com/a/42321673
+        // license: cc by-sa 3.0
+        // license url: https://creativecommons.org/licenses/by-sa/3.0/
         const randomBytes: Uint32Array = new Uint32Array(1);
         window.crypto.getRandomValues(randomBytes);
-        return randomBytes[0] / 0xffffffff;
+        return randomBytes[0] / (0xffffffff + 1);
       };
     } else {
-      // tslint:disable:insecure-random // did my best to avoid it
-      this.cRandom = () => Math.random();
+      this.random0to1 = Math.random;
     }
   }
 
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
   // Any copyright is dedicated to the Public Domain. http://creativecommons.org/publicdomain/zero/1.0/
-
-  public num(): number {
-    // ensure that cRandom impl is compatible with Math.random interface
-    // result should be in range <0, 1); mainly to exclude possible inclusive 1
-    const min = 0;
-    const max: number = 1 - 1e-10;
-    return Math.max(Math.min(this.cRandom(), max), min);
-  }
-
   public numArbitrary(min: number, max: number): number {
-    return this.num() * (max - min) + min;
+    return this.random0to1() * (max - min) + min;
   }
 
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+  // Any copyright is dedicated to the Public Domain. http://creativecommons.org/publicdomain/zero/1.0/
   public int(min: number, max: number): number {
     min = Math.ceil(min);
     max = Math.floor(max);
-    return Math.floor(this.num() * (max - min)) + min;
+    return Math.floor(this.random0to1() * (max - min)) + min;
   }
 
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+  // Any copyright is dedicated to the Public Domain. http://creativecommons.org/publicdomain/zero/1.0/
   public intInclusive(min: number, max: number): number {
     min = Math.ceil(min);
     max = Math.floor(max);
-    return Math.floor(this.num() * (max - min + 1)) + min;
+    return Math.floor(this.random0to1() * (max - min + 1)) + min;
   }
-
-  // -----------------------------------------------------------------------------------------------------------
 
   // credits: friends @ stackoverflow
   // url: http://stackoverflow.com/a/10727155
   // license: cc by-sa 3.0
   // license url: https://creativecommons.org/licenses/by-sa/3.0/
   // changes: es6 used & adapted to this random class
-
   public str(length: number, chars: string): string {
     let mask = '';
     if (chars.includes('a')) {

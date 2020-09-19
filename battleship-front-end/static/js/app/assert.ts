@@ -1,6 +1,4 @@
-import {Assert} from './assert.decl';
-
-export class AssertEx implements Assert {
+export class Assert {
   public ok(condition: boolean, message?: string): void {
     if (!condition) {
       throw new Error('(ok) condition failed (message: {0})'.format(message));

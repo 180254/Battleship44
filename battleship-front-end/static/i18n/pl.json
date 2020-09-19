@@ -1,45 +1,29 @@
 {
-  "ws": {
-    "unable": "WebSocket: nie da rady rozpocząć.",
-    "close": "WebSocket: połączenie zakończone [{0},{1}].",
-    "error": "WebSocket: połączenie zakończone [{0}]."
-  },
-  "title": {
-    "standard": "Okręty44",
-    "shoot_me": "O44: Twój strzał …",
-    "shoot_opp": "O44: Teraz przeciwnik …"
-  },
-  "pre": {
-    "initializing": "Inicjowanie, proszę czekać …",
-    "hi": "Powitanie od serwera: {0}"
-  },
-  "put": {
-    "info": "Ustaw swoje statki na prawym polu. ",
-    "done": "zrobione?",
-    "fail": "Statki ustawione nieprawidłowo."
-  },
-  "tour": {
-    "awaiting": "Oczekiwanie na drugiego gracza …",
-    "one_player": "Jeden gracz w grze.",
-    "two_players": "Dwóch graczy w grze.",
-    "shoot_me": "Twój strzał …",
-    "shoot_opp": "Teraz przeciwnik …"
-  },
-  "end": {
-    "won_me": "Koniec gry. Ty wygrałeś. ",
-    "won_opp": "Koniec gry. Wygrał przeciwnik. ",
-    "opp_gone": "Twój przeciwnik sobie poszedł. ",
-    "next_game": "kolejna gra?"
-  },
-  "fail": {
-    "fail": "błąd: {0}"
-  },
-  "stats": {
-    "unknown": "nieznany",
-    "game_url": "gra/adres",
-    "game_players": "gra/graczy",
-    "game_ratio": "gra/wygrane",
-    "server_ships": "serwer/statki",
-    "server_players": "serwer/graczy"
-  }
+  "ws.unable": "WebSocket: nie da rady rozpocząć.",
+  "ws.close": "WebSocket: połączenie zakończone [{0},{1}].",
+  "ws.error": "WebSocket: połączenie zakończone [{0}].",
+  "title.standard": "Okręty44",
+  "title.shoot_me": "O44: Twój strzał …",
+  "title.shoot_opp": "O44: Teraz przeciwnik …",
+  "pre.initializing": "Inicjowanie, proszę czekać …",
+  "pre.hi": "Powitanie od serwera: {0}",
+  "put.info": "Ustaw swoje statki na prawym polu. ",
+  "put.done": "zrobione?",
+  "put.fail": "Statki ustawione nieprawidłowo.",
+  "tour.awaiting": "Oczekiwanie na drugiego gracza …",
+  "tour.one_player": "Jeden gracz w grze.",
+  "tour.two_players": "Dwóch graczy w grze.",
+  "tour.shoot_me": "Twój strzał …",
+  "tour.shoot_opp": "Teraz przeciwnik …",
+  "end.won_me": "Koniec gry. Ty wygrałeś. ",
+  "end.won_opp": "Koniec gry. Wygrał przeciwnik. ",
+  "end.opp_gone": "Twój przeciwnik sobie poszedł. ",
+  "end.next_game": "kolejna gra?",
+  "fail.fail": "błąd: {0}",
+  "end.unknown": "nieznany",
+  "end.game_url": "gra/adres",
+  "end.game_players": "gra/graczy",
+  "end.game_ratio": "gra/wygrane",
+  "end.server_ships": "serwer/statki",
+  "end.server_players": "serwer/graczy"
 }

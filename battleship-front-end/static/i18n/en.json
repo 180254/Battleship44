@@ -1,45 +1,29 @@
 {
-  "ws": {
-    "unable": "WebSocket: unable to initialize.",
-    "close": "WebSocket: connection closed [{0},{1}].",
-    "error": "WebSocket: connection closed [{0}]."
-  },
-  "title": {
-    "standard": "Battleship44",
-    "shoot_me": "B44: Your shoot …",
-    "shoot_opp": "B44: Opponent shoot …"
-  },
-  "pre": {
-    "initializing": "Initializing, please wait …",
-    "hi": "Welcome message: {0}"
-  },
-  "put": {
-    "info": "Put your ships on right grid. ",
-    "done": "done?",
-    "fail": "Verification failed. Check your ships."
-  },
-  "tour": {
-    "awaiting": "Awaiting second player …",
-    "one_player": "One player in game.",
-    "two_players": "Two players in game.",
-    "shoot_me": "Your shoot …",
-    "shoot_opp": "Opponent shoot …"
-  },
-  "end": {
-    "won_me": "The end. You won. ",
-    "won_opp": "The end. Opponent won. ",
-    "opp_gone": "Your opponent has gone. ",
-    "next_game": "next game?"
-  },
-  "fail": {
-    "fail": "error: {0}"
-  },
-  "stats": {
-    "unknown": "unknown",
-    "game_url": "game/url",
-    "game_players": "game/players",
-    "game_ratio": "game/winning ratio",
-    "server_ships": "server/ship sizes",
-    "server_players": "server/players"
-  }
+  "ws.unable": "WebSocket: unable to initialize.",
+  "ws.close": "WebSocket: connection closed [{0},{1}].",
+  "ws.error": "WebSocket: connection closed [{0}].",
+  "title.standard": "Battleship44",
+  "title.shoot_me": "B44: Your shoot …",
+  "title.shoot_opp": "B44: Opponent shoot …",
+  "pre.initializing": "Initializing, please wait …",
+  "pre.hi": "Welcome message: {0}",
+  "put.info": "Put your ships on right grid. ",
+  "put.done": "done?",
+  "put.fail": "Verification failed. Check your ships.",
+  "tour.awaiting": "Awaiting second player …",
+  "tour.one_player": "One player in game.",
+  "tour.two_players": "Two players in game.",
+  "tour.shoot_me": "Your shoot …",
+  "tour.shoot_opp": "Opponent shoot …",
+  "end.won_me": "The end. You won. ",
+  "end.won_opp": "The end. Opponent won. ",
+  "end.opp_gone": "Your opponent has gone. ",
+  "end.next_game": "next game?",
+  "fail.fail": "error: {0}",
+  "stats.unknown": "unknown",
+  "stats.game_url": "game/url",
+  "stats.game_players": "game/players",
+  "stats.game_ratio": "game/winning ratio",
+  "stats.server_ships": "server/ship sizes",
+  "stats.server_players": "server/players"
 }

@@ -2,7 +2,7 @@ export const strings = {
   flag: {
     id: '#flag',
     clazz: {
-      i: 'flag',
+      default: 'flag',
     },
   },
 
@@ -11,7 +11,7 @@ export const strings = {
     id_const: '#message-const',
 
     clazz: {
-      i: 'message',
+      default: 'message',
       fail: 'message-fail',
       important: 'message-important',
     },
@@ -28,7 +28,7 @@ export const strings = {
     id_shoot: '#grid-shoot',
 
     clazz: {
-      i: 'grid',
+      default: 'grid',
       inactive: 'grid-inactive',
     },
   },

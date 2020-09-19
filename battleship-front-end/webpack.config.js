@@ -12,7 +12,7 @@ const webpack_configs = {
     mode: 'development',
     backend: env_config.backend || 'ws://localhost:8080/ws',
     devtool: 'inline-source-map',
-    browserslist: ['last 2 Chrome versions', 'last 2 Firefox versions'],
+    browserslist: ['last 1 chrome versions', 'last 1 firefox versions'],
   },
   production: {
     mode: 'production',
@@ -23,9 +23,8 @@ const webpack_configs = {
 };
 
 function fix_mode(mode) {
-  if (['development', 'production'].includes(mode)) return mode;
-  if (mode === 'dev') return 'development';
-  if (mode === 'prod') return 'production';
+  if (['development', 'dev', 'd'].includes(mode)) return 'development';
+  if (['production', 'prod', 'p'].includes(mode)) return 'production';
   return 'development';
 }
 
@@ -38,7 +37,7 @@ module.exports = (env, argv) => {
     mode: webpack_config.mode,
     devtool: webpack_config.devtool,
     entry: {
-      app: './static/js/app/app.entrypoint.ts',
+      app: './static/js/app/app-entrypoint.ts',
     },
     output: {
       path: path.resolve(__dirname, 'static/js/dist/'),
