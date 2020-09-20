@@ -29,8 +29,8 @@ Supported `browsers`:
 
 ## **architecture**
 
-* back-end (`BE`) and front-end (`FE`) may be started separately 
-* or `FE` may be copied into `BE` and run together
+* back-end (`BE`) and front-end (`FE`) may running separately 
+* or `FE` can be copied into `BE` and run together
 
 ## **back-end**
 
@@ -41,7 +41,7 @@ Supported `browsers`:
 * install local (project) dependencies: (auto installed while compiling)
 * compile `BE` (`FE` not included): `mvn package`
 * compile `BE` with included `FE`: `mvn package -Pfe`
-* start: `java -jar -Dserver.port=<port> target/battleship44-0.0.1.jar <game server propertis>`
+* start `BE`: `java -jar -Dserver.port=<port> target/battleship44-0.0.1.jar <game server propertis>`
 * available `game server properties`:
   - --game.fleet-type.sizes=russian|classic_one|classic_two
   - --game.fleet-type.mode=straight|curved
@@ -57,58 +57,57 @@ Supported `browsers`:
 * default backend in `development` mode: `ws://localhost:8080/ws`
 * default backend in `production` mode: `protocol + '//' + window.location.host + '/ws`
 * compile `FE` with custom backend url: `BACKEND='ws://localhost:8080/ws' npx webpack --mode <mode>`
-* start `FE` in standalone mode: `npm start <server port>`
+* start `FE` in the standalone mode: `npm start <server port>`
 
 ## changelog 
-v1.0  
+v1.0 (released 2016-08-18)  
 + first version  
   
-v1.1  
+v1.1 (released 2016-08-22)  
 + front: general improvements and refactoring  
 + front: handle WinSocket onerror event  
 + front: info about number of players in current game  
 + front: info about current winning ratio  
-+ back/front: info about number of players on server (STAT)  
++ back/front: info about number of players on a server (STAT)  
 + back: add on error controller  
 + back: possible to customize WebSocket conf&policy by .properties file  
   
-v1.2  
+v1.2 (released 2016-08-31)  
 + front: general improvements and refactoring  
 + front: i18n: strings configurable by json files  
 + front: i18n: polish lang support  
-+ front: i18n: possible to change lang without page reload  
++ front: i18n: possible to change lang without reloading page  
 + front: pointer cursor on all flag, and cross-hair on shoot grid  
   
-v1.3  
+v1.3 (released 2016-10-05)   
 + front: re-written & refactored js to TypeScript2  
 + front: source now written with targeting es7, es5 also available (transcompiled)  
-+ front: js file is now minified  
-+ back: controller fix (commit/b23803f28d790c34e47c8b8d2cf753f07860c15d)
- 
-v1.4
-+ general: separated front-end/back-end codes, now they can be started separately
-+ front bug fix: WebSocket connenction on HTTPS didn't work
-+ front bug fix: URL to flags were incorrectly written (uppercase)
-+ back: application property may be now overridden by system property (-D) 
- 
-v1.4.1
-+ front: updated dependencies
-+ front: development/build process refactored & simplified
-+ front: refactored code to meet [gts](https://github.com/google/gts) rules
-+ back: updated dependencies
-+ back: code updated to java 11
++ front: minified js file  
++ back: controller fix (commit/b23803f28d790c34e47c8b8d2cf753f07860c15d)  
+  
+v1.4 (released 2017-05-10)  
++ general: separated front-end/back-end codes, now they can be started separately  
++ front bug fix: WebSocket connection on HTTPS didn't work  
++ front bug fix: URL to flags were incorrect (uppercase)  
+  
+v1.4.1 (unreleaded)  
++ front: updated dependencies  
++ front: development/build process refactored & simplified  
++ front: refactored code to meet [gts](https://github.com/google/gts) rules  
++ back: updated dependencies  
++ back: code updated to java 11  
   
 vX.Y (planned)  
-- "availability broadcasting" - look for a waiting player
-- back/front: dynamic info from server about fleet sizes (was hardcoded in html file)  
-- back/front: info which ship sizes are already shot & which are still to shoot down  
-- back/front: mini chat in game, between players  
+- "availability broadcasting" - look for a waiting player  
+- back/front: dynamic info from a server about fleet sizes (was hardcoded in html file)  
+- back/front: info which ship sizes has been already shot & which are still to shoot down  
+- back/front: a mini chat in game, between players  
 - back/front: fleet-type is now game-level, not server-level  
 - back/front: grid-size is now game-level, not server-level  
 - back/front: able to set custom (game-level) fleet-type (sizes) & grid-size  
-
+  
 ## protocol
-
+  
 → `TO__ SERVER`  
 ← `FROM SERVER`  
   
@@ -159,4 +158,4 @@ vX.Y (planned)
   
 * protocol  
 * code  
-* comments
+* comments  
