@@ -277,7 +277,7 @@ export class OnWsMessage {
             this.process(new WsMessage('', 'GAME OK', ''))
           );
 
-          this.uiTitle.setFixedTitle(i18nKey('title.standard'));
+          this.uiTitle.setFixedDefaultTitle();
         },
       ],
 

@@ -58,11 +58,11 @@ export class OnWsEvent {
     this.url = url;
     this.onWsMessage = onWsMessage;
 
-    this.ws.getWs().onopen = (ev: Event) => this.onOpen(ev);
-    this.ws.getWs().onmessage = (ev: MessageEvent) => this.onMessage(ev);
-    this.ws.getWs().onclose = (ev: CloseEvent) => this.onClose(ev);
-    this.ws.getWs().onerror = (ev: Event) => this.onError(ev);
-    this.ws.getWs().onsend = (ev: string) => this.onSend(ev);
+    this.ws.addEventListener(['open', (ev: Event) => this.onOpen(ev)]);
+    this.ws.addEventListener(['message', (ev: MessageEvent) => this.onMessage(ev)]);
+    this.ws.addEventListener(['close', (ev: CloseEvent) => this.onClose(ev)]);
+    this.ws.addEventListener(['error', (ev: Event) => this.onError(ev)]);
+    this.ws.addEventListener(['send', (ev: MessageEvent) => this.onSend(ev)]);
   }
 
   public onOpen(ev: Event): void {
@@ -98,7 +98,7 @@ export class OnWsEvent {
     this.gridSelection.deactivate();
   }
 
-  public onSend(ev: string): void {
-    this.logger.debug('send={0}', ev);
+  public onSend(ev: MessageEvent): void {
+    this.logger.debug('send={0}', ev.data);
   }
 }
