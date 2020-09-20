@@ -1,5 +1,3 @@
-/* eslint-disable node/no-unpublished-require */
-
 const path = require('path');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 
