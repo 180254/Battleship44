@@ -24,7 +24,7 @@ Supported `langs`:
 
 Supported `browsers`:  
 
-* debug mode: last Chrome version, last Firefox version
+* development mode: last Chrome version, last Firefox version
 * production mode: any <sub>modern</sub> browser
 
 ## **architecture**
@@ -41,7 +41,7 @@ Supported `browsers`:
 * install local (project) dependencies: (auto installed while compiling)
 * compile `BE` (`FE` not included): `mvn package`
 * compile `BE` with included `FE`: `mvn package -Pfe`
-* start: `java -jar -Dserver.port=<port> target/battleship44-0.0.1.jar <game server propertis>`, eg. `java -jar -Dserver.port=8080 target/battleship44-0.0.1.jar`
+* start: `java -jar -Dserver.port=<port> target/battleship44-0.0.1.jar <game server propertis>`
 * available `game server properties`:
   - --game.fleet-type.sizes=russian|classic_one|classic_two
   - --game.fleet-type.mode=straight|curved
@@ -57,7 +57,7 @@ Supported `browsers`:
 * default backend in `development` mode: `ws://localhost:8080/ws`
 * default backend in `production` mode: `protocol + '//' + window.location.host + '/ws`
 * compile `FE` with custom backend url: `BACKEND='ws://localhost:8080/ws' npx webpack --mode <mode>`
-* start `FE` in standalone mode: `npm start <port>`, eg. `npm start 8090`
+* start `FE` in standalone mode: `npm start <server port>`
 
 ## changelog 
 v1.0  
