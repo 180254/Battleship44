@@ -41,10 +41,11 @@ Supported `browsers`:
 * install local (project) dependencies: (auto installed while compiling)
 * compile (`FE` not included): `mvn package`
 * compile with included `FE`: `mvn package -Pfe`
-* start: `java -jar -Dserver.port=<port> target/battleship44-0.0.1.jar <game server propertis>`
+* start: `java -jar target/battleship44-0.0.1.jar <game server properties>`
 * available `game server properties`:
-  - --game.fleet-type.sizes=russian|classic_one|classic_two
-  - --game.fleet-type.mode=straight|curved
+  - `--server.port=<port>`
+  - `--game.fleet-type.sizes=<size>` (`russian`, `classic_one`, `classic_two`)
+  - `--game.fleet-type.mode=<mode>` (`straight`, `curved`)
 
 ## **front-end**
 
