@@ -1,8 +1,10 @@
+/* eslint-disable node/no-unpublished-require */
+
 const path = require('path');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 
 const env_config = {
-  mode: process.env.MODE || 'dev',
+  mode: process.env.MODE || '',
   backend: process.env.BACKEND || '',
 };
 const webpack_configs = {
@@ -23,11 +25,11 @@ const webpack_configs = {
 function fix_mode(mode) {
   if (['development', 'dev', 'd'].includes(mode)) return 'development';
   if (['production', 'prod', 'p'].includes(mode)) return 'production';
-  return 'development';
+  return 'production';
 }
 
 module.exports = (env, argv) => {
-  const webpack_mode = fix_mode(argv.mode || env_config.mode);
+  const webpack_mode = fix_mode(env_config.mode || argv.mode);
   const webpack_config = webpack_configs[webpack_mode];
 
   return {
