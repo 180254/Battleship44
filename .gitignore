@@ -2,7 +2,6 @@
 *.iml
 target/
 dist/
-package-lock.json
 node_modules/
 node_bower/
 node_types/

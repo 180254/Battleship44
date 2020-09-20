@@ -33,11 +33,11 @@
     "clean-webpack-plugin": "3.0.0",
     "core-js": "3.6.5",
     "eslint": "7.9.0",
-    "gts": "2.0.2",
+    "gts": "git+https://github.com/google/gts.git#54148dfbd8b5f8b36a0f44f901c5db933393a661",
     "mocha": "8.1.3",
     "string-replace-loader": "2.3.0",
     "ts-loader": "8.0.4",
-    "typescript": "3.9.7",
+    "typescript": "4.0.3",
     "webpack": "5.0.0-beta.32",
     "webpack-cli": "3.3.12",
     "webpack-merge": "5.1.4"
