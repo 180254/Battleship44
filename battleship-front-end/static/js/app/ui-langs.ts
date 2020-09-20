@@ -1,5 +1,6 @@
 import {Logger, LoggerFactory} from './logger';
 import * as Cookies from 'js-cookie';
+import {ServerLanguages} from "./ui-serverlangs";
 
 declare global {
   // extend navigator: add not standard lang tags
@@ -51,11 +52,6 @@ export class LangTagComparer {
   }
 }
 
-export const ServerSupportedLangs: LangTag[] = [
-  LangTag.FromString('pl-pl'),
-  LangTag.FromString('en-us'),
-];
-
 export class LangFinder {
   private readonly logger: Logger = LoggerFactory.getLogger(LangFinder);
   private readonly langTagCookieName = 'i18n-lang-tag';
@@ -80,8 +76,9 @@ export class LangFinder {
   }
 
   public server(): LangTag[] {
-    this.logger.trace('result={0}', ServerSupportedLangs);
-    return ServerSupportedLangs;
+    const serverLangTags: LangTag[] = ServerLanguages.map(val => LangTag.FromString(val));
+    this.logger.trace('result={0}', serverLangTags);
+    return serverLangTags;
   }
 }
 

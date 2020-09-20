@@ -9,7 +9,7 @@ const webpack_configs = {
   development: {
     mode: 'development',
     backend: env_config.backend || 'ws://localhost:8080/ws',
-    devtool: 'inline-source-map',
+    devtool: 'source-map',
     browserslist: ['last 1 chrome versions', 'last 1 firefox versions'],
   },
   production: {

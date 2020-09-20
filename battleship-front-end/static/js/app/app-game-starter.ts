@@ -7,6 +7,7 @@ import {UiFlags} from './ui-flags';
 import {Grids} from './game-grid';
 import {UiMessage} from './ui-message';
 import {Url} from './url';
+import {LangTag} from "./ui-langs";
 
 export class GameStarter {
   private readonly logger: Logger = LoggerFactory.getLogger(GameStarter);
@@ -43,10 +44,12 @@ export class GameStarter {
     Logger.LEVEL = debug ? Level.TRACE : Level.WARN;
 
     this.translator.init(
-      () => {
-        this.logger.error('translator.init error');
+      (err: unknown) => {
+        this.logger.error('translator.init error, reason: [{0}]', err);
       },
-      () => {
+      (langTag: LangTag) => {
+        this.logger.debug('translator.init success, lang={0}', langTag);
+
         this.uiTitle.setFixedDefaultTitle();
         this.uiFlags.initFlags();
         this.grids.init();

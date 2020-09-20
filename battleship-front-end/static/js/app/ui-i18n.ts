@@ -1,5 +1,5 @@
 import {PublisherSubscriber} from './publisher-subscriber';
-import {Runnable} from './functional-interfaces';
+import {Consumer} from './functional-interfaces';
 import {LangSelector, LangSetter, LangTag} from './ui-langs';
 
 export class I18nKey {
@@ -25,7 +25,7 @@ export class Translator {
 
   private readonly dataAttrPath = 'data-i18n-path';
   private readonly dataAttrParams = 'data-i18n-params';
-  private translatedStrings!: {[key: string]: string};
+  private translatedStrings!: { [key: string]: string };
   private readonly langSelector: LangSelector;
   private readonly langSetter: LangSetter;
 
@@ -90,23 +90,30 @@ export class Translator {
     this.translatableElements().each((i, element) => this.translateElement($(element)));
   }
 
-  public init(onError?: Runnable, callback?: Runnable): void {
+  public init(onError?: Consumer<unknown>, callback?: Consumer<LangTag>): void {
     const langTag: LangTag = this.langSelector.autoSelect()[0];
     const jsonPath: string = Translator.fileWithTranslations(langTag);
 
-    $.get(jsonPath, data => {
-      this.translatedStrings = data;
-      this.translateAllElements();
+    fetch(jsonPath)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('network request failed: {0} {1}'.format(response.status, response.statusText));
+        }
+        return response.json()
+      })
+      .then(data => {
+        this.translatedStrings = data;
+        this.translateAllElements();
+        this.onLangChange.publish(0);
 
-      this.onLangChange.publish(0);
-
-      if (callback) {
-        callback();
-      }
-    }).fail(() => {
-      if (onError) {
-        onError();
-      }
-    });
+        if (callback) {
+          callback(langTag);
+        }
+      })
+      .catch((err) => {
+        if (onError) {
+          onError(err);
+        }
+      });
   }
 }

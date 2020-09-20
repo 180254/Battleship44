@@ -63,7 +63,7 @@ export class Caller {
 }
 
 export class Logger {
-  public static LEVEL: Level = Level.TRACE;
+  public static LEVEL: Level = Level.WARN;
   public static STDOUT: Consumer<string> = console.log;
   private static loggerCaller: Caller = new Caller();
 
