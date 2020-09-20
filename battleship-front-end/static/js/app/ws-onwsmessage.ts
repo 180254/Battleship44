@@ -13,41 +13,57 @@ import {UiTitle} from './ui-title';
 import {GridSerializer} from './game-grid-serializer';
 
 export class OnWsMessage {
-  private readonly _logger: Logger = new Logger(OnWsMessage);
+  private readonly logger: Logger = new Logger(OnWsMessage);
 
-  private _ws!: Ws;
-  private readonly funcs: Map<string, Consumer<string>>;
-  private readonly uiMessage: UiMessage;
+  private funcs!: Map<string, Consumer<string>>;
+
+  private readonly ws: Ws;
+  private readonly document2Event: Document2Event;
+  private readonly gridSelection: GridSelection;
+  private readonly gridSerializer: GridSerializer;
   private readonly grids: Grids;
   private readonly translator: Translator;
-  private readonly gridSelection: GridSelection;
-  private readonly documentEvent: Document2Event;
-  private readonly uiTitle: UiTitle;
-  private readonly gridSerializer: GridSerializer;
+  private readonly uiMessage: UiMessage;
   private readonly uiMessageTimeout: UiMessageTimeout;
+  private readonly uiTitle: UiTitle;
   private readonly url: Url;
 
   public constructor(
-    uiMessage: UiMessage,
+    ws: Ws,
+    document2Event: Document2Event,
+    gridSelection: GridSelection,
+    gridSerializer: GridSerializer,
     grids: Grids,
     translator: Translator,
-    gridSelection: GridSelection,
-    documentEvent: Document2Event,
-    uiTitle: UiTitle,
-    gridSerializer: GridSerializer,
+    uiMessage: UiMessage,
     uiMessageTimeout: UiMessageTimeout,
+    uiTitle: UiTitle,
     url: Url
   ) {
-    this.uiMessage = uiMessage;
+    this.ws = ws;
+    this.document2Event = document2Event;
+    this.gridSelection = gridSelection;
+    this.gridSerializer = gridSerializer;
     this.grids = grids;
     this.translator = translator;
-    this.gridSelection = gridSelection;
-    this.documentEvent = documentEvent;
-    this.uiTitle = uiTitle;
-    this.gridSerializer = gridSerializer;
+    this.uiMessage = uiMessage;
     this.uiMessageTimeout = uiMessageTimeout;
+    this.uiTitle = uiTitle;
     this.url = url;
+    this.initFunc();
+  }
 
+  public process(msg: WsMessage): void {
+    const callback: Consumer<string> | undefined = this.funcs.get(msg.command);
+
+    if (callback !== undefined) {
+      callback(msg.payload);
+    } else {
+      this.logger.error('unknown={0}', msg);
+    }
+  }
+
+  private initFunc(): void {
     this.funcs = new Map<string, Consumer<string>>([
       [
         'HI_.',
@@ -64,7 +80,7 @@ export class OnWsMessage {
           } else if (payload.startsWith('FAIL')) {
             this.process(WsMessage.Sub('GAME', payload, 'FAIL'));
           } else {
-            this._logger.error('unknown_func={0},{1}', 'GAME', payload);
+            this.logger.error('unknown_func={0},{1}', 'GAME', payload);
           }
         },
       ],
@@ -99,7 +115,7 @@ export class OnWsMessage {
 
           this.gridSelection.activate();
           $(htmlStrings.message.ok.id_ship_selection).on('click', () =>
-            this._ws.send('GRID {0}'.format(this.gridSelection.collect()))
+            this.ws.send('GRID {0}'.format(this.gridSelection.collect()))
           );
         },
       ],
@@ -119,7 +135,7 @@ export class OnWsMessage {
           } else if (payload.startsWith('FAIL')) {
             this.process(WsMessage.Sub('GRID', payload, 'FAIL'));
           } else {
-            this._logger.error('unknown_func={0},{1}', 'GRID', payload);
+            this.logger.error('unknown_func={0},{1}', 'GRID', payload);
           }
         },
       ],
@@ -158,7 +174,7 @@ export class OnWsMessage {
           } else if (payload.startsWith('HE')) {
             this.process(WsMessage.Sub('TOUR', payload, 'HE'));
           } else {
-            this._logger.error('unknown_func={0},{1}', 'TOUR', payload);
+            this.logger.error('unknown_func={0},{1}', 'TOUR', payload);
           }
         },
       ],
@@ -181,10 +197,10 @@ export class OnWsMessage {
           const $cells: JQuery = this.grids.$shootCells;
 
           $cells.addClass(htmlStrings.cell.clazz.shootable);
-          this.documentEvent.onetime($cells, 'click', $td => {
+          this.document2Event.onetime($cells, 'click', $td => {
             const pos: string = this.gridSerializer.cellSerializer(Cell.FromElement($td));
 
-            this._ws.send('SHOT {0}'.format(pos));
+            this.ws.send('SHOT {0}'.format(pos));
           });
         },
       ],
@@ -257,7 +273,7 @@ export class OnWsMessage {
             i18nKey('end.next_game'),
             htmlStrings.message.ok.id_game_next
           );
-          this.documentEvent.onetime($(htmlStrings.message.ok.id_game_next), 'click', () =>
+          this.document2Event.onetime($(htmlStrings.message.ok.id_game_next), 'click', () =>
             this.process(new WsMessage('', 'GAME OK', ''))
           );
 
@@ -291,7 +307,7 @@ export class OnWsMessage {
             this.uiTitle.setFixedDefaultTitle();
           }
 
-          this.documentEvent.onetime($(htmlStrings.message.ok.id_game_next), 'click', () =>
+          this.document2Event.onetime($(htmlStrings.message.ok.id_game_next), 'click', () =>
             this.process(new WsMessage('', 'GAME OK', ''))
           );
         },
@@ -337,25 +353,9 @@ export class OnWsMessage {
         payload => {
           this.uiMessage.setFixed(i18nKey('fail.fail', payload));
 
-          this._logger.error('400_={0}', payload);
+          this.logger.error('400_={0}', payload);
         },
       ],
     ]);
-
-    // -------------------------------------------------------------------------------
-  }
-
-  public setWs(ws: Ws): void {
-    this._ws = ws;
-  }
-
-  public process(msg: WsMessage): void {
-    const callback: Consumer<string> | undefined = this.funcs.get(msg.command);
-
-    if (callback !== undefined) {
-      callback(msg.payload);
-    } else {
-      this._logger.error('unknown={0}', msg);
-    }
   }
 }

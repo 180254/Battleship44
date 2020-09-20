@@ -26,7 +26,7 @@ export class WsMessage {
   }
 
   public toString(): string {
-    return 'MessageEx[raw={0} command={1} payload={2}]'.format(
+    return 'WsMessage[raw={0} command={1} payload={2}]'.format(
       this.raw,
       this.command,
       this.payload

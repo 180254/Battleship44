@@ -6,34 +6,41 @@ import {UiTitle} from './ui-title';
 import {UiFlags} from './ui-flags';
 import {Grids} from './game-grid';
 import {UiMessage} from './ui-message';
+import {Url} from './url';
 
-export class Starter {
-  private readonly logger: Logger = LoggerFactory.getLogger(Starter);
+export class GameStarter {
+  private readonly logger: Logger = LoggerFactory.getLogger(GameStarter);
+
   private readonly ws: Ws;
-  private readonly translator: Translator;
-  private readonly uiTitle: UiTitle;
-  private readonly uiFlags: UiFlags;
   private readonly grids: Grids;
+  private readonly translator: Translator;
+  private readonly uiFlags: UiFlags;
   private readonly uiMessage: UiMessage;
+  private readonly uiTitle: UiTitle;
+  private readonly url: Url;
 
   public constructor(
     ws: Ws,
-    translator: Translator,
-    uiTitle: UiTitle,
-    uiFlags: UiFlags,
     grids: Grids,
-    uiMessage: UiMessage
+    translator: Translator,
+    uiFlags: UiFlags,
+    uiMessage: UiMessage,
+    uiTitle: UiTitle,
+    url: Url
   ) {
     this.ws = ws;
-    this.translator = translator;
-    this.uiTitle = uiTitle;
-    this.uiFlags = uiFlags;
     this.grids = grids;
+    this.translator = translator;
+    this.uiFlags = uiFlags;
     this.uiMessage = uiMessage;
+    this.uiTitle = uiTitle;
+    this.url = url;
   }
 
   public init(): void {
-    Logger.LEVEL = Environment.MODE === 'development' ? Level.TRACE : Level.WARN;
+    const param = this.url.getParam('d');
+    const debug = Environment.MODE === 'development' || param?.value === '1';
+    Logger.LEVEL = debug ? Level.TRACE : Level.WARN;
 
     this.translator.init(
       () => {

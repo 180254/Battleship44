@@ -38,8 +38,8 @@ export const htmlStrings = {
       unknown: 'cell-unknown',
       empty: 'cell-empty',
       ship: 'cell-ship',
-      opp_shoot: 'cell-opp-shoot',
-      shootable: 'cell-shoot-able',
+      opp_shoot: 'cell-oppshoot',
+      shootable: 'cell-shootable',
     },
   },
 

@@ -11,7 +11,7 @@ import {Assert} from './assert';
 import {Random} from './random';
 import {OnWsMessage} from './ws-onwsmessage';
 import {OnWsEvent} from './ws-onwsevent';
-import {Starter} from './ws-starter';
+import {GameStarter} from './app-game-starter';
 import {Ws} from './ws-ws';
 
 declare global {
@@ -21,62 +21,59 @@ declare global {
   }
 }
 
-class Context {
-  public assert: Assert = new Assert();
-  public random: Random = new Random();
-  public documentEvent: Document2Event = new Document2Event(this.random);
-  public url: Url = new Url();
-  public grids: Grids = new Grids();
-  public selection: GridSelection = new GridSelection(this.grids);
-  public langTagComparer: LangTagComparer = new LangTagComparer();
-  public langFinder: LangFinder = new LangFinder();
-  public langSelector: LangSelector = new LangSelector(this.langFinder, this.langTagComparer);
-  public langSetter: LangSetter = new LangSetter();
-  public translator: Translator = new Translator(this.langSelector, this.langSetter);
-  public timeout: UiMessageTimeout = new UiMessageTimeout();
-  public uiMessage: UiMessage = new UiMessage(this.random, this.translator);
-  public uiTitle: UiTitle = new UiTitle(this.translator);
-  public uiFlags: UiFlags = new UiFlags(this.translator);
-  public gridSerializer: GridSerializer = new GridSerializer();
-  public gridSelection: GridSelection = new GridSelection(this.grids);
-  public documentEvents: Document2Event = new Document2Event(this.random);
+class Game {
+  private readonly assert: Assert = new Assert();
+  private readonly random: Random = new Random();
+  private readonly document2Event: Document2Event = new Document2Event(this.random);
+  private readonly grids: Grids = new Grids();
+  private readonly gridSelection: GridSelection = new GridSelection(this.grids);
+  private readonly gridSerializer: GridSerializer = new GridSerializer();
+  private readonly langTagComparer: LangTagComparer = new LangTagComparer();
+  private readonly langFinder: LangFinder = new LangFinder();
+  private readonly langSelector: LangSelector = new LangSelector(
+    this.langTagComparer,
+    this.langFinder
+  );
+  private readonly langSetter: LangSetter = new LangSetter();
+  private readonly translator: Translator = new Translator(this.langSelector, this.langSetter);
+  private readonly uiFlags: UiFlags = new UiFlags(this.translator);
+  private readonly uiMessage: UiMessage = new UiMessage(this.random, this.translator);
+  private readonly uiMessageTimeout: UiMessageTimeout = new UiMessageTimeout();
+  private readonly uiTitle: UiTitle = new UiTitle(this.translator);
+  private readonly url: Url = new Url();
+
+  private readonly ws: Ws = new Ws();
+
+  private readonly onWsMessage: OnWsMessage = new OnWsMessage(
+    this.ws,
+    this.document2Event,
+    this.gridSelection,
+    this.gridSerializer,
+    this.grids,
+    this.translator,
+    this.uiMessage,
+    this.uiMessageTimeout,
+    this.uiTitle,
+    this.url
+  );
+  private onWsEvent: OnWsEvent = new OnWsEvent(
+    this.ws,
+    this.gridSelection,
+    this.onWsMessage,
+    this.uiMessage,
+    this.uiTitle,
+    this.url
+  );
+
+  public starter: GameStarter = new GameStarter(
+    this.ws,
+    this.grids,
+    this.translator,
+    this.uiFlags,
+    this.uiMessage,
+    this.uiTitle,
+    this.url
+  );
 }
 
-const context: Context = new Context();
-
-class SingletonGame {
-  private _onMessage: OnWsMessage = new OnWsMessage(
-    context.uiMessage,
-    context.grids,
-    context.translator,
-    context.gridSelection,
-    context.documentEvents,
-    context.uiTitle,
-    context.gridSerializer,
-    context.timeout,
-    context.url
-  );
-  private _onEvent: OnWsEvent = new OnWsEvent(
-    this._onMessage,
-    context.uiMessage,
-    context.uiTitle,
-    context.gridSelection,
-    context.url
-  );
-  private _ws: Ws = new Ws(this._onEvent);
-  public starter: Starter = new Starter(
-    this._ws,
-    context.translator,
-    context.uiTitle,
-    context.uiFlags,
-    context.grids,
-    context.uiMessage
-  );
-
-  public constructor() {
-    this._onMessage.setWs(this._ws);
-    this._onEvent.setWs(this._ws);
-  }
-}
-
-export const iGame: SingletonGame = new SingletonGame();
+export const iGame: Game = new Game();

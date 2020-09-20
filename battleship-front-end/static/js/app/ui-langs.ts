@@ -35,7 +35,7 @@ export class LangTag {
       result += '-' + this.region;
     }
 
-    return 'LangTag[{0}]'.format(result);
+    return result;
   }
 }
 
@@ -93,12 +93,12 @@ export enum LangTagSelectType {
 
 export class LangSelector {
   private readonly logger: Logger = LoggerFactory.getLogger(LangSelector);
-  private readonly langFinder: LangFinder;
   private readonly landTagComparer: LangTagComparer;
+  private readonly langFinder: LangFinder;
 
-  public constructor(finder: LangFinder, langTagComparison: LangTagComparer) {
-    this.langFinder = finder;
+  public constructor(langTagComparison: LangTagComparer, finder: LangFinder) {
     this.landTagComparer = langTagComparison;
+    this.langFinder = finder;
   }
 
   public getLangFinder(): LangFinder {

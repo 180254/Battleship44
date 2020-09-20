@@ -22,6 +22,7 @@ export function i18nKey(path: string, params?: string[] | string): I18nKey {
 
 export class Translator {
   public readonly onLangChange = new PublisherSubscriber<number>();
+
   private readonly dataAttrPath = 'data-i18n-path';
   private readonly dataAttrParams = 'data-i18n-params';
   private translatedStrings!: {[key: string]: string};

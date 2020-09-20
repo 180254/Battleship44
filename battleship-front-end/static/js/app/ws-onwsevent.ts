@@ -13,55 +13,62 @@ export class OnWsEvent {
   private readonly logger: Logger = LoggerFactory.getLogger(OnWsEvent);
 
   // https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
+  // https://www.iana.org/assignments/websocket/websocket.xml#close-code-number
+  // https://searchfox.org/mozilla-central/source/__GENERATED__/dist/include/nsIWebSocketChannel.h#96
+  // https://chromium.googlesource.com/chromium/src/net/+/refs/heads/master/websockets/websocket_channel.cc#144
   private readonly closeReasons: Map<number, string> = new Map<number, string>([
-    [1000, 'CLOSE_NORMAL'],
-    [1001, 'CLOSE_GOING_AWAY'],
-    [1002, 'CLOSE_PROTOCOL_ERROR'],
-    [1003, 'CLOSE_UNSUPPORTED'],
-    [1005, 'CLOSE_NO_STATUS'],
-    [1004, '?'],
-    [1006, 'CLOSE_ABNORMAL'],
-    [1007, 'Unsupported Data'],
-    [1008, 'Policy Violation'],
-    [1009, 'CLOSE_TOO_LARGE'],
-    [1010, 'Missing Extension'],
-    [1011, 'Internal Error'],
-    [1012, 'Service Restart'],
-    [1013, 'Try Again Later'],
-    [1014, '?'],
-    [1015, 'TLS Handshake'],
+    [1000, 'NormalClosure'],
+    [1001, 'GoingAway'],
+    [1002, 'ProtocolError'],
+    [1003, 'UnsupportedData'],
+    [1004, 'SomethingWentWrong'],
+    [1005, 'NoStatusRcvd'],
+    [1006, 'AbnormalClosure'],
+    [1007, 'InvalidFramePayloadData'],
+    [1008, 'PolicyViolation'],
+    [1009, 'MessageTooBig'],
+    [1010, 'ExtensionMissing'],
+    [1011, 'InternalError'],
+    [1012, 'ServiceRestart'],
+    [1013, 'TryAgainLater'],
+    [1014, 'BadGateway'],
+    [1015, 'TlsFailed'],
   ]);
 
-  private _ws!: Ws;
+  private readonly ws: Ws;
 
+  private readonly gridSelection: GridSelection;
   private readonly onWsMessage: OnWsMessage;
   private readonly uiMessage: UiMessage;
   private readonly uiTitle: UiTitle;
-  private readonly gridSelection: GridSelection;
   private readonly url: Url;
 
   public constructor(
+    ws: Ws,
+    gridSelection: GridSelection,
     onWsMessage: OnWsMessage,
     uiMessage: UiMessage,
     uiTitle: UiTitle,
-    gridSelection: GridSelection,
     url: Url
   ) {
-    this.onWsMessage = onWsMessage;
+    this.ws = ws;
+    this.gridSelection = gridSelection;
     this.uiMessage = uiMessage;
     this.uiTitle = uiTitle;
-    this.gridSelection = gridSelection;
     this.url = url;
-  }
+    this.onWsMessage = onWsMessage;
 
-  public setWs(ws: Ws): void {
-    this._ws = ws;
+    this.ws.getWs().onopen = (ev: Event) => this.onOpen(ev);
+    this.ws.getWs().onmessage = (ev: MessageEvent) => this.onMessage(ev);
+    this.ws.getWs().onclose = (ev: CloseEvent) => this.onClose(ev);
+    this.ws.getWs().onerror = (ev: Event) => this.onError(ev);
+    this.ws.getWs().onsend = (ev: string) => this.onSend(ev);
   }
 
   public onOpen(ev: Event): void {
     this.logger.debug('url={0}', ev.target!.url);
     const id: string = this.url.getParam('id')?.value || 'NEW';
-    this._ws.send('GAME {0}'.format(id));
+    this.ws.send('GAME {0}'.format(id));
   }
 
   public onMessage(ev: MessageEvent): void {
@@ -69,12 +76,8 @@ export class OnWsEvent {
     this.onWsMessage.process(WsMessage.Ex(ev));
   }
 
-  public onSend(ev: string): void {
-    this.logger.debug('send={0}', ev);
-  }
-
   public onClose(ev: CloseEvent): void {
-    const reason: string = ev.reason || this.closeReasons.get(ev.code) || '?';
+    const reason: string = ev.reason || this.closeReasons.get(ev.code) || '';
     this.logger.debug('close={0}({1})', ev.code, reason);
 
     this.uiMessage.setFixed(
@@ -93,5 +96,9 @@ export class OnWsEvent {
     this.uiTitle.setFixedDefaultTitle();
 
     this.gridSelection.deactivate();
+  }
+
+  public onSend(ev: string): void {
+    this.logger.debug('send={0}', ev);
   }
 }

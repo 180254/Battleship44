@@ -4,7 +4,6 @@ import {htmlStrings} from './html-strings';
 
 export class UiFlags {
   private readonly logger: Logger = LoggerFactory.getLogger(UiFlags);
-  private readonly $flags: JQuery = $(htmlStrings.flag.id);
 
   private readonly translator: Translator;
 
@@ -31,7 +30,7 @@ export class UiFlags {
           );
         });
 
-        this.$flags.append($flag);
+        $(htmlStrings.flag.id).append($flag);
         this.logger.trace('init={0}', langTag);
       });
   }

@@ -1,4 +1,3 @@
-import {Supplier} from './functional-interfaces';
 import {htmlStrings} from './html-strings';
 import {Logger, LoggerFactory} from './logger';
 import {Random} from './random';
@@ -13,7 +12,6 @@ export class UiMessageTimeout {
 export class UiMessage {
   private readonly logger: Logger = LoggerFactory.getLogger(UiMessage);
 
-  private readonly $msgDiv: JQuery = $(htmlStrings.message.id);
   private readonly random: Random;
   private readonly translator: Translator;
 
@@ -40,12 +38,10 @@ export class UiMessage {
     });
 
     this.translator.translateElement($a, i18nKey);
-    $(this.$ConstDivSupplier()).append($a);
+    $(htmlStrings.message.id_const).append($a);
 
     this.logger.trace('{0},{1},{2}', i18nKey, id, clazz);
   }
-
-  private readonly $ConstDivSupplier: Supplier<JQuery> = () => $(htmlStrings.message.id_const);
 
   private set(i18nKey: I18nKey, timeout?: number, clazz?: string): void {
     const outerId: string = timeout
@@ -62,11 +58,11 @@ export class UiMessage {
     $outer.append($inner);
 
     if (timeout) {
-      this.$msgDiv.append($outer);
+      $(htmlStrings.message.id).append($outer);
       setTimeout(() => $(outerId).fadeOut('fast', () => $(outerId).remove()), timeout);
     } else {
-      $(this.$ConstDivSupplier()).remove();
-      this.$msgDiv.append($outer);
+      $(htmlStrings.message.id_const).remove();
+      $(htmlStrings.message.id).append($outer);
     }
   }
 }

@@ -120,7 +120,7 @@ main {
     background-color: #0b5c53;
 }
 
-.grid td.cell-opp-shoot::after {
+.grid td.cell-oppshoot::after {
     content: "*";
 
     font-family: Tahoma, Geneva, sans-serif;
@@ -128,7 +128,7 @@ main {
     color: red;
 }
 
-.cell-shoot-able {
+.cell-shootable {
     cursor: crosshair;
 }
 
