@@ -29,35 +29,35 @@ Supported `browsers`:
 
 ## **architecture**
 
-* back-end (`BE`) and front-end (`FE`) may running separately 
+* back-end (`BE`) and front-end (`FE`) may running both standalone
 * or `FE` can be copied into `BE` and run together
 
 ## **back-end**
 
-* it is `spring boot` application
 * `BE` is written in `Java 11`
-* `BE` uses `maven` as build automation tool & dependency manager
+* it is `spring boot` application
+* uses `maven` as build automation tool & dependency manager
 * required system-wide dependencies: [Java](http://www.oracle.com/technetwork/java/javase/overview/index.html) >= 11, [maven](https://maven.apache.org/) >= 3.3
 * install local (project) dependencies: (auto installed while compiling)
-* compile `BE` (`FE` not included): `mvn package`
-* compile `BE` with included `FE`: `mvn package -Pfe`
-* start `BE`: `java -jar -Dserver.port=<port> target/battleship44-0.0.1.jar <game server propertis>`
+* compile (`FE` not included): `mvn package`
+* compile with included `FE`: `mvn package -Pfe`
+* start: `java -jar -Dserver.port=<port> target/battleship44-0.0.1.jar <game server propertis>`
 * available `game server properties`:
   - --game.fleet-type.sizes=russian|classic_one|classic_two
   - --game.fleet-type.mode=straight|curved
 
 ## **front-end**
 
-* `FE` is written in `html5+TypeScript2`
-* `FE` uses `npm`, `webpack` as build automation tool & dependency manager
+* `FE` is written in `html5+TypeScript4`
+* uses `npm`, `webpack` as build automation tool & dependency manager
 * required system-wide dependencies: [nodejs](https://nodejs.org/en/) >=10.0.0
 * install local (project) dependencies: `npm install`
-* compile `FE` in `development` mode: `npx webpack --mode development`
-* compile `FE` in `production` mode: `npx webpack --mode production`
+* compile in `development` mode: `npx webpack --mode development`
+* compile in `production` mode: `npx webpack --mode production`
 * default backend in `development` mode: `ws://localhost:8080/ws`
 * default backend in `production` mode: `protocol + '//' + window.location.host + '/ws`
-* compile `FE` with custom backend url: `BACKEND='ws://localhost:8080/ws' npx webpack --mode <mode>`
-* start `FE` in the standalone mode: `npm start <server port>`
+* compile with a custom backend url: `BACKEND='ws://localhost:8080/ws' npx webpack --mode <mode>`
+* start in the standalone mode: `npm start <server port>`
 
 ## changelog 
 v1.0 (released 2016-08-18)  
