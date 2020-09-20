@@ -7,7 +7,7 @@ import {UiFlags} from './ui-flags';
 import {Grids} from './game-grid';
 import {UiMessage} from './ui-message';
 import {Url} from './url';
-import {LangTag} from "./ui-langs";
+import {LangTag} from './ui-langs';
 
 export class GameStarter {
   private readonly logger: Logger = LoggerFactory.getLogger(GameStarter);

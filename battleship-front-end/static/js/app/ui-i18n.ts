@@ -25,7 +25,7 @@ export class Translator {
 
   private readonly dataAttrPath = 'data-i18n-path';
   private readonly dataAttrParams = 'data-i18n-params';
-  private translatedStrings!: { [key: string]: string };
+  private translatedStrings!: {[key: string]: string};
   private readonly langSelector: LangSelector;
   private readonly langSetter: LangSetter;
 
@@ -97,9 +97,11 @@ export class Translator {
     fetch(jsonPath)
       .then(response => {
         if (!response.ok) {
-          throw new Error('network request failed: {0} {1}'.format(response.status, response.statusText));
+          throw new Error(
+            'network request failed: {0} {1}'.format(response.status, response.statusText)
+          );
         }
-        return response.json()
+        return response.json();
       })
       .then(data => {
         this.translatedStrings = data;
@@ -110,7 +112,7 @@ export class Translator {
           callback(langTag);
         }
       })
-      .catch((err) => {
+      .catch(err => {
         if (onError) {
           onError(err);
         }

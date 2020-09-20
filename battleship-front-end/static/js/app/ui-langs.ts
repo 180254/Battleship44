@@ -1,6 +1,6 @@
 import {Logger, LoggerFactory} from './logger';
 import * as Cookies from 'js-cookie';
-import {ServerLanguages} from "./ui-serverlangs";
+import {ServerLanguages} from './ui-serverlangs';
 
 declare global {
   // extend navigator: add not standard lang tags
