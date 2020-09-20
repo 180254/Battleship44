@@ -1,96 +1,63 @@
 # **Battleship44**
 
-Just <a href="https://en.wikipedia.org/wiki/Battleship_(game)">battleship</a> html5 `game`. Perhaps available <a href="https://battleship.nn44.pl/">online</a>.  
+Just <a href="https://en.wikipedia.org/wiki/Battleship_(game)">battleship</a> html5 `game`.  
 
 <img src="screenshots/0.png" alt="screenshot" width="700"/>
 
 ## features
 
-Supported (implemented) `fleet sizes`:
+Supported `fleet sizes`:
 
 * russian (4, 3, 3, 2, 2, 2, 1, 1, 1, 1)
 * classic one (5, 4, 3, 3, 2)
 * classic two (5, 4, 3, 2, 2, 1, 1)
 
-Supported (implemented) `fleet modes`:
+Supported `fleet modes`:
 
 * straight fleets
 * curved fleets
 
-Supported `langs` (translated strings):  
+Supported `langs`:  
 
 * english  
 * polish  
 
-Supported (?tested?) `browsers`:  
+Supported `browsers`:  
 
-* ES7 (default in debug mode): Chrome 53, Firefox 51
-* ES5 (default in production mode): any modern browser <sub>ie11 is not modern</sub>
+* debug mode: last Chrome version, last Firefox version
+* production mode: any <sub>modern</sub> browser
 
 ## **architecture**
 
-* back-end (`BE`) and front-end (`FE`) may be runned separately (two servers: `run.s`)  
-* or FE may be copied into BE and run together (one server: `run.t`)
-
-## **front-end**
-
-### info-general
-* FE is written in `html5+TypeScript2`
-* FE uses `npm`, `bower` as build automation tool & dependency manager
-
-### info-configuration
-* set the FE mode by changing DEBUG flag (static/js/app.loader.js)  
-* (`run.s`) set the BE address by changing API_WS_URL var (static/js/app.loader.js)
-* (`run.s`) set the FE default listening port by changing var (server.js)
-
-### compile-dependencies
-* [nodejs, npm](https://nodejs.org/en/) >=?, <=?
-
-### compile-steps
-* install all FE compile-dependencies
-* go to app main directory
-* execute `npm run install-update`
-* execute `npm run collect-compile`
-* execute `npm run convert-minify`
-
-### run-dependencies
-* (`run.s`) [nodejs, npm](https://nodejs.org/en/) >=?
-* (`run.t`) none
-
-### run-steps
-* (`run.s`) go to app main directory
-* (`run.s`) execute `npm start`
+* back-end (`BE`) and front-end (`FE`) may be started separately 
+* or `FE` may be copied into `BE` and run together
 
 ## **back-end**
 
-### info-general
 * it is `spring boot` application
-* BE is written in `Java 8`
-* BE uses `maven` as build automation tool & dependency manager
+* `BE` is written in `Java 11`
+* `BE` uses `maven` as build automation tool & dependency manager
+* required system-wide dependencies: [Java](http://www.oracle.com/technetwork/java/javase/overview/index.html) >= 11, [maven](https://maven.apache.org/) >= 3.3
+* install local (project) dependencies: (auto installed while compiling)
+* compile `BE` (`FE` not included): `mvn package`
+* compile `BE` with included `FE`: `mvn package -Pfe`
+* start: `java -jar -Dserver.port=<port> target/battleship44-0.0.1.jar <game server propertis>`, eg. `java -jar -Dserver.port=8080 target/battleship44-0.0.1.jar`
+* available `game server properties`:
+  - --game.fleet-type.sizes=russian|classic_one|classic_two
+  - --game.fleet-type.mode=straight|curved
 
-### info-configuration
-* set your favorite fleet sizes/mode in .properties (src/main/resources/application.properties)
-* set the BE default listening port in .properties (src/main/resources/application.properties)
+## **front-end**
 
-### compile-dependencies
-* [java development kit](http://www.oracle.com/technetwork/java/javase/overview/index.html) >=1.8
-* [maven](https://maven.apache.org/) >= 3.3 (wrapper is provided)
-
-### compile-steps
-* (`run.t`) compile FE first
-* generally steps are [as in any spring boot app](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#build-tool-plugins-maven-packaging)
-* install all BE compile-dependencies
-* go to app main directory
-* (`run.s`) run `mvn clean package`
-* (`run.t`) run `mvn clean package -Pfe`
-
-### run-dependencies
-* [java se runtime environment >=1.8](http://www.oracle.com/technetwork/java/javase/overview/index.html)
-
-### run-steps
-* go to app main directory
-* application properties ([spring boot](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#common-application-properties), [application.properties](/battleship-back-end/src/main/resources/application.properties)) may be overridden in a standard way (-D)
-* execute `java -jar -Dserver.port=80 target/battleship44-0.0.1.jar`
+* `FE` is written in `html5+TypeScript2`
+* `FE` uses `npm`, `webpack` as build automation tool & dependency manager
+* required system-wide dependencies: [nodejs](https://nodejs.org/en/) >=10.0.0
+* install local (project) dependencies: `npm install`
+* compile `FE` in `development` mode: `npx webpack --mode development`
+* compile `FE` in `production` mode: `npx webpack --mode production`
+* default backend in `development` mode: `ws://localhost:8080/ws`
+* default backend in `production` mode: `protocol + '//' + window.location.host + '/ws`
+* compile `FE` with custom backend url: `BACKEND='ws://localhost:8080/ws' npx webpack --mode <mode>`
+* start `FE` in standalone mode: `npm start <port>`, eg. `npm start 8090`
 
 ## changelog 
 v1.0  
@@ -119,12 +86,19 @@ v1.3
 + back: controller fix (commit/b23803f28d790c34e47c8b8d2cf753f07860c15d)
  
 v1.4
-+ general: separated front-end/back-end codes, now may be run separately
++ general: separated front-end/back-end codes, now they can be started separately
 + front bug fix: WebSocket connenction on HTTPS didn't work
 + front bug fix: URL to flags were incorrectly written (uppercase)
 + back: application property may be now overridden by system property (-D) 
  
-vX.Y  
+v1.4.1
++ front: updated dependencies
++ front: development/build process refactored & simplified
++ front: refactored code to meet [gts](https://github.com/google/gts) rules
++ back: updated dependencies
++ back: code updated to java 11
+  
+vX.Y (planned)  
 - "availability broadcasting" - look for a waiting player
 - back/front: dynamic info from server about fleet sizes (was hardcoded in html file)  
 - back/front: info which ship sizes are already shot & which are still to shoot down  
