@@ -66,7 +66,8 @@ module.exports = (env, argv) => {
                       loose: true,
                       // Outputs to console.log the polyfills and transform plugins enabled
                       debug: false,
-                      // Adds specific imports for polyfills (core-js@3) when they are used in each file.
+                      // Adds specific imports for polyfills (core-js@3),
+                      // when they are used in each file.
                       useBuiltIns: 'usage',
                       corejs: {version: 3},
                     },

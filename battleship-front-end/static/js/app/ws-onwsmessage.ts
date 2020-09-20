@@ -50,7 +50,6 @@ export class OnWsMessage {
     this.uiMessageTimeout = uiMessageTimeout;
     this.uiTitle = uiTitle;
     this.url = url;
-    this.initFunc();
   }
 
   public process(msg: WsMessage): void {
@@ -63,7 +62,7 @@ export class OnWsMessage {
     }
   }
 
-  private initFunc(): void {
+  public init(): void {
     this.funcs = new Map<string, Consumer<string>>([
       [
         'HI_.',

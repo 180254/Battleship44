@@ -7,6 +7,13 @@ export type WsEventListener =
   | ['error', (ev: Event) => void]
   | ['send', (ev: MessageEvent) => void];
 
+declare global {
+  // extend EventTarget; url is given in event on WebSocket open
+  interface EventTarget {
+    readonly url?: string;
+  }
+}
+
 export class Ws {
   private ws!: WebSocket;
   private readonly eventListeners: Array<WsEventListener> = new Array<WsEventListener>();

@@ -57,7 +57,9 @@ export class OnWsEvent {
     this.uiTitle = uiTitle;
     this.url = url;
     this.onWsMessage = onWsMessage;
+  }
 
+  public init(): void {
     this.ws.addEventListener(['open', (ev: Event) => this.onOpen(ev)]);
     this.ws.addEventListener(['message', (ev: MessageEvent) => this.onMessage(ev)]);
     this.ws.addEventListener(['close', (ev: CloseEvent) => this.onClose(ev)]);
