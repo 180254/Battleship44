@@ -14,8 +14,6 @@ export class UiMessage {
   private readonly logger: Logger = LoggerFactory.getLogger(UiMessage);
 
   private readonly $msgDiv: JQuery = $(htmlStrings.message.id);
-  private readonly $ConstDivSupplier: Supplier<JQuery> = () => $(htmlStrings.message.id_const);
-
   private readonly random: Random;
   private readonly translator: Translator;
 
@@ -46,6 +44,8 @@ export class UiMessage {
 
     this.logger.trace('{0},{1},{2}', i18nKey, id, clazz);
   }
+
+  private readonly $ConstDivSupplier: Supplier<JQuery> = () => $(htmlStrings.message.id_const);
 
   private set(i18nKey: I18nKey, timeout?: number, clazz?: string): void {
     const outerId: string = timeout

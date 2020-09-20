@@ -21,18 +21,24 @@ export function i18nKey(path: string, params?: string[] | string): I18nKey {
 }
 
 export class Translator {
+  public readonly onLangChange = new PublisherSubscriber<number>();
   private readonly dataAttrPath = 'data-i18n-path';
   private readonly dataAttrParams = 'data-i18n-params';
   private translatedStrings!: {[key: string]: string};
-
   private readonly langSelector: LangSelector;
   private readonly langSetter: LangSetter;
-
-  public readonly onLangChange = new PublisherSubscriber<number>();
 
   public constructor(langSelector: LangSelector, langSetter: LangSetter) {
     this.langSelector = langSelector;
     this.langSetter = langSetter;
+  }
+
+  private static fileWithTranslations(langTag: LangTag): string {
+    return 'i18n/{0}.json'.format(langTag.lang);
+  }
+
+  private static getDefaultTranslation(p: I18nKey): string {
+    return '!{0}[{1}]!'.format(p.path, p.params.join(','));
   }
 
   public getLangSelector(): LangSelector {
@@ -41,10 +47,6 @@ export class Translator {
 
   public getLangSetter(): LangSetter {
     return this.langSetter;
-  }
-
-  private static fileWithTranslations(langTag: LangTag): string {
-    return 'i18n/{0}.json'.format(langTag.lang);
   }
 
   public getTranslation(i18nKey: I18nKey): string {
@@ -57,10 +59,6 @@ export class Translator {
     return typeof text === 'string'
       ? text.format(...i18nKey.params)
       : Translator.getDefaultTranslation(i18nKey);
-  }
-
-  private static getDefaultTranslation(p: I18nKey): string {
-    return '!{0}[{1}]!'.format(p.path, p.params.join(','));
   }
 
   public translatableElements(): JQuery {

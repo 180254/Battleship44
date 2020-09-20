@@ -27,10 +27,6 @@ export class OnWsMessage {
   private readonly uiMessageTimeout: UiMessageTimeout;
   private readonly url: Url;
 
-  public setWs(ws: Ws): void {
-    this._ws = ws;
-  }
-
   public constructor(
     uiMessage: UiMessage,
     grids: Grids,
@@ -347,6 +343,10 @@ export class OnWsMessage {
     ]);
 
     // -------------------------------------------------------------------------------
+  }
+
+  public setWs(ws: Ws): void {
+    this._ws = ws;
   }
 
   public process(msg: WsMessage): void {

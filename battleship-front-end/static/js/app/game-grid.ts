@@ -34,6 +34,15 @@ export class Grids {
   public readonly $opponent: JQuery = $(htmlStrings.grid.id_opponent);
   public $opponentCells!: JQuery;
 
+  private static createCell(gridId: string, rowIndex: number, colIndex: number): JQuery {
+    return $('<td/>', {
+      ['class']: htmlStrings.cell.clazz.unknown,
+      ['data-grid-id']: gridId,
+      ['data-row-i']: rowIndex,
+      ['data-col-i']: colIndex,
+    });
+  }
+
   public init(): void {
     this.createGrid(this.$shoot.attr('id')!).appendTo(this.$shoot);
     this.createGrid(this.$opponent.attr('id')!).appendTo(this.$opponent);
@@ -77,15 +86,6 @@ export class Grids {
     }
 
     return $row;
-  }
-
-  private static createCell(gridId: string, rowIndex: number, colIndex: number): JQuery {
-    return $('<td/>', {
-      ['class']: htmlStrings.cell.clazz.unknown,
-      ['data-grid-id']: gridId,
-      ['data-row-i']: rowIndex,
-      ['data-col-i']: colIndex,
-    });
   }
 }
 
