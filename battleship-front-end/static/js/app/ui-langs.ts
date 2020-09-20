@@ -5,9 +5,9 @@ declare global {
   // extend navigator: add not standard lang tags
   // as browsers differently support reporting user lang
   // https://gist.github.com/ksol/62b489572944ca70b4ba
-  export interface Navigator {
+  export interface NavigatorLanguage {
     readonly language: string;
-    readonly languages: string[];
+    readonly languages: ReadonlyArray<string>;
     readonly userLanguage: string;
     readonly browserLanguage: string;
     readonly systemLanguage: string;
@@ -35,7 +35,7 @@ export class LangTag {
       result += '-' + this.region;
     }
 
-    return result;
+    return 'LangTag[{0}]'.format(result);
   }
 }
 
@@ -115,7 +115,7 @@ export class LangSelector {
 
     let resultLandTag: LangTag | undefined;
     let resultLandTag2: LangTag | undefined;
-    let resultSelectType: LangTagSelectType | undefined = undefined;
+    let resultSelectType: LangTagSelectType | undefined;
 
     for (const userLang of user) {
       // try exact tag, as from user data
@@ -175,17 +175,10 @@ export class LangSelector {
 
 export class LangSetter {
   private readonly logger: Logger = LoggerFactory.getLogger(LangSetter);
-  private readonly langSelector: LangSelector;
   private readonly langTagCookieName = 'i18n-lang-tag';
 
-  public constructor(langSelector: LangSelector) {
-    this.langSelector = langSelector;
-  }
-
   public setLang(langTag: LangTag): void {
-    this.logger.debug('result={0}', langTag);
-    Cookies.set(this.langTagCookieName, langTag.toString(), {
-      sameSite: 'Strict',
-    });
+    this.logger.trace('result={0}', langTag);
+    Cookies.set(this.langTagCookieName, langTag.toString(), {sameSite: 'Strict'});
   }
 }

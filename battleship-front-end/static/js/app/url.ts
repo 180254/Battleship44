@@ -1,29 +1,28 @@
-import './regexp-escape';
 import {Logger, LoggerFactory} from './logger';
+import './regexp-escape';
 
 export class Url {
-  private static readonly logger: Logger = LoggerFactory.getLogger(Url);
+  private readonly logger: Logger = LoggerFactory.getLogger(Url);
 
-  public static getParam(name: string): UrlParam | undefined {
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const value = urlSearchParams.get(name);
+  // window.location doc: https://developer.mozilla.org/en-US/docs/Web/API/Location
+
+  public getParam(name: string): UrlParam | null {
+    const urlSearchParams: URLSearchParams = new URLSearchParams(window.location.search);
+    const value: string | null = urlSearchParams.get(name);
     if (value === null) {
-      this.logger.trace('{0}={1}', name, value);
-      return undefined;
+      this.logger.debug('{0}={1}', name, value);
+      return null;
     }
-    this.logger.trace('{0}={1}', name, value);
+    this.logger.debug('{0}={1}', name, value);
     return new UrlParam(name, value);
   }
 
-  public static buildUrlWithParams(
-    ...params: (UrlParam | undefined)[]
-  ): string {
+  public buildUrlWithParams(...params: UrlParam[]): string {
     const locationSearch: string = params
-      .filter(p => p !== undefined)
       .map(p => {
-        const name: string = encodeURIComponent(p!.name);
-        const value: string = encodeURIComponent(p!.value);
-        return p!.value ? '{0}={1}'.format(name, value) : '{0}'.format(name);
+        const name: string = encodeURIComponent(p.name);
+        const value: string = encodeURIComponent(p.value);
+        return p.value ? '{0}={1}'.format(name, value) : '{0}'.format(name);
       })
       .join('&');
 
@@ -46,6 +45,6 @@ export class UrlParam {
   }
 
   public toString(): string {
-    return 'UrlParamEx[name={0} value={1}]'.format(this.name, this.value);
+    return 'UrlParam[{0}={1}]'.format(this.name, this.value);
   }
 }

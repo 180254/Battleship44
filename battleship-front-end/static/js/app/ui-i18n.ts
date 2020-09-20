@@ -12,10 +12,7 @@ export class I18nKey {
   }
 
   public toString(): string {
-    return 'TranslateKey[path={0} params={1}]'.format(
-      this.path,
-      this.params.join(',')
-    );
+    return 'I18nKey[{0},{1}]'.format(this.path, this.params.join(','));
   }
 }
 
@@ -24,11 +21,12 @@ export function i18nKey(path: string, params?: string[] | string): I18nKey {
 }
 
 export class Translator {
-  private readonly langSelector: LangSelector;
-  private readonly langSetter: LangSetter;
   private readonly dataAttrPath = 'data-i18n-path';
   private readonly dataAttrParams = 'data-i18n-params';
   private translatedStrings!: {[key: string]: string};
+
+  private readonly langSelector: LangSelector;
+  private readonly langSetter: LangSetter;
 
   public readonly onLangChange = new PublisherSubscriber<number>();
 
@@ -52,9 +50,7 @@ export class Translator {
   public getTranslation(i18nKey: I18nKey): string {
     let text: string | undefined;
 
-    if (
-      Object.prototype.hasOwnProperty.call(this.translatedStrings, i18nKey.path)
-    ) {
+    if (Object.prototype.hasOwnProperty.call(this.translatedStrings, i18nKey.path)) {
       text = this.translatedStrings[i18nKey.path];
     }
 
@@ -72,9 +68,7 @@ export class Translator {
   }
 
   public translateElement($element: JQuery, i18nKey?: I18nKey): void {
-    const path: string = i18nKey
-      ? i18nKey.path
-      : $element.attr(this.dataAttrPath)!;
+    const path: string = i18nKey ? i18nKey.path : $element.attr(this.dataAttrPath)!;
 
     const params: string[] = i18nKey
       ? i18nKey.params
@@ -94,9 +88,7 @@ export class Translator {
   }
 
   public translateAllElements(): void {
-    this.translatableElements().each((i, element) =>
-      this.translateElement($(element))
-    );
+    this.translatableElements().each((i, element) => this.translateElement($(element)));
   }
 
   public init(onError?: Runnable, callback?: Runnable): void {

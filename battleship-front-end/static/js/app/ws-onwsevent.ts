@@ -1,13 +1,13 @@
 import {Logger, LoggerFactory} from './logger';
 import {UiMessage} from './ui-message';
 import {i18nKey} from './ui-i18n';
-import {strings} from './html-strings';
+import {htmlStrings} from './html-strings';
 import {Ws} from './ws-ws';
 import {UiTitle} from './ui-title';
 import {GridSelection} from './game-grid';
 import {OnWsMessage} from './ws-onwsmessage';
 import {WsMessage} from './ws-wsmessage';
-import {Url} from "./url";
+import {Url} from './url';
 
 export class OnWsEvent {
   private readonly logger: Logger = LoggerFactory.getLogger(OnWsEvent);
@@ -38,17 +38,20 @@ export class OnWsEvent {
   private readonly uiMessage: UiMessage;
   private readonly uiTitle: UiTitle;
   private readonly gridSelection: GridSelection;
+  private readonly url: Url;
 
   public constructor(
     onWsMessage: OnWsMessage,
     uiMessage: UiMessage,
     uiTitle: UiTitle,
-    gridSelection: GridSelection
+    gridSelection: GridSelection,
+    url: Url
   ) {
     this.onWsMessage = onWsMessage;
     this.uiMessage = uiMessage;
     this.uiTitle = uiTitle;
     this.gridSelection = gridSelection;
+    this.url = url;
   }
 
   public setWs(ws: Ws): void {
@@ -57,7 +60,7 @@ export class OnWsEvent {
 
   public onOpen(ev: Event): void {
     this.logger.debug('url={0}', ev.target!.url);
-    const id: string = Url.getParam('id')?.value || 'NEW';
+    const id: string = this.url.getParam('id')?.value || 'NEW';
     this._ws.send('GAME {0}'.format(id));
   }
 
@@ -76,9 +79,9 @@ export class OnWsEvent {
 
     this.uiMessage.setFixed(
       i18nKey('ws.close', [String(ev.code), reason]),
-      strings.message.clazz.fail
+      htmlStrings.message.clazz.fail
     );
-    this.uiTitle.setFixedTitle(this.uiTitle.standardTitleI18nKey);
+    this.uiTitle.setFixedDefaultTitle();
 
     this.gridSelection.deactivate();
   }
@@ -86,11 +89,8 @@ export class OnWsEvent {
   public onError(ev: Event): void {
     this.logger.debug('close={0}', ev.type);
 
-    this.uiMessage.setFixed(
-      i18nKey('ws.error', [ev.type]),
-      strings.message.clazz.fail
-    );
-    this.uiTitle.setFixedTitle(this.uiTitle.standardTitleI18nKey);
+    this.uiMessage.setFixed(i18nKey('ws.error', [ev.type]), htmlStrings.message.clazz.fail);
+    this.uiTitle.setFixedDefaultTitle();
 
     this.gridSelection.deactivate();
   }

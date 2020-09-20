@@ -2,7 +2,7 @@
   "ws.unable": "WebSocket: unable to initialize.",
   "ws.close": "WebSocket: connection closed [{0},{1}].",
   "ws.error": "WebSocket: connection closed [{0}].",
-  "title.standard": "Battleship44",
+  "title.default": "Battleship44",
   "title.shoot_me": "B44: Your shoot …",
   "title.shoot_opp": "B44: Opponent shoot …",
   "pre.initializing": "Initializing, please wait …",

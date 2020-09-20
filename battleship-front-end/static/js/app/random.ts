@@ -4,11 +4,7 @@ export class Random {
   public random0to1: Supplier<number>;
 
   public constructor() {
-    if (
-      typeof window === 'object' &&
-      window.crypto &&
-      window.crypto.getRandomValues
-    ) {
+    if (typeof window === 'object' && window.crypto && window.crypto.getRandomValues) {
       this.random0to1 = () => {
         // credits: friends @ stackoverflow
         // url: https://stackoverflow.com/a/42321673

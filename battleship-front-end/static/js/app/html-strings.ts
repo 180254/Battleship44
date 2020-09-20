@@ -1,4 +1,4 @@
-export const strings = {
+export const htmlStrings = {
   flag: {
     id: '#flag',
     clazz: {

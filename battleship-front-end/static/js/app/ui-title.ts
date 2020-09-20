@@ -4,7 +4,7 @@ import {I18nKey, Translator} from './ui-i18n';
 export class UiTitle {
   private readonly logger: Logger = LoggerFactory.getLogger(UiTitle);
 
-  public readonly standardTitleI18nKey: I18nKey = new I18nKey('title.standard');
+  private readonly defaultTitleI18nKey: I18nKey = new I18nKey('title.default');
   private readonly blinkingTimeoutMs = 1350;
 
   private currentI18nKey: I18nKey[] = [];
@@ -18,19 +18,19 @@ export class UiTitle {
     this.translator.onLangChange.subscribe(() => this.updateTranslation());
   }
 
+  public setFixedDefaultTitle(): void {
+    this.setFixedTitle(this.defaultTitleI18nKey);
+  }
+
   public setFixedTitle(i18nKey: I18nKey): void {
     this.removeBlinking();
     this.updateTranslation([i18nKey]);
 
-    this.logger.trace(
-      'state={0},{1}',
-      this.currentI18nKey,
-      this.currentI18nText
-    );
+    this.logger.trace('{0}', i18nKey);
   }
 
-  public setBlinkingTitle(key: I18nKey, override: boolean): void {
-    this.updateTranslation([this.standardTitleI18nKey, key]);
+  public setBlinkingTitle(i18nKey: I18nKey, override: boolean): void {
+    this.updateTranslation([this.defaultTitleI18nKey, i18nKey]);
 
     if (this.blinkIntervalHandler === undefined || override) {
       this.removeBlinking();
@@ -42,12 +42,7 @@ export class UiTitle {
       }, this.blinkingTimeoutMs);
     }
 
-    this.logger.trace(
-      'state={0},{1},{2}',
-      this.currentI18nKey,
-      this.currentI18nText,
-      override
-    );
+    this.logger.trace('{0},{1}', i18nKey, override);
   }
 
   private removeBlinking(): void {
@@ -62,8 +57,8 @@ export class UiTitle {
       this.currentI18nKey = u18nKeys;
     }
 
-    this.currentI18nText = this.currentI18nKey.map(e =>
-      this.translator.getTranslation(e)
+    this.currentI18nText = this.currentI18nKey.map(i18nKey =>
+      this.translator.getTranslation(i18nKey)
     );
 
     if (this.currentI18nText.length === 1) {

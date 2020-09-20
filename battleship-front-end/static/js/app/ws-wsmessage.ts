@@ -17,11 +17,7 @@ export class WsMessage {
     return new WsMessage(raw, command, payload);
   }
 
-  public static Sub(
-    command: string,
-    payload: string,
-    subCommand: string
-  ): WsMessage {
+  public static Sub(command: string, payload: string, subCommand: string): WsMessage {
     return new WsMessage(
       '{0} {1}'.format(command, payload),
       '{0} {1}'.format(command, subCommand),

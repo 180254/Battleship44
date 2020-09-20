@@ -1,5 +1,5 @@
 import * as $ from 'jquery';
-import {strings} from './html-strings';
+import {htmlStrings} from './html-strings';
 
 export class Cell {
   public readonly row: number;
@@ -20,11 +20,7 @@ export class Cell {
   }
 
   public toString(): string {
-    return 'Cell[row={0} col={1} clazz={2}]'.format(
-      this.row,
-      this.col,
-      this.clazz
-    );
+    return 'Cell[{0},{1},{2}]'.format(this.row, this.col, this.clazz);
   }
 }
 
@@ -32,10 +28,10 @@ export class Grids {
   public readonly rows = 10;
   public readonly cols = 10;
 
-  public readonly $shoot: JQuery = $(strings.grid.id_shoot);
+  public readonly $shoot: JQuery = $(htmlStrings.grid.id_shoot);
   public $shootCells!: JQuery;
 
-  public readonly $opponent: JQuery = $(strings.grid.id_opponent);
+  public readonly $opponent: JQuery = $(htmlStrings.grid.id_opponent);
   public $opponentCells!: JQuery;
 
   public init(): void {
@@ -47,21 +43,12 @@ export class Grids {
   }
 
   public reset(): void {
-    this.$shootCells.attr('class', strings.cell.clazz.unknown);
-    this.$opponentCells.attr('class', strings.cell.clazz.unknown);
+    this.$shootCells.attr('class', htmlStrings.cell.clazz.unknown);
+    this.$opponentCells.attr('class', htmlStrings.cell.clazz.unknown);
   }
 
-  public setCellClass(
-    $grid: JQuery,
-    cell: Cell,
-    clazz: string,
-    keepCurrent: boolean
-  ): void {
-    const $element: JQuery = $grid
-      .find('tr')
-      .eq(cell.row)
-      .find('td')
-      .eq(cell.col);
+  public setCellClass($grid: JQuery, cell: Cell, clazz: string, keepCurrent: boolean): void {
+    const $element: JQuery = $grid.find('tr').eq(cell.row).find('td').eq(cell.col);
 
     if (!keepCurrent) {
       $element.removeClass();
@@ -92,13 +79,9 @@ export class Grids {
     return $row;
   }
 
-  private static createCell(
-    gridId: string,
-    rowIndex: number,
-    colIndex: number
-  ): JQuery {
+  private static createCell(gridId: string, rowIndex: number, colIndex: number): JQuery {
     return $('<td/>', {
-      ['class']: strings.cell.clazz.unknown,
+      ['class']: htmlStrings.cell.clazz.unknown,
       ['data-grid-id']: gridId,
       ['data-row-i']: rowIndex,
       ['data-col-i']: colIndex,
@@ -118,20 +101,20 @@ export class GridSelection {
     let isHighlighted = false;
 
     this.grids.$shootCells
-      .addClass(strings.cell.clazz.shootable)
+      .addClass(htmlStrings.cell.clazz.shootable)
 
       .on('mousedown', function (this: Element): boolean {
         isMouseDown = true;
-        $(this).toggleClass(strings.cell.clazz.ship);
-        isHighlighted = $(this).hasClass(strings.cell.clazz.ship);
-        $(this).toggleClass(strings.cell.clazz.unknown, !isHighlighted);
+        $(this).toggleClass(htmlStrings.cell.clazz.ship);
+        isHighlighted = $(this).hasClass(htmlStrings.cell.clazz.ship);
+        $(this).toggleClass(htmlStrings.cell.clazz.unknown, !isHighlighted);
         return false;
       })
 
       .on('mouseover', function (this: Element): void {
         if (isMouseDown) {
-          $(this).toggleClass(strings.cell.clazz.ship, isHighlighted);
-          $(this).toggleClass(strings.cell.clazz.unknown, !isHighlighted);
+          $(this).toggleClass(htmlStrings.cell.clazz.ship, isHighlighted);
+          $(this).toggleClass(htmlStrings.cell.clazz.unknown, !isHighlighted);
         }
       })
 
@@ -143,7 +126,7 @@ export class GridSelection {
   public deactivate(): void {
     this.grids.$shoot
       .find('td')
-      .removeClass(strings.cell.clazz.shootable)
+      .removeClass(htmlStrings.cell.clazz.shootable)
       .off('mousedown')
       .off('mouseover')
       .off('selectstart');
@@ -156,7 +139,7 @@ export class GridSelection {
       .find('tr')
       .find('td')
       .map(function (this: Element): number {
-        return +$(this).hasClass(strings.cell.clazz.ship);
+        return +$(this).hasClass(htmlStrings.cell.clazz.ship);
       })
       .get()
       .join(',');
@@ -168,7 +151,7 @@ export class GridSelection {
 
     for (let i = 0; i < shoot.length; i += 1) {
       const shootClass: string = shoot.eq(i).attr('class')!;
-      shoot.eq(i).attr('class', strings.cell.clazz.unknown);
+      shoot.eq(i).attr('class', htmlStrings.cell.clazz.unknown);
       opponent.eq(i).attr('class', shootClass);
     }
   }

@@ -1,16 +1,14 @@
 import {Logger, LoggerFactory} from './logger';
-import {DocumentEvent} from './document-event';
 import {Translator} from './ui-i18n';
-import {strings} from './html-strings';
+import {htmlStrings} from './html-strings';
 
 export class UiFlags {
   private readonly logger: Logger = LoggerFactory.getLogger(UiFlags);
-  private readonly $flags: JQuery = $(strings.flag.id);
-  private readonly documentEvent: DocumentEvent;
+  private readonly $flags: JQuery = $(htmlStrings.flag.id);
+
   private readonly translator: Translator;
 
-  public constructor(documentEvent: DocumentEvent, translator: Translator) {
-    this.documentEvent = documentEvent;
+  public constructor(translator: Translator) {
     this.translator = translator;
   }
 
@@ -23,13 +21,13 @@ export class UiFlags {
         const $flag: JQuery = $(document.createElement('img'));
         $flag.attr('alt', langTag.lang);
         $flag.attr('src', 'flag/{0}.png'.format(langTag.region!.toLowerCase()));
-        $flag.attr('class', strings.flag.clazz.default);
+        $flag.attr('class', htmlStrings.flag.clazz.default);
 
-        this.documentEvent.on($flag, 'click', () => {
+        $flag.on('click', () => {
           this.translator.getLangSetter().setLang(langTag);
           this.translator.init(
             () => this.logger.error('lang.change fail={0}', langTag),
-            () => this.logger.debug('lang.change ok={0}', langTag)
+            () => this.logger.trace('lang.change ok={0}', langTag)
           );
         });
 

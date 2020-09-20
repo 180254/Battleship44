@@ -2,7 +2,7 @@
   "ws.unable": "WebSocket: nie da rady rozpocząć.",
   "ws.close": "WebSocket: połączenie zakończone [{0},{1}].",
   "ws.error": "WebSocket: połączenie zakończone [{0}].",
-  "title.standard": "Okręty44",
+  "title.default": "Okręty44",
   "title.shoot_me": "O44: Twój strzał …",
   "title.shoot_opp": "O44: Teraz przeciwnik …",
   "pre.initializing": "Inicjowanie, proszę czekać …",
@@ -20,10 +20,10 @@
   "end.opp_gone": "Twój przeciwnik sobie poszedł. ",
   "end.next_game": "kolejna gra?",
   "fail.fail": "błąd: {0}",
-  "end.unknown": "nieznany",
-  "end.game_url": "gra/adres",
-  "end.game_players": "gra/graczy",
-  "end.game_ratio": "gra/wygrane",
-  "end.server_ships": "serwer/statki",
-  "end.server_players": "serwer/graczy"
+  "stats.unknown": "nieznany",
+  "stats.game_url": "gra/adres",
+  "stats.game_players": "gra/graczy",
+  "stats.game_ratio": "gra/wygrane",
+  "stats.server_ships": "serwer/statki",
+  "stats.server_players": "serwer/graczy"
 }

@@ -33,21 +33,18 @@ export class Starter {
   }
 
   public init(): void {
-    Logger.LEVEL =
-      Environment.MODE === 'development' ? Level.TRACE : Level.WARN;
+    Logger.LEVEL = Environment.MODE === 'development' ? Level.TRACE : Level.WARN;
 
     this.translator.init(
       () => {
         this.logger.error('translator.init error');
       },
       () => {
-        this.uiTitle.setFixedTitle(this.uiTitle.standardTitleI18nKey);
+        this.uiTitle.setFixedDefaultTitle();
         this.uiFlags.initFlags();
         this.grids.init();
 
-        'WebSocket' in window
-          ? this.ws.init()
-          : this.uiMessage.setFixed(i18nKey('ws.unable'));
+        'WebSocket' in window ? this.ws.init() : this.uiMessage.setFixed(i18nKey('ws.unable'));
       }
     );
   }

@@ -1,20 +1,16 @@
 import {Logger} from './logger';
 import {Consumer} from './functional-interfaces';
 import {i18nKey, Translator} from './ui-i18n';
-import {strings} from './html-strings';
+import {htmlStrings} from './html-strings';
 import * as $ from 'jquery';
 import {Url, UrlParam} from './url';
 import {Cell, Grids, GridSelection} from './game-grid';
-import {Timeout, UiMessage} from './ui-message';
+import {UiMessage, UiMessageTimeout} from './ui-message';
 import {Ws} from './ws-ws';
 import {WsMessage} from './ws-wsmessage';
-import {DocumentEvent} from './document-event';
+import {Document2Event} from './document2-event';
 import {UiTitle} from './ui-title';
-import {
-  CellDeserializer,
-  CellsDeserializer,
-  CellSerializer,
-} from './game-grid-serializer';
+import {GridSerializer} from './game-grid-serializer';
 
 export class OnWsMessage {
   private readonly _logger: Logger = new Logger(OnWsMessage);
@@ -25,11 +21,12 @@ export class OnWsMessage {
   private readonly grids: Grids;
   private readonly translator: Translator;
   private readonly gridSelection: GridSelection;
-  private readonly documentEvent: DocumentEvent;
+  private readonly documentEvent: Document2Event;
   private readonly uiTitle: UiTitle;
-  private readonly cellSerializer: CellSerializer;
-  private readonly cellDeserializer: CellDeserializer;
-  private readonly cellsDeserializer: CellsDeserializer;
+  private readonly gridSerializer: GridSerializer;
+  private readonly uiMessageTimeout: UiMessageTimeout;
+  private readonly url: Url;
+
   public setWs(ws: Ws): void {
     this._ws = ws;
   }
@@ -39,11 +36,11 @@ export class OnWsMessage {
     grids: Grids,
     translator: Translator,
     gridSelection: GridSelection,
-    documentEvent: DocumentEvent,
+    documentEvent: Document2Event,
     uiTitle: UiTitle,
-    cellSerializer: CellSerializer,
-    cellDeserializer: CellDeserializer,
-    cellsDeserializer: CellsDeserializer
+    gridSerializer: GridSerializer,
+    uiMessageTimeout: UiMessageTimeout,
+    url: Url
   ) {
     this.uiMessage = uiMessage;
     this.grids = grids;
@@ -51,15 +48,15 @@ export class OnWsMessage {
     this.gridSelection = gridSelection;
     this.documentEvent = documentEvent;
     this.uiTitle = uiTitle;
-    this.cellDeserializer = cellDeserializer;
-    this.cellSerializer = cellSerializer;
-    this.cellsDeserializer = cellsDeserializer;
+    this.gridSerializer = gridSerializer;
+    this.uiMessageTimeout = uiMessageTimeout;
+    this.url = url;
 
     this.funcs = new Map<string, Consumer<string>>([
       [
         'HI_.',
         payload => {
-          this.uiMessage.addFleeting(i18nKey('pre.hi', payload), Timeout.fast);
+          this.uiMessage.addFleeting(i18nKey('pre.hi', payload), this.uiMessageTimeout.fast);
         },
       ],
 
@@ -79,23 +76,21 @@ export class OnWsMessage {
       [
         'GAME OK',
         payload => {
-          this.grids.$opponent.addClass(strings.grid.clazz.inactive);
-          this.grids.$shoot.removeClass(strings.grid.clazz.inactive);
+          this.grids.$opponent.addClass(htmlStrings.grid.clazz.inactive);
+          this.grids.$shoot.removeClass(htmlStrings.grid.clazz.inactive);
 
           if (payload) {
-            const $gameUrl: JQuery = $(strings.info.id_game_url);
+            const $gameUrl: JQuery = $(htmlStrings.info.id_game_url);
 
             this.translator.removeTranslation($gameUrl);
-            $gameUrl.text(
-              Url.buildUrlWithParams(
-                Url.getParam('v'),
-                Url.getParam('m'),
-                Url.getParam('d'),
-                new UrlParam('id', payload)
-              )
-            );
 
-            $(strings.info.id_players_game).text(1);
+            const urlParams: UrlParam[] = [
+              this.url.getParam('d'),
+              new UrlParam('id', payload),
+            ].filter(urlParam => urlParam !== null) as UrlParam[];
+            $gameUrl.text(this.url.buildUrlWithParams(...urlParams));
+
+            $(htmlStrings.info.id_players_game).text(1);
           }
 
           this.grids.reset();
@@ -103,14 +98,12 @@ export class OnWsMessage {
           this.uiMessage.setFixed(i18nKey('put.info'));
           this.uiMessage.addFixedLink(
             i18nKey('put.done'),
-            strings.message.ok.id_ship_selection
+            htmlStrings.message.ok.id_ship_selection
           );
 
           this.gridSelection.activate();
-          this.documentEvent.on(
-            $(strings.message.ok.id_ship_selection),
-            'click',
-            () => this._ws.send('GRID {0}'.format(this.gridSelection.collect()))
+          $(htmlStrings.message.ok.id_ship_selection).on('click', () =>
+            this._ws.send('GRID {0}'.format(this.gridSelection.collect()))
           );
         },
       ],
@@ -138,8 +131,8 @@ export class OnWsMessage {
       [
         'GRID OK',
         () => {
-          this.grids.$opponent.removeClass(strings.grid.clazz.inactive);
-          this.grids.$shoot.addClass(strings.grid.clazz.inactive);
+          this.grids.$opponent.removeClass(htmlStrings.grid.clazz.inactive);
+          this.grids.$shoot.addClass(htmlStrings.grid.clazz.inactive);
 
           this.uiMessage.setFixed(i18nKey('tour.awaiting'));
 
@@ -153,8 +146,8 @@ export class OnWsMessage {
         () => {
           this.uiMessage.addFleeting(
             i18nKey('put.fail'),
-            Timeout.default_,
-            strings.message.clazz.fail
+            this.uiMessageTimeout.default,
+            htmlStrings.message.clazz.fail
           );
         },
       ],
@@ -184,21 +177,16 @@ export class OnWsMessage {
       [
         'TOUR YOU',
         () => {
-          this.grids.$shoot.removeClass(strings.grid.clazz.inactive);
+          this.grids.$shoot.removeClass(htmlStrings.grid.clazz.inactive);
 
-          this.uiMessage.setFixed(
-            i18nKey('tour.shoot_me'),
-            strings.message.clazz.important
-          );
+          this.uiMessage.setFixed(i18nKey('tour.shoot_me'), htmlStrings.message.clazz.important);
           this.uiTitle.setBlinkingTitle(i18nKey('title.shoot_me'), false);
 
           const $cells: JQuery = this.grids.$shootCells;
 
-          $cells.addClass(strings.cell.clazz.shootable);
+          $cells.addClass(htmlStrings.cell.clazz.shootable);
           this.documentEvent.onetime($cells, 'click', $td => {
-            const pos: string = this.cellSerializer.convert(
-              Cell.FromElement($td)
-            );
+            const pos: string = this.gridSerializer.cellSerializer(Cell.FromElement($td));
 
             this._ws.send('SHOT {0}'.format(pos));
           });
@@ -208,8 +196,8 @@ export class OnWsMessage {
       [
         'TOUR HE',
         () => {
-          this.grids.$shoot.addClass(strings.grid.clazz.inactive);
-          this.grids.$shootCells.removeClass(strings.cell.clazz.shootable);
+          this.grids.$shoot.addClass(htmlStrings.grid.clazz.inactive);
+          this.grids.$shootCells.removeClass(htmlStrings.cell.clazz.shootable);
 
           this.uiMessage.setFixed(i18nKey('tour.shoot_opp'));
           this.uiTitle.setFixedTitle(i18nKey('title.shoot_opp'));
@@ -219,11 +207,11 @@ export class OnWsMessage {
       [
         'YOU_',
         payload => {
-          const cells: Cell[] = this.cellsDeserializer.convert(payload);
+          const cells: Cell[] = this.gridSerializer.cellsDeserializer(payload);
 
           const clazzMap: Map<string, string> = new Map([
-            ['ship', strings.cell.clazz.ship],
-            ['empty', strings.cell.clazz.empty],
+            ['ship', htmlStrings.cell.clazz.ship],
+            ['empty', htmlStrings.cell.clazz.empty],
           ]);
 
           cells.forEach(cell => {
@@ -240,13 +228,13 @@ export class OnWsMessage {
       [
         'HE__',
         payload => {
-          const cells: Cell[] = this.cellsDeserializer.convert(payload);
+          const cells: Cell[] = this.gridSerializer.cellsDeserializer(payload);
 
           cells.forEach(cell => {
             this.grids.setCellClass(
               this.grids.$opponent,
               cell,
-              strings.cell.clazz.opp_shoot,
+              htmlStrings.cell.clazz.opp_shoot,
               true
             );
           });
@@ -256,13 +244,13 @@ export class OnWsMessage {
       [
         'WON_',
         payload => {
-          this.grids.$opponent.addClass(strings.grid.clazz.inactive);
-          this.grids.$shoot.addClass(strings.grid.clazz.inactive);
+          this.grids.$opponent.addClass(htmlStrings.grid.clazz.inactive);
+          this.grids.$shoot.addClass(htmlStrings.grid.clazz.inactive);
 
           const winning: JQuery =
             payload === 'YOU'
-              ? $(strings.info.id_winning_me)
-              : $(strings.info.id_winning_opp);
+              ? $(htmlStrings.info.id_winning_me)
+              : $(htmlStrings.info.id_winning_opp);
           winning.text(Number.parseInt(winning.text()) + 1);
 
           payload === 'YOU'
@@ -271,12 +259,10 @@ export class OnWsMessage {
 
           this.uiMessage.addFixedLink(
             i18nKey('end.next_game'),
-            strings.message.ok.id_game_next
+            htmlStrings.message.ok.id_game_next
           );
-          this.documentEvent.onetime(
-            $(strings.message.ok.id_game_next),
-            'click',
-            () => this.process(new WsMessage('', 'GAME OK', ''))
+          this.documentEvent.onetime($(htmlStrings.message.ok.id_game_next), 'click', () =>
+            this.process(new WsMessage('', 'GAME OK', ''))
           );
 
           this.uiTitle.setFixedTitle(i18nKey('title.standard'));
@@ -286,33 +272,31 @@ export class OnWsMessage {
       [
         '1PLA',
         payload => {
-          $(strings.info.id_players_game).text(1);
+          $(htmlStrings.info.id_players_game).text(1);
 
           const interrupted: boolean = payload === 'game-interrupted';
 
           interrupted
             ? this.uiMessage.setFixed(i18nKey('end.opp_gone'))
-            : this.uiMessage.addFleeting(i18nKey('end.opp_gone'), Timeout.slow);
+            : this.uiMessage.addFleeting(i18nKey('end.opp_gone'), this.uiMessageTimeout.slow);
 
           if (interrupted) {
-            this.grids.$shootCells.removeClass(strings.cell.clazz.shootable);
-            this.documentEvent.off(this.grids.$shootCells, 'click'); // remove shoot action
+            this.grids.$shootCells.removeClass(htmlStrings.cell.clazz.shootable);
+            this.grids.$shootCells.off('click'); // remove shoot action
 
             this.uiMessage.addFixedLink(
               i18nKey('end.next_game'),
-              strings.message.ok.id_game_next
+              htmlStrings.message.ok.id_game_next
             );
 
-            this.grids.$opponent.addClass(strings.grid.clazz.inactive);
-            this.grids.$shoot.addClass(strings.grid.clazz.inactive);
+            this.grids.$opponent.addClass(htmlStrings.grid.clazz.inactive);
+            this.grids.$shoot.addClass(htmlStrings.grid.clazz.inactive);
 
-            this.uiTitle.setFixedTitle(this.uiTitle.standardTitleI18nKey);
+            this.uiTitle.setFixedDefaultTitle();
           }
 
-          this.documentEvent.onetime(
-            $(strings.message.ok.id_game_next),
-            'click',
-            () => this.process(new WsMessage('', 'GAME OK', ''))
+          this.documentEvent.onetime($(htmlStrings.message.ok.id_game_next), 'click', () =>
+            this.process(new WsMessage('', 'GAME OK', ''))
           );
         },
       ],
@@ -320,9 +304,9 @@ export class OnWsMessage {
       [
         '2PLA',
         () => {
-          $(strings.info.id_players_game).text(2);
+          $(htmlStrings.info.id_players_game).text(2);
 
-          this.uiMessage.addFleeting(i18nKey('tour.two_players'), Timeout.slow);
+          this.uiMessage.addFleeting(i18nKey('tour.two_players'), this.uiMessageTimeout.slow);
         },
       ],
 
@@ -337,7 +321,7 @@ export class OnWsMessage {
         'STAT',
         payload => {
           const infoStat: {[key: string]: string} = {
-            players: strings.info.id_players_global,
+            players: htmlStrings.info.id_players_global,
           };
 
           const stats: string[] = payload.split(',');

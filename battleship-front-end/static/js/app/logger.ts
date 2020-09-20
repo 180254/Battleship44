@@ -17,10 +17,55 @@ export class LoggerFactory {
   }
 }
 
+export class Caller {
+  // get@http://localhost:8090/js/dist/app.dist.js:630:17
+  // log@http://localhost:8090/js/dist/app.dist.js:606:14
+  // trace@http://localhost:8090/js/dist/app.dist.js:575:10
+  // initFlags/<@http://localhost:8090/js/dist/app.dist.js:852:19
+  // initFlags@<http://localhost:8090/js/dist/app.dist.js:852:19
+  private readonly spiderMonkeyRegExp = new RegExp(/(\w+)@/, 'g');
+
+  // Error
+  // at Caller.get (logger.ts:98)
+  // at Logger.log (logger.ts:71)
+  // at Logger.trace (logger.ts:32)
+  // at ui-flags.ts:37
+  // at Array.forEach (<anonymous>)
+  // at UiFlags.initFlags (ui-flags.ts:22)
+  private readonly v8RegExp = new RegExp(/at (?:\w+)\.(\w+) \((?!<)/, 'g');
+
+  private readonly commonRegExp = new RegExp(
+    '(?:{0})|(?:{1})'.format(this.spiderMonkeyRegExp.source, this.v8RegExp.source),
+    'g'
+  );
+
+  public get(depth: number): string | null {
+    const stack: string | undefined = new Error().stack;
+    if (stack === undefined) {
+      return null;
+    }
+
+    const matchAll: IterableIterator<RegExpMatchArray> = stack.matchAll(this.commonRegExp);
+
+    let currentDepth = -1;
+    for (const match of matchAll) {
+      if (++currentDepth < depth) {
+        // skip depth-1 matches
+        continue;
+      }
+      // spiderMonkeyRegExp substring match is on first pos
+      // v8RegExp substring match is on second pos
+      return match[1] || match[2];
+    }
+
+    return null;
+  }
+}
+
 export class Logger {
   public static LEVEL: Level = Level.TRACE;
   public static STDOUT: Consumer<string> = console.log;
-  private static callerRegexp: RegExp;
+  private static loggerCaller: Caller = new Caller();
 
   private readonly clazz: Function;
 
@@ -55,52 +100,21 @@ export class Logger {
   private log(level: Level, text: string, ...args: unknown[]): void {
     if (Logger.LEVEL >= level) {
       const level2: string =
-        level <= Level.WARN
-          ? Level[level].toUpperCase()
-          : Level[level].toLowerCase();
+        level <= Level.WARN ? Level[level].toUpperCase() : Level[level].toLowerCase();
 
       Logger.STDOUT(
         '{0} | {1}.{2} | {3}'.format(
           level2,
           this.clazz.name || '?',
           // caller depth?
-          // [0] _caller
-          // [1] _log
+          // [0] LoggerCaller.get
+          // [1] Logger.log
           // [2] trace/debug/...
           // [3]
-          Logger.loggerCaller(3) || '?',
+          Logger.loggerCaller.get(3) || '?',
           text.format(...args)
         )
       );
     }
-  }
-
-  private static loggerCaller(depth: number): string | null {
-    if (!this.callerRegexp) {
-      // x@debugger eval code:1:29
-      // @debugger eval code:1:1
-      const _spiderMonkey: string = String.raw`(\w+)@`;
-
-      // at Test.method (<anonymous>:1:29)
-      // at func (<anonymous>:1:26)
-      // at <anonymous>:1:1
-      const _v8: string = String.raw`at (?:\w+\.)?(<?\w+>?) ?[\(: ]`;
-
-      // at Test.method (eval code:1:29)
-      // at func (eval code:1:26)
-      // at eval code (eval code:1:1)
-      // const _chakra = undefined; // handled by _v8, additional regexp not needed
-
-      this.callerRegexp = new RegExp(
-        '(?:{0})|(?:{1})'.format(_spiderMonkey, _v8)
-      );
-    }
-
-    const stack: string[] = (new Error().stack || '')
-      .replace('Error\n', '') // v8, chakra
-      .split('\n');
-
-    const match: RegExpExecArray | null = this.callerRegexp.exec(stack[depth]);
-    return match ? match[2] : null;
   }
 }

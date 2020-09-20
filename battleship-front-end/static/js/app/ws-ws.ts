@@ -11,8 +11,7 @@ export class Ws {
 
   public init(): void {
     const protocol: string = location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl =
-      Environment.BACKEND || protocol + '//' + window.location.host + '/ws';
+    const wsUrl = Environment.BACKEND || protocol + '//' + window.location.host + '/ws';
     this.ws = new WebSocket(wsUrl);
     this.ws.onopen = (ev: Event) => this.onWsEvent.onOpen(ev);
     this.ws.onmessage = (ev: MessageEvent) => this.onWsEvent.onMessage(ev);
