@@ -12,8 +12,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @Disabled("Exception: Not running on Jetty, WebSocket support unavailable") // !?
 public class ApplicationTests {
 
-    @Test
-    public void contextLoads() {
+  @Test
+  public void contextLoads() {
 
-    }
+  }
 }

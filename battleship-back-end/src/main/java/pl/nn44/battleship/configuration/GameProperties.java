@@ -47,6 +47,16 @@ public class GameProperties {
     this.ws = ws;
   }
 
+  @Override
+  public String toString() {
+    return new StringJoiner(", ", GameProperties.class.getSimpleName() + "[", "]")
+        .add("gridSize=" + gridSize)
+        .add("fleetType=" + fleetType)
+        .add("impl=" + impl)
+        .add("ws=" + ws)
+        .toString();
+  }
+
   public static class FleetType {
 
     private Mode mode;
@@ -68,6 +78,14 @@ public class GameProperties {
       this.sizes = sizes;
     }
 
+    @Override
+    public String toString() {
+      return new StringJoiner(", ", FleetType.class.getSimpleName() + "[", "]")
+          .add("mode=" + mode)
+          .add("sizes=" + sizes)
+          .toString();
+    }
+
     public enum Mode {
       CURVED,
       STRAIGHT
@@ -77,14 +95,6 @@ public class GameProperties {
       RUSSIAN,
       CLASSIC_ONE,
       CLASSIC_TWO,
-    }
-
-    @Override
-    public String toString() {
-      return new StringJoiner(", ", FleetType.class.getSimpleName() + "[", "]")
-          .add("mode=" + mode)
-          .add("sizes=" + sizes)
-          .toString();
     }
   }
 
@@ -206,15 +216,5 @@ public class GameProperties {
           .add("policyIdleTimeoutMs=" + policyIdleTimeoutMs)
           .toString();
     }
-  }
-
-  @Override
-  public String toString() {
-    return new StringJoiner(", ", GameProperties.class.getSimpleName() + "[", "]")
-        .add("gridSize=" + gridSize)
-        .add("fleetType=" + fleetType)
-        .add("impl=" + impl)
-        .add("ws=" + ws)
-        .toString();
   }
 }
