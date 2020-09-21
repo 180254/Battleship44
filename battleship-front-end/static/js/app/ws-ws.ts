@@ -19,7 +19,7 @@ export class Ws {
   private readonly eventListeners: Array<WsEventListener> = new Array<WsEventListener>();
 
   public init(): void {
-    const protocol: string = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const protocol: string = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = Environment.BACKEND || protocol + '//' + window.location.host + '/ws';
     this.ws = new WebSocket(wsUrl);
 
