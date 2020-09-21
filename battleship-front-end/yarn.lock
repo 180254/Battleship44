@@ -3777,9 +3777,9 @@ growl@1.10.5:
   resolved "https://registry.yarnpkg.com/growl/-/growl-1.10.5.tgz#f2735dc2283674fa67478b10181059355c369e5e"
   integrity sha512-qBr4OuELkhPenW6goKVXiv47US3clb3/IbuWF9KNKEijAy9oeHxU9IgzjvJhHkUzhaj7rOUD7+YGWqUjLp5oSA==
 
-"gts@git+https://github.com/google/gts.git#54148dfbd8b5f8b36a0f44f901c5db933393a661":
+"gts@git+https://github.com/180254/gts.git#5f4daa4411aaa5eaaba60511f74c661ad4e25083":
   version "2.0.2"
-  resolved "git+https://github.com/google/gts.git#54148dfbd8b5f8b36a0f44f901c5db933393a661"
+  resolved "git+https://github.com/180254/gts.git#5f4daa4411aaa5eaaba60511f74c661ad4e25083"
   dependencies:
     "@typescript-eslint/eslint-plugin" "^4.0.0"
     "@typescript-eslint/parser" "^4.0.0"

@@ -33,7 +33,7 @@
     "cache-loader": "4.1.0",
     "clean-webpack-plugin": "3.0.0",
     "core-js": "3.6.5",
-    "gts": "git+https://github.com/google/gts.git#54148dfbd8b5f8b36a0f44f901c5db933393a661",
+    "gts": "git+https://github.com/180254/gts.git#5f4daa4411aaa5eaaba60511f74c661ad4e25083",
     "mocha": "8.1.3",
     "string-replace-loader": "2.3.0",
     "ts-loader": "8.0.4",
