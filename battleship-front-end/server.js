@@ -2,8 +2,10 @@
 
 const express = require('express');
 const serveStatic = require('serve-static');
+const morgan = require('morgan');
 
 const app = express();
+app.use(morgan('dev'));
 app.use(serveStatic('static', {index: ['index.html']}));
 
 const port = process.argv[2] || 8090;
