@@ -1,6 +1,6 @@
 import {Logger, LoggerFactory} from './logger';
 import * as Cookies from 'js-cookie';
-import {ServerLanguages} from './ui-serverlangs';
+import {Environment} from './environment';
 
 declare global {
   // extend navigator: add not standard lang tags
@@ -76,7 +76,9 @@ export class LangFinder {
   }
 
   public server(): LangTag[] {
-    const serverLangTags: LangTag[] = ServerLanguages.map(val => LangTag.FromString(val));
+    const serverLangTags: LangTag[] = Environment.ServerLanguages.map(val =>
+      LangTag.FromString(val)
+    );
     this.logger.trace('result={0}', serverLangTags);
     return serverLangTags;
   }
