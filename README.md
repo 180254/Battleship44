@@ -91,7 +91,7 @@ v1.4 (released 2017-05-10)
 + front bug fix: WebSocket connection on HTTPS didn't work  
 + front bug fix: URL to flags were incorrect (uppercase)  
   
-v1.4.1 (unreleaded)  
+v1.4.1 
 + front: updated dependencies  
 + front: development/build process refactored & simplified  
 + front: refactored code to meet [gts](https://github.com/google/gts) rules  
