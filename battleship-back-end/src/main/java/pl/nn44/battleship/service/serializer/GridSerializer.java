@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
 
 public class GridSerializer implements Serializer<Grid, String> {
 
-  private final String validCodes = String.format("%d%d", Cell.Type.EMPTY.getCode(), Cell.Type.SHIP.getCode());
-  private final Pattern pattern = Pattern.compile("[" + validCodes + "](,[" + validCodes + "])*");
+  private final String allowedCodes = String.format("%d%d", Cell.Type.EMPTY.getCode(), Cell.Type.SHIP.getCode());
+  private final Pattern allowedGridPattern = Pattern.compile("[" + allowedCodes + "](,[" + allowedCodes + "])*");
 
   private final GameRules gameRules;
   private final int gameSize;
@@ -32,7 +32,7 @@ public class GridSerializer implements Serializer<Grid, String> {
 
   @Override
   public Optional<Grid> deserialize(String ser) {
-    if (!pattern.matcher(ser).matches()) {
+    if (!allowedGridPattern.matcher(ser).matches()) {
       return Optional.empty();
     }
 

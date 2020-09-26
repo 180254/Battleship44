@@ -61,7 +61,8 @@ public class Cell {
 
     UNKNOWN(-1),
     EMPTY(0),
-    SHIP(1);
+    SHIP(1),
+    SHIP_SUNK(2);
 
     private final int code;
 

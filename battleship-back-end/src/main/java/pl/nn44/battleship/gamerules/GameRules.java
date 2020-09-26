@@ -13,6 +13,7 @@ public class GameRules {
   private FleetMode fleetMode;
   private FleetSizes fleetSizes;
   private boolean fleetCanTouchEachOtherDiagonally;
+  private boolean showFieldsForSureEmpty;
 
   public GridSize getGridSize() {
     return gridSize;
@@ -46,6 +47,14 @@ public class GameRules {
     this.fleetCanTouchEachOtherDiagonally = fleetCanTouchEachOtherDiagonally;
   }
 
+  public boolean isShowFieldsForSureEmpty() {
+    return showFieldsForSureEmpty;
+  }
+
+  public void setShowFieldsForSureEmpty(boolean showFieldsForSureEmpty) {
+    this.showFieldsForSureEmpty = showFieldsForSureEmpty;
+  }
+
   @Override
   public String toString() {
     return new StringJoiner(", ", GameRules.class.getSimpleName() + "[", "]")
@@ -53,6 +62,7 @@ public class GameRules {
         .add("fleetMode=" + fleetMode)
         .add("fleetSizes=" + fleetSizes)
         .add("fleetCanTouchEachOtherDiagonally=" + fleetCanTouchEachOtherDiagonally)
+        .add("showFieldsForSureEmpty=" + showFieldsForSureEmpty)
         .toString();
   }
 }

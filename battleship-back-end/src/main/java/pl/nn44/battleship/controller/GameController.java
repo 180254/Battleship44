@@ -297,7 +297,7 @@ public class GameController extends TextWebSocketHandler {
 
         } else {
           boolean goodShoot = shoot.stream()
-              .anyMatch(s -> s.getType() == Cell.Type.SHIP);
+              .anyMatch(s -> s.getType() == Cell.Type.SHIP || s.getType() == Cell.Type.SHIP_SUNK);
           if (!goodShoot) {
             game.nextTour();
           }

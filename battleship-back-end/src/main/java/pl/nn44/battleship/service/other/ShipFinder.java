@@ -64,7 +64,7 @@ public class ShipFinder {
         Coord coord = Coord.create(rowNo, colNo);
         Cell cell = grid.getCell(coord);
 
-        if (cell.getType() == Cell.Type.SHIP) {
+        if (cell.getType() == Cell.Type.SHIP || cell.getType() == Cell.Type.SHIP_SUNK) {
           if (!isShipCoord(ships, coord)) {
 
             List<Coord> shipCoords = collectShipCoords(coord);
@@ -101,7 +101,8 @@ public class ShipFinder {
 
     checkedCoords.add(startCoord);
 
-    if (grid.getCell(startCoord).getType() == Cell.Type.SHIP) {
+    Cell.Type startCoordCellType = grid.getCell(startCoord).getType();
+    if (startCoordCellType == Cell.Type.SHIP || startCoordCellType == Cell.Type.SHIP_SUNK) {
       shipCoords.add(startCoord);
 
       for (Cell neighbourCell : grid.neighboursPlus(startCoord)) {

@@ -19,11 +19,10 @@ public class FleetVerifierRules {
     this.shipFinder = shipFinder;
   }
 
-  public boolean hasProperValues(Grid grid) {
+  public boolean hasAllowedValues(Grid grid) {
     int[] cells = grid.getCells();
     return Arrays.stream(cells).allMatch(val ->
-        val == Cell.Type.EMPTY.getCode()
-            || val == Cell.Type.SHIP.getCode()
+        val == Cell.Type.EMPTY.getCode() || val == Cell.Type.SHIP.getCode()
     );
   }
 

@@ -1,144 +1,155 @@
 html {
-    font-size: 16px;
+  font-size: 16px;
 }
 
 body {
-    background-color: #2C3E44;
+  background-color: #2C3E44;
 }
 
 main {
-    margin: 0 auto;
-    width: 850px;
-    height: 600px;
+  margin: 0 auto;
+  width: 850px;
+  height: 600px;
 }
 
 #flag {
-    float: right;
-    margin-bottom: 5px;
-    cursor: pointer;
+  float: right;
+  margin-bottom: 5px;
+  cursor: pointer;
 }
 
 #flag > img {
-    padding-right: 10px;
+  padding-right: 10px;
 }
 
 #flag > :last-child {
-    padding-right: 0 !important;
+  padding-right: 0 !important;
 }
 
 #message {
-    font-family: Verdana, Geneva, sans-serif;
-    text-align: center;
-    font-size: 1.25rem;
-    color: #000000;
+  font-family: Verdana, Geneva, sans-serif;
+  text-align: center;
+  font-size: 1.25rem;
+  color: #000000;
 
-    background-color: rgba(171, 181, 70, 0.96);
-    border-radius: 2px;
-    margin-bottom: 20px;
+  background-color: rgba(171, 181, 70, 0.96);
+  border-radius: 2px;
+  margin-bottom: 20px;
 
-    min-height: 3.125rem;
-    width: 100%;
+  min-height: 3.125rem;
+  width: 100%;
 
-    padding-top: 5px;
-    padding-bottom: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 #message .message {
-    display: block;
+  display: block;
 }
 
 #message-const a {
-    color: #000057;
-    cursor: pointer;
+  color: #000057;
+  cursor: pointer;
 }
 
 .message-fail {
-    color: #ab0505;
+  color: #ab0505;
 }
 
 .message-important {
-    font-weight: bold;
-    animation: message-blinker 1s linear infinite;
+  font-weight: bold;
+  animation: message-blinker 1s linear infinite;
 }
 
 @keyframes message-blinker {
-    50% {
-        opacity: 0.0;
-    }
+  50% {
+    opacity: 0.0;
+  }
 }
 
 .grid table {
-    margin: 0 auto;
-    font-weight: bold;
+  margin: 0 auto;
+  font-weight: bold;
 
-    border-collapse: separate;
-    border-spacing: 1px;
+  border-collapse: separate;
+  border-spacing: 1px;
 }
 
 #grid-opponent {
-    float: left;
+  float: left;
 }
 
 #grid-shoot {
-    float: right;
+  float: right;
 }
 
 #grid-opponent.grid td {
-    width: 30px;
-    height: 30px;
+  width: 30px;
+  height: 30px;
 }
 
 #grid-shoot.grid td {
-    width: 40px;
-    height: 40px;
+  width: 40px;
+  height: 40px;
 }
 
 .grid td {
-    text-align: center;
-    vertical-align: bottom;
+  text-align: center;
 }
 
 .grid td.cell-unknown {
-    background-color: #ffffff;
+  background-color: #ffffff;
 }
 
 .grid td.cell-empty {
-    background-color: #d6c5d0;
+  background-color: #d6c5d0;
 }
 
 .grid td.cell-ship {
-    background-color: #0b5c53;
+  background-color: #0b5c53;
+}
+
+.grid td.cell-ship-sunk {
+  background-color: #0b5c53;
+}
+
+.grid td.cell-ship-sunk:after {
+  content: "*";
+
+  font-family: Tahoma, Geneva, sans-serif;
+  font-size: 1.3125rem;
+  color: powderblue;
 }
 
 .grid td.cell-oppshoot::after {
-    content: "*";
+  content: "*";
 
-    font-family: Tahoma, Geneva, sans-serif;
-    font-size: 1.3125rem;
-    color: red;
+  font-family: Tahoma, Geneva, sans-serif;
+  font-size: 1.3125rem;
+  color: red;
 }
 
 .cell-shootable {
-    cursor: crosshair;
+  cursor: crosshair;
 }
 
 .grid.grid-inactive {
-    opacity: 0.4;
+  opacity: 0.4;
 }
 
 #info {
-    font-family: Verdana, Geneva, sans-serif;
-    font-size: 0.9375rem;
-    color: darkgray;
-    clear: both;
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 0.9375rem;
+  color: darkgray;
+  clear: both;
 
-    padding-top: 1rem;
+  padding-top: 1rem;
 }
 
 .info-td-1 {
-    width: 10rem;
+  width: 10rem;
 }

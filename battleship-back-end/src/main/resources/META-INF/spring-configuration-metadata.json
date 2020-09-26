@@ -74,6 +74,12 @@
       "defaultValue": 0
     },
     {
+      "name": "game.rules.show-fields-for-sure-empty",
+      "type": "java.lang.Boolean",
+      "sourceType": "pl.nn44.battleship.gamerules.GameRules",
+      "defaultValue": false
+    },
+    {
       "name": "game.ws.conf-allowed-origins",
       "type": "java.lang.String[]",
       "sourceType": "pl.nn44.battleship.configuration.GameProperties$Ws"

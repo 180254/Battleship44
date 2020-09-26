@@ -222,6 +222,7 @@ export class OnWsMessage {
 
           const clazzMap: Map<string, string> = new Map([
             ['ship', htmlStrings.cell.clazz.ship],
+            ['ship_sunk', htmlStrings.cell.clazz.ship_sunk],
             ['empty', htmlStrings.cell.clazz.empty],
           ]);
 

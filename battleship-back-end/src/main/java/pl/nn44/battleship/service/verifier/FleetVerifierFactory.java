@@ -1,7 +1,5 @@
 package pl.nn44.battleship.service.verifier;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pl.nn44.battleship.gamerules.FleetMode;
 import pl.nn44.battleship.gamerules.GameRules;
 import pl.nn44.battleship.model.Grid;
@@ -20,7 +18,7 @@ public class FleetVerifierFactory {
         ShipFinder shipFinder = ShipFinder.forGrid(grid);
         FleetVerifierRules fleetVerifierRules = new FleetVerifierRules(shipFinder);
 
-        if (!fleetVerifierRules.hasProperValues(grid)) {
+        if (!fleetVerifierRules.hasAllowedValues(grid)) {
           return false;
         }
 

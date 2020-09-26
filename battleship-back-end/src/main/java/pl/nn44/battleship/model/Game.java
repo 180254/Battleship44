@@ -27,6 +27,7 @@ public class Game {
     this.gameRules.setFleetMode(gameRules.getFleetMode());
     this.gameRules.setFleetSizes(gameRules.getFleetSizes());
     this.gameRules.setFleetCanTouchEachOtherDiagonally(gameRules.isFleetCanTouchEachOtherDiagonally());
+    this.gameRules.setShowFieldsForSureEmpty(gameRules.isShowFieldsForSureEmpty());
   }
 
   public String getId() {

@@ -33,22 +33,29 @@ public class ShootGrid extends Grid {
     List<Cell> changedCell = new ArrayList<>();
     Cell.Type opponentCell = opponentGrid.getCell(coord).getType();
 
-    if (opponentCell == Cell.Type.SHIP) {
+    if (opponentCell == Cell.Type.SHIP || opponentCell == Cell.Type.SHIP_SUNK) {
       this.setCell(coord, Cell.Type.SHIP);
 
       Ship opponentShip = opShipFinder.findShip(coord);
-      if (isShipSink(opponentShip)) {
-
-        List<Coord> neighbours;
-        if (gameRules.isFleetCanTouchEachOtherDiagonally()) {
-          neighbours = opShipFinder.neighboursPlus(opponentShip);
-        } else {
-          neighbours = opShipFinder.neighbours(opponentShip);
+      if (isShipSunk(opponentShip)) {
+        for (Coord shipCoord : opponentShip.getCoords()) {
+          this.setCell(shipCoord, Cell.Type.SHIP_SUNK);
+          changedCell.add(this.getCell(shipCoord));
         }
 
-        for (Coord neighbourCoord : neighbours) {
-          this.setCell(neighbourCoord, Cell.Type.EMPTY);
-          changedCell.add(this.getCell(neighbourCoord));
+        if (gameRules.isShowFieldsForSureEmpty()) {
+          List<Coord> neighbours;
+          if (gameRules.isFleetCanTouchEachOtherDiagonally()) {
+            neighbours = opShipFinder.neighboursPlus(opponentShip);
+          } else {
+            neighbours = opShipFinder.neighbours(opponentShip);
+          }
+
+          for (Coord neighbourCoord : neighbours) {
+            this.setCell(neighbourCoord, Cell.Type.EMPTY);
+            changedCell.add(this.getCell(neighbourCoord));
+          }
+
         }
       }
 
@@ -61,13 +68,13 @@ public class ShootGrid extends Grid {
   }
 
   public boolean allShotDown() {
-    return opShipFinder.ships().stream().allMatch(this::isShipSink);
+    return opShipFinder.ships().stream().allMatch(this::isShipSunk);
   }
 
-  private boolean isShipSink(Ship ship) {
+  private boolean isShipSunk(Ship ship) {
     return ship.getCoords().stream()
         .map(this::getCell)
-        .allMatch(c -> c.getType() == Cell.Type.SHIP);
+        .allMatch(c -> c.getType() == Cell.Type.SHIP || c.getType() == Cell.Type.SHIP_SUNK);
   }
 
   @Override
