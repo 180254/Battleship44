@@ -1,5 +1,6 @@
 package pl.nn44.battleship.model;
 
+import pl.nn44.battleship.gamerules.GameRules;
 import pl.nn44.battleship.service.other.ShipFinder;
 
 import java.util.ArrayList;
@@ -10,14 +11,16 @@ public class ShootGrid extends Grid {
 
   private final Grid opponentGrid;
   private final ShipFinder opShipFinder;
+  private final GameRules gameRules;
 
-  public ShootGrid(Grid opponentGrid) {
+  public ShootGrid(Grid opponentGrid, GameRules gameRules) {
     super(
         opponentGrid.getRowsNo(), opponentGrid.getColsNo(),
         new int[opponentGrid.getSize()]);
 
     this.opponentGrid = opponentGrid;
     this.opShipFinder = ShipFinder.forGrid(opponentGrid);
+    this.gameRules = gameRules;
 
     Arrays.fill(this.cells, Cell.Type.UNKNOWN.getCode());
   }
@@ -36,7 +39,14 @@ public class ShootGrid extends Grid {
       Ship opponentShip = opShipFinder.findShip(coord);
       if (isShipSink(opponentShip)) {
 
-        for (Coord neighbourCoord : opShipFinder.neighbours(opponentShip)) {
+        List<Coord> neighbours;
+        if (gameRules.isFleetCanTouchEachOtherDiagonally()) {
+          neighbours = opShipFinder.neighboursPlus(opponentShip);
+        } else {
+          neighbours = opShipFinder.neighbours(opponentShip);
+        }
+
+        for (Coord neighbourCoord : neighbours) {
           this.setCell(neighbourCoord, Cell.Type.EMPTY);
           changedCell.add(this.getCell(neighbourCoord));
         }

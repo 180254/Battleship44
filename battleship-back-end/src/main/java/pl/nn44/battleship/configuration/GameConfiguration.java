@@ -66,6 +66,7 @@ class GameConfiguration implements WebSocketConfigurer {
     Serializer<List<Cell>, String> cellSerializer = new CellSerializer();
 
     return new GameController(
+        this.gameProperties.getRules(),
         random,
         locker,
         idGenerator,

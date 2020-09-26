@@ -1,5 +1,6 @@
 package pl.nn44.battleship.model;
 
+import pl.nn44.battleship.gamerules.GameRules;
 import pl.nn44.battleship.util.id.IdGenerator;
 import pl.nn44.battleship.util.other.Arrays;
 
@@ -11,12 +12,21 @@ public class Game {
 
   private final String id;
   private final Player[] players = new Player[2];
+  private final GameRules gameRules;
   private State state = State.WAITING;
   private Integer tour = null;
 
   public Game(IdGenerator idGenerator, Player player1) {
-    id = idGenerator.nextId();
+    this.id = idGenerator.nextId();
+    this.gameRules = new GameRules();
     this.players[0] = player1;
+  }
+
+  public void cloneRules(GameRules gameRules) {
+    this.gameRules.setGridSize(gameRules.getGridSize());
+    this.gameRules.setFleetMode(gameRules.getFleetMode());
+    this.gameRules.setFleetSizes(gameRules.getFleetSizes());
+    this.gameRules.setFleetCanTouchEachOtherDiagonally(gameRules.isFleetCanTouchEachOtherDiagonally());
   }
 
   public String getId() {
@@ -96,8 +106,8 @@ public class Game {
   }
 
   public void prepareShootGrids() {
-    players[0].setShootGrid(new ShootGrid(players[1].getGrid()));
-    players[1].setShootGrid(new ShootGrid(players[0].getGrid()));
+    players[0].setShootGrid(new ShootGrid(players[1].getGrid(), gameRules));
+    players[1].setShootGrid(new ShootGrid(players[0].getGrid(), gameRules));
   }
 
   public boolean completed() {

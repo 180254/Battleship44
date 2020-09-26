@@ -6,6 +6,7 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import pl.nn44.battleship.gamerules.GameRules;
 import pl.nn44.battleship.model.*;
 import pl.nn44.battleship.service.locker.Locker;
 import pl.nn44.battleship.service.serializer.Serializer;
@@ -28,10 +29,10 @@ import java.util.function.BiConsumer;
 public class GameController extends TextWebSocketHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(GameController.class);
-  private static final int COMMAND_LEN = 4;
 
   private final ConcurrentMap<WebSocketSession, Player> players = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, Game> games = new ConcurrentHashMap<>();
+  private final GameRules gameRules;
   private final Random random;
   private final Locker locker;
   private final IdGenerator idGenerator;
@@ -47,13 +48,15 @@ public class GameController extends TextWebSocketHandler {
           Map.entry("PING", this::ping)
       );
 
-  public GameController(Random random,
+  public GameController(GameRules gameRules,
+                        Random random,
                         Locker locker,
                         IdGenerator idGenerator,
                         FleetVerifier fleetVerifier,
                         Serializer<Grid, String> gridSerializer,
                         Serializer<Coord, String> coordSerializer,
                         Serializer<List<Cell>, String> cellSerializer) {
+    this.gameRules = gameRules;
     this.random = random;
     this.locker = locker;
     this.idGenerator = idGenerator;
@@ -157,8 +160,12 @@ public class GameController extends TextWebSocketHandler {
   @Override
   protected void handleTextMessage(WebSocketSession session, TextMessage message) {
     String payload = message.getPayload();
-    String command = Strings.safeSubstring(payload, 0, COMMAND_LEN);
-    String param = Strings.safeSubstring(payload, COMMAND_LEN + 1);
+    int endOfCommandIndex = payload.indexOf(' ');
+    if (endOfCommandIndex == -1) {
+      endOfCommandIndex = payload.length();
+    }
+    String command = Strings.safeSubstring(payload, 0, endOfCommandIndex);
+    String param = Strings.safeSubstring(payload, endOfCommandIndex + 1);
 
     LOGGER.info("<-  {} @ {}", session.getId(), message.getPayload());
 
@@ -185,6 +192,7 @@ public class GameController extends TextWebSocketHandler {
 
       } else if (param.equals("NEW")) {
         Game game = new Game(idGenerator, player);
+        game.cloneRules(gameRules);
         player.setGame(game);
         games.put(game.getId(), game);
         txt(player, "GAME OK %s", game.getId());
