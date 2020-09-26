@@ -1,43 +1,45 @@
 package pl.nn44.battleship.service.verifier;
 
-import com.google.common.collect.ImmutableMap;
-import pl.nn44.battleship.configuration.GameProperties;
-import pl.nn44.battleship.configuration.GameProperties.FleetType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pl.nn44.battleship.gamerules.FleetMode;
+import pl.nn44.battleship.gamerules.GameRules;
+import pl.nn44.battleship.model.Grid;
+import pl.nn44.battleship.model.Ship;
+import pl.nn44.battleship.service.other.ShipFinder;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
+import java.util.List;
 
 public class FleetVerifierFactory {
 
-  private final static Map<FleetType.Sizes, int[]> SIZES_TO_ARG =
-      ImmutableMap.<FleetType.Sizes, int[]>builder()
-          .put(FleetType.Sizes.RUSSIAN, new int[]{4, 3, 3, 2, 2, 2, 1, 1, 1, 1})
-          .put(FleetType.Sizes.CLASSIC_ONE, new int[]{5, 4, 3, 3, 2})
-          .put(FleetType.Sizes.CLASSIC_TWO, new int[]{5, 4, 3, 2, 2, 1, 1})
-          .build();
+  public static FleetVerifier forRules(GameRules rules) {
 
-  private final static Map<FleetType.Mode, Class<? extends FleetVerifier>> MODES_TO_VERIFIER_CLASS =
-      ImmutableMap.<FleetType.Mode, Class<? extends FleetVerifier>>builder()
-          .put(FleetType.Mode.STRAIGHT, StraightFleetVerifier.class)
-          .put(FleetType.Mode.CURVED, CurvedFleetVerifier.class)
-          .build();
+    return new FleetVerifier() {
+      @Override
+      public boolean verify(Grid grid) {
+        ShipFinder shipFinder = ShipFinder.forGrid(grid);
+        FleetVerifierRules fleetVerifierRules = new FleetVerifierRules(shipFinder);
 
+        if (!fleetVerifierRules.hasProperValues(grid)) {
+          return false;
+        }
 
-  public static FleetVerifier forType(FleetType.Mode mode, FleetType.Sizes sizes) {
-    try {
-      return MODES_TO_VERIFIER_CLASS.get(mode)
-          .getConstructor(int[].class)
-          .newInstance((Object) SIZES_TO_ARG.get(sizes));
+        List<Ship> ships = shipFinder.ships();
 
-    } catch (NoSuchMethodException | IllegalAccessException
-        | InstantiationException | InvocationTargetException e) {
-      throw new AssertionError(e);
-    }
-  }
+        boolean valid = fleetVerifierRules.hasProperShipSizes(ships, rules.getFleetSizes().getAvailableShipSizes());
 
-  public static FleetVerifier forTypeFromGm(GameProperties gm) {
-    FleetType.Mode mode = gm.getFleetType().getMode();
-    FleetType.Sizes sizes = gm.getFleetType().getSizes();
-    return forType(mode, sizes);
+        if (rules.getFleetMode() == FleetMode.STRAIGHT) {
+          valid &= fleetVerifierRules.allShipsStraight(ships);
+        }
+
+        if (rules.isFleetCanTouchEachOtherDiagonally()) {
+          valid &= fleetVerifierRules.hasSpaceAroundShipsPlus(ships);
+        } else {
+          valid &= fleetVerifierRules.hasSpaceAroundShips(ships);
+        }
+
+        return valid;
+      }
+    };
   }
 }

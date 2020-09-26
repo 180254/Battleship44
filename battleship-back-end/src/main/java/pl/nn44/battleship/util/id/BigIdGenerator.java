@@ -1,10 +1,6 @@
 package pl.nn44.battleship.util.id;
 
-import com.google.common.base.Strings;
-import com.google.common.math.IntMath;
-
 import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.util.Random;
 
 // credits: friends @ stackoverflow
@@ -18,7 +14,7 @@ import java.util.Random;
 public class BigIdGenerator implements IdGenerator {
 
   private final static int NUMBER_BASE = 32;
-  private final static int BIT_PER_CHAR = IntMath.log2(NUMBER_BASE, RoundingMode.UNNECESSARY);
+  private final static int BIT_PER_CHAR = (int) (Math.log(NUMBER_BASE) / Math.log(2));
 
   private final Random random;
   private final int chars;
@@ -33,6 +29,6 @@ public class BigIdGenerator implements IdGenerator {
   @Override
   public String nextId() {
     String nextId = new BigInteger(bits, random).toString(NUMBER_BASE);
-    return Strings.padStart(nextId, chars, '0');
+    return String.format("%1$" + chars + "s", nextId).replace(' ', '0');
   }
 }

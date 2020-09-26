@@ -1,6 +1,5 @@
 package selenium;
 
-
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -26,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 @TestMethodOrder(MethodOrderer.Alphanumeric.class)
 public class AppTest {
 
-  static final String APP_URL = "http://localhost:8090/";
+  static final String APP_URL = "http://localhost:8080/";
 
   static RemoteWebDriver driver;
   static Wait<WebDriver> wait;
@@ -60,7 +59,7 @@ public class AppTest {
     driver.get(APP_URL);
 
     wait.until((@Nonnull WebDriver wd) ->
-        !elementHelper.id_one("info-game-url").getText().equals("?_text_?"));
+        !elementHelper.oneById("info-game-url").getText().equals("?_text_?"));
 
     tabHelper.create();
     tabHelper.switchTo(0);
@@ -68,8 +67,8 @@ public class AppTest {
 
   @Test
   public void a02_changesLang() {
-    WebElement enFlag = elementHelper.flag_one("en");
-    WebElement plFlag = elementHelper.flag_one("pl");
+    WebElement enFlag = elementHelper.oneFlag("en");
+    WebElement plFlag = elementHelper.oneFlag("pl");
 
     enFlag.click();
     generalHelper.sleep(1000);
@@ -83,23 +82,23 @@ public class AppTest {
 
   @Test
   public void a03_gridVerificationFail1() {
-    elementHelper.cell_one("grid-shoot", 0, 1).click();
+    elementHelper.oneCell("grid-shoot", 0, 1).click();
 
-    elementHelper.id_one("ok-ship-selection").click();
-    wait.until((@Nonnull WebDriver wd) -> elementHelper.i18n_list("put.fail").size() > 0);
+    elementHelper.oneById("ok-ship-selection").click();
+    wait.until((@Nonnull WebDriver wd) -> elementHelper.listByI18n("put.fail").size() > 0);
 
-    elementHelper.cell_one("grid-shoot", 0, 1).click(); //r
+    elementHelper.oneCell("grid-shoot", 0, 1).click(); //r
   }
 
   @Test
   public void a04_gridVerificationFail2() {
     generalHelper.clickProperShips();
-    elementHelper.cell_one("grid-shoot", 8, 8).click();
+    elementHelper.oneCell("grid-shoot", 8, 8).click();
 
-    elementHelper.id_one("ok-ship-selection").click();
-    wait.until((@Nonnull WebDriver wd) -> elementHelper.i18n_list("put.fail").size() > 0);
+    elementHelper.oneById("ok-ship-selection").click();
+    wait.until((@Nonnull WebDriver wd) -> elementHelper.listByI18n("put.fail").size() > 0);
 
-    elementHelper.cell_one("grid-shoot", 8, 8).click(); //r
+    elementHelper.oneCell("grid-shoot", 8, 8).click(); //r
     generalHelper.clickProperShips(); //r
   }
 
@@ -107,41 +106,41 @@ public class AppTest {
   public void a05_acceptsProperGrid() {
     generalHelper.clickProperShips();
 
-    elementHelper.id_one("ok-ship-selection").click();
-    wait.until((@Nonnull WebDriver wd) -> elementHelper.i18n_list("tour.awaiting").size() > 0);
+    elementHelper.oneById("ok-ship-selection").click();
+    wait.until((@Nonnull WebDriver wd) -> elementHelper.listByI18n("tour.awaiting").size() > 0);
   }
 
   @Test
   public void a06_msgSecondUserGoneNoGame() {
-    String gameUrl = elementHelper.id_one("info-game-url").getText();
+    String gameUrl = elementHelper.oneById("info-game-url").getText();
 
     tabHelper.switchTo(1);
     driver.get(gameUrl);
-    wait.until((@Nonnull WebDriver wd) -> elementHelper.css_list("#grid-shoot td").size() > 0);
+    wait.until((@Nonnull WebDriver wd) -> elementHelper.listByCss("#grid-shoot td").size() > 0);
 
     tabHelper.clear();
     tabHelper.switchTo(0);
-    wait.until((@Nonnull WebDriver wd) -> elementHelper.i18n_list("end.opp_gone").size() > 0);
+    wait.until((@Nonnull WebDriver wd) -> elementHelper.listByI18n("end.opp_gone").size() > 0);
   }
 
   @Test
   public void a07_msgSecondUserGameInProgress() {
-    String gameUrl = elementHelper.id_one("info-game-url").getText();
+    String gameUrl = elementHelper.oneById("info-game-url").getText();
 
     tabHelper.switchTo(1);
     driver.get(gameUrl);
-    wait.until((@Nonnull WebDriver wd) -> elementHelper.css_list("#grid-shoot table").size() > 0);
+    wait.until((@Nonnull WebDriver wd) -> elementHelper.listByCss("#grid-shoot table").size() > 0);
 
     generalHelper.clickProperShips();
-    elementHelper.id_one("ok-ship-selection").click();
-    wait.until((@Nonnull WebDriver wd) -> elementHelper.i18n_list("tour.shoot_me").size() > 0
-        || elementHelper.i18n_list("tour.shoot_opp").size() > 0);
+    elementHelper.oneById("ok-ship-selection").click();
+    wait.until((@Nonnull WebDriver wd) -> elementHelper.listByI18n("tour.shoot_me").size() > 0
+        || elementHelper.listByI18n("tour.shoot_opp").size() > 0);
   }
 
   @Test
   public void a08_blinkingTitleIsTranslated() {
-    WebElement enFlag = elementHelper.flag_one("en");
-    WebElement plFlag = elementHelper.flag_one("pl");
+    WebElement enFlag = elementHelper.oneFlag("en");
+    WebElement plFlag = elementHelper.oneFlag("pl");
 
     enFlag.click();
     generalHelper.sleep(2000);
@@ -157,51 +156,51 @@ public class AppTest {
   public void a09_msgUserGoneGameInterrupted() {
     tabHelper.clear();
     tabHelper.switchTo(0);
-    wait.until((@Nonnull WebDriver wd) -> elementHelper.i18n_list("end.next_game").size() > 0);
-    elementHelper.id_one("ok-game-next").click();
+    wait.until((@Nonnull WebDriver wd) -> elementHelper.listByI18n("end.next_game").size() > 0);
+    elementHelper.oneById("ok-game-next").click();
   }
 
   @Test
   public void a10_gameFlowWorks() {
-    String gameUrl = elementHelper.id_one("info-game-url").getText();
+    String gameUrl = elementHelper.oneById("info-game-url").getText();
 
     tabHelper.switchTo(1);
     driver.get(gameUrl);
-    wait.until((@Nonnull WebDriver wd) -> elementHelper.css_list("#grid-shoot table").size() > 0);
+    wait.until((@Nonnull WebDriver wd) -> elementHelper.listByCss("#grid-shoot table").size() > 0);
 
     for (int i = 0; i < 5; i++) {
       System.out.println("GAME=" + i);
 
       tabHelper.switchTo(0);
       generalHelper.clickProperShips();
-      elementHelper.id_one("ok-ship-selection").click();
+      elementHelper.oneById("ok-ship-selection").click();
 
       tabHelper.switchTo(1);
       generalHelper.clickProperShips();
-      elementHelper.id_one("ok-ship-selection").click();
+      elementHelper.oneById("ok-ship-selection").click();
 
-      wait.until((@Nonnull WebDriver wd) -> elementHelper.i18n_list("tour.shoot_me").size() > 0
-          || elementHelper.i18n_list("tour.shoot_opp").size() > 0);
+      wait.until((@Nonnull WebDriver wd) -> elementHelper.listByI18n("tour.shoot_me").size() > 0
+          || elementHelper.listByI18n("tour.shoot_opp").size() > 0);
 
       if (i == 0) { // one bad click
-        if (elementHelper.i18n_list("tour.shoot_me").size() > 0) {
-          elementHelper.cell_one("grid-shoot", 5, 5).click();
+        if (elementHelper.listByI18n("tour.shoot_me").size() > 0) {
+          elementHelper.oneCell("grid-shoot", 5, 5).click();
         } else {
           tabHelper.switchTo(0);
-          elementHelper.cell_one("grid-shoot", 5, 5).click();
+          elementHelper.oneCell("grid-shoot", 5, 5).click();
           tabHelper.switchTo(1);
         }
       }
 
-      if (elementHelper.i18n_list("tour.shoot_me").size() <= 0) {
+      if (elementHelper.listByI18n("tour.shoot_me").size() <= 0) {
         tabHelper.switchTo(0);
       }
       generalHelper.clickProperShips();
 
       for (int s = 0; s < 2; s++) {
         tabHelper.switchTo(s);
-        wait.until((@Nonnull WebDriver wd) -> elementHelper.i18n_list("end.next_game").size() > 0);
-        elementHelper.id_one("ok-game-next").click();
+        wait.until((@Nonnull WebDriver wd) -> elementHelper.listByI18n("end.next_game").size() > 0);
+        elementHelper.oneById("ok-game-next").click();
       }
     }
   }

@@ -1,18 +1,15 @@
 package pl.nn44.battleship.model;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
-import pl.nn44.battleship.util.other.Lists;
-
 import java.util.List;
+import java.util.Objects;
+import java.util.StringJoiner;
 
 public class Ship {
 
   private final List<Coord> coords;
 
   public Ship(List<Coord> coords) {
-    this.coords = ImmutableList.copyOf(coords);
+    this.coords = List.copyOf(coords);
   }
 
   public List<Coord> getCoords() {
@@ -28,18 +25,18 @@ public class Ship {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Ship ship = (Ship) o;
-    return Lists.equalsIgnoreOrder(coords, ship.coords);
+    return Objects.equals(coords, ship.coords);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(coords);
+    return Objects.hash(coords);
   }
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("coords", coords)
+    return new StringJoiner(", ", Ship.class.getSimpleName() + "[", "]")
+        .add("coords=" + coords)
         .toString();
   }
 }

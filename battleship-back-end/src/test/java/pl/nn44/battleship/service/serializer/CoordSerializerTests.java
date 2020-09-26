@@ -16,7 +16,7 @@ public class CoordSerializerTests {
     Optional<Coord> coord = coordSerializer.deserialize(coordStr);
 
     Assertions.assertTrue(coord.isPresent());
-    Assertions.assertEquals(Coord.c(6, 44), coord.get());
+    Assertions.assertEquals(Coord.create(6, 44), coord.get());
   }
 
   @Test
@@ -25,7 +25,7 @@ public class CoordSerializerTests {
     Optional<Coord> coord = coordSerializer.deserialize(coordStr);
 
     Assertions.assertTrue(coord.isPresent());
-    Assertions.assertEquals(Coord.c(106, 4), coord.get());
+    Assertions.assertEquals(Coord.create(106, 4), coord.get());
   }
 
   @Test

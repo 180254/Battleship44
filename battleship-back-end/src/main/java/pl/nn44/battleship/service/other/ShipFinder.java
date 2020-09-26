@@ -9,8 +9,7 @@ import pl.nn44.battleship.util.other.Suppliers;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -18,7 +17,6 @@ public class ShipFinder {
 
   private final Grid grid;
   private final Supplier<List<Ship>> ships = Suppliers.memoize(this::calculateShips);
-  private final ConcurrentMap<Ship, List<Coord>> surrounding = new ConcurrentHashMap<>();
 
   private ShipFinder(Grid grid) {
     this.grid = grid;
@@ -32,8 +30,16 @@ public class ShipFinder {
     return ships.get();
   }
 
-  public List<Coord> surrounding(Ship ship) {
-    return surrounding.computeIfAbsent(ship, this::calculateSurrounding);
+  public List<Coord> neighbours(Ship ship) {
+    return calculateNeighbours(ship, grid::neighbours);
+  }
+
+  public List<Coord> neighboursPlus(Ship ship) {
+    return calculateNeighbours(ship, grid::neighboursPlus);
+  }
+
+  public List<Coord> neighboursX(Ship ship) {
+    return calculateNeighbours(ship, grid::neighboursX);
   }
 
   public Ship findShip(Coord coord) {
@@ -55,7 +61,7 @@ public class ShipFinder {
     for (int rowNo = 0; rowNo < grid.getRowsNo(); rowNo++) {
       for (int colNo = 0; colNo < grid.getColsNo(); colNo++) {
 
-        Coord coord = Coord.c(rowNo, colNo);
+        Coord coord = Coord.create(rowNo, colNo);
         Cell cell = grid.getCell(coord);
 
         if (cell.getType() == Cell.Type.SHIP) {
@@ -72,9 +78,9 @@ public class ShipFinder {
     return Collections.unmodifiableList(ships);
   }
 
-  private List<Coord> calculateSurrounding(Ship ship) {
+  private List<Coord> calculateNeighbours(Ship ship, Function<Coord, List<Cell>> neighboursSupplier) {
     return ship.getCoords().stream()
-        .flatMap(c -> grid.getNeighbours(c).stream())
+        .flatMap(c -> neighboursSupplier.apply(c).stream())
         .map(Cell::getCoord)
         .filter(c -> !ship.getCoords().contains(c))
         .distinct()
@@ -82,28 +88,28 @@ public class ShipFinder {
   }
 
   private List<Coord> collectShipCoords(Coord startCoord) {
-    return collectShipCoords(startCoord, new ArrayList<>(), new ArrayList<>());
+    return List.copyOf(collectShipCoords(startCoord, new ArrayList<>(), new ArrayList<>()));
   }
 
   private List<Coord> collectShipCoords(Coord startCoord,
-                                        List<Coord> ship_int,
-                                        List<Coord> checked_int) {
+                                        List<Coord> shipCoords,
+                                        List<Coord> checkedCoords) {
 
-    if (checked_int.contains(startCoord)) {
-      return ship_int;
+    if (checkedCoords.contains(startCoord)) {
+      return shipCoords;
     }
 
-    checked_int.add(startCoord);
+    checkedCoords.add(startCoord);
 
     if (grid.getCell(startCoord).getType() == Cell.Type.SHIP) {
-      ship_int.add(startCoord);
+      shipCoords.add(startCoord);
 
-      for (Cell neighbourCell : grid.getNeighboursPlus(startCoord)) {
-        collectShipCoords(neighbourCell.getCoord(), ship_int, checked_int);
+      for (Cell neighbourCell : grid.neighboursPlus(startCoord)) {
+        collectShipCoords(neighbourCell.getCoord(), shipCoords, checkedCoords);
       }
     }
 
-    return ship_int;
+    return shipCoords;
   }
 
   private boolean isShipCoord(List<Ship> ships, Coord coord) {

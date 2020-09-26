@@ -44,8 +44,8 @@ Supported `browsers`:
 * start: `java -jar target/battleship44-0.0.1.jar <game server properties>`
 * available `game server properties`:
   - `--server.port=<port>`
-  - `--game.fleet-type.sizes=<size>` (`russian`, `classic_one`, `classic_two`)
-  - `--game.fleet-type.mode=<mode>` (`straight`, `curved`)
+  - `--game.rules.fleet-sizes=<size>` (`russian`, `classic_one`, `classic_two`)
+  - `--game.rules.fleet-mode=<mode>` (`straight`, `curved`)
 
 ## **front-end**
 
@@ -98,6 +98,8 @@ v1.4.1 (released 2020-09-24)
 + back: updated dependencies  
 + back: code updated to java 11  
   
+v2.0 (unreleased)
+
 vX.Y (planned)  
 - "availability broadcasting" - look for a waiting player  
 - back/front: dynamic info from a server about fleet sizes (was hardcoded in html file)  

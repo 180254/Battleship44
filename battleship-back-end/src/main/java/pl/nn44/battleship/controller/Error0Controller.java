@@ -20,8 +20,9 @@ public class Error0Controller extends AbstractErrorController {
   }
 
   @Override
+  @SuppressWarnings("deprecation") // just implementing ErrorController
   public String getErrorPath() {
-    return "";
+    return null;
   }
 
   @RequestMapping(produces = {"text/plain"})

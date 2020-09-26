@@ -1,9 +1,8 @@
 package pl.nn44.battleship.model;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
-
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.StringJoiner;
 
 public class Cell {
 
@@ -40,21 +39,21 @@ public class Cell {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Cell cell = (Cell) o;
-    return Objects.equal(grid, cell.grid) &&
-        Objects.equal(coord, cell.coord);
+    return Objects.equals(grid, cell.grid) &&
+        Objects.equals(coord, cell.coord);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(grid, coord);
+    return Objects.hash(grid, coord);
   }
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("grid", grid)
-        .add("coord", coord)
-        .add("type", type)
+    return new StringJoiner(", ", Cell.class.getSimpleName() + "[", "]")
+        .add("grid=" + grid)
+        .add("coord=" + coord)
+        .add("type=" + type)
         .toString();
   }
 
@@ -84,9 +83,8 @@ public class Cell {
 
     @Override
     public String toString() {
-      return MoreObjects.toStringHelper(this)
-          .add("name", name())
-          .add("code", code)
+      return new StringJoiner(", ", Type.class.getSimpleName() + "[", "]")
+          .add("code=" + code)
           .toString();
     }
   }

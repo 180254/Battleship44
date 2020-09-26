@@ -24,7 +24,7 @@ public class CellSerializerTests {
 
   @Test
   public void serialize_one() {
-    Cell cell = new Cell(null, Coord.c(10, 7), Cell.Type.SHIP);
+    Cell cell = new Cell(null, Coord.create(10, 7), Cell.Type.SHIP);
     List<Cell> cells = Collections.singletonList(cell);
     String serialize = cellSerializer.serialize(cells);
 
@@ -33,8 +33,8 @@ public class CellSerializerTests {
 
   @Test
   public void serialize_two() {
-    Cell cell1 = new Cell(null, Coord.c(10, 7), Cell.Type.EMPTY);
-    Cell cell2 = new Cell(null, Coord.c(5, 4), Cell.Type.SHIP);
+    Cell cell1 = new Cell(null, Coord.create(10, 7), Cell.Type.EMPTY);
+    Cell cell2 = new Cell(null, Coord.create(5, 4), Cell.Type.SHIP);
 
     List<Cell> cells = Arrays.asList(cell1, cell2);
     String serialize = cellSerializer.serialize(cells);
@@ -44,8 +44,8 @@ public class CellSerializerTests {
 
   @Test
   public void serialize_some() {
-    Cell cell1 = new Cell(null, Coord.c(10, 7), Cell.Type.EMPTY);
-    Cell cell2 = new Cell(null, Coord.c(5, 4), Cell.Type.SHIP);
+    Cell cell1 = new Cell(null, Coord.create(10, 7), Cell.Type.EMPTY);
+    Cell cell2 = new Cell(null, Coord.create(5, 4), Cell.Type.SHIP);
 
     List<Cell> cells = Arrays.asList(cell1, cell2, cell1, cell1);
     String serialize = cellSerializer.serialize(cells);

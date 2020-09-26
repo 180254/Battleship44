@@ -1,11 +1,11 @@
 package pl.nn44.battleship.model;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import pl.nn44.battleship.util.id.IdGenerator;
 import pl.nn44.battleship.util.other.Arrays;
 
+import java.util.Objects;
 import java.util.Random;
+import java.util.StringJoiner;
 
 public class Game {
 
@@ -122,19 +122,19 @@ public class Game {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Game game = (Game) o;
-    return Objects.equal(id, game.id);
+    return Objects.equals(id, game.id);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(id);
+    return Objects.hash(id);
   }
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("id", id)
-        .add("players", players)
+    return new StringJoiner(", ", Game.class.getSimpleName() + "[", "]")
+        .add("id='" + id + "'")
+        .add("players=" + java.util.Arrays.toString(players))
         .toString();
   }
 

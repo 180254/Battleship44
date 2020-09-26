@@ -32,7 +32,6 @@ public class Grid {
     return colsNo;
   }
 
-
   public boolean isCoordProper(Coord coord) {
     return (coord.getRow() >= 0
         && coord.getCol() >= 0
@@ -48,15 +47,15 @@ public class Grid {
     return new Cell(this, coord, type);
   }
 
-  public List<Cell> getNeighbours(Coord coord) {
+  public List<Cell> neighbours(Coord coord) {
     return filteredNeighbours(coord.neighbours());
   }
 
-  public List<Cell> getNeighboursPlus(Coord coord) {
+  public List<Cell> neighboursPlus(Coord coord) {
     return filteredNeighbours(coord.neighboursPlus());
   }
 
-  public List<Cell> getNeighboursX(Coord coord) {
+  public List<Cell> neighboursX(Coord coord) {
     return filteredNeighbours(coord.neighboursX());
   }
 
@@ -64,7 +63,7 @@ public class Grid {
     return coords.stream()
         .filter(this::isCoordProper)
         .map(this::getCell)
-        .collect(Collectors.toList());
+        .collect(Collectors.toUnmodifiableList());
   }
 
   protected int coordToOffset(Coord coord) {

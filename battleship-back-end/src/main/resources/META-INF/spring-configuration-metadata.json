@@ -1,0 +1,109 @@
+{
+  "groups": [
+    {
+      "name": "game",
+      "type": "pl.nn44.battleship.configuration.GameProperties",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties"
+    },
+    {
+      "name": "game.impl",
+      "type": "pl.nn44.battleship.configuration.GameProperties$Impl",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties",
+      "sourceMethod": "getImpl()"
+    },
+    {
+      "name": "game.rules",
+      "type": "pl.nn44.battleship.gamerules.GameRules",
+      "sourceType": "pl.nn44.battleship.gamerules.GameRules"
+    },
+    {
+      "name": "game.rules.grid-size",
+      "type": "pl.nn44.battleship.gamerules.GridSize",
+      "sourceType": "pl.nn44.battleship.gamerules.GridSize"
+    },
+    {
+      "name": "game.ws",
+      "type": "pl.nn44.battleship.configuration.GameProperties$Ws",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties",
+      "sourceMethod": "getWs()"
+    }
+  ],
+  "properties": [
+    {
+      "name": "game.impl.id-len",
+      "type": "java.lang.Integer",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Impl",
+      "defaultValue": 0
+    },
+    {
+      "name": "game.impl.locks-no",
+      "type": "java.lang.Integer",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Impl",
+      "defaultValue": 0
+    },
+    {
+      "name": "game.rules",
+      "type": "pl.nn44.battleship.gamerules.GameRules",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties"
+    },
+    {
+      "name": "game.rules.fleet-can-touch-each-other-diagonally",
+      "type": "java.lang.Boolean",
+      "sourceType": "pl.nn44.battleship.gamerules.GameRules",
+      "defaultValue": false
+    },
+    {
+      "name": "game.rules.fleet-mode",
+      "type": "pl.nn44.battleship.gamerules.FleetMode",
+      "sourceType": "pl.nn44.battleship.gamerules.GameRules"
+    },
+    {
+      "name": "game.rules.fleet-sizes",
+      "type": "pl.nn44.battleship.gamerules.FleetSizes",
+      "sourceType": "pl.nn44.battleship.gamerules.GameRules"
+    },
+    {
+      "name": "game.rules.grid-size",
+      "type": "pl.nn44.battleship.gamerules.GridSize",
+      "sourceType": "pl.nn44.battleship.gamerules.GameRules"
+    },
+    {
+      "name": "game.rules.grid-size.cols",
+      "type": "java.lang.Integer",
+      "sourceType": "pl.nn44.battleship.gamerules.GridSize",
+      "defaultValue": 0
+    },
+    {
+      "name": "game.rules.grid-size.rows",
+      "type": "java.lang.Integer",
+      "sourceType": "pl.nn44.battleship.gamerules.GridSize",
+      "defaultValue": 0
+    },
+    {
+      "name": "game.ws.conf-allowed-origins",
+      "type": "java.lang.String[]",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Ws"
+    },
+    {
+      "name": "game.ws.conf-handlers",
+      "type": "java.lang.String[]",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Ws"
+    },
+    {
+      "name": "game.ws.policy-idle-timeout",
+      "type": "java.time.Duration",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Ws"
+    },
+    {
+      "name": "game.ws.policy-max-binary-message-buffer-size",
+      "type": "org.springframework.util.unit.DataSize",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Ws"
+    },
+    {
+      "name": "game.ws.policy-max-text-message-buffer-size",
+      "type": "org.springframework.util.unit.DataSize",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Ws"
+    }
+  ],
+  "hints": []
+}

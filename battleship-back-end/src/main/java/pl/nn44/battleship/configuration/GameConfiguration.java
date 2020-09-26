@@ -40,13 +40,13 @@ class GameConfiguration implements WebSocketConfigurer {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(GameConfiguration.class);
 
-  final GameProperties gm;
+  final GameProperties gameProperties;
 
   @Autowired
-  GameConfiguration(GameProperties gm) {
-    LOGGER.info("{}", gm);
-    Assert.notNull(gm, "GameProperties must not be null.");
-    this.gm = gm;
+  GameConfiguration(GameProperties gameProperties) {
+    LOGGER.info("{}", gameProperties);
+    Assert.notNull(gameProperties, "GameProperties must not be null.");
+    this.gameProperties = gameProperties;
   }
 
   @Bean
@@ -58,10 +58,10 @@ class GameConfiguration implements WebSocketConfigurer {
   GameController webSocketController() {
 
     Random random = new SecureRandom();
-    Locker locker = new LockerImpl(gm.getImpl().getLocksNo());
-    IdGenerator idGenerator = new BigIdGenerator(random, gm.getImpl().getIdLen());
-    FleetVerifier fleetVerifier = FleetVerifierFactory.forTypeFromGm(gm);
-    Serializer<Grid, String> gridSerializer = new GridSerializer(gm);
+    Locker locker = new LockerImpl(gameProperties.getImpl().getLocksNo());
+    IdGenerator idGenerator = new BigIdGenerator(random, gameProperties.getImpl().getIdLen());
+    FleetVerifier fleetVerifier = FleetVerifierFactory.forRules(gameProperties.getRules());
+    Serializer<Grid, String> gridSerializer = new GridSerializer(gameProperties.getRules());
     Serializer<Coord, String> coordSerializer = new CoordSerializer();
     Serializer<List<Cell>, String> cellSerializer = new CellSerializer();
 
@@ -79,16 +79,19 @@ class GameConfiguration implements WebSocketConfigurer {
   ServletServerContainerFactoryBean createWebSocketContainer() {
 
     ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
-    container.setMaxTextMessageBufferSize(gm.getWs().getPolicyMaxTextMessageSize());
-    container.setMaxBinaryMessageBufferSize(gm.getWs().getPolicyMaxBinaryMessageSize());
-    container.setMaxSessionIdleTimeout(gm.getWs().getPolicyIdleTimeoutMs());
+    container.setMaxTextMessageBufferSize(
+        (int) gameProperties.getWs().getPolicyMaxTextMessageBufferSize().toBytes());
+    container.setMaxBinaryMessageBufferSize(
+        (int) gameProperties.getWs().getPolicyMaxBinaryMessageBufferSize().toBytes());
+    container.setMaxSessionIdleTimeout(
+        gameProperties.getWs().getPolicyIdleTimeout().toMillis());
     return container;
   }
 
   @Override
   public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-    registry.addHandler(webSocketController(), gm.getWs().getConfHandlers())
-        .setAllowedOrigins(gm.getWs().getConfAllowedOrigins());
+    registry.addHandler(webSocketController(), gameProperties.getWs().getConfHandlers())
+        .setAllowedOrigins(gameProperties.getWs().getConfAllowedOrigins());
   }
 
   @Bean

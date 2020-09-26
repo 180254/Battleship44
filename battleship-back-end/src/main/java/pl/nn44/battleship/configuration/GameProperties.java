@@ -2,33 +2,27 @@ package pl.nn44.battleship.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.util.unit.DataSize;
+import pl.nn44.battleship.gamerules.GameRules;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.StringJoiner;
 
-@ConfigurationProperties(prefix = "game")
 @Component
+@ConfigurationProperties(prefix = "game", ignoreInvalidFields = false, ignoreUnknownFields = false)
 public class GameProperties {
 
-  private GridSize gridSize;
-  private FleetType fleetType;
+  private GameRules rules;
   private Impl impl;
   private Ws ws;
 
-  public GridSize getGridSize() {
-    return gridSize;
+  public GameRules getRules() {
+    return rules;
   }
 
-  public void setGridSize(GridSize gridSize) {
-    this.gridSize = gridSize;
-  }
-
-  public FleetType getFleetType() {
-    return fleetType;
-  }
-
-  public void setFleetType(FleetType fleetType) {
-    this.fleetType = fleetType;
+  public void setRules(GameRules rules) {
+    this.rules = rules;
   }
 
   public Impl getImpl() {
@@ -50,82 +44,10 @@ public class GameProperties {
   @Override
   public String toString() {
     return new StringJoiner(", ", GameProperties.class.getSimpleName() + "[", "]")
-        .add("gridSize=" + gridSize)
-        .add("fleetType=" + fleetType)
+        .add("rules=" + rules)
         .add("impl=" + impl)
         .add("ws=" + ws)
         .toString();
-  }
-
-  public static class FleetType {
-
-    private Mode mode;
-    private Sizes sizes;
-
-    public Mode getMode() {
-      return mode;
-    }
-
-    public void setMode(Mode mode) {
-      this.mode = mode;
-    }
-
-    public Sizes getSizes() {
-      return sizes;
-    }
-
-    public void setSizes(Sizes sizes) {
-      this.sizes = sizes;
-    }
-
-    @Override
-    public String toString() {
-      return new StringJoiner(", ", FleetType.class.getSimpleName() + "[", "]")
-          .add("mode=" + mode)
-          .add("sizes=" + sizes)
-          .toString();
-    }
-
-    public enum Mode {
-      CURVED,
-      STRAIGHT
-    }
-
-    public enum Sizes {
-      RUSSIAN,
-      CLASSIC_ONE,
-      CLASSIC_TWO,
-    }
-  }
-
-  public static class GridSize {
-
-    private int rows;
-    private int cols;
-
-    public int getRows() {
-      return rows;
-    }
-
-    public void setRows(int rows) {
-      this.rows = rows;
-    }
-
-    public int getCols() {
-      return cols;
-    }
-
-    public void setCols(int cols) {
-      this.cols = cols;
-    }
-
-    @Override
-    public String toString() {
-      return new StringJoiner(", ", GridSize.class.getSimpleName() + "[", "]")
-          .add("rows=" + rows)
-          .add("cols=" + cols)
-          .toString();
-    }
   }
 
   public static class Impl {
@@ -162,9 +84,9 @@ public class GameProperties {
 
     private String[] confHandlers;
     private String[] confAllowedOrigins;
-    private int policyMaxTextMessageSize;
-    private int policyMaxBinaryMessageSize;
-    private long policyIdleTimeoutMs;
+    private DataSize policyMaxTextMessageBufferSize;
+    private DataSize policyMaxBinaryMessageBufferSize;
+    private Duration policyIdleTimeout;
 
     public String[] getConfHandlers() {
       return confHandlers;
@@ -182,28 +104,28 @@ public class GameProperties {
       this.confAllowedOrigins = confAllowedOrigins;
     }
 
-    public int getPolicyMaxTextMessageSize() {
-      return policyMaxTextMessageSize;
+    public DataSize getPolicyMaxTextMessageBufferSize() {
+      return policyMaxTextMessageBufferSize;
     }
 
-    public void setPolicyMaxTextMessageSize(int policyMaxTextMessageSize) {
-      this.policyMaxTextMessageSize = policyMaxTextMessageSize;
+    public void setPolicyMaxTextMessageBufferSize(DataSize policyMaxTextMessageBufferSize) {
+      this.policyMaxTextMessageBufferSize = policyMaxTextMessageBufferSize;
     }
 
-    public int getPolicyMaxBinaryMessageSize() {
-      return policyMaxBinaryMessageSize;
+    public DataSize getPolicyMaxBinaryMessageBufferSize() {
+      return policyMaxBinaryMessageBufferSize;
     }
 
-    public void setPolicyMaxBinaryMessageSize(int policyMaxBinaryMessageSize) {
-      this.policyMaxBinaryMessageSize = policyMaxBinaryMessageSize;
+    public void setPolicyMaxBinaryMessageBufferSize(DataSize policyMaxBinaryMessageBufferSize) {
+      this.policyMaxBinaryMessageBufferSize = policyMaxBinaryMessageBufferSize;
     }
 
-    public long getPolicyIdleTimeoutMs() {
-      return policyIdleTimeoutMs;
+    public Duration getPolicyIdleTimeout() {
+      return policyIdleTimeout;
     }
 
-    public void setPolicyIdleTimeoutMs(long policyIdleTimeoutMs) {
-      this.policyIdleTimeoutMs = policyIdleTimeoutMs;
+    public void setPolicyIdleTimeout(Duration policyIdleTimeout) {
+      this.policyIdleTimeout = policyIdleTimeout;
     }
 
     @Override
@@ -211,9 +133,9 @@ public class GameProperties {
       return new StringJoiner(", ", Ws.class.getSimpleName() + "[", "]")
           .add("confHandlers=" + Arrays.toString(confHandlers))
           .add("confAllowedOrigins=" + Arrays.toString(confAllowedOrigins))
-          .add("policyMaxTextMessageSize=" + policyMaxTextMessageSize)
-          .add("policyMaxBinaryMessageSize=" + policyMaxBinaryMessageSize)
-          .add("policyIdleTimeoutMs=" + policyIdleTimeoutMs)
+          .add("policyMaxTextMessageBufferSize=" + policyMaxTextMessageBufferSize)
+          .add("policyMaxBinaryMessageBufferSize=" + policyMaxBinaryMessageBufferSize)
+          .add("policyIdleTimeout=" + policyIdleTimeout)
           .toString();
     }
   }

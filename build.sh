@@ -10,7 +10,6 @@ yarn install
 npx webpack --mode production
 popd
 
-
 pushd battleship-back-end
 mvn clean package -Pfe
 popd

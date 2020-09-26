@@ -1,11 +1,10 @@
 package pl.nn44.battleship.model;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
-
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Coord {
 
@@ -17,7 +16,7 @@ public class Coord {
     this.col = col;
   }
 
-  public static Coord c(int row, int col) {
+  public static Coord create(int row, int col) {
     return new Coord(row, col);
   }
 
@@ -30,27 +29,27 @@ public class Coord {
   }
 
   public List<Coord> neighbours() {
-    return ImmutableList.<Coord>builder()
-        .addAll(neighboursPlus())
-        .addAll(neighboursX())
-        .build();
+    return Stream.concat(
+        neighboursPlus().stream(),
+        neighboursX().stream()
+    ).collect(Collectors.toUnmodifiableList());
   }
 
   public List<Coord> neighboursPlus() {
-    return Arrays.asList(
-        Coord.c(row, col - 1),
-        Coord.c(row, col + 1),
-        Coord.c(row - 1, col),
-        Coord.c(row + 1, col)
+    return List.of(
+        Coord.create(row, col - 1),
+        Coord.create(row, col + 1),
+        Coord.create(row - 1, col),
+        Coord.create(row + 1, col)
     );
   }
 
   public List<Coord> neighboursX() {
-    return Arrays.asList(
-        Coord.c(row - 1, col - 1),
-        Coord.c(row + 1, col - 1),
-        Coord.c(row - 1, col + 1),
-        Coord.c(row + 1, col + 1)
+    return List.of(
+        Coord.create(row - 1, col - 1),
+        Coord.create(row + 1, col - 1),
+        Coord.create(row - 1, col + 1),
+        Coord.create(row + 1, col + 1)
     );
   }
 
@@ -65,14 +64,14 @@ public class Coord {
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(row, col);
+    return Objects.hash(row, col);
   }
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("row", row)
-        .add("col", col)
+    return new StringJoiner(", ", Coord.class.getSimpleName() + "[", "]")
+        .add("row=" + row)
+        .add("col=" + col)
         .toString();
   }
 }

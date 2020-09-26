@@ -8,7 +8,6 @@ public class ServletCustomizer implements WebServerFactoryCustomizer<Configurabl
   public void customize(ConfigurableServletWebServerFactory factory) {
     MimeMappings mappings = new MimeMappings(MimeMappings.DEFAULT);
     mappings.add("map", "application/json");
-    mappings.add("mjs", "application/javascript");
     factory.setMimeMappings(mappings);
   }
 }

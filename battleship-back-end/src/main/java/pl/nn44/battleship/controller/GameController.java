@@ -26,8 +26,9 @@ import java.util.function.BiConsumer;
 
 public class GameController extends TextWebSocketHandler {
 
-  public static final int COMMAND_LEN = 4;
   private static final Logger LOGGER = LoggerFactory.getLogger(GameController.class);
+  private static final int COMMAND_LEN = 4;
+
   private final ConcurrentMap<WebSocketSession, Player> players = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, Game> games = new ConcurrentHashMap<>();
   private final Random random;

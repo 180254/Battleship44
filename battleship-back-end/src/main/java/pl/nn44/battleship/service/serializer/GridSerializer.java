@@ -1,6 +1,7 @@
 package pl.nn44.battleship.service.serializer;
 
-import pl.nn44.battleship.configuration.GameProperties;
+import pl.nn44.battleship.gamerules.GameRules;
+import pl.nn44.battleship.gamerules.GridSize;
 import pl.nn44.battleship.model.Cell;
 import pl.nn44.battleship.model.Grid;
 import pl.nn44.battleship.service.other.GridFactory;
@@ -14,13 +15,13 @@ public class GridSerializer implements Serializer<Grid, String> {
   private final String validCodes = String.format("%d%d", Cell.Type.EMPTY.getCode(), Cell.Type.SHIP.getCode());
   private final Pattern pattern = Pattern.compile("[" + validCodes + "](,[" + validCodes + "])*");
 
-  private final GameProperties gameProps;
+  private final GameRules gameRules;
   private final int gameSize;
 
-  public GridSerializer(GameProperties gameProps) {
-    this.gameProps = gameProps;
+  public GridSerializer(GameRules gameRules) {
+    this.gameRules = gameRules;
 
-    GameProperties.GridSize gridSize = gameProps.getGridSize();
+    GridSize gridSize = gameRules.getGridSize();
     this.gameSize = gridSize.getRows() * gridSize.getCols();
   }
 
@@ -42,7 +43,7 @@ public class GridSerializer implements Serializer<Grid, String> {
       return Optional.empty();
     }
 
-    Grid grid = GridFactory.sizeFromEnv(gameProps, codes);
+    Grid grid = GridFactory.fromGameRules(gameRules, codes);
     return Optional.of(grid);
 
   }

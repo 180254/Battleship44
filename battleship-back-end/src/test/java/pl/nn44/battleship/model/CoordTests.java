@@ -11,9 +11,9 @@ import java.util.List;
 
 public class CoordTests {
 
-  private Matcher<Coord> isNeighbourOf(Coord coord, List<Coord> neighbours) {
+  private Matcher<Coord> isNeighbourOf(List<Coord> neighbours) {
 
-    return new TypeSafeMatcher<Coord>() {
+    return new TypeSafeMatcher<>() {
       @Override
       protected boolean matchesSafely(Coord item) {
         return neighbours.contains(item);
@@ -31,7 +31,7 @@ public class CoordTests {
   public void checkNeighboursPlus_00() {
     Coord coord = new Coord(0, 0);
     List<Coord> neighboursPlus = coord.neighboursPlus();
-    Matcher<Coord> isNeighbourPlus = isNeighbourOf(coord, neighboursPlus);
+    Matcher<Coord> isNeighbourPlus = isNeighbourOf(neighboursPlus);
 
     Assertions.assertSame(4, neighboursPlus.size(), "has 4 neighboursPlus");
     MatcherAssert.assertThat(new Coord(0, -1), isNeighbourPlus);
@@ -44,7 +44,7 @@ public class CoordTests {
   public void checkNeighboursPlus_64() {
     Coord coord = new Coord(4, 6);
     List<Coord> neighboursPlus = coord.neighboursPlus();
-    Matcher<Coord> isNeighbourPlus = isNeighbourOf(coord, neighboursPlus);
+    Matcher<Coord> isNeighbourPlus = isNeighbourOf(neighboursPlus);
 
     Assertions.assertSame(4, neighboursPlus.size(), "has 4 neighboursPlus");
     MatcherAssert.assertThat(new Coord(4, 5), isNeighbourPlus);
@@ -57,7 +57,7 @@ public class CoordTests {
   public void checkNeighboursX_00() {
     Coord coord = new Coord(0, 0);
     List<Coord> neighboursX = coord.neighboursX();
-    Matcher<Coord> isNeighbourX = isNeighbourOf(coord, neighboursX);
+    Matcher<Coord> isNeighbourX = isNeighbourOf(neighboursX);
 
     Assertions.assertSame(4, neighboursX.size(), "has 4 neighboursX");
     MatcherAssert.assertThat(new Coord(-1, -1), isNeighbourX);
@@ -70,7 +70,7 @@ public class CoordTests {
   public void checkNeighboursX_64() {
     Coord coord = new Coord(4, 6);
     List<Coord> neighboursX = coord.neighboursX();
-    Matcher<Coord> isNeighbourX = isNeighbourOf(coord, neighboursX);
+    Matcher<Coord> isNeighbourX = isNeighbourOf(neighboursX);
 
     Assertions.assertSame(4, neighboursX.size(), "has 4 neighboursX");
     MatcherAssert.assertThat(new Coord(3, 5), isNeighbourX);
