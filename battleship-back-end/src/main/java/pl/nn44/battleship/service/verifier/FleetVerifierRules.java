@@ -37,22 +37,22 @@ public class FleetVerifierRules {
   }
 
   public boolean hasSpaceAroundShipsPlus(List<Ship> ships) {
-   return hasSpaceAroundShipsHelper(ships, shipFinder::neighboursPlus);
+    return hasSpaceAroundShipsHelper(ships, shipFinder::neighboursPlus);
   }
 
-  private boolean hasSpaceAroundShipsHelper(List<Ship> ships, Function<Ship, List<Coord>> surroundingSupplier) {
+  private boolean hasSpaceAroundShipsHelper(List<Ship> ships, Function<Ship, List<Coord>> neighboursSupplier) {
     boolean collision = false;
 
     outerLoop:
     for (int i = 0; i < ships.size(); i++) {
       Ship ship1 = ships.get(i);
-      List<Coord> surrounding1 = surroundingSupplier.apply(ship1);
+      List<Coord> neighbours = neighboursSupplier.apply(ship1);
 
       for (int j = i + 1; j < ships.size(); j++) {
         Ship ship2 = ships.get(j);
         List<Coord> coords2 = ship2.getCoords();
 
-        if (!Collections.disjoint(coords2, surrounding1)) {
+        if (!Collections.disjoint(coords2, neighbours)) {
           collision = true;
           break outerLoop;
         }

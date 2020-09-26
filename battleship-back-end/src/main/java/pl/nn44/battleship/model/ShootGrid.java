@@ -36,9 +36,9 @@ public class ShootGrid extends Grid {
       Ship opponentShip = opShipFinder.findShip(coord);
       if (isShipSink(opponentShip)) {
 
-        for (Coord surroundCoord : opShipFinder.neighbours(opponentShip)) {
-          this.setCell(surroundCoord, Cell.Type.EMPTY);
-          changedCell.add(this.getCell(surroundCoord));
+        for (Coord neighbourCoord : opShipFinder.neighbours(opponentShip)) {
+          this.setCell(neighbourCoord, Cell.Type.EMPTY);
+          changedCell.add(this.getCell(neighbourCoord));
         }
       }
 
