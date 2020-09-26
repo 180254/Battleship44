@@ -1,6 +1,5 @@
 package pl.nn44.battleship.controller;
 
-import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
@@ -22,6 +21,8 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 public class GameController extends TextWebSocketHandler {
@@ -39,12 +40,12 @@ public class GameController extends TextWebSocketHandler {
   private final Serializer<Coord, String> coordSerializer;
   private final Serializer<List<Cell>, String> cellSerializer;
   private final Map<String, BiConsumer<Player, String>> commands =
-      new ImmutableMap.Builder<String, BiConsumer<Player, String>>()
-          .put("GAME", this::game)
-          .put("GRID", this::grid)
-          .put("SHOT", this::shot)
-          .put("PING", this::ping)
-          .build();
+      Map.ofEntries(
+          Map.entry("GAME", this::game),
+          Map.entry("GRID", this::grid),
+          Map.entry("SHOT", this::shot),
+          Map.entry("PING", this::ping)
+      );
 
   public GameController(Random random,
                         Locker locker,
@@ -60,10 +61,17 @@ public class GameController extends TextWebSocketHandler {
     this.gridSerializer = gridSerializer;
     this.coordSerializer = coordSerializer;
     this.cellSerializer = cellSerializer;
+
+    if (LOGGER.isDebugEnabled()) {
+      Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+        LOGGER.error("players.size=" + players.size());
+        LOGGER.error("games.size=" + games.size());
+      }, 0, 30, TimeUnit.SECONDS);
+    }
   }
 
   private String id(WebSocketSession session) {
-    return com.google.common.base.Strings.padStart(session.getId(), 8, '0');
+    return String.format("%1$8s", session.getId()).replace(' ', '0');
   }
 
   private void txt(Player player, String format, Object... args) {

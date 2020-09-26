@@ -58,7 +58,7 @@ class GameConfiguration implements WebSocketConfigurer {
   GameController webSocketController() {
 
     Random random = new SecureRandom();
-    Locker locker = new LockerImpl(gameProperties.getImpl().getLocksNo());
+    Locker locker = new LockerImpl();
     IdGenerator idGenerator = new BigIdGenerator(random, gameProperties.getImpl().getIdLen());
     FleetVerifier fleetVerifier = FleetVerifierFactory.forRules(gameProperties.getRules());
     Serializer<Grid, String> gridSerializer = new GridSerializer(gameProperties.getRules());

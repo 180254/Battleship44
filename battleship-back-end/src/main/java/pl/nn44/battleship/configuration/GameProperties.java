@@ -53,7 +53,6 @@ public class GameProperties {
   public static class Impl {
 
     private int idLen;
-    private int locksNo;
 
     public int getIdLen() {
       return idLen;
@@ -63,19 +62,11 @@ public class GameProperties {
       this.idLen = idLen;
     }
 
-    public int getLocksNo() {
-      return locksNo;
-    }
-
-    public void setLocksNo(int locksNo) {
-      this.locksNo = locksNo;
-    }
 
     @Override
     public String toString() {
       return new StringJoiner(", ", Impl.class.getSimpleName() + "[", "]")
           .add("idLen=" + idLen)
-          .add("locksNo=" + locksNo)
           .toString();
     }
   }

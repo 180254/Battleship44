@@ -19,7 +19,6 @@
         <start-class>pl.nn44.battleship.Application</start-class>
         <require.maven.version>3.0.5</require.maven.version>
         <maven-site-plugin.version>3.9.1</maven-site-plugin.version>
-        <guava.version>29.0-jre</guava.version>
         <findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
     </properties>
 
@@ -117,12 +116,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
         </dependency>
 
         <dependency>
