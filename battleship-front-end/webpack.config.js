@@ -37,7 +37,7 @@ module.exports = (env, argv) => {
     mode: webpack_config.mode,
     devtool: webpack_config.devtool,
     entry: {
-      app: './static/js/app/app-entrypoint.ts',
+      app: './src/app-entrypoint.ts',
     },
     output: {
       path: path.resolve(__dirname, 'static/js/dist/'),
