@@ -94,28 +94,21 @@ export class Translator {
     const langTag: LangTag = this.langSelector.autoSelect()[0];
     const jsonPath: string = Translator.fileWithTranslations(langTag);
 
-    fetch(jsonPath)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(
-            'network request failed: {0} {1}'.format(response.status, response.statusText)
-          );
-        }
-        return response.json();
-      })
-      .then(data => {
-        this.translatedStrings = data;
-        this.translateAllElements();
-        this.onLangChange.publish(0);
+    // core-js@3 do not polyfill window.fetch
+    const fetch: JQuery.jqXHR<{[key: string]: string}> = $.get(jsonPath);
+    fetch.done(data => {
+      this.translatedStrings = data;
+      this.translateAllElements();
+      this.onLangChange.publish(0);
 
-        if (callback) {
-          callback(langTag);
-        }
-      })
-      .catch(err => {
-        if (onError) {
-          onError(err);
-        }
-      });
+      if (callback) {
+        callback(langTag);
+      }
+    });
+    fetch.fail(err => {
+      if (onError) {
+        onError(err);
+      }
+    });
   }
 }

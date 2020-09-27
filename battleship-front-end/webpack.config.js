@@ -2,11 +2,15 @@
 
 const path = require('path');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const env_config = {
   mode: process.env.MODE || '',
   backend: process.env.BACKEND || '',
 };
+
 const webpack_configs = {
   development: {
     mode: 'development',
@@ -28,16 +32,13 @@ function fix_mode(mode) {
   return 'production';
 }
 
-module.exports = (env, argv) => {
-  const webpack_mode = fix_mode(env_config.mode || argv.mode);
-  const webpack_config = webpack_configs[webpack_mode];
-
+function js_config(webpack_config) {
   return {
-    target: 'web',
+    target: ['web', 'es5'],
     mode: webpack_config.mode,
     devtool: webpack_config.devtool,
     entry: {
-      app: './src/app-entrypoint.ts',
+      app: './src/js/app-entrypoint.ts',
     },
     output: {
       path: path.resolve(__dirname, 'static/js/dist/'),
@@ -77,10 +78,7 @@ module.exports = (env, argv) => {
               },
             },
           ],
-          exclude: [
-            // Babels adds some core-js polyfills. Do not process that polyfills. It breaks app.
-            /[\\/]node_modules[\\/]core-js[\\/]/,
-          ],
+          exclude: [/[\\/]node_modules[\\/]/],
         },
         {
           test: /\.ts$/,
@@ -114,6 +112,7 @@ module.exports = (env, argv) => {
       'js-cookie': 'Cookies',
     },
     optimization: {
+      minimizer: [new TerserPlugin()],
       runtimeChunk: 'single',
       splitChunks: {
         cacheGroups: {
@@ -127,4 +126,65 @@ module.exports = (env, argv) => {
     },
     plugins: [new CleanWebpackPlugin()],
   };
+}
+
+function css_config(webpack_config) {
+  return {
+    target: ['web', 'es5'],
+    mode: webpack_config.mode,
+    devtool: webpack_config.devtool,
+    entry: {
+      stylesheet: './src/css/stylesheet.css',
+    },
+    output: {
+      path: path.resolve(__dirname, 'static/css/dist/'),
+      filename: '[name].dist.js',
+    },
+    resolve: {
+      extensions: ['.css'],
+    },
+    module: {
+      rules: [
+        {
+          test: /\.css$/,
+          use: [
+            {
+              loader: MiniCssExtractPlugin.loader,
+            },
+            {loader: 'css-loader', options: {importLoaders: 1}},
+            {
+              loader: 'postcss-loader',
+              options: {
+                postcssOptions: {
+                  plugins: [
+                    ['postcss-preset-env', {browsers: webpack_config.browserslist}],
+                    [
+                      'postcss-normalize',
+                      {browsers: webpack_config.browserslist, forceImport: true},
+                    ],
+                  ],
+                },
+              },
+            },
+          ],
+          exclude: [/[\\/]node_modules[\\/]/],
+        },
+      ],
+    },
+    optimization: {
+      minimizer: [new OptimizeCSSAssetsPlugin({})],
+    },
+    plugins: [
+      new CleanWebpackPlugin(),
+      new MiniCssExtractPlugin({
+        filename: '[name].dist.css',
+      }),
+    ],
+  };
+}
+
+module.exports = (env, argv) => {
+  const webpack_mode = fix_mode(env_config.mode || argv.mode);
+  const webpack_config = webpack_configs[webpack_mode];
+  return [js_config(webpack_config), css_config(webpack_config)];
 };

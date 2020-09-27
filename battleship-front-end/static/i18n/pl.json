@@ -2,7 +2,7 @@
   "ws.unable": "WebSocket: nie da rady rozpocząć.",
   "ws.close": "WebSocket: połączenie zakończone [{0},{1}].",
   "ws.error": "WebSocket: połączenie zakończone [{0}].",
-  "title.default": "Okręty44",
+  "title.default": "Okręty",
   "title.shoot_me": "O44: Twój strzał …",
   "title.shoot_opp": "O44: Teraz przeciwnik …",
   "pre.initializing": "Inicjowanie, proszę czekać …",

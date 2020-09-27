@@ -2,82 +2,82 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8"/>
-    <title>Battleship44</title>
+  <meta charset="UTF-8"/>
+  <title>Battleship</title>
 
-    <meta name="description" content="Battleship online game."/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Battleship online game."/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-    <link rel="stylesheet" href="css/stylesheet.css"/>
-    <link rel="shortcut icon" href="favicon.ico?v=ico"/>
+  <link rel="stylesheet" href="css/dist/stylesheet.dist.css"/>
+  <link rel="shortcut icon" href="favicon.ico?v=ico"/>
 </head>
 
 <body>
 <div id="container">
-    <main>
-        <!--
-        Credits: Mark James @ famfamfam.com
-        License: These flag icons are available for free use for any purpose with no requirement for attribution.
-        URL: http://www.famfamfam.com/lab/icons/flags/
-        -->
-        <div id="flag"></div>
+  <main>
+    <!--
+    Credits: Mark James @ famfamfam.com
+    License: These flag icons are available for free use for any purpose with no requirement for attribution.
+    URL: http://www.famfamfam.com/lab/icons/flags/
+    -->
+    <div id="flag"></div>
 
-        <div id="message">
-                    <span id="message-const" data-i18n-path="pre.initializing">
-                        Initializing, please wait …
-                    </span>
-        </div>
+    <div id="message">
+      <span id="message-const" data-i18n-path="pre.initializing">
+          Initializing, please wait …
+      </span>
+    </div>
 
-        <div id="grid">
-            <div class="grid" id="grid-opponent"></div>
-            <div class="grid" id="grid-shoot"></div>
-        </div>
+    <div id="grid">
+      <div class="grid" id="grid-opponent"></div>
+      <div class="grid" id="grid-shoot"></div>
+    </div>
 
-        <div id="info">
-            <table>
-                <tr>
-                    <td data-i18n-path="stats.game_url" class="info-td-1">?_text_?</td>
-                    <td data-i18n-path="stats.unknown" class="info-td-2" id="info-game-url">?_text_?</td>
-                </tr>
+    <div id="info">
+      <table>
+        <tr>
+          <td data-i18n-path="stats.game_url" class="info-td-1">?_text_?</td>
+          <td data-i18n-path="stats.unknown" class="info-td-2" id="info-game-url">?_text_?</td>
+        </tr>
 
-                <tr>
-                    <td data-i18n-path="stats.game_players">?_text_?</td>
-                    <td id="info-players-game">0</td>
-                </tr>
+        <tr>
+          <td data-i18n-path="stats.game_players">?_text_?</td>
+          <td id="info-players-game">0</td>
+        </tr>
 
-                <tr>
-                    <td data-i18n-path="stats.game_ratio">?_text_?</td>
+        <tr>
+          <td data-i18n-path="stats.game_ratio">?_text_?</td>
 
-                    <td id="info-winning-ratio">
-                        <span id="info-winning-me">0</span>:<span id="info-winning-opp">0</span>
-                    </td>
-                </tr>
+          <td id="info-winning-ratio">
+            <span id="info-winning-me">0</span>:<span id="info-winning-opp">0</span>
+          </td>
+        </tr>
 
-                <tr>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
 
-                <tr>
-                    <td data-i18n-path="stats.server_ships">?_text_?</td>
-                    <td id="info-ship-sizes">4 | 3, 3 | 2, 2, 2 | 1, 1, 1, 1</td>
-                </tr>
+        <tr>
+          <td data-i18n-path="stats.server_ships">?_text_?</td>
+          <td id="info-ship-sizes">4 | 3, 3 | 2, 2, 2 | 1, 1, 1, 1</td>
+        </tr>
 
-                <tr>
-                    <td data-i18n-path="stats.server_players">?_text_?</td>
-                    <td data-i18n-path="stats.unknown" id="info-players-global">?_text_?</td>
-                </tr>
-            </table>
-        </div>
-    </main>
+        <tr>
+          <td data-i18n-path="stats.server_players">?_text_?</td>
+          <td data-i18n-path="stats.unknown" id="info-players-global">?_text_?</td>
+        </tr>
+      </table>
+    </div>
+  </main>
 
-    <footer id="scripts">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
-        <script src="js/dist/runtime.dist.js"></script>
-        <script src="js/dist/vendors.dist.js"></script>
-        <script src="js/dist/app.dist.js"></script>
-    </footer>
+  <footer id="scripts">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+    <script src="js/dist/runtime.dist.js"></script>
+    <script src="js/dist/vendors.dist.js"></script>
+    <script src="js/dist/app.dist.js"></script>
+  </footer>
 
 </div>
 </body>
