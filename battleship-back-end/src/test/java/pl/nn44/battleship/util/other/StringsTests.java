@@ -2,6 +2,7 @@ package pl.nn44.battleship.util.other;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import pl.nn44.battleship.util.Strings;
 
 public class StringsTests {
 

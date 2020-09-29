@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import pl.nn44.battleship.model.Cell;
 import pl.nn44.battleship.model.Coord;
+import pl.nn44.battleship.service.CellSerializer;
 
 import java.util.ArrayList;
 import java.util.Arrays;

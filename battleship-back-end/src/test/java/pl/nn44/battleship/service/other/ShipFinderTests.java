@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import pl.nn44.battleship.model.Coord;
 import pl.nn44.battleship.model.Grid;
 import pl.nn44.battleship.model.Ship;
+import pl.nn44.battleship.service.ShipFinder;
 
 import java.util.List;
 

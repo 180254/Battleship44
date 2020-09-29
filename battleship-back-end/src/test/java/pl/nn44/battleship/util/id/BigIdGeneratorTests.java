@@ -2,6 +2,7 @@ package pl.nn44.battleship.util.id;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import pl.nn44.battleship.util.BigIdGenerator;
 
 import java.util.Random;
 import java.util.regex.Pattern;

@@ -71,8 +71,8 @@ public class Cell {
     }
 
     public static Type getByCode(int code) {
-      Type[] allCells = Type.values();
-      return Arrays.stream(allCells)
+      Type[] types = Type.values();
+      return Arrays.stream(types)
           .filter(cell -> cell.code == code)
           .findFirst()
           .orElseThrow(() -> new IllegalArgumentException("bad code"));
@@ -80,13 +80,6 @@ public class Cell {
 
     public int getCode() {
       return code;
-    }
-
-    @Override
-    public String toString() {
-      return new StringJoiner(", ", Type.class.getSimpleName() + "[", "]")
-          .add("code=" + code)
-          .toString();
     }
   }
 }

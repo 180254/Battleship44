@@ -1,19 +1,36 @@
 package pl.nn44.battleship.model;
 
+import pl.nn44.battleship.gamerules.GridSize;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Grid {
 
+  protected final GridSize gridSize;
   protected final int[] cells;
-  private final int rowsNo;
-  private final int colsNo;
 
-  public Grid(int rowsNo, int colsNo, int[] cells) {
-    this.rowsNo = rowsNo;
-    this.colsNo = colsNo;
+  public Grid(int rows, int cols, int[] cells) {
+    this.gridSize = new GridSize(rows, cols);
     this.cells = cells.clone();
+  }
+
+
+  public Grid(GridSize gridSize, int[] cells) {
+    this.gridSize = gridSize;
+    this.cells = cells.clone();
+  }
+
+  public Grid(GridSize gridSize, List<Ship> ships) {
+    this.gridSize = gridSize;
+    this.cells = new int[gridSize.getRows() * gridSize.getCols()];
+
+    for (Ship ship : ships) {
+      for (Coord coord : ship.getCoords()) {
+        setCell(coord, Cell.Type.SHIP);
+      }
+    }
   }
 
   public int[] getCells() {
@@ -25,18 +42,18 @@ public class Grid {
   }
 
   public int getRowsNo() {
-    return rowsNo;
+    return gridSize.getRows();
   }
 
   public int getColsNo() {
-    return colsNo;
+    return gridSize.getCols();
   }
 
   public boolean isCoordProper(Coord coord) {
     return (coord.getRow() >= 0
         && coord.getCol() >= 0
-        && coord.getRow() < rowsNo
-        && coord.getCol() < colsNo);
+        && coord.getRow() < gridSize.getRows()
+        && coord.getCol() < gridSize.getCols());
   }
 
   public Cell getCell(Coord coord) {
@@ -48,18 +65,18 @@ public class Grid {
   }
 
   public List<Cell> neighbours(Coord coord) {
-    return filteredNeighbours(coord.neighbours());
+    return filteredCoords(coord.neighbours());
   }
 
   public List<Cell> neighboursPlus(Coord coord) {
-    return filteredNeighbours(coord.neighboursPlus());
+    return filteredCoords(coord.neighboursPlus());
   }
 
   public List<Cell> neighboursX(Coord coord) {
-    return filteredNeighbours(coord.neighboursX());
+    return filteredCoords(coord.neighboursX());
   }
 
-  protected List<Cell> filteredNeighbours(Collection<Coord> coords) {
+  protected List<Cell> filteredCoords(Collection<Coord> coords) {
     return coords.stream()
         .filter(this::isCoordProper)
         .map(this::getCell)
@@ -67,11 +84,23 @@ public class Grid {
   }
 
   protected int coordToOffset(Coord coord) {
-    return coord.getRow() * colsNo + coord.getCol();
+    return coord.getRow() * gridSize.getCols() + coord.getCol();
   }
 
   protected void setCell(Coord coord, Cell.Type type) {
     cells[coordToOffset(coord)] = type.getCode();
+  }
+
+  public String visualize() {
+    StringBuilder sb = new StringBuilder();
+    for (int col = 0; col < gridSize.getCols(); col++) {
+      for (int row = 0; row < gridSize.getRows(); row++) {
+        sb.append(cells[coordToOffset(Coord.create(row, col))]);
+        sb.append(" ");
+      }
+      sb.append("\n");
+    }
+    return sb.toString();
   }
 
   @Override

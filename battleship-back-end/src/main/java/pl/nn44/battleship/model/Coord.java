@@ -1,5 +1,7 @@
 package pl.nn44.battleship.model;
 
+import pl.nn44.battleship.gamerules.GridSize;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -26,6 +28,13 @@ public class Coord {
 
   public int getRow() {
     return row;
+  }
+
+  public boolean isProper(GridSize gridSize) {
+    return row >= 0
+        && col >= 0
+        && row < gridSize.getRows()
+        && col < gridSize.getCols();
   }
 
   public List<Coord> neighbours() {

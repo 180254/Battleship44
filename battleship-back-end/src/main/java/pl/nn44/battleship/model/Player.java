@@ -8,9 +8,17 @@ import java.util.StringJoiner;
 public class Player {
 
   private final WebSocketSession session;
+  private Game game;
   private Grid grid;
   private ShootGrid shootGrid;
-  private Game game;
+
+  public Game getGame() {
+    return game;
+  }
+
+  public void setGame(Game game) {
+    this.game = game;
+  }
 
   public Player(WebSocketSession session) {
     this.session = session;
@@ -34,14 +42,6 @@ public class Player {
 
   public void setShootGrid(ShootGrid shootGrid) {
     this.shootGrid = shootGrid;
-  }
-
-  public Game getGame() {
-    return game;
-  }
-
-  public void setGame(Game game) {
-    this.game = game;
   }
 
   @Override

@@ -1,4 +1,4 @@
-package pl.nn44.battleship.util.id;
+package pl.nn44.battleship.util;
 
 import java.math.BigInteger;
 import java.util.Random;
@@ -10,7 +10,7 @@ import java.util.Random;
 // changes: 180254 @ GitHub
 // changes[0] - wrapped in class
 // changes[1] - random as strategy
-// changes[1] - customizable number of characters in result id (instead of bits)
+// changes[2] - customizable number of characters in result id (instead of bits)
 public class BigIdGenerator implements IdGenerator {
 
   private final static int NUMBER_BASE = 32;

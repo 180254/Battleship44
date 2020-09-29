@@ -1,4 +1,4 @@
-package pl.nn44.battleship.service.serializer;
+package pl.nn44.battleship.service;
 
 import java.util.Optional;
 

@@ -4,7 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.server.MimeMappings;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.Assert;
@@ -17,16 +20,9 @@ import pl.nn44.battleship.controller.GameController;
 import pl.nn44.battleship.model.Cell;
 import pl.nn44.battleship.model.Coord;
 import pl.nn44.battleship.model.Grid;
-import pl.nn44.battleship.service.locker.Locker;
-import pl.nn44.battleship.service.locker.LockerImpl;
-import pl.nn44.battleship.service.serializer.CellSerializer;
-import pl.nn44.battleship.service.serializer.CoordSerializer;
-import pl.nn44.battleship.service.serializer.GridSerializer;
-import pl.nn44.battleship.service.serializer.Serializer;
-import pl.nn44.battleship.service.verifier.FleetVerifier;
-import pl.nn44.battleship.service.verifier.FleetVerifierFactory;
-import pl.nn44.battleship.util.id.BigIdGenerator;
-import pl.nn44.battleship.util.id.IdGenerator;
+import pl.nn44.battleship.service.*;
+import pl.nn44.battleship.util.BigIdGenerator;
+import pl.nn44.battleship.util.IdGenerator;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -36,48 +32,50 @@ import java.util.Random;
 @EnableWebSocket
 @EnableConfigurationProperties
 // http://docs.spring.io/spring/docs/current/spring-framework-reference/html/websocket.html
-class GameConfiguration implements WebSocketConfigurer {
+public class GameConfiguration implements WebSocketConfigurer {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(GameConfiguration.class);
 
-  final GameProperties gameProperties;
+  public final GameProperties gameProperties;
 
   @Autowired
-  GameConfiguration(GameProperties gameProperties) {
+  public GameConfiguration(GameProperties gameProperties) {
     LOGGER.info("{}", gameProperties);
     Assert.notNull(gameProperties, "GameProperties must not be null.");
     this.gameProperties = gameProperties;
   }
 
   @Bean
-  ErrorController errorController() {
+  public ErrorController errorController() {
     return new Error0Controller();
   }
 
   @Bean
-  GameController webSocketController() {
+  public GameController webSocketController() {
 
     Random random = new SecureRandom();
     Locker locker = new LockerImpl();
     IdGenerator idGenerator = new BigIdGenerator(random, gameProperties.getImpl().getIdLen());
     FleetVerifier fleetVerifier = FleetVerifierFactory.forRules(gameProperties.getRules());
-    Serializer<Grid, String> gridSerializer = new GridSerializer(gameProperties.getRules());
+    Serializer<Grid, String> gridSerializer = new GridSerializer(gameProperties.getRules().getGridSize());
     Serializer<Coord, String> coordSerializer = new CoordSerializer();
     Serializer<List<Cell>, String> cellSerializer = new CellSerializer();
+    MonteCarloFleet monteCarloFleet = new MonteCarloFleet(gameProperties.getRules(), random);
 
     return new GameController(
-        this.gameProperties.getRules(),
+        gameProperties.getRules(),
         random,
         locker,
         idGenerator,
         fleetVerifier,
         gridSerializer,
         coordSerializer,
-        cellSerializer);
+        cellSerializer,
+        monteCarloFleet);
   }
 
   @Bean
-  ServletServerContainerFactoryBean createWebSocketContainer() {
+  public ServletServerContainerFactoryBean createWebSocketContainer() {
 
     ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
     container.setMaxTextMessageBufferSize(
@@ -96,7 +94,11 @@ class GameConfiguration implements WebSocketConfigurer {
   }
 
   @Bean
-  ServletCustomizer servletCustomizer() {
-    return new ServletCustomizer();
+  public WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> servletCustomizer() {
+    return factory -> {
+      MimeMappings mappings = new MimeMappings(MimeMappings.DEFAULT);
+      mappings.add("map", "application/json");
+      factory.setMimeMappings(mappings);
+    };
   }
 }

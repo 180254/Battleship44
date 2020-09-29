@@ -1,15 +1,16 @@
-package pl.nn44.battleship.service.verifier;
+package pl.nn44.battleship.service;
 
 import pl.nn44.battleship.model.Cell;
 import pl.nn44.battleship.model.Coord;
 import pl.nn44.battleship.model.Grid;
 import pl.nn44.battleship.model.Ship;
-import pl.nn44.battleship.service.other.ShipFinder;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class FleetVerifierRules {
 
@@ -26,9 +27,12 @@ public class FleetVerifierRules {
     );
   }
 
-  public boolean hasProperShipSizes(List<Ship> ships, int[] availShipSizes) {
-    int[] shipSizes = ships.stream().mapToInt(Ship::getSize).sorted().toArray();
-    return Arrays.equals(availShipSizes, shipSizes);
+  public boolean hasProperShipSizes(List<Ship> ships, List<Integer> availShipSizes) {
+    List<Integer> shipSizes = ships.stream()
+        .map(Ship::getSize)
+        .sorted(Comparator.reverseOrder())
+        .collect(Collectors.toUnmodifiableList());
+    return availShipSizes.equals(shipSizes);
   }
 
   public boolean hasSpaceAroundShips(List<Ship> ships) {

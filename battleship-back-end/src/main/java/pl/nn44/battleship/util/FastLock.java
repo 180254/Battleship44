@@ -1,4 +1,4 @@
-package pl.nn44.battleship.util.other;
+package pl.nn44.battleship.util;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
@@ -13,8 +13,7 @@ public class FastLock implements Lock {
   }
 
   @Override
-  public void lockInterruptibly()
-      throws InterruptedException {
+  public void lockInterruptibly() {
 
   }
 
@@ -24,9 +23,7 @@ public class FastLock implements Lock {
   }
 
   @Override
-  public boolean tryLock(long time, @Nonnull TimeUnit unit)
-      throws InterruptedException {
-
+  public boolean tryLock(long time, @Nonnull TimeUnit unit) {
     return true;
   }
 

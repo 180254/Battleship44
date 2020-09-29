@@ -130,6 +130,9 @@ vX.Y (planned)
 ← `400_ game-in-progress`  
 ← `400_ grid-already-set`  
   
+→ `GRID RANDOM`  
+→ `GRID RANDOM 0,1,0,1,1,1,0,1,0,1,0,1,1,0,0,0,0`  
+  
 ← `2PLA`  
 ← `TOUR START`  
 ← `TOUR YOU`  

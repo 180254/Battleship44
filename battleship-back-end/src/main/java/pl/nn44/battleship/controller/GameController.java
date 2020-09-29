@@ -8,11 +8,12 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import pl.nn44.battleship.gamerules.GameRules;
 import pl.nn44.battleship.model.*;
-import pl.nn44.battleship.service.locker.Locker;
-import pl.nn44.battleship.service.serializer.Serializer;
-import pl.nn44.battleship.service.verifier.FleetVerifier;
-import pl.nn44.battleship.util.id.IdGenerator;
-import pl.nn44.battleship.util.other.Strings;
+import pl.nn44.battleship.service.FleetVerifier;
+import pl.nn44.battleship.service.Locker;
+import pl.nn44.battleship.service.MonteCarloFleet;
+import pl.nn44.battleship.service.Serializer;
+import pl.nn44.battleship.util.IdGenerator;
+import pl.nn44.battleship.util.Strings;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -32,6 +33,7 @@ public class GameController extends TextWebSocketHandler {
 
   private final ConcurrentMap<WebSocketSession, Player> players = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, Game> games = new ConcurrentHashMap<>();
+
   private final GameRules gameRules;
   private final Random random;
   private final Locker locker;
@@ -40,6 +42,8 @@ public class GameController extends TextWebSocketHandler {
   private final Serializer<Grid, String> gridSerializer;
   private final Serializer<Coord, String> coordSerializer;
   private final Serializer<List<Cell>, String> cellSerializer;
+  private final MonteCarloFleet monteCarloFleet;
+
   private final Map<String, BiConsumer<Player, String>> commands =
       Map.ofEntries(
           Map.entry("GAME", this::game),
@@ -55,7 +59,8 @@ public class GameController extends TextWebSocketHandler {
                         FleetVerifier fleetVerifier,
                         Serializer<Grid, String> gridSerializer,
                         Serializer<Coord, String> coordSerializer,
-                        Serializer<List<Cell>, String> cellSerializer) {
+                        Serializer<List<Cell>, String> cellSerializer,
+                        MonteCarloFleet monteCarloFleet) {
     this.gameRules = gameRules;
     this.random = random;
     this.locker = locker;
@@ -64,33 +69,34 @@ public class GameController extends TextWebSocketHandler {
     this.gridSerializer = gridSerializer;
     this.coordSerializer = coordSerializer;
     this.cellSerializer = cellSerializer;
+    this.monteCarloFleet = monteCarloFleet;
 
     if (LOGGER.isDebugEnabled()) {
       Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
-        LOGGER.error("players.size=" + players.size());
-        LOGGER.error("games.size=" + games.size());
+        LOGGER.debug("players.size={}", players.size());
+        LOGGER.debug("games.size={}", games.size());
       }, 0, 30, TimeUnit.SECONDS);
     }
   }
 
-  private String id(WebSocketSession session) {
+  private String sessionId(WebSocketSession session) {
     return String.format("%1$8s", session.getId()).replace(' ', '0');
   }
 
-  private void txt(Player player, String format, Object... args) {
-    txt(player.getSession(), format, args);
+  private void send(Player player, String format, Object... args) {
+    send(player.getSession(), format, args);
   }
 
-  private void txt(WebSocketSession session, String format, Object... args) {
+  private void send(WebSocketSession session, String format, Object... args) {
     String msg = String.format(format, args);
-    LOGGER.info("->  {} @ {}", id(session), msg);
+    LOGGER.info("->  {} @ {}", sessionId(session), msg);
 
     try {
       TextMessage textMessage = new TextMessage(msg);
       session.sendMessage(textMessage);
     } catch (IOException e) {
-      LOGGER.warn("<-> server to user _fail_");
-      LOGGER.warn("->  {} @ {}", id(session), msg);
+      LOGGER.warn("<-> sending message to user failed");
+      LOGGER.warn("->  {} @ {}", sessionId(session), msg);
       LOGGER.warn("<-> exception stack", e);
     }
   }
@@ -100,9 +106,9 @@ public class GameController extends TextWebSocketHandler {
     LOGGER.info("->  {} @ {}", "______bc", msg);
 
     TextMessage textMessage = new TextMessage(msg);
-    players.forEach((s, p) -> {
+    players.forEach((session, player) -> {
       try {
-        s.sendMessage(textMessage);
+        session.sendMessage(textMessage);
       } catch (IOException ignored) {
       }
     });
@@ -110,15 +116,15 @@ public class GameController extends TextWebSocketHandler {
 
   @Override
   public void afterConnectionEstablished(@Nonnull WebSocketSession session) {
-    LOGGER.info("<-> {} @ established {}", id(session), session.getRemoteAddress());
-    txt(session, "HI_. Welcome.");
+    LOGGER.info("<-> {} @ established {}", sessionId(session), session.getRemoteAddress());
+    send(session, "HI_. Welcome.");
   }
 
   @Override
   public void afterConnectionClosed(@Nonnull WebSocketSession session, @Nonnull CloseStatus status) {
-    LOGGER.info("<-> {} @ closed @ {}", id(session), status);
+    LOGGER.info("<-> {} @ closed @ {}", sessionId(session), status);
     Player player = players.get(session);
-    Locker.Sync lock = locker.lock(player);
+    Locker.Unlocker lock = locker.lock(player);
 
     try {
       if (player == null) {
@@ -140,10 +146,8 @@ public class GameController extends TextWebSocketHandler {
         boolean gameInterrupted
             = game.getState() == Game.State.IN_PROGRESS;
 
-        txt(secondPlayer, "1PLA %s",
-            gameInterrupted
-                ? "game-interrupted"
-                : "game-not-interrupted");
+        send(secondPlayer, "1PLA %s",
+            gameInterrupted ? "game-interrupted" : "game-not-interrupted");
 
         if (gameInterrupted) {
           game.nextGame();
@@ -158,21 +162,16 @@ public class GameController extends TextWebSocketHandler {
   }
 
   @Override
-  protected void handleTextMessage(WebSocketSession session, TextMessage message) {
+  protected void handleTextMessage(@Nonnull WebSocketSession session, TextMessage message) {
     String payload = message.getPayload();
-    int endOfCommandIndex = payload.indexOf(' ');
-    if (endOfCommandIndex == -1) {
-      endOfCommandIndex = payload.length();
-    }
+    int endOfCommandIndex = Strings.indexOf(payload, ' ', payload.length());
     String command = Strings.safeSubstring(payload, 0, endOfCommandIndex);
     String param = Strings.safeSubstring(payload, endOfCommandIndex + 1);
 
     LOGGER.info("<-  {} @ {}", session.getId(), message.getPayload());
 
-    Player player = players
-        .computeIfAbsent(session, Player::new);
-
-    Locker.Sync lock = locker.lock(player);
+    Player player = players.computeIfAbsent(session, Player::new);
+    Locker.Unlocker lock = locker.lock(player);
 
     try {
       commands
@@ -184,18 +183,18 @@ public class GameController extends TextWebSocketHandler {
   }
 
   private void game(Player player, String param) {
-    Locker.Sync lockGame = null;
+    Locker.Unlocker lockGame = null;
 
     try {
       if (player.getGame() != null) {
-        txt(player, "400_ you-are-in-game");
+        send(player, "400_ you-are-in-game");
 
       } else if (param.equals("NEW")) {
         Game game = new Game(idGenerator, player);
-        game.cloneRules(gameRules);
+        game.setGameRules(gameRules);
         player.setGame(game);
         games.put(game.getId(), game);
-        txt(player, "GAME OK %s", game.getId());
+        send(player, "GAME OK %s", game.getId());
         broadcast("STAT players=%d", players.size());
 
       } else {
@@ -203,16 +202,16 @@ public class GameController extends TextWebSocketHandler {
         lockGame = locker.lock(game);
 
         if (game == null) {
-          txt(player, "GAME FAIL no-such-game");
+          send(player, "GAME FAIL no-such-game");
 
         } else if (!game.setPlayerAtFreeSlot(player)) {
-          txt(player, "GAME FAIL no-free-slot");
+          send(player, "GAME FAIL no-free-slot");
 
         } else {
           player.setGame(game);
-          txt(player, "GAME OK %s", game.getId());
-          txt(game.getPlayer(0), "2PLA");
-          txt(game.getPlayer(1), "2PLA");
+          send(player, "GAME OK %s", game.getId());
+          send(game.getPlayer(0), "2PLA");
+          send(game.getPlayer(1), "2PLA");
           broadcast("STAT players=%d", players.size());
         }
       }
@@ -227,37 +226,44 @@ public class GameController extends TextWebSocketHandler {
   private void grid(Player player, String param) {
     Game game = player.getGame();
 
-    if (game == null) {
-      txt(player, "400_ no-game-set");
+    if (param.equals("RANDOM")) {
+      monteCarloFleet.maybeRandomFleet().whenComplete((grid, throwable) -> {
+        if (throwable != null) {
+          send(player, "GRID RANDOM %s", gridSerializer.serialize(grid));
+        }
+      });
+
+    } else if (game == null) {
+      send(player, "400_ no-game-set");
 
     } else if (game.getState() == Game.State.IN_PROGRESS) {
-      txt(player, "400_ game-in-progress");
+      send(player, "400_ game-in-progress");
 
     } else if (player.getGrid() != null) {
-      txt(player, "400_ grid-already-set");
+      send(player, "400_ grid-already-set");
 
     } else {
       Optional<Grid> grid = gridSerializer.deserialize(param);
 
       if (grid.isEmpty()) {
-        txt(player, "GRID FAIL");
+        send(player, "GRID FAIL");
 
       } else if (!fleetVerifier.verify(grid.get())) {
-        txt(player, "GRID FAIL");
+        send(player, "GRID FAIL");
 
       } else {
         player.setGrid(grid.get());
-        txt(player, "GRID OK");
+        send(player, "GRID OK");
 
         if (game.bothGridSets()) {
           game.setState(Game.State.IN_PROGRESS);
           game.prepareShootGrids();
           game.nextTour(random);
 
-          txt(game.getPlayer(0), "TOUR START");
-          txt(game.getPlayer(1), "TOUR START");
-          txt(game.getTourPlayer(), "TOUR YOU");
-          txt(game.getNotTourPlayer(), "TOUR HE");
+          send(game.getPlayer(0), "TOUR START");
+          send(game.getPlayer(1), "TOUR START");
+          send(game.getTourPlayer(), "TOUR YOU");
+          send(game.getNotTourPlayer(), "TOUR HE");
         }
       }
     }
@@ -268,31 +274,31 @@ public class GameController extends TextWebSocketHandler {
     Game game = player.getGame();
 
     if (game == null) {
-      txt(player, "400_ no-game-set");
+      send(player, "400_ no-game-set");
 
     } else if (game.getState() == Game.State.WAITING) {
-      txt(player, "400_ game-waiting");
+      send(player, "400_ game-waiting");
 
     } else if (game.getNotTourPlayer().equals(player)) {
-      txt(player, "400_ not-your-tour");
+      send(player, "400_ not-your-tour");
 
     } else {
       Optional<Coord> coord = coordSerializer.deserialize(param);
 
       if (coord.isEmpty()) {
-        txt(player, "400_ bad-shoot");
+        send(player, "400_ bad-shoot");
 
       } else {
         Player tourPlayer = game.getTourPlayer();
         List<Cell> shoot = tourPlayer.getShootGrid().shoot(coord.get());
         String shootSerial = cellSerializer.serialize(shoot);
 
-        txt(tourPlayer, "YOU_ %s", shootSerial);
-        txt(game.getNotTourPlayer(), "HE__ %s", shootSerial);
+        send(tourPlayer, "YOU_ %s", shootSerial);
+        send(game.getNotTourPlayer(), "HE__ %s", shootSerial);
 
         if (game.completed()) {
-          txt(tourPlayer, "WON_ YOU");
-          txt(game.getNotTourPlayer(), "WON_ HE");
+          send(tourPlayer, "WON_ YOU");
+          send(game.getNotTourPlayer(), "WON_ HE");
           game.nextGame();
 
         } else {
@@ -302,18 +308,18 @@ public class GameController extends TextWebSocketHandler {
             game.nextTour();
           }
 
-          txt(game.getTourPlayer(), "TOUR YOU");
-          txt(game.getNotTourPlayer(), "TOUR HE");
+          send(game.getTourPlayer(), "TOUR YOU");
+          send(game.getNotTourPlayer(), "TOUR HE");
         }
       }
     }
   }
 
   private void ping(Player player, String param) {
-    txt(player, "PONG %s", param);
+    send(player, "PONG %s", param);
   }
 
   private void other(Player player, String payload) {
-    txt(player, "400_ unknown-command");
+    send(player, "400_ unknown-command");
   }
 }

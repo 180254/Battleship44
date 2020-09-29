@@ -5,16 +5,22 @@ import org.junit.jupiter.api.Test;
 import pl.nn44.battleship.gamerules.FleetMode;
 import pl.nn44.battleship.gamerules.FleetSizes;
 import pl.nn44.battleship.gamerules.GameRules;
+import pl.nn44.battleship.gamerules.GridSize;
 import pl.nn44.battleship.model.Grid;
+import pl.nn44.battleship.service.FleetVerifier;
+import pl.nn44.battleship.service.FleetVerifierFactory;
 
 public class CurvedFleetVerifierTests {
 
   private final FleetVerifier fleetVerifier;
 
   {
-    GameRules gameRules = new GameRules();
-    gameRules.setFleetMode(FleetMode.CURVED);
-    gameRules.setFleetSizes(FleetSizes.RUSSIAN);
+    GameRules gameRules = new GameRules(
+        new GridSize(10, 10),
+        FleetMode.CURVED,
+        FleetSizes.RUSSIAN,
+        false,
+        false);
     fleetVerifier = FleetVerifierFactory.forRules(gameRules);
   }
 

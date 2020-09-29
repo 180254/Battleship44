@@ -3,6 +3,7 @@ package pl.nn44.battleship.service.serializer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import pl.nn44.battleship.model.Coord;
+import pl.nn44.battleship.service.CoordSerializer;
 
 import java.util.Optional;
 

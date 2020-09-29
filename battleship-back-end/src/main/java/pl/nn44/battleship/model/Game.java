@@ -1,8 +1,8 @@
 package pl.nn44.battleship.model;
 
 import pl.nn44.battleship.gamerules.GameRules;
-import pl.nn44.battleship.util.id.IdGenerator;
-import pl.nn44.battleship.util.other.Arrays;
+import pl.nn44.battleship.util.IdGenerator;
+import pl.nn44.battleship.util.Arrays;
 
 import java.util.Objects;
 import java.util.Random;
@@ -12,22 +12,13 @@ public class Game {
 
   private final String id;
   private final Player[] players = new Player[2];
-  private final GameRules gameRules;
+  private GameRules gameRules;
   private State state = State.WAITING;
   private Integer tour = null;
 
   public Game(IdGenerator idGenerator, Player player1) {
     this.id = idGenerator.nextId();
-    this.gameRules = new GameRules();
     this.players[0] = player1;
-  }
-
-  public void cloneRules(GameRules gameRules) {
-    this.gameRules.setGridSize(gameRules.getGridSize());
-    this.gameRules.setFleetMode(gameRules.getFleetMode());
-    this.gameRules.setFleetSizes(gameRules.getFleetSizes());
-    this.gameRules.setFleetCanTouchEachOtherDiagonally(gameRules.isFleetCanTouchEachOtherDiagonally());
-    this.gameRules.setShowFieldsForSureEmpty(gameRules.isShowFieldsForSureEmpty());
   }
 
   public String getId() {
@@ -40,6 +31,15 @@ public class Game {
 
   public void setPlayer(int no, Player player) {
     players[no] = player;
+  }
+
+  public GameRules getGameRules() {
+    return gameRules;
+  }
+
+  public Game setGameRules(GameRules gameRules) {
+    this.gameRules = gameRules;
+    return this;
   }
 
   public State getState() {
@@ -63,9 +63,10 @@ public class Game {
 
     if (slotIndex != -1) {
       players[slotIndex] = player;
+      return true;
     }
 
-    return slotIndex != -1;
+    return false;
   }
 
   public void removePlayer(Player player) {
@@ -112,8 +113,8 @@ public class Game {
   }
 
   public boolean completed() {
-    return players[0].getShootGrid().allShotDown()
-        || players[1].getShootGrid().allShotDown();
+    return players[0].getShootGrid().allShipsSunk()
+        || players[1].getShootGrid().allShipsSunk();
   }
 
   public void nextGame() {

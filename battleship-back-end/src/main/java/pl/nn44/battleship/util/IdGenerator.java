@@ -1,4 +1,4 @@
-package pl.nn44.battleship.util.id;
+package pl.nn44.battleship.util;
 
 public interface IdGenerator {
 

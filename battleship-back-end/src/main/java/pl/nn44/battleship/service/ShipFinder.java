@@ -1,10 +1,10 @@
-package pl.nn44.battleship.service.other;
+package pl.nn44.battleship.service;
 
 import pl.nn44.battleship.model.Cell;
 import pl.nn44.battleship.model.Coord;
 import pl.nn44.battleship.model.Grid;
 import pl.nn44.battleship.model.Ship;
-import pl.nn44.battleship.util.other.Suppliers;
+import pl.nn44.battleship.util.Suppliers;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,7 +1,7 @@
 package pl.nn44.battleship.model;
 
 import pl.nn44.battleship.gamerules.GameRules;
-import pl.nn44.battleship.service.other.ShipFinder;
+import pl.nn44.battleship.service.ShipFinder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,9 +14,7 @@ public class ShootGrid extends Grid {
   private final GameRules gameRules;
 
   public ShootGrid(Grid opponentGrid, GameRules gameRules) {
-    super(
-        opponentGrid.getRowsNo(), opponentGrid.getColsNo(),
-        new int[opponentGrid.getSize()]);
+    super(gameRules.getGridSize(), new int[opponentGrid.getSize()]);
 
     this.opponentGrid = opponentGrid;
     this.opShipFinder = ShipFinder.forGrid(opponentGrid);
@@ -67,7 +65,7 @@ public class ShootGrid extends Grid {
     return List.copyOf(changedCell);
   }
 
-  public boolean allShotDown() {
+  public boolean allShipsSunk() {
     return opShipFinder.ships().stream().allMatch(this::isShipSunk);
   }
 
