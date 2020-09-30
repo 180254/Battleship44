@@ -1,8 +1,8 @@
 package pl.nn44.battleship.model;
 
 import pl.nn44.battleship.gamerules.GameRules;
-import pl.nn44.battleship.util.IdGenerator;
 import pl.nn44.battleship.util.Arrays;
+import pl.nn44.battleship.util.IdGenerator;
 
 import java.util.Objects;
 import java.util.Random;

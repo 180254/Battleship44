@@ -226,14 +226,7 @@ public class GameController extends TextWebSocketHandler {
   private void grid(Player player, String param) {
     Game game = player.getGame();
 
-    if (param.equals("RANDOM")) {
-      monteCarloFleet.maybeRandomFleet().whenComplete((grid, throwable) -> {
-        if (grid != null && throwable == null) {
-          send(player, "GRID RANDOM %s", gridSerializer.serialize(grid));
-        }
-      });
-
-    } else if (game == null) {
+    if (game == null) {
       send(player, "400_ no-game-set");
 
     } else if (game.getState() == Game.State.IN_PROGRESS) {
@@ -241,6 +234,13 @@ public class GameController extends TextWebSocketHandler {
 
     } else if (player.getGrid() != null) {
       send(player, "400_ grid-already-set");
+
+    } else if (param.equals("RANDOM")) {
+      monteCarloFleet.maybeRandomFleet().whenComplete((grid, throwable) -> {
+        if (grid != null && throwable == null) {
+          send(player, "GRID RANDOM %s", gridSerializer.serialize(grid));
+        }
+      });
 
     } else {
       Optional<Grid> grid = gridSerializer.deserialize(param);

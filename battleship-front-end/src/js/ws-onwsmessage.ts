@@ -179,7 +179,7 @@ export class OnWsMessage {
         'GRID RANDOM',
         payload => {
           const fleet: number[] = payload.split(',').map(value => Number(value));
-          this.grids.putRandomFleet(fleet);
+          this.grids.putFleet(fleet);
         },
       ],
 
@@ -352,7 +352,7 @@ export class OnWsMessage {
       [
         'STAT',
         payload => {
-          const infoStat: { [key: string]: string } = {
+          const infoStat: {[key: string]: string} = {
             players: htmlStrings.info.id_players_global,
           };
 

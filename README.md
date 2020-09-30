@@ -98,8 +98,9 @@ v1.4.1 (released 2020-09-24)
 + back: updated dependencies  
 + back: code updated to java 11  
   
-v2.0 (unreleased)
-
+v2.0 (unreleased)  
++ back/front: a new feature: random fleet location  
+  
 vX.Y (planned)  
 - "availability broadcasting" - look for a waiting player  
 - back/front: dynamic info from a server about fleet sizes (was hardcoded in html file)  
@@ -131,7 +132,7 @@ vX.Y (planned)
 ← `400_ grid-already-set`  
   
 → `GRID RANDOM`  
-→ `GRID RANDOM 0,1,0,1,1,1,0,1,0,1,0,1,1,0,0,0,0`  
+← `GRID RANDOM 0,1,0,1,1,1,0,1,0,1,0,1,1,0,0,0,0`  
   
 ← `2PLA`  
 ← `TOUR START`  

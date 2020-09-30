@@ -12,16 +12,16 @@ public class Player {
   private Grid grid;
   private ShootGrid shootGrid;
 
+  public Player(WebSocketSession session) {
+    this.session = session;
+  }
+
   public Game getGame() {
     return game;
   }
 
   public void setGame(Game game) {
     this.game = game;
-  }
-
-  public Player(WebSocketSession session) {
-    this.session = session;
   }
 
   public WebSocketSession getSession() {

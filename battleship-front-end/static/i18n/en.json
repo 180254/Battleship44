@@ -7,7 +7,7 @@
   "title.shoot_opp": "B44: Opponent shoot …",
   "pre.initializing": "Initializing, please wait …",
   "pre.hi": "Welcome message: {0}",
-  "put.info": "Put your ships on right grid. ",
+  "put.info": "Put your ships on right grid.",
   "put.random": "random?",
   "put.done": "done?",
   "put.fail": "Verification failed. Check your ships.",

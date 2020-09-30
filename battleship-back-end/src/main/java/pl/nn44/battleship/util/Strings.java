@@ -10,7 +10,6 @@ public class Strings {
     return index;
   }
 
-
   public static String safeSubstring(String str, int beginIndex, int endIndex) {
     int beginIndex2 = Math.min(beginIndex, str.length());
     int endIndex2 = Math.min(endIndex, str.length());
