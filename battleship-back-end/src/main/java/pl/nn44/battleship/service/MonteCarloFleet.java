@@ -1,9 +1,6 @@
 package pl.nn44.battleship.service;
 
-import pl.nn44.battleship.gamerules.FleetMode;
-import pl.nn44.battleship.gamerules.FleetSizes;
 import pl.nn44.battleship.gamerules.GameRules;
-import pl.nn44.battleship.gamerules.GridSize;
 import pl.nn44.battleship.model.Coord;
 import pl.nn44.battleship.model.Grid;
 import pl.nn44.battleship.model.Ship;
@@ -16,13 +13,14 @@ import java.util.concurrent.*;
 
 public class MonteCarloFleet {
 
-  private ExecutorService executorService;
-  private ScheduledExecutorService cancelerService;
+  private final ExecutorService executorService;
+  private final ScheduledExecutorService cancelerService;
 
   private final GameRules gameRules;
   private final Random random;
 
   public MonteCarloFleet(GameRules gameRules, Random random) {
+    // based on Executors.newCachedThreadPool()
     this.executorService = new ThreadPoolExecutor(
         1, 8,
         60L, TimeUnit.SECONDS,
@@ -30,43 +28,6 @@ public class MonteCarloFleet {
     this.cancelerService = Executors.newSingleThreadScheduledExecutor();
     this.gameRules = gameRules;
     this.random = random;
-  }
-
-  public static void main(String[] args) {
-    GameRules gameRules = new GameRules(
-        new GridSize(10, 10),
-        FleetMode.CURVED,
-        FleetSizes.RUSSIAN,
-        false,
-        false);
-    Random random = new Random();
-    MonteCarloFleet monteCarloFleet = new MonteCarloFleet(gameRules, random);
-
-    int samples = 0;
-    double sum = 0;
-    double min = Integer.MAX_VALUE;
-    double max = 0;
-
-    while (true) {
-      long startTime = System.currentTimeMillis();
-      Grid randomFleet = monteCarloFleet.randomFleet();
-      long stopTime = System.currentTimeMillis();
-      long time = stopTime - startTime;
-
-      samples++;
-      sum += time;
-      if (time < min) {
-        min = time;
-      }
-      if (time > max) {
-        max = time;
-      }
-
-      if (samples % 1000 == 0) {
-        System.out.printf("avg %.2f, min: %.2f, max: %.2f%n", sum / samples, min, max);
-      }
-    }
-
   }
 
   public CompletableFuture<Grid> maybeRandomFleet() {
@@ -83,14 +44,17 @@ public class MonteCarloFleet {
 
     Grid grid = null;
     for (int shipSize : availableShipSizes) {
+      if (Thread.interrupted()) {
+        return null;
+      }
       doneShipSizes.add(shipSize);
 
       while (true) {
-        Ship ship = null;
         if (Thread.interrupted()) {
           return null;
         }
 
+        Ship ship = null;
         while (ship == null) {
           if (Thread.interrupted()) {
             return null;

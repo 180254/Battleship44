@@ -10,17 +10,4 @@ public class Arrays {
   public static <T> int indexOf(@Nullable T needle, T[] haystack) {
     return java.util.Arrays.asList(haystack).indexOf(needle);
   }
-
-  public static int[] sortedReversedOrder(int[] data) {
-    return IntStream.of(data)
-        .map(i -> -i).sorted().map(i -> -i)
-        .toArray();
-  }
-
-  public static int[] sortedReversedOrder(List<Integer> data) {
-    return data.stream()
-        .sorted(Comparator.reverseOrder())
-        .mapToInt(i -> i)
-        .toArray();
-  }
 }

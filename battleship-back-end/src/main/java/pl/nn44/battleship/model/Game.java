@@ -12,12 +12,13 @@ public class Game {
 
   private final String id;
   private final Player[] players = new Player[2];
-  private GameRules gameRules;
+  private final GameRules gameRules;
   private State state = State.WAITING;
   private Integer tour = null;
 
   public Game(IdGenerator idGenerator, Player player1) {
     this.id = idGenerator.nextId();
+    this.gameRules = new GameRules();
     this.players[0] = player1;
   }
 
@@ -37,9 +38,12 @@ public class Game {
     return gameRules;
   }
 
-  public Game setGameRules(GameRules gameRules) {
-    this.gameRules = gameRules;
-    return this;
+  public void cloneGameRules(GameRules gameRules) {
+    this.gameRules.setGridSize(gameRules.getGridSize());
+    this.gameRules.setFleetMode(gameRules.getFleetMode());
+    this.gameRules.setFleetSizes(gameRules.getFleetSizes());
+    this.gameRules.setFleetCanTouchEachOtherDiagonally(gameRules.isFleetCanTouchEachOtherDiagonally());
+    this.gameRules.setShowFieldsForSureEmpty(gameRules.isShowFieldsForSureEmpty());
   }
 
   public State getState() {

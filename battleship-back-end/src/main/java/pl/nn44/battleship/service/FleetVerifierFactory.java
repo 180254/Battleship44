@@ -10,7 +10,13 @@ import java.util.List;
 public class FleetVerifierFactory {
 
   public static FleetVerifier forRules(GameRules rules) {
-    return forRules(rules, rules.getFleetSizes().getAvailableShipSizes());
+    return new FleetVerifier() {
+
+      @Override
+      public boolean verify(Grid grid) {
+        return forRules(rules, rules.getFleetSizes().getAvailableShipSizes()).verify(grid);
+      }
+    };
   }
 
   public static FleetVerifier forRules(GameRules rules, List<Integer> customShipSizes) {

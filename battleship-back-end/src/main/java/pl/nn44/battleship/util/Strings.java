@@ -3,7 +3,7 @@ package pl.nn44.battleship.util;
 public class Strings {
 
   public static int indexOf(String str, int ch, int noSuchCharacterIndex) {
-    int index = str.indexOf(' ');
+    int index = str.indexOf(ch);
     if (index == -1) {
       index = noSuchCharacterIndex;
     }

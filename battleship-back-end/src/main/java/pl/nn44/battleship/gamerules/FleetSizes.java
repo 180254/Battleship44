@@ -2,8 +2,10 @@ package pl.nn44.battleship.gamerules;
 
 import pl.nn44.battleship.util.Lists;
 
+import javax.annotation.concurrent.Immutable;
 import java.util.List;
 
+@Immutable
 public enum FleetSizes {
 
   RUSSIAN(List.of(4, 3, 3, 2, 2, 2, 1, 1, 1, 1)),

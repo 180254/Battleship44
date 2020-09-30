@@ -1,14 +1,12 @@
 package pl.nn44.battleship.gamerules;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
-import org.springframework.stereotype.Component;
 
+import javax.annotation.concurrent.Immutable;
 import java.util.StringJoiner;
 
-@Component
 @ConfigurationProperties(prefix = "game.rules.grid-size", ignoreInvalidFields = false, ignoreUnknownFields = false)
-@ConstructorBinding
+@Immutable
 public class GridSize {
 
   private final int rows;

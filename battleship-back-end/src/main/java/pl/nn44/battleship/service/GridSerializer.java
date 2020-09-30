@@ -1,6 +1,6 @@
 package pl.nn44.battleship.service;
 
-import pl.nn44.battleship.gamerules.GridSize;
+import pl.nn44.battleship.gamerules.GameRules;
 import pl.nn44.battleship.model.Cell;
 import pl.nn44.battleship.model.Grid;
 
@@ -14,12 +14,10 @@ public class GridSerializer implements Serializer<Grid, String> {
   private final String allowedCodes = String.format("%d%d", Cell.Type.EMPTY.getCode(), Cell.Type.SHIP.getCode());
   private final Pattern allowedGridPattern = Pattern.compile("[" + allowedCodes + "](,[" + allowedCodes + "])*");
 
-  private final GridSize gridSize;
-  private final int gameSize;
+  private final GameRules gameRules;
 
-  public GridSerializer(GridSize gridSize) {
-    this.gridSize = gridSize;
-    this.gameSize = gridSize.getRows() * gridSize.getCols();
+  public GridSerializer(GameRules gameRules) {
+    this.gameRules = gameRules;
   }
 
   @Override
@@ -39,11 +37,12 @@ public class GridSerializer implements Serializer<Grid, String> {
     String[] split = ser.split(",");
     int[] codes = Arrays.stream(split).mapToInt(Integer::parseInt).toArray();
 
-    if (codes.length != gameSize) {
+    int gridSizeTotal = gameRules.getGridSize().getRows() * gameRules.getGridSize().getCols();
+    if (codes.length != gridSizeTotal) {
       return Optional.empty();
     }
 
-    Grid grid = new Grid(gridSize, codes);
+    Grid grid = new Grid(gameRules.getGridSize(), codes);
     return Optional.of(grid);
 
   }

@@ -1,16 +1,13 @@
 package pl.nn44.battleship.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 import org.springframework.util.unit.DataSize;
 import pl.nn44.battleship.gamerules.GameRules;
 
-import javax.annotation.concurrent.Immutable;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.StringJoiner;
 
-@Component
 @ConfigurationProperties(prefix = "game", ignoreInvalidFields = false, ignoreUnknownFields = false)
 public class GameProperties {
 

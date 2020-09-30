@@ -17,6 +17,8 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
 import pl.nn44.battleship.controller.Error0Controller;
 import pl.nn44.battleship.controller.GameController;
+import pl.nn44.battleship.gamerules.GameRules;
+import pl.nn44.battleship.gamerules.GridSize;
 import pl.nn44.battleship.model.Cell;
 import pl.nn44.battleship.model.Coord;
 import pl.nn44.battleship.model.Grid;
@@ -30,7 +32,7 @@ import java.util.Random;
 
 @Configuration
 @EnableWebSocket
-@EnableConfigurationProperties
+@EnableConfigurationProperties({GameProperties.class, GameRules.class, GridSize.class})
 // http://docs.spring.io/spring/docs/current/spring-framework-reference/html/websocket.html
 public class GameConfiguration implements WebSocketConfigurer {
 
@@ -57,10 +59,10 @@ public class GameConfiguration implements WebSocketConfigurer {
     Locker locker = new LockerImpl();
     IdGenerator idGenerator = new BigIdGenerator(random, gameProperties.getImpl().getIdLen());
     FleetVerifier fleetVerifier = FleetVerifierFactory.forRules(gameProperties.getRules());
-    Serializer<Grid, String> gridSerializer = new GridSerializer(gameProperties.getRules().getGridSize());
+    Serializer<Grid, String> gridSerializer = new GridSerializer(gameProperties.getRules());
+    MonteCarloFleet monteCarloFleet = new MonteCarloFleet(gameProperties.getRules(), random);
     Serializer<Coord, String> coordSerializer = new CoordSerializer();
     Serializer<List<Cell>, String> cellSerializer = new CellSerializer();
-    MonteCarloFleet monteCarloFleet = new MonteCarloFleet(gameProperties.getRules(), random);
 
     return new GameController(
         gameProperties.getRules(),
@@ -68,10 +70,11 @@ public class GameConfiguration implements WebSocketConfigurer {
         locker,
         idGenerator,
         fleetVerifier,
+        monteCarloFleet,
         gridSerializer,
         coordSerializer,
-        cellSerializer,
-        monteCarloFleet);
+        cellSerializer
+    );
   }
 
   @Bean

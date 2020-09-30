@@ -2,20 +2,21 @@ package pl.nn44.battleship.gamerules;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
-import org.springframework.stereotype.Component;
 
 import java.util.StringJoiner;
 
-@Component
 @ConfigurationProperties(prefix = "game.rules", ignoreInvalidFields = false, ignoreUnknownFields = false)
 @ConstructorBinding
 public class GameRules {
 
-  private final GridSize gridSize;
-  private final FleetMode fleetMode;
-  private final FleetSizes fleetSizes;
-  private final boolean fleetCanTouchEachOtherDiagonally;
-  private final boolean showFieldsForSureEmpty;
+  private GridSize gridSize;
+  private FleetMode fleetMode;
+  private FleetSizes fleetSizes;
+  private boolean fleetCanTouchEachOtherDiagonally;
+  private boolean showFieldsForSureEmpty;
+
+  public GameRules() {
+  }
 
   public GameRules(GridSize gridSize,
                    FleetMode fleetMode,
@@ -33,20 +34,40 @@ public class GameRules {
     return gridSize;
   }
 
+  public void setGridSize(GridSize gridSize) {
+    this.gridSize = gridSize;
+  }
+
   public FleetMode getFleetMode() {
     return fleetMode;
+  }
+
+  public void setFleetMode(FleetMode fleetMode) {
+    this.fleetMode = fleetMode;
   }
 
   public FleetSizes getFleetSizes() {
     return fleetSizes;
   }
 
+  public void setFleetSizes(FleetSizes fleetSizes) {
+    this.fleetSizes = fleetSizes;
+  }
+
   public boolean isFleetCanTouchEachOtherDiagonally() {
     return fleetCanTouchEachOtherDiagonally;
   }
 
+  public void setFleetCanTouchEachOtherDiagonally(boolean fleetCanTouchEachOtherDiagonally) {
+    this.fleetCanTouchEachOtherDiagonally = fleetCanTouchEachOtherDiagonally;
+  }
+
   public boolean isShowFieldsForSureEmpty() {
     return showFieldsForSureEmpty;
+  }
+
+  public void setShowFieldsForSureEmpty(boolean showFieldsForSureEmpty) {
+    this.showFieldsForSureEmpty = showFieldsForSureEmpty;
   }
 
   @Override

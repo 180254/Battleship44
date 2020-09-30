@@ -39,10 +39,10 @@ public class GameController extends TextWebSocketHandler {
   private final Locker locker;
   private final IdGenerator idGenerator;
   private final FleetVerifier fleetVerifier;
+  private final MonteCarloFleet monteCarloFleet;
   private final Serializer<Grid, String> gridSerializer;
   private final Serializer<Coord, String> coordSerializer;
   private final Serializer<List<Cell>, String> cellSerializer;
-  private final MonteCarloFleet monteCarloFleet;
 
   private final Map<String, BiConsumer<Player, String>> commands =
       Map.ofEntries(
@@ -57,19 +57,19 @@ public class GameController extends TextWebSocketHandler {
                         Locker locker,
                         IdGenerator idGenerator,
                         FleetVerifier fleetVerifier,
+                        MonteCarloFleet monteCarloFleet,
                         Serializer<Grid, String> gridSerializer,
                         Serializer<Coord, String> coordSerializer,
-                        Serializer<List<Cell>, String> cellSerializer,
-                        MonteCarloFleet monteCarloFleet) {
+                        Serializer<List<Cell>, String> cellSerializer) {
     this.gameRules = gameRules;
     this.random = random;
     this.locker = locker;
     this.idGenerator = idGenerator;
     this.fleetVerifier = fleetVerifier;
+    this.monteCarloFleet = monteCarloFleet;
     this.gridSerializer = gridSerializer;
     this.coordSerializer = coordSerializer;
     this.cellSerializer = cellSerializer;
-    this.monteCarloFleet = monteCarloFleet;
 
     if (LOGGER.isDebugEnabled()) {
       Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
@@ -191,7 +191,7 @@ public class GameController extends TextWebSocketHandler {
 
       } else if (param.equals("NEW")) {
         Game game = new Game(idGenerator, player);
-        game.setGameRules(gameRules);
+        game.cloneGameRules(gameRules);
         player.setGame(game);
         games.put(game.getId(), game);
         send(player, "GAME OK %s", game.getId());
@@ -228,7 +228,7 @@ public class GameController extends TextWebSocketHandler {
 
     if (param.equals("RANDOM")) {
       monteCarloFleet.maybeRandomFleet().whenComplete((grid, throwable) -> {
-        if (throwable != null) {
+        if (grid != null && throwable != null) {
           send(player, "GRID RANDOM %s", gridSerializer.serialize(grid));
         }
       });
