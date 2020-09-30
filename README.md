@@ -46,6 +46,8 @@ Supported `browsers`:
   - `--server.port=<port>`
   - `--game.rules.fleet-sizes=<size>` (`russian`, `classic_one`, `classic_two`)
   - `--game.rules.fleet-mode=<mode>` (`straight`, `curved`)
+  - `--game.rules.fleet-can-touch-each-other-diagonally=<value>` (`true`, `false`)
+  - `--game.rules.show-fields-for-sure-empty=<value>` (`true`, `false`)
 
 ## **front-end**
 
