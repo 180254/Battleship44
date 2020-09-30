@@ -228,7 +228,7 @@ public class GameController extends TextWebSocketHandler {
 
     if (param.equals("RANDOM")) {
       monteCarloFleet.maybeRandomFleet().whenComplete((grid, throwable) -> {
-        if (grid != null && throwable != null) {
+        if (grid != null && throwable == null) {
           send(player, "GRID RANDOM %s", gridSerializer.serialize(grid));
         }
       });

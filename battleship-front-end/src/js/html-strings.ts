@@ -18,6 +18,7 @@ export const htmlStrings = {
 
     ok: {
       id_ship_selection: '#ok-ship-selection',
+      id_random_ship_selection: '#random-ship-selection',
       id_game_next: '#ok-game-next',
     },
   },

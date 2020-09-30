@@ -1,5 +1,7 @@
 package pl.nn44.battleship.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.nn44.battleship.gamerules.GameRules;
 import pl.nn44.battleship.model.Coord;
 import pl.nn44.battleship.model.Grid;
@@ -12,6 +14,8 @@ import java.util.Random;
 import java.util.concurrent.*;
 
 public class MonteCarloFleet {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(MonteCarloFleet.class);
 
   private final ExecutorService executorService;
   private final ScheduledExecutorService cancelerService;
@@ -32,11 +36,12 @@ public class MonteCarloFleet {
 
   public CompletableFuture<Grid> maybeRandomFleet() {
     CompletableFuture<Grid> futureGrid = CompletableFuture.supplyAsync(this::randomFleet, executorService);
-    cancelerService.schedule(() -> futureGrid.cancel(true), 10, TimeUnit.MILLISECONDS);
+    cancelerService.schedule(() -> futureGrid.cancel(true), 100, TimeUnit.MILLISECONDS);
     return futureGrid;
   }
 
   private Grid randomFleet() {
+    long startTime = System.currentTimeMillis();
     List<Integer> availableShipSizes = gameRules.getFleetSizes().getAvailableShipSizes();
 
     List<Ship> doneShips = new ArrayList<>(availableShipSizes.size());
@@ -71,11 +76,10 @@ public class MonteCarloFleet {
           doneShips.remove(doneShips.size() - 1);
         }
       }
-
-
     }
-    return grid;
 
+    LOGGER.debug("MonteCarloFleet took {}ms", System.currentTimeMillis() - startTime);
+    return grid;
   }
 
   @Nullable

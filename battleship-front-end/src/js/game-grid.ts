@@ -56,6 +56,16 @@ export class Grids {
     this.$opponentCells.attr('class', htmlStrings.cell.clazz.unknown);
   }
 
+  public putRandomFleet(fleet: number[]): void {
+    console.log(fleet);
+    this.$shootCells.attr('class', htmlStrings.cell.clazz.unknown);
+    for (let i = 0; i < fleet.length; i++) {
+      if (fleet[i] === 1) {
+        this.$shootCells.get(i).setAttribute('class', htmlStrings.cell.clazz.ship);
+      }
+    }
+  }
+
   public setCellClass($grid: JQuery, cell: Cell, clazz: string, keepCurrent: boolean): void {
     const $element: JQuery = $grid.find('tr').eq(cell.row).find('td').eq(cell.col);
 

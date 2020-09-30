@@ -105,14 +105,24 @@ export class OnWsMessage {
           }
 
           this.grids.reset();
+          this.gridSelection.activate();
 
           this.uiMessage.setFixed(i18nKey('put.info'));
+
+          $(htmlStrings.message.id_const).append(' ');
+          this.uiMessage.addFixedLink(
+            i18nKey('put.random'),
+            htmlStrings.message.ok.id_random_ship_selection
+          );
+          $(htmlStrings.message.ok.id_random_ship_selection).on('click', () =>
+            this.ws.send('GRID RANDOM')
+          );
+
+          $(htmlStrings.message.id_const).append(' ');
           this.uiMessage.addFixedLink(
             i18nKey('put.done'),
             htmlStrings.message.ok.id_ship_selection
           );
-
-          this.gridSelection.activate();
           $(htmlStrings.message.ok.id_ship_selection).on('click', () =>
             this.ws.send('GRID {0}'.format(this.gridSelection.collect()))
           );
@@ -133,6 +143,8 @@ export class OnWsMessage {
             this.process(WsMessage.Sub('GRID', payload, 'OK'));
           } else if (payload.startsWith('FAIL')) {
             this.process(WsMessage.Sub('GRID', payload, 'FAIL'));
+          } else if (payload.startsWith('RANDOM')) {
+            this.process(WsMessage.Sub('GRID', payload, 'RANDOM'));
           } else {
             this.logger.error('unknown_func={0},{1}', 'GRID', payload);
           }
@@ -160,6 +172,14 @@ export class OnWsMessage {
             this.uiMessageTimeout.default,
             htmlStrings.message.clazz.fail
           );
+        },
+      ],
+
+      [
+        'GRID RANDOM',
+        payload => {
+          const fleet: number[] = payload.split(',').map(value => Number(value));
+          this.grids.putRandomFleet(fleet);
         },
       ],
 
@@ -332,7 +352,7 @@ export class OnWsMessage {
       [
         'STAT',
         payload => {
-          const infoStat: {[key: string]: string} = {
+          const infoStat: { [key: string]: string } = {
             players: htmlStrings.info.id_players_global,
           };
 
