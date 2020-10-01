@@ -26,7 +26,6 @@ import pl.nn44.battleship.service.*;
 import pl.nn44.battleship.util.BigIdGenerator;
 import pl.nn44.battleship.util.IdGenerator;
 
-import java.security.SecureRandom;
 import java.util.List;
 import java.util.Random;
 
@@ -55,7 +54,7 @@ public class GameConfiguration implements WebSocketConfigurer {
   @Bean
   public GameController webSocketController() {
 
-    Random random = new SecureRandom();
+    Random random = new Random();
     Locker locker = new LockerImpl();
     IdGenerator idGenerator = new BigIdGenerator(random, gameProperties.getImpl().getIdLen());
     FleetVerifier fleetVerifier = FleetVerifierFactory.forRules(gameProperties.getRules());

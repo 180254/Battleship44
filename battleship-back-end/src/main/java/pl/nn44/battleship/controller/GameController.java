@@ -73,8 +73,7 @@ public class GameController extends TextWebSocketHandler {
 
     if (LOGGER.isDebugEnabled()) {
       Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
-        LOGGER.debug("players.size={}", players.size());
-        LOGGER.debug("games.size={}", games.size());
+        LOGGER.debug("players.size={},games.size={}", players.size(), games.size());
       }, 0, 30, TimeUnit.SECONDS);
     }
   }
