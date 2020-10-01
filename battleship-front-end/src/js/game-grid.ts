@@ -57,8 +57,12 @@ export class Grids {
   }
 
   public putFleet(fleet: number[]): void {
+    const codeToClazz: {[key: number]: string} = {
+      0: htmlStrings.cell.clazz.unknown,
+      1: htmlStrings.cell.clazz.ship,
+    };
     fleet
-      .map(code => (code === 1 ? htmlStrings.cell.clazz.ship : htmlStrings.cell.clazz.unknown))
+      .map(code => codeToClazz[code])
       .forEach((clazz, index) => {
         this.$shootCells.get(index).setAttribute('class', clazz);
       });
