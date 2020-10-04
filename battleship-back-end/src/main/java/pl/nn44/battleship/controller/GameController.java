@@ -14,6 +14,8 @@ import pl.nn44.battleship.util.Strings;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -110,8 +112,14 @@ public class GameController extends TextWebSocketHandler {
 
   @Override
   public void afterConnectionEstablished(@Nonnull WebSocketSession session) {
-    LOGGER.info("<-> {} @ established {}", sessionId(session), session.getRemoteAddress());
+    InetSocketAddress clientSocketAddress = session.getRemoteAddress();
+    LOGGER.info("<-> {} @ established {}", sessionId(session), clientSocketAddress);
     send(session, "HI_. Welcome.");
+
+    InetAddress clientAddress = (clientSocketAddress != null)
+        ? clientSocketAddress.getAddress()
+        : null;
+    metricsService.maybeUnique("players.uniqueSoFar", clientAddress);
   }
 
   @Override
