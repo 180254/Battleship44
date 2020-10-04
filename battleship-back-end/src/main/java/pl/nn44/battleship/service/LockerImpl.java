@@ -9,8 +9,6 @@ import pl.nn44.battleship.model.Player;
 import pl.nn44.battleship.util.FastLock;
 
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -21,12 +19,8 @@ public class LockerImpl implements Locker {
   private final Lock fastLock = new FastLock();
   private final Map<Object, Lock> locks = new ConcurrentReferenceHashMap<>(16, ReferenceType.WEAK);
 
-  public LockerImpl() {
-    if (LOGGER.isDebugEnabled()) {
-      Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
-        LOGGER.debug("locks.size=" + locks.size());
-      }, 0, 30, TimeUnit.SECONDS);
-    }
+  public LockerImpl(MetricsService metricsService) {
+    metricsService.registerDeliverable("locks.currentSize", locks::size);
   }
 
   @Override

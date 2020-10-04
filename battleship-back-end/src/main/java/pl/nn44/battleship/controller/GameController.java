@@ -8,10 +8,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import pl.nn44.battleship.gamerules.GameRules;
 import pl.nn44.battleship.model.*;
-import pl.nn44.battleship.service.FleetVerifier;
-import pl.nn44.battleship.service.Locker;
-import pl.nn44.battleship.service.MonteCarloFleet;
-import pl.nn44.battleship.service.Serializer;
+import pl.nn44.battleship.service.*;
 import pl.nn44.battleship.util.IdGenerator;
 import pl.nn44.battleship.util.Strings;
 
@@ -23,8 +20,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 public class GameController extends TextWebSocketHandler {
@@ -38,6 +33,7 @@ public class GameController extends TextWebSocketHandler {
   private final Random random;
   private final Locker locker;
   private final IdGenerator idGenerator;
+  private final MetricsService metricsService;
   private final FleetVerifier fleetVerifier;
   private final MonteCarloFleet monteCarloFleet;
   private final Serializer<Grid, String> gridSerializer;
@@ -56,6 +52,7 @@ public class GameController extends TextWebSocketHandler {
                         Random random,
                         Locker locker,
                         IdGenerator idGenerator,
+                        MetricsService metricsService,
                         FleetVerifier fleetVerifier,
                         MonteCarloFleet monteCarloFleet,
                         Serializer<Grid, String> gridSerializer,
@@ -65,17 +62,15 @@ public class GameController extends TextWebSocketHandler {
     this.random = random;
     this.locker = locker;
     this.idGenerator = idGenerator;
+    this.metricsService = metricsService;
     this.fleetVerifier = fleetVerifier;
     this.monteCarloFleet = monteCarloFleet;
     this.gridSerializer = gridSerializer;
     this.coordSerializer = coordSerializer;
     this.cellSerializer = cellSerializer;
 
-    if (LOGGER.isDebugEnabled()) {
-      Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
-        LOGGER.debug("players.size={},games.size={}", players.size(), games.size());
-      }, 0, 30, TimeUnit.SECONDS);
-    }
+    this.metricsService.registerDeliverable("players.currentSize", players::size);
+    this.metricsService.registerDeliverable("games.currentSize", games::size);
   }
 
   private String sessionId(WebSocketSession session) {
@@ -195,6 +190,7 @@ public class GameController extends TextWebSocketHandler {
         games.put(game.getId(), game);
         send(player, "GAME OK %s", game.getId());
         broadcast("STAT players=%d", players.size());
+        metricsService.increment("games.totalCreated");
 
       } else {
         Game game = games.get(param);
@@ -263,6 +259,8 @@ public class GameController extends TextWebSocketHandler {
           send(game.getPlayer(1), "TOUR START");
           send(game.getTourPlayer(), "TOUR YOU");
           send(game.getNotTourPlayer(), "TOUR HE");
+
+          metricsService.increment("games.totalStarted");
         }
       }
     }
@@ -299,6 +297,9 @@ public class GameController extends TextWebSocketHandler {
           send(tourPlayer, "WON_ YOU");
           send(game.getNotTourPlayer(), "WON_ HE");
           game.nextGame();
+
+          metricsService.increment("games.totalFinished");
+          metricsService.increment("games.totalCreated");
 
         } else {
           boolean goodShoot = shoot.stream()

@@ -4,6 +4,7 @@ import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorCon
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -25,7 +26,7 @@ public class Error0Controller extends AbstractErrorController {
     return null;
   }
 
-  @RequestMapping(produces = {"text/plain"})
+  @RequestMapping(produces = MediaType.TEXT_PLAIN_VALUE)
   public ResponseEntity<String> textPlainError(HttpServletRequest request) {
     HttpStatus status = getStatus(request);
     Map<String, Object> errorAttributes = getErrorAttributes(request, ErrorAttributeOptions.defaults());

@@ -1,8 +1,5 @@
 package pl.nn44.battleship.configuration;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.server.MimeMappings;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
@@ -10,13 +7,12 @@ import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.Assert;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
 import pl.nn44.battleship.controller.Error0Controller;
 import pl.nn44.battleship.controller.GameController;
+import pl.nn44.battleship.controller.MetricsController;
 import pl.nn44.battleship.gamerules.GameRules;
 import pl.nn44.battleship.gamerules.GridSize;
 import pl.nn44.battleship.model.Cell;
@@ -33,17 +29,16 @@ import java.util.Random;
 @EnableWebSocket
 @EnableConfigurationProperties({GameProperties.class, GameRules.class, GridSize.class})
 // http://docs.spring.io/spring/docs/current/spring-framework-reference/html/websocket.html
-public class GameConfiguration implements WebSocketConfigurer {
+public class GameConfiguration {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(GameConfiguration.class);
+  @Bean
+  public MetricsService metricsService() {
+    return new MetricsService();
+  }
 
-  public final GameProperties gameProperties;
-
-  @Autowired
-  public GameConfiguration(GameProperties gameProperties) {
-    LOGGER.info("{}", gameProperties);
-    Assert.notNull(gameProperties, "GameProperties must not be null.");
-    this.gameProperties = gameProperties;
+  @Bean
+  public MetricsController metricsController(MetricsService metricsService) {
+    return new MetricsController(metricsService);
   }
 
   @Bean
@@ -52,10 +47,9 @@ public class GameConfiguration implements WebSocketConfigurer {
   }
 
   @Bean
-  public GameController webSocketController() {
-
+  public GameController gameController(GameProperties gameProperties, MetricsService metricsService) {
     Random random = new Random();
-    Locker locker = new LockerImpl();
+    Locker locker = new LockerImpl(metricsService);
     IdGenerator idGenerator = new BigIdGenerator(random, gameProperties.getImpl().getIdLen());
     FleetVerifier fleetVerifier = FleetVerifierFactory.forRules(gameProperties.getRules());
     Serializer<Grid, String> gridSerializer = new GridSerializer(gameProperties.getRules());
@@ -63,11 +57,14 @@ public class GameConfiguration implements WebSocketConfigurer {
     Serializer<Coord, String> coordSerializer = new CoordSerializer();
     Serializer<List<Cell>, String> cellSerializer = new CellSerializer();
 
+    metricsService.registerDeliverable("gameProperties", () -> gameProperties);
+
     return new GameController(
         gameProperties.getRules(),
         random,
         locker,
         idGenerator,
+        metricsService,
         fleetVerifier,
         monteCarloFleet,
         gridSerializer,
@@ -77,8 +74,7 @@ public class GameConfiguration implements WebSocketConfigurer {
   }
 
   @Bean
-  public ServletServerContainerFactoryBean createWebSocketContainer() {
-
+  public ServletServerContainerFactoryBean createWebSocketContainer(GameProperties gameProperties) {
     ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
     container.setMaxTextMessageBufferSize(
         (int) gameProperties.getWs().getPolicyMaxTextMessageBufferSize().toBytes());
@@ -89,10 +85,11 @@ public class GameConfiguration implements WebSocketConfigurer {
     return container;
   }
 
-  @Override
-  public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-    registry.addHandler(webSocketController(), gameProperties.getWs().getConfHandlers())
-        .setAllowedOrigins(gameProperties.getWs().getConfAllowedOrigins());
+  @Bean
+  public WebSocketConfigurer webSocketConfigurer(GameProperties gameProperties, GameController gameController) {
+    return registry ->
+        registry.addHandler(gameController, gameProperties.getWs().getConfHandlers())
+            .setAllowedOrigins(gameProperties.getWs().getConfAllowedOrigins());
   }
 
   @Bean
