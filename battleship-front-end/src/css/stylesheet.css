@@ -8,8 +8,12 @@ body {
 
 main {
   margin: 0 auto;
-  width: 850px;
-  height: 600px;
+}
+
+@media all and (min-width: 850px) {
+  main {
+    width: 45vw;
+  }
 }
 
 #flag {
@@ -87,14 +91,37 @@ main {
   float: right;
 }
 
+/*
+td width/height calculations rationale:
+  100vw - viewport width
+  1/10 - grid width/height is 10 cells
+  3/7, 4/7: there are two grids, their size ratio is 3:4
+  0.44: main width is 45vw
+  0.95 or 0.85: grids occupy x% of the available width
+  - 1px: minus border spacing
+  max(calc(), x) - x is minimum size
+*/
+
 #grid-opponent.grid td {
-  width: 30px;
-  height: 30px;
+  width: max(calc(100vw * 1 / 10 * 3 / 7 * 0.95 - 1px), 21px);
+  height: max(calc(100vw * 1 / 10 * 3 / 7 * 0.95 - 1px), 21px);
 }
 
 #grid-shoot.grid td {
-  width: 40px;
-  height: 40px;
+  width: max(calc(100vw * 1 / 10 * 3 / 7 * 0.95 - 1px), 28px);
+  height: max(calc(100vw * 1 / 10 * 3 / 7 * 0.95 - 1px), 28px);
+}
+
+@media all and (min-width: 850px) {
+  #grid-opponent.grid td {
+    width: calc(100vw * 1 / 10 * 3 / 7 * 0.45 * 0.85 - 1px);
+    height: calc(100vw * 1 / 10 * 3 / 7 * 0.45 * 0.85 - 1px);
+  }
+
+  #grid-shoot.grid td {
+    width: calc(100vw * 1 / 10 * 4 / 7 * 0.45 * 0.85 - 1px);
+    height: calc(100vw * 1 / 10 * 4 / 7 * 0.45 * 0.85 - 1px);
+  }
 }
 
 .grid td {
