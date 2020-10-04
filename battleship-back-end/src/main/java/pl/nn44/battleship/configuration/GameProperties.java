@@ -1,8 +1,10 @@
 package pl.nn44.battleship.configuration;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.unit.DataSize;
 import pl.nn44.battleship.gamerules.GameRules;
+import pl.nn44.battleship.util.DataSizeSerializer;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -93,6 +95,7 @@ public class GameProperties {
       this.confAllowedOrigins = confAllowedOrigins;
     }
 
+    @JsonSerialize(using = DataSizeSerializer.class)
     public DataSize getPolicyMaxTextMessageBufferSize() {
       return policyMaxTextMessageBufferSize;
     }
@@ -101,6 +104,7 @@ public class GameProperties {
       this.policyMaxTextMessageBufferSize = policyMaxTextMessageBufferSize;
     }
 
+    @JsonSerialize(using = DataSizeSerializer.class)
     public DataSize getPolicyMaxBinaryMessageBufferSize() {
       return policyMaxBinaryMessageBufferSize;
     }
