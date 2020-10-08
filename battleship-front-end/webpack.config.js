@@ -5,6 +5,7 @@ const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const env_config = {
   mode: process.env.MODE || '',
@@ -112,7 +113,11 @@ function js_config(webpack_config) {
       'js-cookie': 'Cookies',
     },
     optimization: {
-      minimizer: [new TerserPlugin()],
+      minimizer: [
+        new TerserPlugin({
+          exclude: /.min.js$/,
+        }),
+      ],
       runtimeChunk: 'single',
       splitChunks: {
         cacheGroups: {
@@ -124,7 +129,21 @@ function js_config(webpack_config) {
         },
       },
     },
-    plugins: [new CleanWebpackPlugin()],
+    plugins: [
+      new CleanWebpackPlugin(),
+      new CopyPlugin({
+        patterns: [
+          {
+            from: path.resolve(__dirname, 'node_modules/jquery/dist/jquery.min.js'),
+            to: 'jquery.min.js',
+          },
+          {
+            from: path.resolve(__dirname, 'node_modules/js-cookie/dist/js.cookie.min.js'),
+            to: 'js.cookie.min.js',
+          },
+        ],
+      }),
+    ],
   };
 }
 
