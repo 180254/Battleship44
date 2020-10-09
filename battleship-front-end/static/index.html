@@ -8,8 +8,19 @@
   <meta name="description" content="Battleship online game."/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
+  <link rel="shortcut icon" href="favicon.ico"/>
   <link rel="stylesheet" href="css/dist/stylesheet.dist.css"/>
-  <link rel="shortcut icon" href="favicon.ico?v=ico"/>
+
+  <script src="js/dist/jquery.min.js" defer="defer"></script>
+  <script src="js/dist/js.cookie.min.js" defer="defer"></script>
+  <script src="js/dist/runtime.dist.js" defer="defer"></script>
+  <script src="js/dist/vendors.dist.js" defer="defer"></script>
+  <script src="js/dist/app.dist.js" defer="defer"></script>
+
+  <link rel="prefetch" href="i18n/en.json" as="fetch" crossorigin="anonymous"/>
+  <link rel="prefetch" href="i18n/pl.json" as="fetch" crossorigin="anonymous"/>
+  <link rel="preload" href="flag/us.png" as="image"/>
+  <link rel="preload" href="flag/pl.png" as="image"/>
 </head>
 
 <body>
@@ -70,14 +81,6 @@
       </table>
     </div>
   </main>
-
-  <footer id="scripts">
-    <script src="js/dist/jquery.min.js"></script>
-    <script src="js/dist/js.cookie.min.js"></script>
-    <script src="js/dist/runtime.dist.js"></script>
-    <script src="js/dist/vendors.dist.js"></script>
-    <script src="js/dist/app.dist.js"></script>
-  </footer>
 
 </div>
 </body>
