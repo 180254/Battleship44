@@ -102,15 +102,13 @@ v1.4.1 (released 2020-09-24)
   
 v2.0.0 (unreleased)  
 + back/front: a new feature: random fleet location  
++ back/front: a new feature: possibility to change the rules of the game in each game  
   
 vX.Y.Z (planned)  
 - "availability broadcasting" - look for a waiting player  
-- back/front: dynamic info from a server about fleet sizes (was hardcoded in html file)  
 - back/front: info which ship sizes has been already shot & which are still to shoot down  
 - back/front: a mini chat in game, between players  
-- back/front: fleet-type is now game-level, not server-level  
 - back/front: grid-size is now game-level, not server-level  
-- back/front: able to set custom (game-level) fleet-type (sizes) & grid-size  
   
 ## protocol
   
@@ -125,6 +123,14 @@ vX.Y.Z (planned)
 ← `GAME FAIL no-such-game`  
 ← `GAME FAIL no-free-slot`  
 ← `400_ you-are-in-game`  
+  
+← `GAME-RULES fleet-sizes=russian,fleet-mode=curved,fleet-can-touch-each-other-diagonally=true,show-fields-for-sure-empty=true`  
+→ `GAME-RULES CHANGE fleet-sizes`  
+→ `GAME-RULES CHANGE fleet-sizes=classic_one`  
+← `GAME-RULES fleet-sizes=classic_one`  
+← `400_ no-game-set`  
+← `400_ game-in-progress`  
+← `400_ 2pla-in-game`  
   
 → `GRID 0,1,0,1,1,1,0,1,0,1,0,1,1,0,0,0,0`  
 ← `GRID OK`  
