@@ -53,7 +53,6 @@ export const htmlStrings = {
     id_winning_ratio: '#info-winning-ratio',
     id_winning_me: '#info-winning-me',
     id_winning_opp: '#info-winning-opp',
-    id_ship_sizes: '#info-ship-sizes',
 
     clazz: {
       td_1: '.info-td-1',
@@ -61,7 +60,7 @@ export const htmlStrings = {
     },
   },
 
-  script: {
-    id: '#script',
+  game_rules: {
+    data_game_rules_change: 'data-game-rules-change',
   },
 };

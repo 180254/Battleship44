@@ -2,7 +2,9 @@ package pl.nn44.battleship.service;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -11,6 +13,8 @@ public class MetricsService {
   private final Map<String, Supplier<?>> deliverable = new ConcurrentHashMap<>();
   private final Map<String, AtomicInteger> countable = new ConcurrentHashMap<>();
   private final Map<String, Set<Integer>> inimitable = new ConcurrentHashMap<>();
+  private final Map<String, AtomicLong> timeableTotalTime = new ConcurrentHashMap<>();
+  private final Map<String, AtomicInteger> timeableCounter = new ConcurrentHashMap<>();
 
   public Map<String, Object> getMetrics() {
     Map<String, Object> metrics = new TreeMap<>();
@@ -27,6 +31,9 @@ public class MetricsService {
         .keySet().stream().map(key -> Map.entry(key, inimitable.get(key).size()))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> v1, TreeMap::new)));
 
+    metrics.put("timeable", timeableCounter
+        .keySet().stream().map(key -> Map.entry(key, timeableTotalTime.get(key).get() / timeableCounter.get(key).get()))
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> v1, TreeMap::new)));
     return metrics;
   }
 
@@ -42,5 +49,10 @@ public class MetricsService {
     inimitable
         .computeIfAbsent(key, key1 -> Collections.newSetFromMap(new ConcurrentHashMap<>()))
         .add(Objects.hash(object));
+  }
+
+  public void registerDuration(String key, long duration, TimeUnit timeUnit) {
+    timeableTotalTime.computeIfAbsent(key, (key1) -> new AtomicLong()).addAndGet(timeUnit.toMillis(duration));
+    timeableCounter.computeIfAbsent(key, (key1) -> new AtomicInteger()).incrementAndGet();
   }
 }

@@ -184,5 +184,26 @@ td width/height calculations rationale:
 }
 
 .info-td-1 {
-  width: 10rem;
+  width: 16rem;
+}
+
+a.change {
+  font-family: Lucida Sans Unicode, sans-serif;
+  font-size: 1.2rem;
+  text-decoration: none;
+}
+
+a.change-enabled {
+  color: dodgerblue;
+}
+
+a.change-disabled {
+  color: gray;
+}
+
+.stats-value {
+}
+
+.game-rules-value {
+  color: #fa8b00;
 }

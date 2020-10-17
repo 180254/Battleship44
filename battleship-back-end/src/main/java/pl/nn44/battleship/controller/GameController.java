@@ -6,6 +6,8 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import pl.nn44.battleship.gamerules.FleetMode;
+import pl.nn44.battleship.gamerules.FleetSizes;
 import pl.nn44.battleship.gamerules.GameRules;
 import pl.nn44.battleship.model.*;
 import pl.nn44.battleship.service.*;
@@ -16,10 +18,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiConsumer;
@@ -36,8 +35,6 @@ public class GameController extends TextWebSocketHandler {
   private final Locker locker;
   private final IdGenerator idGenerator;
   private final MetricsService metricsService;
-  private final FleetVerifier fleetVerifier;
-  private final MonteCarloFleet monteCarloFleet;
   private final Serializer<Grid, String> gridSerializer;
   private final Serializer<Coord, String> coordSerializer;
   private final Serializer<List<Cell>, String> cellSerializer;
@@ -45,6 +42,7 @@ public class GameController extends TextWebSocketHandler {
   private final Map<String, BiConsumer<Player, String>> commands =
       Map.ofEntries(
           Map.entry("GAME", this::game),
+          Map.entry("GAME-RULES", this::gameRules),
           Map.entry("GRID", this::grid),
           Map.entry("SHOT", this::shot),
           Map.entry("PING", this::ping)
@@ -55,8 +53,6 @@ public class GameController extends TextWebSocketHandler {
                         Locker locker,
                         IdGenerator idGenerator,
                         MetricsService metricsService,
-                        FleetVerifier fleetVerifier,
-                        MonteCarloFleet monteCarloFleet,
                         Serializer<Grid, String> gridSerializer,
                         Serializer<Coord, String> coordSerializer,
                         Serializer<List<Cell>, String> cellSerializer) {
@@ -65,8 +61,6 @@ public class GameController extends TextWebSocketHandler {
     this.locker = locker;
     this.idGenerator = idGenerator;
     this.metricsService = metricsService;
-    this.fleetVerifier = fleetVerifier;
-    this.monteCarloFleet = monteCarloFleet;
     this.gridSerializer = gridSerializer;
     this.coordSerializer = coordSerializer;
     this.cellSerializer = cellSerializer;
@@ -197,6 +191,7 @@ public class GameController extends TextWebSocketHandler {
         player.setGame(game);
         games.put(game.getId(), game);
         send(player, "GAME OK %s", game.getId());
+        send(player, "GAME-RULES %s", game.getGameRules().describe());
         broadcast("STAT players=%d", players.size());
         metricsService.increment("games.totalCreated");
 
@@ -213,6 +208,7 @@ public class GameController extends TextWebSocketHandler {
         } else {
           player.setGame(game);
           send(player, "GAME OK %s", game.getId());
+          send(player, "GAME-RULES %s", game.getGameRules().describe());
           send(game.getPlayer(0), "2PLA");
           send(game.getPlayer(1), "2PLA");
           broadcast("STAT players=%d", players.size());
@@ -226,99 +222,246 @@ public class GameController extends TextWebSocketHandler {
     }
   }
 
-  private void grid(Player player, String param) {
-    Game game = player.getGame();
+  private void gameRules(Player player, String param) {
+    Locker.Unlocker lockGame = null;
+    try {
+      if (player.getGame() == null) {
+        send(player, "400_ no-game-set");
 
-    if (game == null) {
-      send(player, "400_ no-game-set");
+      } else if (param.startsWith("CHANGE ")) {
+        Game game = player.getGame();
+        lockGame = locker.lock(game);
 
-    } else if (game.getState() == Game.State.IN_PROGRESS) {
-      send(player, "400_ game-in-progress");
-
-    } else if (player.getGrid() != null) {
-      send(player, "400_ grid-already-set");
-
-    } else if (param.equals("RANDOM")) {
-      monteCarloFleet.maybeRandomFleet().whenComplete((grid, throwable) -> {
-        if (grid != null && throwable == null) {
-          send(player, "GRID RANDOM %s", gridSerializer.serialize(grid));
+        if(game.allPlayerSlotsUsed()) {
+          send(player, "400_ 2pla-in-game");
+          return;
         }
-      });
 
-    } else {
-      Optional<Grid> grid = gridSerializer.deserialize(param);
-
-      if (grid.isEmpty()) {
-        send(player, "GRID FAIL");
-
-      } else if (!fleetVerifier.verify(grid.get())) {
-        send(player, "GRID FAIL");
-
-      } else {
-        player.setGrid(grid.get());
-        send(player, "GRID OK");
-
-        if (game.bothGridSets()) {
-          game.setState(Game.State.IN_PROGRESS);
-          game.prepareShootGrids();
-          game.nextTour(random);
-
-          send(game.getPlayer(0), "TOUR START");
-          send(game.getPlayer(1), "TOUR START");
-          send(game.getTourPlayer(), "TOUR YOU");
-          send(game.getNotTourPlayer(), "TOUR HE");
-
-          metricsService.increment("games.totalStarted");
+        if (game.getState() == Game.State.IN_PROGRESS) {
+          send(player, "400_ game-in-progress");
+          return;
         }
+
+        String[] gameRulesChange = param.substring("CHANGE ".length()).split("=", 2);
+        if (gameRulesChange.length != 1 && gameRulesChange.length != 2) {
+          send(player, "400_ game-rules-invalid-change");
+          return;
+        }
+        GameRules gameRules = game.getGameRules();
+
+        if (gameRulesChange.length == 1) {
+          String changeKey = gameRulesChange[0];
+
+          switch (changeKey) {
+            case "fleet-mode": {
+              List<FleetMode> fleetModes = Arrays.asList(FleetMode.values());
+              int currentIndex = fleetModes.indexOf(gameRules.getFleetMode());
+              int nextIndex = (currentIndex + 1) % fleetModes.size();
+              FleetMode nextFleetMode = fleetModes.get(nextIndex);
+              gameRules.setFleetMode(nextFleetMode);
+              send(player, "GAME-RULES fleet-mode=%s", nextFleetMode);
+              break;
+            }
+
+            case "fleet-sizes": {
+              List<FleetSizes> fleetSizes = Arrays.asList(FleetSizes.values());
+              int currentIndex = fleetSizes.indexOf(gameRules.getFleetSizes());
+              int nextIndex = (currentIndex + 1) % fleetSizes.size();
+              FleetSizes nextFleetMode = fleetSizes.get(nextIndex);
+              gameRules.setFleetSizes(nextFleetMode);
+              send(player, "GAME-RULES fleet-sizes=%s", nextFleetMode);
+              break;
+            }
+
+            case "fleet-can-touch-each-other-diagonally": {
+              boolean fleetCanTouchEachOtherDiagonally = gameRules.isFleetCanTouchEachOtherDiagonally();
+              gameRules.setFleetCanTouchEachOtherDiagonally(!fleetCanTouchEachOtherDiagonally);
+              send(player, "GAME-RULES fleet-can-touch-each-other-diagonally=%s", !fleetCanTouchEachOtherDiagonally);
+              break;
+            }
+
+            case "show-fields-for-sure-empty": {
+              boolean showFieldsForSureEmpty = gameRules.isShowFieldsForSureEmpty();
+              gameRules.setShowFieldsForSureEmpty(!showFieldsForSureEmpty);
+              send(player, "GAME-RULES show-fields-for-sure-empty=%s", !showFieldsForSureEmpty);
+              break;
+            }
+
+            default: {
+              send(player, "400_ game-rules-invalid-change");
+            }
+          }
+
+        } else {
+          String changeKey = gameRulesChange[0];
+          String changeValue = gameRulesChange[1];
+
+          outerSwitch:
+          switch (changeKey) {
+            case "fleet-mode": {
+              for (FleetMode fleetMode : FleetMode.values()) {
+                if (fleetMode.name().equalsIgnoreCase(changeValue)) {
+                  gameRules.setFleetMode(fleetMode);
+                  send(player, "GAME-RULES fleet-mode=%s", fleetMode);
+                  break outerSwitch;
+                }
+              }
+              send(player, "400_ game-rules-invalid-change");
+              break;
+            }
+
+            case "fleet-sizes": {
+              for (FleetSizes fleetSizes : FleetSizes.values()) {
+                if (fleetSizes.name().equalsIgnoreCase(changeValue)) {
+                  gameRules.setFleetSizes(fleetSizes);
+                  send(player, "GAME-RULES fleet-sizes=%s", fleetSizes);
+                  break outerSwitch;
+                }
+              }
+              send(player, "400_ game-rules-invalid-change");
+              break;
+            }
+
+            case "fleet-can-touch-each-other-diagonally": {
+              boolean boolChangeValue = Boolean.parseBoolean(changeValue);
+              gameRules.setFleetCanTouchEachOtherDiagonally(boolChangeValue);
+              send(player, "GAME-RULES fleet-can-touch-each-other-diagonally=%s",
+                  gameRules.isFleetCanTouchEachOtherDiagonally());
+              break;
+            }
+
+            case "show-fields-for-sure-empty": {
+              boolean boolChangeValue = Boolean.parseBoolean(changeValue);
+              gameRules.setShowFieldsForSureEmpty(boolChangeValue);
+              send(player, "GAME-RULES show-fields-for-sure-empty=%s",
+                  gameRules.isShowFieldsForSureEmpty());
+              break;
+            }
+
+            default: {
+              send(player, "400_ game-rules-invalid-change");
+            }
+          }
+        }
+
+      }
+    } finally {
+      if (lockGame != null) {
+        lockGame.unlock();
       }
     }
+  }
 
+  private void grid(Player player, String param) {
+    Locker.Unlocker lockGame = null;
+
+    try {
+      Game game = player.getGame();
+      lockGame = locker.lock(game);
+
+      if (game == null) {
+        send(player, "400_ no-game-set");
+
+      } else if (game.getState() == Game.State.IN_PROGRESS) {
+        send(player, "400_ game-in-progress");
+
+      } else if (player.getGrid() != null) {
+        send(player, "400_ grid-already-set");
+
+      } else if (param.equals("RANDOM")) {
+        new MonteCarloFleet(game.getGameRules(), random, metricsService).maybeRandomFleet().whenComplete((grid, throwable) -> {
+          if (grid != null && throwable == null) {
+            send(player, "GRID RANDOM %s", gridSerializer.serialize(grid));
+          }
+        });
+
+      } else {
+        Optional<Grid> grid = gridSerializer.deserialize(param);
+
+        if (grid.isEmpty()) {
+          send(player, "GRID FAIL");
+
+        } else if (!FleetVerifierFactory.forRules(game.getGameRules()).verify(grid.get())) {
+          send(player, "GRID FAIL");
+
+        } else {
+          player.setGrid(grid.get());
+          send(player, "GRID OK");
+
+          if (game.bothGridSets()) {
+            game.setState(Game.State.IN_PROGRESS);
+            game.prepareShootGrids();
+            game.nextTour(random);
+
+            send(game.getPlayer(0), "TOUR START");
+            send(game.getPlayer(1), "TOUR START");
+            send(game.getTourPlayer(), "TOUR YOU");
+            send(game.getNotTourPlayer(), "TOUR HE");
+
+            metricsService.increment("games.totalStarted");
+          }
+        }
+      }
+    } finally {
+      if (lockGame != null) {
+        lockGame.unlock();
+      }
+    }
   }
 
   private void shot(Player player, String param) {
-    Game game = player.getGame();
+    Locker.Unlocker lockGame = null;
 
-    if (game == null) {
-      send(player, "400_ no-game-set");
+    try {
+      Game game = player.getGame();
+      lockGame = locker.lock(game);
 
-    } else if (game.getState() == Game.State.WAITING) {
-      send(player, "400_ game-waiting");
+      if (game == null) {
+        send(player, "400_ no-game-set");
 
-    } else if (game.getNotTourPlayer().equals(player)) {
-      send(player, "400_ not-your-tour");
+      } else if (game.getState() == Game.State.WAITING) {
+        send(player, "400_ game-waiting");
 
-    } else {
-      Optional<Coord> coord = coordSerializer.deserialize(param);
-
-      if (coord.isEmpty()) {
-        send(player, "400_ bad-shoot");
+      } else if (game.getNotTourPlayer().equals(player)) {
+        send(player, "400_ not-your-tour");
 
       } else {
-        Player tourPlayer = game.getTourPlayer();
-        List<Cell> shoot = tourPlayer.getShootGrid().shoot(coord.get());
-        String shootSerial = cellSerializer.serialize(shoot);
+        Optional<Coord> coord = coordSerializer.deserialize(param);
 
-        send(tourPlayer, "YOU_ %s", shootSerial);
-        send(game.getNotTourPlayer(), "HE__ %s", shootSerial);
-
-        if (game.completed()) {
-          send(tourPlayer, "WON_ YOU");
-          send(game.getNotTourPlayer(), "WON_ HE");
-          game.nextGame();
-
-          metricsService.increment("games.totalFinished");
-          metricsService.increment("games.totalCreated");
+        if (coord.isEmpty()) {
+          send(player, "400_ bad-shoot");
 
         } else {
-          boolean goodShoot = shoot.stream()
-              .anyMatch(s -> s.getType() == Cell.Type.SHIP || s.getType() == Cell.Type.SHIP_SUNK);
-          if (!goodShoot) {
-            game.nextTour();
-          }
+          Player tourPlayer = game.getTourPlayer();
+          List<Cell> shoot = tourPlayer.getShootGrid().shoot(coord.get());
+          String shootSerial = cellSerializer.serialize(shoot);
 
-          send(game.getTourPlayer(), "TOUR YOU");
-          send(game.getNotTourPlayer(), "TOUR HE");
+          send(tourPlayer, "YOU_ %s", shootSerial);
+          send(game.getNotTourPlayer(), "HE__ %s", shootSerial);
+
+          if (game.completed()) {
+            send(tourPlayer, "WON_ YOU");
+            send(game.getNotTourPlayer(), "WON_ HE");
+            game.nextGame();
+
+            metricsService.increment("games.totalFinished");
+            metricsService.increment("games.totalCreated");
+
+          } else {
+            boolean goodShoot = shoot.stream()
+                .anyMatch(s -> s.getType() == Cell.Type.SHIP || s.getType() == Cell.Type.SHIP_SUNK);
+            if (!goodShoot) {
+              game.nextTour();
+            }
+
+            send(game.getTourPlayer(), "TOUR YOU");
+            send(game.getNotTourPlayer(), "TOUR HE");
+          }
         }
+      }
+    } finally {
+      if (lockGame != null) {
+        lockGame.unlock();
       }
     }
   }

@@ -70,6 +70,15 @@ public class GameRules {
     this.showFieldsForSureEmpty = showFieldsForSureEmpty;
   }
 
+  public String describe() {
+    return new StringJoiner(",")
+        .add("fleet-mode=" + fleetMode)
+        .add("fleet-sizes=" + fleetSizes)
+        .add("fleet-can-touch-each-other-diagonally=" + fleetCanTouchEachOtherDiagonally)
+        .add("show-fields-for-sure-empty=" + showFieldsForSureEmpty)
+        .toString();
+  }
+
   @Override
   public String toString() {
     return new StringJoiner(", ", GameRules.class.getSimpleName() + "[", "]")

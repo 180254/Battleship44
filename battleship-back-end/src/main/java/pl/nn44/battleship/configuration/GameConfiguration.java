@@ -53,7 +53,7 @@ public class GameConfiguration {
     IdGenerator idGenerator = new BigIdGenerator(random, gameProperties.getImpl().getIdLen());
     FleetVerifier fleetVerifier = FleetVerifierFactory.forRules(gameProperties.getRules());
     Serializer<Grid, String> gridSerializer = new GridSerializer(gameProperties.getRules());
-    MonteCarloFleet monteCarloFleet = new MonteCarloFleet(gameProperties.getRules(), random);
+    MonteCarloFleet monteCarloFleet = new MonteCarloFleet(gameProperties.getRules(), random, metricsService);
     Serializer<Coord, String> coordSerializer = new CoordSerializer();
     Serializer<List<Cell>, String> cellSerializer = new CellSerializer();
 
@@ -65,8 +65,6 @@ public class GameConfiguration {
         locker,
         idGenerator,
         metricsService,
-        fleetVerifier,
-        monteCarloFleet,
         gridSerializer,
         coordSerializer,
         cellSerializer

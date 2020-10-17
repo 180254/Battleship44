@@ -48,37 +48,71 @@
       <table>
         <tr>
           <td data-i18n-path="stats.game_url" class="info-td-1">game/url</td>
-          <td data-i18n-path="stats.unknown" class="info-td-2" id="info-game-url">unknown</td>
+          <td data-i18n-path="stats.unknown" class="info-td-2 stats-value" id="info-game-url">unknown</td>
         </tr>
 
         <tr>
           <td data-i18n-path="stats.game_players">game/players</td>
-          <td id="info-players-game">0</td>
+          <td id="info-players-game" class="stats-value">0</td>
         </tr>
 
         <tr>
           <td data-i18n-path="stats.game_ratio">game/winning ratio</td>
 
-          <td id="info-winning-ratio">
+          <td id="info-winning-ratio" class="stats-value">
             <span id="info-winning-me">0</span>:<span id="info-winning-opp">0</span>
           </td>
         </tr>
 
         <tr>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-        </tr>
-
-        <tr>
-          <td data-i18n-path="stats.server_ships">server/ship sizes</td>
-          <td id="info-ship-sizes">unknown</td>
-        </tr>
-
-        <tr>
           <td data-i18n-path="stats.server_players">server/players</td>
-          <td data-i18n-path="stats.unknown" id="info-players-global">unknown</td>
+          <td data-i18n-path="stats.unknown" class="stats-value" id="info-players-global">unknown</td>
         </tr>
       </table>
+
+      <div>
+        <p>
+          <span data-i18n-path="game-rules.fleet-mode">
+            game/players/fleet-mode
+          </span>
+          <span data-i18n-path="game-rules.fleet-mode.unknown"
+                id="game-rules-fleet-mode-value" class="game-rules-value">
+            unknown
+          </span>
+          <a href="#" data-game-rules-change="fleet-mode" class="change change-disabled">&#x21B7;</a>
+          <br/>
+
+          <span data-i18n-path="game-rules.fleet-sizes">
+            game/players/fleet-sizes
+          </span>
+          <span data-i18n-path="game-rules.fleet-sizes.unknown"
+                id="game-rules-fleet-sizes-value" class="game-rules-value">
+            unknown
+          </span>
+          <a href="#" data-game-rules-change="fleet-sizes" class="change change-disabled">&#x21B7;</a>
+          <br/>
+
+          <span data-i18n-path="game-rules.fleet-can-touch-each-other-diagonally">
+            game/players/fleet-can-touch-each-other-diagonally
+          </span>
+          <span data-i18n-path="game-rules.fleet-can-touch-each-other-diagonally.unknown"
+                id="game-rules-fleet-can-touch-each-other-diagonally-value" class="game-rules-value">
+            unknown
+          </span>
+          <a href="#" data-game-rules-change="fleet-can-touch-each-other-diagonally"
+             class="change change-disabled">&#x21B7;</a>
+          <br/>
+
+          <span data-i18n-path="game-rules.show-fields-for-sure-empty">
+            game/players/show-fields-for-sure-empty
+          </span>
+          <span data-i18n-path="game-rules.show-fields-for-sure-empty.unknown"
+                id="game-rules-show-fields-for-sure-empty-value" class="game-rules-value">
+            unknown
+          </span>
+          <a href="#" data-game-rules-change="show-fields-for-sure-empty" class="change change-disabled">&#x21B7;</a>
+        </p>
+      </div>
     </div>
   </main>
 

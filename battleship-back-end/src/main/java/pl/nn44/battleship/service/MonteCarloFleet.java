@@ -2,6 +2,7 @@ package pl.nn44.battleship.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.nn44.battleship.gamerules.FleetMode;
 import pl.nn44.battleship.gamerules.GameRules;
 import pl.nn44.battleship.model.Coord;
 import pl.nn44.battleship.model.Grid;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.*;
+import java.util.function.BiConsumer;
 
 public class MonteCarloFleet {
 
@@ -22,8 +24,10 @@ public class MonteCarloFleet {
 
   private final GameRules gameRules;
   private final Random random;
+  private final MetricsService metricsService;
 
-  public MonteCarloFleet(GameRules gameRules, Random random) {
+  public MonteCarloFleet(GameRules gameRules, Random random, MetricsService metricsService) {
+    this.metricsService = metricsService;
     // based on Executors.newCachedThreadPool()
     this.executorService = new ThreadPoolExecutor(
         1, 8,
@@ -35,8 +39,20 @@ public class MonteCarloFleet {
   }
 
   public CompletableFuture<Grid> maybeRandomFleet() {
-    CompletableFuture<Grid> futureGrid = CompletableFuture.supplyAsync(this::randomFleet, executorService);
-    cancelerService.schedule(() -> futureGrid.cancel(true), 100, TimeUnit.MILLISECONDS);
+    CompletableFuture<Grid> gridCompletableFuture = CompletableFuture.supplyAsync(this::randomFleet, executorService);
+    CompletableFuture<Grid> futureGrid = gridCompletableFuture.whenComplete(new BiConsumer<Grid, Throwable>() {
+      @Override
+      public void accept(Grid grid, Throwable throwable) {
+        if (throwable != null) {
+          metricsService.increment("monteCarloFleet.completedExceptionally." + throwable.getClass().getSimpleName());
+        } else if (grid == null) {
+          metricsService.increment("monteCarloFleet.completedNull");
+        } else {
+          metricsService.increment("monteCarloFleet.completedOk");
+        }
+      }
+    });
+    cancelerService.schedule(() -> gridCompletableFuture.cancel(true), 100, TimeUnit.MILLISECONDS);
     return futureGrid;
   }
 
@@ -78,6 +94,7 @@ public class MonteCarloFleet {
       }
     }
 
+    metricsService.registerDuration("monteCarloFleet.averageTimeMs", System.currentTimeMillis() - startTime, TimeUnit.MILLISECONDS);
     LOGGER.debug("MonteCarloFleet took {}ms", System.currentTimeMillis() - startTime);
     return grid;
   }
@@ -94,6 +111,9 @@ public class MonteCarloFleet {
     Direction direction = randomDirection();
 
     for (int i = 0; i < size - 1; i++) {
+      if (gameRules.getFleetMode() == FleetMode.CURVED) {
+        direction = randomDirection();
+      }
       coord = direction.move(coord);
       if (!coord.isProper(gameRules.getGridSize())) {
         return null;

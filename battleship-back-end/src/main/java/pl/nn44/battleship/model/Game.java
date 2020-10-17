@@ -86,6 +86,10 @@ public class Game {
     return players[(playerIndex + 1) % 2];
   }
 
+  public boolean allPlayerSlotsUsed() {
+    return java.util.Arrays.stream(players).allMatch(Objects::nonNull);
+  }
+
   public boolean bothGridSets() {
     return players[0] != null
         && players[1] != null

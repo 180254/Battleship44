@@ -1,6 +1,6 @@
 import {Logger} from './logger';
 import {Consumer} from './functional-interfaces';
-import {i18nKey, Translator} from './ui-i18n';
+import {I18nKey, i18nKey, Translator} from './ui-i18n';
 import {htmlStrings} from './html-strings';
 import * as $ from 'jquery';
 import {Url, UrlParam} from './url';
@@ -11,6 +11,11 @@ import {WsMessage} from './ws-wsmessage';
 import {Document2Event} from './document2-event';
 import {UiTitle} from './ui-title';
 import {GridSerializer} from './game-grid-serializer';
+
+class Context {
+  public numberOfPlayers = 1;
+  public gridSet = false;
+}
 
 export class OnWsMessage {
   private readonly logger: Logger = new Logger(OnWsMessage);
@@ -27,6 +32,7 @@ export class OnWsMessage {
   private readonly uiMessageTimeout: UiMessageTimeout;
   private readonly uiTitle: UiTitle;
   private readonly url: Url;
+  private readonly context: Context;
 
   public constructor(
     ws: Ws,
@@ -50,6 +56,7 @@ export class OnWsMessage {
     this.uiMessageTimeout = uiMessageTimeout;
     this.uiTitle = uiTitle;
     this.url = url;
+    this.context = new Context();
   }
 
   public process(msg: WsMessage): void {
@@ -87,6 +94,7 @@ export class OnWsMessage {
       [
         'GAME OK',
         payload => {
+          this.context.gridSet = false;
           this.grids.$opponent.addClass(htmlStrings.grid.clazz.inactive);
           this.grids.$shoot.removeClass(htmlStrings.grid.clazz.inactive);
 
@@ -126,6 +134,20 @@ export class OnWsMessage {
           $(htmlStrings.message.ok.id_ship_selection).on('click', () =>
             this.ws.send('GRID {0}'.format(this.gridSelection.collect()))
           );
+
+          if (this.context.numberOfPlayers === 1 && this.context.gridSet === false) {
+            $('[{0}]'.format(htmlStrings.game_rules.data_game_rules_change)).on('click', e =>
+              this.ws.send(
+                'GAME-RULES CHANGE {0}'.format(
+                  $(e.target).attr(htmlStrings.game_rules.data_game_rules_change)
+                )
+              )
+            );
+
+            $('[{0}]'.format(htmlStrings.game_rules.data_game_rules_change))
+              .addClass('change-enabled')
+              .removeClass('change-disabled');
+          }
         },
       ],
 
@@ -133,6 +155,23 @@ export class OnWsMessage {
         'GAME FAIL',
         payload => {
           this.uiMessage.setFixed(i18nKey('fail.fail', payload));
+        },
+      ],
+
+      [
+        'GAME-RULES',
+        payload => {
+          const gameRules = payload.split(',');
+          for (const gameRule of gameRules) {
+            const gameRuleSplit = gameRule.split('=', 2);
+            const gameRuleKey = gameRuleSplit[0];
+            const gameRuleValue = gameRuleSplit[1];
+
+            this.translator.translateElement(
+              $('#game-rules-{0}-value'.format(gameRuleKey)),
+              new I18nKey('game-rules.{0}.{1}'.format(gameRuleKey, gameRuleValue))
+            );
+          }
         },
       ],
 
@@ -154,10 +193,15 @@ export class OnWsMessage {
       [
         'GRID OK',
         () => {
+          this.context.gridSet = true;
           this.grids.$opponent.removeClass(htmlStrings.grid.clazz.inactive);
           this.grids.$shoot.addClass(htmlStrings.grid.clazz.inactive);
 
           this.uiMessage.setFixed(i18nKey('tour.awaiting'));
+          $('[{0}]'.format(htmlStrings.game_rules.data_game_rules_change)).off('click');
+          $('[{0}]'.format(htmlStrings.game_rules.data_game_rules_change))
+            .removeClass('change-enabled')
+            .addClass('change-disabled');
 
           this.gridSelection.deactivate();
           this.gridSelection.moveToLeft();
@@ -304,6 +348,7 @@ export class OnWsMessage {
       [
         '1PLA',
         payload => {
+          this.context.numberOfPlayers = 1;
           $(htmlStrings.info.id_players_game).text(1);
 
           const interrupted: boolean = payload === 'game-interrupted';
@@ -330,15 +375,35 @@ export class OnWsMessage {
           this.document2Event.onetime($(htmlStrings.message.ok.id_game_next), 'click', () =>
             this.process(new WsMessage('', 'GAME OK', ''))
           );
+
+          if (this.context.numberOfPlayers === 1 && this.context.gridSet === false) {
+            $('[{0}]'.format(htmlStrings.game_rules.data_game_rules_change)).on('click', e =>
+              this.ws.send(
+                'GAME-RULES CHANGE {0}'.format(
+                  $(e.target).attr(htmlStrings.game_rules.data_game_rules_change)
+                )
+              )
+            );
+
+            $('[{0}]'.format(htmlStrings.game_rules.data_game_rules_change))
+              .addClass('change-enabled')
+              .removeClass('change-disabled');
+          }
         },
       ],
 
       [
         '2PLA',
         () => {
+          this.context.numberOfPlayers = 2;
           $(htmlStrings.info.id_players_game).text(2);
 
           this.uiMessage.addFleeting(i18nKey('tour.two_players'), this.uiMessageTimeout.slow);
+
+          $('[{0}]'.format(htmlStrings.game_rules.data_game_rules_change)).off('click');
+          $('[{0}]'.format(htmlStrings.game_rules.data_game_rules_change))
+            .removeClass('change-enabled')
+            .addClass('change-disabled');
         },
       ],
 
@@ -352,7 +417,7 @@ export class OnWsMessage {
       [
         'STAT',
         payload => {
-          const infoStat: {[key: string]: string} = {
+          const infoStat: { [key: string]: string } = {
             players: htmlStrings.info.id_players_global,
           };
 

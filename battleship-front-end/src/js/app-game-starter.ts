@@ -8,8 +8,6 @@ import {Grids} from './game-grid';
 import {UiMessage} from './ui-message';
 import {Url} from './url';
 import {LangTag} from './ui-langs';
-import * as $ from 'jquery';
-import {htmlStrings} from './html-strings';
 
 export class GameStarter {
   private readonly logger: Logger = LoggerFactory.getLogger(GameStarter);
@@ -55,9 +53,6 @@ export class GameStarter {
         this.uiTitle.setFixedDefaultTitle();
         this.uiFlags.initFlags();
         this.grids.init();
-
-        // should be sent by server.
-        $(htmlStrings.info.id_ship_sizes).text('4 | 3, 3 | 2, 2, 2 | 1, 1, 1, 1');
 
         'WebSocket' in window ? this.ws.init() : this.uiMessage.setFixed(i18nKey('ws.unable'));
       }
