@@ -63,10 +63,10 @@ Supported `browsers`:
 * start in the standalone mode: `npm start <server port>`
 
 ## changelog 
-v1.0 (released 2016-08-18)  
+v1.0.0 (released 2016-08-18)  
 + first version  
   
-v1.1 (released 2016-08-22)  
+v1.1.0 (released 2016-08-22)  
 + front: general improvements and refactoring  
 + front: handle WinSocket onerror event  
 + front: info about number of players in current game  
@@ -75,20 +75,20 @@ v1.1 (released 2016-08-22)
 + back: add on error controller  
 + back: possible to customize WebSocket conf&policy by .properties file  
   
-v1.2 (released 2016-08-31)  
+v1.2.0 (released 2016-08-31)  
 + front: general improvements and refactoring  
 + front: i18n: strings configurable by json files  
 + front: i18n: polish lang support  
 + front: i18n: possible to change lang without reloading page  
 + front: pointer cursor on all flag, and cross-hair on shoot grid  
   
-v1.3 (released 2016-10-05)   
+v1.3.0 (released 2016-10-05)   
 + front: re-written & refactored js to TypeScript2  
 + front: source now written with targeting es7, es5 also available (transcompiled)  
 + front: minified js file  
 + back: controller fix (commit/b23803f28d790c34e47c8b8d2cf753f07860c15d)  
   
-v1.4 (released 2017-05-10)  
+v1.4.0 (released 2017-05-10)  
 + general: separated front-end/back-end codes, now they can be started separately  
 + front bug fix: WebSocket connection on HTTPS didn't work  
 + front bug fix: URL to flags were incorrect (uppercase)  
@@ -100,10 +100,10 @@ v1.4.1 (released 2020-09-24)
 + back: updated dependencies  
 + back: code updated to java 11  
   
-v2.0 (unreleased)  
+v2.0.0 (unreleased)  
 + back/front: a new feature: random fleet location  
   
-vX.Y (planned)  
+vX.Y.Z (planned)  
 - "availability broadcasting" - look for a waiting player  
 - back/front: dynamic info from a server about fleet sizes (was hardcoded in html file)  
 - back/front: info which ship sizes has been already shot & which are still to shoot down  
