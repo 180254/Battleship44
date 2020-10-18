@@ -1,6 +1,7 @@
 /* eslint-disable node/no-unpublished-require */
 
 const path = require('path');
+const webpack = require('webpack');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -86,26 +87,6 @@ function js_config(webpack_config) {
           use: [{loader: 'ts-loader'}],
           exclude: [/[\\/]node_modules[\\/]/],
         },
-        {
-          test: /\.(ts|js)$/,
-          use: [
-            {
-              loader: 'string-replace-loader',
-              options: {
-                search: '__CONFIG_MODE__',
-                replace: webpack_config.mode,
-              },
-            },
-            {
-              loader: 'string-replace-loader',
-              options: {
-                search: '__CONFIG_BACKEND__',
-                replace: webpack_config.backend,
-              },
-            },
-          ],
-          exclude: [/[\\/]node_modules[\\/]/],
-        },
       ],
     },
     externals: {
@@ -131,6 +112,10 @@ function js_config(webpack_config) {
     },
     plugins: [
       new CleanWebpackPlugin(),
+      new webpack.DefinePlugin({
+        WEBPACK_DEFINE_MODE: JSON.stringify(webpack_config.mode),
+        WEBPACK_DEFINE_BACKEND: JSON.stringify(webpack_config.backend),
+      }),
       new CopyPlugin({
         patterns: [
           {
