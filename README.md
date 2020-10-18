@@ -44,8 +44,8 @@ Supported `browsers`:
 * start: `java -jar target/battleship44-0.0.1.jar <game server properties>`
 * available `game server properties`:
   - `--server.port=<port>`
-  - `--game.rules.fleet-sizes=<size>` (`russian`, `classic_one`, `classic_two`)
   - `--game.rules.fleet-mode=<mode>` (`straight`, `curved`)
+  - `--game.rules.fleet-sizes=<size>` (`russian`, `classic_one`, `classic_two`)
   - `--game.rules.fleet-can-touch-each-other-diagonally=<value>` (`true`, `false`)
   - `--game.rules.show-fields-for-sure-empty=<value>` (`true`, `false`)
 
@@ -101,6 +101,7 @@ v1.4.1 (released 2020-09-24)
 + back: code updated to java 11  
   
 v2.0.0 (unreleased)  
++ general: revised protocol,
 + back/front: a new feature: random fleet location  
 + back/front: a new feature: possibility to change the rules of the game in each game  
   
@@ -120,24 +121,25 @@ vX.Y.Z (planned)
 → `GAME NEW`  
 → `GAME <game_id>`  
 ← `GAME OK <game_id>`  
-← `GAME FAIL no-such-game`  
-← `GAME FAIL no-free-slot`  
-← `400_ you-are-in-game`  
+← `400 GAME no-such-game`  
+← `400 GAME no-free-slot`  
+← `400 GAME you-are-in-game`  
   
 ← `GAME-RULES fleet-sizes=russian,fleet-mode=curved,fleet-can-touch-each-other-diagonally=true,show-fields-for-sure-empty=true`  
-→ `GAME-RULES CHANGE fleet-sizes`  
-→ `GAME-RULES CHANGE fleet-sizes=classic_one`  
+→ `GAME-RULES fleet-sizes=next`  
+→ `GAME-RULES fleet-sizes=classic_one`  
 ← `GAME-RULES fleet-sizes=classic_one`  
-← `400_ no-game-set`  
-← `400_ game-in-progress`  
-← `400_ 2pla-in-game`  
+← `400 GAME-RULES no-game-set`  
+← `400 GAME-RULES game-in-progress`  
+← `400 GAME-RULES 2pla-in-game`  
+← `400 GAME-RULES invalid-game-rules-change`  
   
 → `GRID 0,1,0,1,1,1,0,1,0,1,0,1,1,0,0,0,0`  
 ← `GRID OK`  
 ← `GRID FAIL`  
-← `400_ no-game-set`  
-← `400_ game-in-progress`  
-← `400_ grid-already-set`  
+← `400 GRID no-game-set`  
+← `400 GRID game-in-progress`  
+← `400 GRID grid-already-set`  
   
 → `GRID RANDOM`  
 ← `GRID RANDOM 0,1,0,1,1,1,0,1,0,1,0,1,1,0,0,0,0`  
@@ -150,10 +152,10 @@ vX.Y.Z (planned)
 → `SHOT [0,2]`  
 ← `YOU_ [SHIP,0,2],[EMPTY,2,1],[EMPTY,2,2]`  
 ← `HE__ [EMPTY,2,7]`  
-← `400_ no-game-set`  
-← `400_ game-waiting`  
-← `400_ not-your-tour`  
-← `400_ bad-shoot`  
+← `400 SHOT no-game-set`  
+← `400 SHOT game-waiting`  
+← `400 SHOT not-your-tour`  
+← `400 SHOT bad-shoot`  
   
 ← `WON_ YOU`  
 ← `WON_ HE`  
@@ -167,7 +169,7 @@ vX.Y.Z (planned)
 ← `PONG <ping_msg>`  
   
 → `<bad_command>`  
-← `400_ unknown-command`  
+← `400 unknown-command`  
 
 ## documentation
   
