@@ -16,6 +16,6 @@ public class MetricsController {
 
   @RequestMapping(value = "/metrics", produces = MediaType.APPLICATION_JSON_VALUE)
   public Object metrics() {
-    return metricsService.getMetrics();
+    return metricsService.getMetricsSnapshot();
   }
 }

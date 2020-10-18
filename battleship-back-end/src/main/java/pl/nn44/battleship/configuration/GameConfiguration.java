@@ -22,6 +22,8 @@ import pl.nn44.battleship.service.*;
 import pl.nn44.battleship.util.BigIdGenerator;
 import pl.nn44.battleship.util.IdGenerator;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Random;
 
@@ -48,16 +50,16 @@ public class GameConfiguration {
 
   @Bean
   public GameController gameController(GameProperties gameProperties, MetricsService metricsService) {
+    Instant applicationStartTime = Instant.now();
+    metricsService.registerDeliverableMetric("uptime", () -> Duration.between(applicationStartTime, Instant.now()));
+    metricsService.registerDeliverableMetric("gameProperties", () -> gameProperties);
+
     Random random = new Random();
     Locker locker = new LockerImpl(metricsService);
     IdGenerator idGenerator = new BigIdGenerator(random, gameProperties.getImpl().getIdLen());
-    FleetVerifier fleetVerifier = FleetVerifierFactory.forRules(gameProperties.getRules());
     Serializer<Grid, String> gridSerializer = new GridSerializer(gameProperties.getRules());
-    MonteCarloFleet monteCarloFleet = new MonteCarloFleet(gameProperties.getRules(), random, metricsService);
     Serializer<Coord, String> coordSerializer = new CoordSerializer();
     Serializer<List<Cell>, String> cellSerializer = new CellSerializer();
-
-    metricsService.registerDeliverable("gameProperties", () -> gameProperties);
 
     return new GameController(
         gameProperties.getRules(),

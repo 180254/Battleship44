@@ -30,7 +30,7 @@ public class GameController extends TextWebSocketHandler {
   private final ConcurrentMap<WebSocketSession, Player> players = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, Game> games = new ConcurrentHashMap<>();
 
-  private final GameRules gameRules;
+  private final GameRules defaultGameRules;
   private final Random random;
   private final Locker locker;
   private final IdGenerator idGenerator;
@@ -41,14 +41,14 @@ public class GameController extends TextWebSocketHandler {
 
   private final Map<String, BiConsumer<Player, String>> commands =
       Map.ofEntries(
-          Map.entry("GAME", this::game),
-          Map.entry("GAME-RULES", this::gameRules),
-          Map.entry("GRID", this::grid),
-          Map.entry("SHOT", this::shot),
-          Map.entry("PING", this::ping)
+          Map.entry("GAME", this::processCommandGame),
+          Map.entry("GAME-RULES", this::processCommandGameRules),
+          Map.entry("GRID", this::processCommandGrid),
+          Map.entry("SHOT", this::processCommandShot),
+          Map.entry("PING", this::processCommandPing)
       );
 
-  public GameController(GameRules gameRules,
+  public GameController(GameRules defaultGameRules,
                         Random random,
                         Locker locker,
                         IdGenerator idGenerator,
@@ -56,7 +56,7 @@ public class GameController extends TextWebSocketHandler {
                         Serializer<Grid, String> gridSerializer,
                         Serializer<Coord, String> coordSerializer,
                         Serializer<List<Cell>, String> cellSerializer) {
-    this.gameRules = gameRules;
+    this.defaultGameRules = defaultGameRules;
     this.random = random;
     this.locker = locker;
     this.idGenerator = idGenerator;
@@ -65,8 +65,8 @@ public class GameController extends TextWebSocketHandler {
     this.coordSerializer = coordSerializer;
     this.cellSerializer = cellSerializer;
 
-    this.metricsService.registerDeliverable("players.currentSize", players::size);
-    this.metricsService.registerDeliverable("games.currentSize", games::size);
+    this.metricsService.registerDeliverableMetric("players.currentSize", players::size);
+    this.metricsService.registerDeliverableMetric("games.currentSize", games::size);
   }
 
   private String sessionId(WebSocketSession session) {
@@ -113,14 +113,17 @@ public class GameController extends TextWebSocketHandler {
     InetAddress clientAddress = (clientSocketAddress != null)
         ? clientSocketAddress.getAddress()
         : null;
-    metricsService.maybeUnique("players.uniqueSoFar", clientAddress);
+    metricsService.countUniqueValues("players.uniqueSoFar", clientAddress);
+
+    players.computeIfAbsent(session, Player::new);
+    broadcast("STAT players=%s", players.size());
   }
 
   @Override
   public void afterConnectionClosed(@Nonnull WebSocketSession session, @Nonnull CloseStatus status) {
     LOGGER.info("<-> {} @ closed @ {}", sessionId(session), status);
     Player player = players.get(session);
-    Locker.Unlocker lock = locker.lock(player);
+    Locker.Unlocker playerLock = locker.lock(player);
 
     try {
       if (player == null) {
@@ -153,7 +156,7 @@ public class GameController extends TextWebSocketHandler {
         games.remove(game.getId());
       }
     } finally {
-      lock.unlock();
+      playerLock.unlock();
     }
   }
 
@@ -166,311 +169,295 @@ public class GameController extends TextWebSocketHandler {
 
     LOGGER.info("<-  {} @ {}", session.getId(), message.getPayload());
 
-    Player player = players.computeIfAbsent(session, Player::new);
+    Player player = players.get(session);
     Locker.Unlocker lock = locker.lock(player);
 
     try {
       commands
-          .getOrDefault(command, this::other)
+          .getOrDefault(command, this::processOtherCommand)
           .accept(player, param);
     } finally {
       lock.unlock();
     }
   }
 
-  private void game(Player player, String param) {
-    Locker.Unlocker lockGame = null;
+  private void processCommandGame(Player player, String param) {
+    if (player.getGame() != null) {
+      send(player, "400 GAME you-are-in-game");
+      return;
+    }
 
-    try {
-      if (player.getGame() != null) {
-        send(player, "400_ you-are-in-game");
+    if (param.equals("NEW")) {
+      Game game = new Game(idGenerator, player);
+      game.cloneGameRules(defaultGameRules);
+      player.setGame(game);
+      games.put(game.getId(), game);
+      send(player, "GAME OK %s", game.getId());
+      send(player, "GAME-RULES %s", game.getGameRules().describe());
+      metricsService.incrementCounter("games.totalCreated");
+      return;
+    }
 
-      } else if (param.equals("NEW")) {
-        Game game = new Game(idGenerator, player);
-        game.cloneGameRules(gameRules);
-        player.setGame(game);
-        games.put(game.getId(), game);
-        send(player, "GAME OK %s", game.getId());
-        send(player, "GAME-RULES %s", game.getGameRules().describe());
-        broadcast("STAT players=%d", players.size());
-        metricsService.increment("games.totalCreated");
+    // else GAME <game_id>
+    Game game = games.get(param);
 
-      } else {
-        Game game = games.get(param);
-        lockGame = locker.lock(game);
+    if (game == null) {
+      send(player, "400 GAME no-such-game");
+      return;
+    }
 
-        if (game == null) {
-          send(player, "GAME FAIL no-such-game");
+    if (!game.setPlayerAtFreeSlot(player)) {
+      send(player, "400 GAME no-free-slot");
+      return;
+    }
 
-        } else if (!game.setPlayerAtFreeSlot(player)) {
-          send(player, "GAME FAIL no-free-slot");
+    player.setGame(game);
+    send(player, "GAME OK %s", game.getId());
+    send(player, "GAME-RULES %s", game.getGameRules().describe());
+    send(game.getPlayer(0), "2PLA");
+    send(game.getPlayer(1), "2PLA");
+  }
 
-        } else {
-          player.setGame(game);
-          send(player, "GAME OK %s", game.getId());
-          send(player, "GAME-RULES %s", game.getGameRules().describe());
-          send(game.getPlayer(0), "2PLA");
-          send(game.getPlayer(1), "2PLA");
-          broadcast("STAT players=%d", players.size());
+
+  private void processCommandGameRules(Player player, String param) {
+    if (player.getGame() == null) {
+      send(player, "400 GAME-RULES no-game-set");
+      return;
+    }
+
+    Game game = player.getGame();
+
+    if (game.bothPlayerSlotsUsed()) {
+      send(player, "400 GAME-RULES 2pla-in-game");
+      return;
+    }
+
+    if (game.getState() == Game.State.IN_PROGRESS) {
+      send(player, "400 GAME-RULES game-in-progress");
+      return;
+    }
+
+    String[] gameRulesChange = param.split("=", 2);
+    if (gameRulesChange.length != 1 && gameRulesChange.length != 2) {
+      send(player, "400 GAME-RULES invalid-game-rules-change");
+      return;
+    }
+
+    GameRules gameRules = game.getGameRules();
+
+    if (gameRulesChange.length == 1) {
+      String changeKey = gameRulesChange[0];
+
+      switch (changeKey) {
+        case "fleet-mode": {
+          List<FleetMode> fleetModes = Arrays.asList(FleetMode.values());
+          int currentIndex = fleetModes.indexOf(gameRules.getFleetMode());
+          int nextIndex = (currentIndex + 1) % fleetModes.size();
+          FleetMode nextFleetMode = fleetModes.get(nextIndex);
+          gameRules.setFleetMode(nextFleetMode);
+          send(player, "GAME-RULES fleet-mode=%s", nextFleetMode);
+          break;
+        }
+
+        case "fleet-sizes": {
+          List<FleetSizes> fleetSizes = Arrays.asList(FleetSizes.values());
+          int currentIndex = fleetSizes.indexOf(gameRules.getFleetSizes());
+          int nextIndex = (currentIndex + 1) % fleetSizes.size();
+          FleetSizes nextFleetMode = fleetSizes.get(nextIndex);
+          gameRules.setFleetSizes(nextFleetMode);
+          send(player, "GAME-RULES fleet-sizes=%s", nextFleetMode);
+          break;
+        }
+
+        case "fleet-can-touch-each-other-diagonally": {
+          boolean currentValue = gameRules.isFleetCanTouchEachOtherDiagonally();
+          boolean nextValue = !currentValue;
+          gameRules.setFleetCanTouchEachOtherDiagonally(nextValue);
+          send(player, "GAME-RULES fleet-can-touch-each-other-diagonally=%s", nextValue);
+          break;
+        }
+
+        case "show-fields-for-sure-empty": {
+          boolean currentValue = gameRules.isShowFieldsForSureEmpty();
+          boolean nextValue = !currentValue;
+          gameRules.setShowFieldsForSureEmpty(nextValue);
+          send(player, "GAME-RULES show-fields-for-sure-empty=%s", nextValue);
+          break;
+        }
+
+        default: {
+          send(player, "400 GAME-RULES invalid-game-rules-change");
         }
       }
+    }
 
-    } finally {
-      if (lockGame != null) {
-        lockGame.unlock();
+    if (gameRulesChange.length == 2) {
+      String changeKey = gameRulesChange[0];
+      String changeValue = gameRulesChange[1];
+
+      outerSwitch:
+      switch (changeKey) {
+        case "fleet-mode": {
+          for (FleetMode fleetMode : FleetMode.values()) {
+            if (fleetMode.name().equalsIgnoreCase(changeValue)) {
+              gameRules.setFleetMode(fleetMode);
+              send(player, "GAME-RULES fleet-mode=%s", fleetMode);
+              break outerSwitch;
+            }
+          }
+          send(player, "400 GAME-RULES invalid-game-rules-change");
+          break;
+        }
+
+        case "fleet-sizes": {
+          for (FleetSizes fleetSizes : FleetSizes.values()) {
+            if (fleetSizes.name().equalsIgnoreCase(changeValue)) {
+              gameRules.setFleetSizes(fleetSizes);
+              send(player, "GAME-RULES fleet-sizes=%s", fleetSizes);
+              break outerSwitch;
+            }
+          }
+          send(player, "400 GAME-RULES invalid-game-rules-change");
+          break;
+        }
+
+        case "fleet-can-touch-each-other-diagonally": {
+          boolean nextValue = Boolean.parseBoolean(changeValue);
+          gameRules.setFleetCanTouchEachOtherDiagonally(nextValue);
+          send(player, "GAME-RULES fleet-can-touch-each-other-diagonally=%s", nextValue);
+          break;
+        }
+
+        case "show-fields-for-sure-empty": {
+          boolean nextValue = Boolean.parseBoolean(changeValue);
+          gameRules.setShowFieldsForSureEmpty(nextValue);
+          send(player, "GAME-RULES show-fields-for-sure-empty=%s", nextValue);
+          break;
+        }
+
+        default: {
+          send(player, "400 GAME-RULES invalid-game-rules-change");
+        }
       }
     }
   }
 
-  private void gameRules(Player player, String param) {
-    Locker.Unlocker lockGame = null;
-    try {
-      if (player.getGame() == null) {
-        send(player, "400_ no-game-set");
+  private void processCommandGrid(Player player, String param) {
+    Game game = player.getGame();
 
-      } else if (param.startsWith("CHANGE ")) {
-        Game game = player.getGame();
-        lockGame = locker.lock(game);
+    if (game == null) {
+      send(player, "400_ no-game-set");
+      return;
+    }
 
-        if(game.allPlayerSlotsUsed()) {
-          send(player, "400_ 2pla-in-game");
-          return;
+    if (game.getState() == Game.State.IN_PROGRESS) {
+      send(player, "400_ game-in-progress");
+      return;
+    }
+
+    if (player.getGrid() != null) {
+      send(player, "400_ grid-already-set");
+      return;
+    }
+
+    if (param.equals("RANDOM")) {
+      MonteCarloFleet monteCarloFleet = new MonteCarloFleet(game.getGameRules(), random, metricsService);
+      monteCarloFleet.maybeRandomFleet().whenComplete((grid, throwable) -> {
+        if (throwable == null && grid != null) {
+          send(player, "GRID RANDOM %s", gridSerializer.serialize(grid));
         }
+      });
+      return;
+    }
 
-        if (game.getState() == Game.State.IN_PROGRESS) {
-          send(player, "400_ game-in-progress");
-          return;
-        }
+    // GRID 0,1,0,1,1,
+    Optional<Grid> grid = gridSerializer.deserialize(param);
 
-        String[] gameRulesChange = param.substring("CHANGE ".length()).split("=", 2);
-        if (gameRulesChange.length != 1 && gameRulesChange.length != 2) {
-          send(player, "400_ game-rules-invalid-change");
-          return;
-        }
-        GameRules gameRules = game.getGameRules();
+    if (grid.isEmpty()) {
+      send(player, "GRID FAIL");
+      return;
+    }
 
-        if (gameRulesChange.length == 1) {
-          String changeKey = gameRulesChange[0];
+    if (!FleetVerifierFactory.forRules(game.getGameRules()).verify(grid.get())) {
+      send(player, "GRID FAIL");
+      return;
+    }
 
-          switch (changeKey) {
-            case "fleet-mode": {
-              List<FleetMode> fleetModes = Arrays.asList(FleetMode.values());
-              int currentIndex = fleetModes.indexOf(gameRules.getFleetMode());
-              int nextIndex = (currentIndex + 1) % fleetModes.size();
-              FleetMode nextFleetMode = fleetModes.get(nextIndex);
-              gameRules.setFleetMode(nextFleetMode);
-              send(player, "GAME-RULES fleet-mode=%s", nextFleetMode);
-              break;
-            }
+    player.setGrid(grid.get());
+    send(player, "GRID OK");
 
-            case "fleet-sizes": {
-              List<FleetSizes> fleetSizes = Arrays.asList(FleetSizes.values());
-              int currentIndex = fleetSizes.indexOf(gameRules.getFleetSizes());
-              int nextIndex = (currentIndex + 1) % fleetSizes.size();
-              FleetSizes nextFleetMode = fleetSizes.get(nextIndex);
-              gameRules.setFleetSizes(nextFleetMode);
-              send(player, "GAME-RULES fleet-sizes=%s", nextFleetMode);
-              break;
-            }
+    if (game.bothGridSets()) {
+      game.setState(Game.State.IN_PROGRESS);
+      game.prepareShootGrids();
+      game.nextTour(random);
 
-            case "fleet-can-touch-each-other-diagonally": {
-              boolean fleetCanTouchEachOtherDiagonally = gameRules.isFleetCanTouchEachOtherDiagonally();
-              gameRules.setFleetCanTouchEachOtherDiagonally(!fleetCanTouchEachOtherDiagonally);
-              send(player, "GAME-RULES fleet-can-touch-each-other-diagonally=%s", !fleetCanTouchEachOtherDiagonally);
-              break;
-            }
+      send(game.getPlayer(0), "TOUR START");
+      send(game.getPlayer(1), "TOUR START");
+      send(game.getTourPlayer(), "TOUR YOU");
+      send(game.getNotTourPlayer(), "TOUR HE");
 
-            case "show-fields-for-sure-empty": {
-              boolean showFieldsForSureEmpty = gameRules.isShowFieldsForSureEmpty();
-              gameRules.setShowFieldsForSureEmpty(!showFieldsForSureEmpty);
-              send(player, "GAME-RULES show-fields-for-sure-empty=%s", !showFieldsForSureEmpty);
-              break;
-            }
-
-            default: {
-              send(player, "400_ game-rules-invalid-change");
-            }
-          }
-
-        } else {
-          String changeKey = gameRulesChange[0];
-          String changeValue = gameRulesChange[1];
-
-          outerSwitch:
-          switch (changeKey) {
-            case "fleet-mode": {
-              for (FleetMode fleetMode : FleetMode.values()) {
-                if (fleetMode.name().equalsIgnoreCase(changeValue)) {
-                  gameRules.setFleetMode(fleetMode);
-                  send(player, "GAME-RULES fleet-mode=%s", fleetMode);
-                  break outerSwitch;
-                }
-              }
-              send(player, "400_ game-rules-invalid-change");
-              break;
-            }
-
-            case "fleet-sizes": {
-              for (FleetSizes fleetSizes : FleetSizes.values()) {
-                if (fleetSizes.name().equalsIgnoreCase(changeValue)) {
-                  gameRules.setFleetSizes(fleetSizes);
-                  send(player, "GAME-RULES fleet-sizes=%s", fleetSizes);
-                  break outerSwitch;
-                }
-              }
-              send(player, "400_ game-rules-invalid-change");
-              break;
-            }
-
-            case "fleet-can-touch-each-other-diagonally": {
-              boolean boolChangeValue = Boolean.parseBoolean(changeValue);
-              gameRules.setFleetCanTouchEachOtherDiagonally(boolChangeValue);
-              send(player, "GAME-RULES fleet-can-touch-each-other-diagonally=%s",
-                  gameRules.isFleetCanTouchEachOtherDiagonally());
-              break;
-            }
-
-            case "show-fields-for-sure-empty": {
-              boolean boolChangeValue = Boolean.parseBoolean(changeValue);
-              gameRules.setShowFieldsForSureEmpty(boolChangeValue);
-              send(player, "GAME-RULES show-fields-for-sure-empty=%s",
-                  gameRules.isShowFieldsForSureEmpty());
-              break;
-            }
-
-            default: {
-              send(player, "400_ game-rules-invalid-change");
-            }
-          }
-        }
-
-      }
-    } finally {
-      if (lockGame != null) {
-        lockGame.unlock();
-      }
+      metricsService.incrementCounter("games.totalStarted");
     }
   }
 
-  private void grid(Player player, String param) {
-    Locker.Unlocker lockGame = null;
+  private void processCommandShot(Player player, String param) {
+    Game game = player.getGame();
 
-    try {
-      Game game = player.getGame();
-      lockGame = locker.lock(game);
+    if (game == null) {
+      send(player, "400 SHOT no-game-set");
+      return;
+    }
 
-      if (game == null) {
-        send(player, "400_ no-game-set");
+    if (game.getState() == Game.State.WAITING) {
+      send(player, "400 SHOT game-waiting");
+      return;
+    }
 
-      } else if (game.getState() == Game.State.IN_PROGRESS) {
-        send(player, "400_ game-in-progress");
+    if (game.getNotTourPlayer().equals(player)) {
+      send(player, "400 SHOT not-your-tour");
+      return;
+    }
 
-      } else if (player.getGrid() != null) {
-        send(player, "400_ grid-already-set");
+    // SHOT [0,2]
+    Optional<Coord> coord = coordSerializer.deserialize(param);
 
-      } else if (param.equals("RANDOM")) {
-        new MonteCarloFleet(game.getGameRules(), random, metricsService).maybeRandomFleet().whenComplete((grid, throwable) -> {
-          if (grid != null && throwable == null) {
-            send(player, "GRID RANDOM %s", gridSerializer.serialize(grid));
-          }
-        });
+    if (coord.isEmpty()) {
+      send(player, "400 SHOT bad-shoot");
+      return;
+    }
 
-      } else {
-        Optional<Grid> grid = gridSerializer.deserialize(param);
+    Player tourPlayer = game.getTourPlayer();
+    List<Cell> shoot = tourPlayer.getShootGrid().shoot(coord.get());
+    String shootSerial = cellSerializer.serialize(shoot);
 
-        if (grid.isEmpty()) {
-          send(player, "GRID FAIL");
+    send(tourPlayer, "YOU_ %s", shootSerial);
+    send(game.getNotTourPlayer(), "HE__ %s", shootSerial);
 
-        } else if (!FleetVerifierFactory.forRules(game.getGameRules()).verify(grid.get())) {
-          send(player, "GRID FAIL");
+    if (game.completed()) {
+      send(tourPlayer, "WON_ YOU");
+      send(game.getNotTourPlayer(), "WON_ HE");
+      game.nextGame();
 
-        } else {
-          player.setGrid(grid.get());
-          send(player, "GRID OK");
+      metricsService.incrementCounter("games.totalFinished");
+      metricsService.incrementCounter("games.totalCreated");
 
-          if (game.bothGridSets()) {
-            game.setState(Game.State.IN_PROGRESS);
-            game.prepareShootGrids();
-            game.nextTour(random);
-
-            send(game.getPlayer(0), "TOUR START");
-            send(game.getPlayer(1), "TOUR START");
-            send(game.getTourPlayer(), "TOUR YOU");
-            send(game.getNotTourPlayer(), "TOUR HE");
-
-            metricsService.increment("games.totalStarted");
-          }
-        }
+    } else {
+      boolean goodShoot = shoot.stream()
+          .anyMatch(s -> s.getType() == Cell.Type.SHIP || s.getType() == Cell.Type.SHIP_SUNK);
+      if (!goodShoot) {
+        game.nextTour();
       }
-    } finally {
-      if (lockGame != null) {
-        lockGame.unlock();
-      }
+
+      send(game.getTourPlayer(), "TOUR YOU");
+      send(game.getNotTourPlayer(), "TOUR HE");
     }
   }
 
-  private void shot(Player player, String param) {
-    Locker.Unlocker lockGame = null;
-
-    try {
-      Game game = player.getGame();
-      lockGame = locker.lock(game);
-
-      if (game == null) {
-        send(player, "400_ no-game-set");
-
-      } else if (game.getState() == Game.State.WAITING) {
-        send(player, "400_ game-waiting");
-
-      } else if (game.getNotTourPlayer().equals(player)) {
-        send(player, "400_ not-your-tour");
-
-      } else {
-        Optional<Coord> coord = coordSerializer.deserialize(param);
-
-        if (coord.isEmpty()) {
-          send(player, "400_ bad-shoot");
-
-        } else {
-          Player tourPlayer = game.getTourPlayer();
-          List<Cell> shoot = tourPlayer.getShootGrid().shoot(coord.get());
-          String shootSerial = cellSerializer.serialize(shoot);
-
-          send(tourPlayer, "YOU_ %s", shootSerial);
-          send(game.getNotTourPlayer(), "HE__ %s", shootSerial);
-
-          if (game.completed()) {
-            send(tourPlayer, "WON_ YOU");
-            send(game.getNotTourPlayer(), "WON_ HE");
-            game.nextGame();
-
-            metricsService.increment("games.totalFinished");
-            metricsService.increment("games.totalCreated");
-
-          } else {
-            boolean goodShoot = shoot.stream()
-                .anyMatch(s -> s.getType() == Cell.Type.SHIP || s.getType() == Cell.Type.SHIP_SUNK);
-            if (!goodShoot) {
-              game.nextTour();
-            }
-
-            send(game.getTourPlayer(), "TOUR YOU");
-            send(game.getNotTourPlayer(), "TOUR HE");
-          }
-        }
-      }
-    } finally {
-      if (lockGame != null) {
-        lockGame.unlock();
-      }
-    }
-  }
-
-  private void ping(Player player, String param) {
+  private void processCommandPing(Player player, String param) {
     send(player, "PONG %s", param);
   }
 
-  private void other(Player player, String payload) {
-    send(player, "400_ unknown-command");
+  private void processOtherCommand(Player player, String payload) {
+    send(player, "400 unknown-command");
   }
 }

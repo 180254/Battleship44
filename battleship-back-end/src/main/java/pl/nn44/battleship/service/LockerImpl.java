@@ -20,7 +20,7 @@ public class LockerImpl implements Locker {
   private final Map<Object, Lock> locks = new ConcurrentReferenceHashMap<>(16, ReferenceType.WEAK);
 
   public LockerImpl(MetricsService metricsService) {
-    metricsService.registerDeliverable("locks.currentSize", locks::size);
+    metricsService.registerDeliverableMetric("locks.currentSize", locks::size);
   }
 
   @Override
