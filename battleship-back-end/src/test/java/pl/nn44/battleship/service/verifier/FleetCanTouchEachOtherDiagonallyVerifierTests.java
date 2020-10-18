@@ -17,8 +17,8 @@ public class FleetCanTouchEachOtherDiagonallyVerifierTests {
   {
     GameRules gameRules = new GameRules(
         new GridSize(10, 10),
-        FleetMode.CURVED,
         FleetSizes.RUSSIAN,
+        FleetMode.CURVED,
         true,
         false);
     fleetVerifier = FleetVerifierFactory.forRules(gameRules);

@@ -17,8 +17,8 @@ public class CurvedFleetVerifierTests {
   {
     GameRules gameRules = new GameRules(
         new GridSize(10, 10),
-        FleetMode.CURVED,
         FleetSizes.RUSSIAN,
+        FleetMode.CURVED,
         false,
         false);
     fleetVerifier = FleetVerifierFactory.forRules(gameRules);

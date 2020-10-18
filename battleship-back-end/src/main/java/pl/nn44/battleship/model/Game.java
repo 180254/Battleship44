@@ -40,8 +40,8 @@ public class Game {
 
   public void cloneGameRules(GameRules gameRules) {
     this.gameRules.setGridSize(gameRules.getGridSize());
-    this.gameRules.setFleetMode(gameRules.getFleetMode());
     this.gameRules.setFleetSizes(gameRules.getFleetSizes());
+    this.gameRules.setFleetMode(gameRules.getFleetMode());
     this.gameRules.setFleetCanTouchEachOtherDiagonally(gameRules.isFleetCanTouchEachOtherDiagonally());
     this.gameRules.setShowFieldsForSureEmpty(gameRules.isShowFieldsForSureEmpty());
   }

@@ -17,8 +17,8 @@ public class StraightFleetVerifierTests {
   {
     GameRules gameRules = new GameRules(
         new GridSize(10, 10),
-        FleetMode.STRAIGHT,
         FleetSizes.RUSSIAN,
+        FleetMode.STRAIGHT,
         false,
         false);
     fleetVerifier = FleetVerifierFactory.forRules(gameRules);

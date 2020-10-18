@@ -249,16 +249,6 @@ public class GameController extends TextWebSocketHandler {
       String changeKey = gameRulesChange[0];
 
       switch (changeKey) {
-        case "fleet-mode": {
-          List<FleetMode> fleetModes = Arrays.asList(FleetMode.values());
-          int currentIndex = fleetModes.indexOf(gameRules.getFleetMode());
-          int nextIndex = (currentIndex + 1) % fleetModes.size();
-          FleetMode nextFleetMode = fleetModes.get(nextIndex);
-          gameRules.setFleetMode(nextFleetMode);
-          send(player, "GAME-RULES fleet-mode=%s", nextFleetMode);
-          break;
-        }
-
         case "fleet-sizes": {
           List<FleetSizes> fleetSizes = Arrays.asList(FleetSizes.values());
           int currentIndex = fleetSizes.indexOf(gameRules.getFleetSizes());
@@ -266,6 +256,16 @@ public class GameController extends TextWebSocketHandler {
           FleetSizes nextFleetMode = fleetSizes.get(nextIndex);
           gameRules.setFleetSizes(nextFleetMode);
           send(player, "GAME-RULES fleet-sizes=%s", nextFleetMode);
+          break;
+        }
+
+        case "fleet-mode": {
+          List<FleetMode> fleetModes = Arrays.asList(FleetMode.values());
+          int currentIndex = fleetModes.indexOf(gameRules.getFleetMode());
+          int nextIndex = (currentIndex + 1) % fleetModes.size();
+          FleetMode nextFleetMode = fleetModes.get(nextIndex);
+          gameRules.setFleetMode(nextFleetMode);
+          send(player, "GAME-RULES fleet-mode=%s", nextFleetMode);
           break;
         }
 
@@ -298,11 +298,11 @@ public class GameController extends TextWebSocketHandler {
 
     outerSwitch:
     switch (changeKey) {
-      case "fleet-mode": {
-        for (FleetMode fleetMode : FleetMode.values()) {
-          if (fleetMode.name().equalsIgnoreCase(changeValue)) {
-            gameRules.setFleetMode(fleetMode);
-            send(player, "GAME-RULES fleet-mode=%s", fleetMode);
+      case "fleet-sizes": {
+        for (FleetSizes fleetSizes : FleetSizes.values()) {
+          if (fleetSizes.name().equalsIgnoreCase(changeValue)) {
+            gameRules.setFleetSizes(fleetSizes);
+            send(player, "GAME-RULES fleet-sizes=%s", fleetSizes);
             break outerSwitch;
           }
         }
@@ -310,11 +310,11 @@ public class GameController extends TextWebSocketHandler {
         break;
       }
 
-      case "fleet-sizes": {
-        for (FleetSizes fleetSizes : FleetSizes.values()) {
-          if (fleetSizes.name().equalsIgnoreCase(changeValue)) {
-            gameRules.setFleetSizes(fleetSizes);
-            send(player, "GAME-RULES fleet-sizes=%s", fleetSizes);
+      case "fleet-mode": {
+        for (FleetMode fleetMode : FleetMode.values()) {
+          if (fleetMode.name().equalsIgnoreCase(changeValue)) {
+            gameRules.setFleetMode(fleetMode);
+            send(player, "GAME-RULES fleet-mode=%s", fleetMode);
             break outerSwitch;
           }
         }

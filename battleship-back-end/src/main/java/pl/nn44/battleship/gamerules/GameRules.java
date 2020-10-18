@@ -10,8 +10,8 @@ import java.util.StringJoiner;
 public class GameRules {
 
   private GridSize gridSize;
-  private FleetMode fleetMode;
   private FleetSizes fleetSizes;
+  private FleetMode fleetMode;
   private boolean fleetCanTouchEachOtherDiagonally;
   private boolean showFieldsForSureEmpty;
 
@@ -19,13 +19,13 @@ public class GameRules {
   }
 
   public GameRules(GridSize gridSize,
-                   FleetMode fleetMode,
                    FleetSizes fleetSizes,
+                   FleetMode fleetMode,
                    boolean fleetCanTouchEachOtherDiagonally,
                    boolean showFieldsForSureEmpty) {
     this.gridSize = gridSize;
-    this.fleetMode = fleetMode;
     this.fleetSizes = fleetSizes;
+    this.fleetMode = fleetMode;
     this.fleetCanTouchEachOtherDiagonally = fleetCanTouchEachOtherDiagonally;
     this.showFieldsForSureEmpty = showFieldsForSureEmpty;
   }
@@ -38,20 +38,20 @@ public class GameRules {
     this.gridSize = gridSize;
   }
 
-  public FleetMode getFleetMode() {
-    return fleetMode;
-  }
-
-  public void setFleetMode(FleetMode fleetMode) {
-    this.fleetMode = fleetMode;
-  }
-
   public FleetSizes getFleetSizes() {
     return fleetSizes;
   }
 
   public void setFleetSizes(FleetSizes fleetSizes) {
     this.fleetSizes = fleetSizes;
+  }
+
+  public FleetMode getFleetMode() {
+    return fleetMode;
+  }
+
+  public void setFleetMode(FleetMode fleetMode) {
+    this.fleetMode = fleetMode;
   }
 
   public boolean isFleetCanTouchEachOtherDiagonally() {
@@ -73,8 +73,8 @@ public class GameRules {
   public String describe() {
     return new StringJoiner(",")
         .add("grid-size=" + gridSize.getRows() + "x" + gridSize.getCols())
-        .add("fleet-mode=" + fleetMode)
         .add("fleet-sizes=" + fleetSizes)
+        .add("fleet-mode=" + fleetMode)
         .add("fleet-can-touch-each-other-diagonally=" + fleetCanTouchEachOtherDiagonally)
         .add("show-fields-for-sure-empty=" + showFieldsForSureEmpty)
         .toString();
@@ -84,8 +84,8 @@ public class GameRules {
   public String toString() {
     return new StringJoiner(", ", GameRules.class.getSimpleName() + "[", "]")
         .add("gridSize=" + gridSize)
-        .add("fleetMode=" + fleetMode)
         .add("fleetSizes=" + fleetSizes)
+        .add("fleetMode=" + fleetMode)
         .add("fleetCanTouchEachOtherDiagonally=" + fleetCanTouchEachOtherDiagonally)
         .add("showFieldsForSureEmpty=" + showFieldsForSureEmpty)
         .toString();
