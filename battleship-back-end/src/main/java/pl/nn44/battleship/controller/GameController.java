@@ -238,14 +238,14 @@ public class GameController extends TextWebSocketHandler {
     }
 
     String[] gameRulesChange = param.split("=", 2);
-    if (gameRulesChange.length != 1 && gameRulesChange.length != 2) {
+    if (gameRulesChange.length != 2) {
       send(player, "400 GAME-RULES invalid-game-rules-change");
       return;
     }
 
     GameRules gameRules = game.getGameRules();
 
-    if (gameRulesChange.length == 1) {
+    if (gameRulesChange[1].equals("next")) {
       String changeKey = gameRulesChange[0];
 
       switch (changeKey) {
@@ -289,55 +289,55 @@ public class GameController extends TextWebSocketHandler {
           send(player, "400 GAME-RULES invalid-game-rules-change");
         }
       }
+
+      return;
     }
 
-    if (gameRulesChange.length == 2) {
-      String changeKey = gameRulesChange[0];
-      String changeValue = gameRulesChange[1];
+    String changeKey = gameRulesChange[0];
+    String changeValue = gameRulesChange[1];
 
-      outerSwitch:
-      switch (changeKey) {
-        case "fleet-mode": {
-          for (FleetMode fleetMode : FleetMode.values()) {
-            if (fleetMode.name().equalsIgnoreCase(changeValue)) {
-              gameRules.setFleetMode(fleetMode);
-              send(player, "GAME-RULES fleet-mode=%s", fleetMode);
-              break outerSwitch;
-            }
+    outerSwitch:
+    switch (changeKey) {
+      case "fleet-mode": {
+        for (FleetMode fleetMode : FleetMode.values()) {
+          if (fleetMode.name().equalsIgnoreCase(changeValue)) {
+            gameRules.setFleetMode(fleetMode);
+            send(player, "GAME-RULES fleet-mode=%s", fleetMode);
+            break outerSwitch;
           }
-          send(player, "400 GAME-RULES invalid-game-rules-change");
-          break;
         }
+        send(player, "400 GAME-RULES invalid-game-rules-change");
+        break;
+      }
 
-        case "fleet-sizes": {
-          for (FleetSizes fleetSizes : FleetSizes.values()) {
-            if (fleetSizes.name().equalsIgnoreCase(changeValue)) {
-              gameRules.setFleetSizes(fleetSizes);
-              send(player, "GAME-RULES fleet-sizes=%s", fleetSizes);
-              break outerSwitch;
-            }
+      case "fleet-sizes": {
+        for (FleetSizes fleetSizes : FleetSizes.values()) {
+          if (fleetSizes.name().equalsIgnoreCase(changeValue)) {
+            gameRules.setFleetSizes(fleetSizes);
+            send(player, "GAME-RULES fleet-sizes=%s", fleetSizes);
+            break outerSwitch;
           }
-          send(player, "400 GAME-RULES invalid-game-rules-change");
-          break;
         }
+        send(player, "400 GAME-RULES invalid-game-rules-change");
+        break;
+      }
 
-        case "fleet-can-touch-each-other-diagonally": {
-          boolean nextValue = Boolean.parseBoolean(changeValue);
-          gameRules.setFleetCanTouchEachOtherDiagonally(nextValue);
-          send(player, "GAME-RULES fleet-can-touch-each-other-diagonally=%s", nextValue);
-          break;
-        }
+      case "fleet-can-touch-each-other-diagonally": {
+        boolean nextValue = Boolean.parseBoolean(changeValue);
+        gameRules.setFleetCanTouchEachOtherDiagonally(nextValue);
+        send(player, "GAME-RULES fleet-can-touch-each-other-diagonally=%s", nextValue);
+        break;
+      }
 
-        case "show-fields-for-sure-empty": {
-          boolean nextValue = Boolean.parseBoolean(changeValue);
-          gameRules.setShowFieldsForSureEmpty(nextValue);
-          send(player, "GAME-RULES show-fields-for-sure-empty=%s", nextValue);
-          break;
-        }
+      case "show-fields-for-sure-empty": {
+        boolean nextValue = Boolean.parseBoolean(changeValue);
+        gameRules.setShowFieldsForSureEmpty(nextValue);
+        send(player, "GAME-RULES show-fields-for-sure-empty=%s", nextValue);
+        break;
+      }
 
-        default: {
-          send(player, "400 GAME-RULES invalid-game-rules-change");
-        }
+      default: {
+        send(player, "400 GAME-RULES invalid-game-rules-change");
       }
     }
   }

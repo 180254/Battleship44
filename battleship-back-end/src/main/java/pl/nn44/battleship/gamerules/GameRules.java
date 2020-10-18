@@ -72,7 +72,7 @@ public class GameRules {
 
   public String describe() {
     return new StringJoiner(",")
-        .add("grid-size=" + gridSize)
+        .add("grid-size=" + gridSize.getRows() + "x" + gridSize.getCols())
         .add("fleet-mode=" + fleetMode)
         .add("fleet-sizes=" + fleetSizes)
         .add("fleet-can-touch-each-other-diagonally=" + fleetCanTouchEachOtherDiagonally)
