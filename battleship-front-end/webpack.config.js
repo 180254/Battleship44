@@ -76,7 +76,6 @@ function js_config(webpack_config) {
                     },
                   ],
                 ],
-                cacheDirectory: true,
               },
             },
           ],
