@@ -4,18 +4,18 @@ import {Translator} from './ui-i18n';
 import {Grids, GridSelection} from './game-grid';
 import {Url} from './url';
 import {GridSerializer} from './game-grid-serializer';
-import {UiTitle} from './ui-title';
 import {UiFlags} from './ui-flags';
+import {UiGameRules} from './ui-gamerules';
+import {UiTitle} from './ui-title';
 import {Document2Event} from './document2-event';
-import {Assert} from './assert';
 import {Random} from './random';
-import {OnWsMessage} from './ws-onwsmessage';
+import {OnWsMessage, SessionContext} from './ws-onwsmessage';
 import {OnWsEvent} from './ws-onwsevent';
 import {GameStarter} from './app-game-starter';
 import {Ws} from './ws-ws';
 
 class Game {
-  private readonly assert: Assert = new Assert();
+  // private readonly assert: Assert = new Assert();
   private readonly random: Random = new Random();
   private readonly document2Event: Document2Event = new Document2Event(this.random);
   private readonly grids: Grids = new Grids();
@@ -30,10 +30,12 @@ class Game {
   private readonly langSetter: LangSetter = new LangSetter();
   private readonly translator: Translator = new Translator(this.langSelector, this.langSetter);
   private readonly uiFlags: UiFlags = new UiFlags(this.translator);
+  private readonly uiGameRules = new UiGameRules();
   private readonly uiMessage: UiMessage = new UiMessage(this.random, this.translator);
   private readonly uiMessageTimeout: UiMessageTimeout = new UiMessageTimeout();
   private readonly uiTitle: UiTitle = new UiTitle(this.translator);
   private readonly url: Url = new Url();
+  private readonly sessionContext: SessionContext = new SessionContext();
 
   private readonly ws: Ws = new Ws();
 
@@ -44,10 +46,12 @@ class Game {
     this.gridSerializer,
     this.grids,
     this.translator,
+    this.uiGameRules,
     this.uiMessage,
     this.uiMessageTimeout,
     this.uiTitle,
-    this.url
+    this.url,
+    this.sessionContext
   );
 
   private onWsEvent: OnWsEvent = new OnWsEvent(

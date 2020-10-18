@@ -26,6 +26,9 @@
   "stats.game_players": "game/players",
   "stats.game_ratio": "game/winning ratio",
   "stats.server_players": "server/players",
+  "game-rules.grid-size": "game-rules/grid-size:",
+  "game-rules.grid-size.unknown": "unknown",
+  "game-rules.grid-size.10x10": "10x10",
   "game-rules.fleet-mode": "game-rules/fleet-mode:",
   "game-rules.fleet-mode.unknown": "unknown",
   "game-rules.fleet-mode.CURVED": "curved",
@@ -37,10 +40,10 @@
   "game-rules.fleet-sizes.CLASSIC_TWO": "5 | 4 | 3 | 2, 2 | 1, 1",
   "game-rules.fleet-can-touch-each-other-diagonally": "game-rules/fleet-can-touch-each-other-diagonally:",
   "game-rules.fleet-can-touch-each-other-diagonally.unknown": "unknown",
-  "game-rules.fleet-can-touch-each-other-diagonally.true": "true",
-  "game-rules.fleet-can-touch-each-other-diagonally.false": "false",
+  "game-rules.fleet-can-touch-each-other-diagonally.true": "yes",
+  "game-rules.fleet-can-touch-each-other-diagonally.false": "no",
   "game-rules.show-fields-for-sure-empty": "game-rules/show-fields-for-sure-empty:",
   "game-rules.show-fields-for-sure-empty.unknown": "unknown",
-  "game-rules.show-fields-for-sure-empty.true": "true",
-  "game-rules.show-fields-for-sure-empty.false": "false"
+  "game-rules.show-fields-for-sure-empty.true": "yes",
+  "game-rules.show-fields-for-sure-empty.false": "no"
 }

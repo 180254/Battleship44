@@ -17,8 +17,8 @@
   <script src="js/dist/vendors.dist.js" defer="defer"></script>
   <script src="js/dist/app.dist.js" defer="defer"></script>
 
-  <link rel="prefetch" href="i18n/en.json" as="fetch" crossorigin="anonymous"/>
-  <link rel="prefetch" href="i18n/pl.json" as="fetch" crossorigin="anonymous"/>
+  <link rel="prefetch" href="i18n/en.json"/>
+  <link rel="prefetch" href="i18n/pl.json"/>
   <link rel="preload" href="flag/us.png" as="image"/>
   <link rel="preload" href="flag/pl.png" as="image"/>
 </head>
@@ -72,6 +72,16 @@
 
       <div>
         <p>
+          <span data-i18n-path="game-rules.grid-size">
+            game/players/grid-size
+          </span>
+          <span data-i18n-path="game-rules.grid-size.unknown"
+                id="game-rules-grid-size-value" class="game-rules-value">
+            unknown
+          </span>
+          <a role="button" class="like-href change change-disabled">&#x21B7;</a>
+          <br/>
+
           <span data-i18n-path="game-rules.fleet-mode">
             game/players/fleet-mode
           </span>
@@ -79,7 +89,7 @@
                 id="game-rules-fleet-mode-value" class="game-rules-value">
             unknown
           </span>
-          <a href="#" data-game-rules-change="fleet-mode" class="change change-disabled">&#x21B7;</a>
+          <a role="button" data-game-rules-change="fleet-mode" class="like-href change change-disabled">&#x21B7;</a>
           <br/>
 
           <span data-i18n-path="game-rules.fleet-sizes">
@@ -89,7 +99,7 @@
                 id="game-rules-fleet-sizes-value" class="game-rules-value">
             unknown
           </span>
-          <a href="#" data-game-rules-change="fleet-sizes" class="change change-disabled">&#x21B7;</a>
+          <a role="button" data-game-rules-change="fleet-sizes" class="like-href change change-disabled">&#x21B7;</a>
           <br/>
 
           <span data-i18n-path="game-rules.fleet-can-touch-each-other-diagonally">
@@ -99,8 +109,8 @@
                 id="game-rules-fleet-can-touch-each-other-diagonally-value" class="game-rules-value">
             unknown
           </span>
-          <a href="#" data-game-rules-change="fleet-can-touch-each-other-diagonally"
-             class="change change-disabled">&#x21B7;</a>
+          <a role="button" data-game-rules-change="fleet-can-touch-each-other-diagonally"
+             class="like-href change change-disabled">&#x21B7;</a>
           <br/>
 
           <span data-i18n-path="game-rules.show-fields-for-sure-empty">
@@ -110,7 +120,9 @@
                 id="game-rules-show-fields-for-sure-empty-value" class="game-rules-value">
             unknown
           </span>
-          <a href="#" data-game-rules-change="show-fields-for-sure-empty" class="change change-disabled">&#x21B7;</a>
+          <a role="button" data-game-rules-change="show-fields-for-sure-empty"
+             class="like-href change change-disabled">&#x21B7;
+          </a>
         </p>
       </div>
     </div>

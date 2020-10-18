@@ -32,9 +32,9 @@ export class UiMessage {
 
   public addFixedLink(i18nKey: I18nKey, id: string, clazz?: string): void {
     const $a: JQuery = $('<a/>', {
-      ['href']: '#',
+      ['role']: 'button',
       ['id']: id.substring(1),
-      ['class']: clazz || '',
+      ['class']: 'like-href ' + (clazz || ''),
     });
 
     this.translator.translateElement($a, i18nKey);

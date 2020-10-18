@@ -18,6 +18,7 @@ export class UiFlags {
       .server()
       .forEach(langTag => {
         const $flag: JQuery = $(document.createElement('img'));
+        $flag.attr('role', 'button');
         $flag.attr('alt', langTag.lang);
         $flag.attr('src', 'flag/{0}.png'.format(langTag.region!.toLowerCase()));
         $flag.attr('class', htmlStrings.flag.clazz.default);

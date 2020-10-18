@@ -187,6 +187,12 @@ td width/height calculations rationale:
   width: 16rem;
 }
 
+a.like-href {
+  text-decoration: underline;
+  cursor: pointer;
+  user-select: none
+}
+
 a.change {
   font-family: Lucida Sans Unicode, sans-serif;
   font-size: 1.2rem;
