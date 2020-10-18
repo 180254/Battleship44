@@ -4,7 +4,7 @@ const path = require('path');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
 const env_config = {
@@ -92,14 +92,14 @@ function js_config(webpack_config) {
             {
               loader: 'string-replace-loader',
               options: {
-                search: 'CONFIG_MODE',
+                search: '__CONFIG_MODE__',
                 replace: webpack_config.mode,
               },
             },
             {
               loader: 'string-replace-loader',
               options: {
-                search: 'CONFIG_BACKEND',
+                search: '__CONFIG_BACKEND__',
                 replace: webpack_config.backend,
               },
             },
@@ -191,7 +191,7 @@ function css_config(webpack_config) {
       ],
     },
     optimization: {
-      minimizer: [new OptimizeCSSAssetsPlugin({})],
+      minimizer: [new CssMinimizerPlugin()],
     },
     plugins: [
       new CleanWebpackPlugin(),
