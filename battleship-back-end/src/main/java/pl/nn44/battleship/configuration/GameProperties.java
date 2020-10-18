@@ -80,19 +80,19 @@ public class GameProperties {
     private Duration policyIdleTimeout;
 
     public String[] getConfHandlers() {
-      return confHandlers;
+      return Arrays.copyOf(confHandlers, confHandlers.length);
     }
 
     public void setConfHandlers(String[] confHandlers) {
-      this.confHandlers = confHandlers;
+      this.confHandlers = Arrays.copyOf(confHandlers, confHandlers.length);
     }
 
     public String[] getConfAllowedOrigins() {
-      return confAllowedOrigins;
+      return Arrays.copyOf(confAllowedOrigins, confAllowedOrigins.length);
     }
 
     public void setConfAllowedOrigins(String[] confAllowedOrigins) {
-      this.confAllowedOrigins = confAllowedOrigins;
+      this.confAllowedOrigins = Arrays.copyOf(confAllowedOrigins, confAllowedOrigins.length);
     }
 
     @JsonSerialize(using = DataSizeSerializer.class)
