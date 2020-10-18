@@ -50,10 +50,10 @@ public class Grid {
   }
 
   public boolean isCoordProper(Coord coord) {
-    return (coord.getRow() >= 0
+    return coord.getRow() >= 0
         && coord.getCol() >= 0
         && coord.getRow() < gridSize.getRows()
-        && coord.getCol() < gridSize.getCols());
+        && coord.getCol() < gridSize.getCols();
   }
 
   public Cell getCell(Coord coord) {
@@ -101,20 +101,5 @@ public class Grid {
       sb.append("\n");
     }
     return sb.toString();
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    return super.equals(o);
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
-  @Override
-  public String toString() {
-    return super.toString();
   }
 }

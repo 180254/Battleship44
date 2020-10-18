@@ -74,19 +74,4 @@ public class ShootGrid extends Grid {
         .map(this::getCell)
         .allMatch(c -> c.getType() == Cell.Type.SHIP || c.getType() == Cell.Type.SHIP_SUNK);
   }
-
-  @Override
-  public boolean equals(Object o) {
-    return super.equals(o);
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
-  @Override
-  public String toString() {
-    return super.toString();
-  }
 }

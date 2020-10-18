@@ -1,7 +1,5 @@
 package pl.nn44.battleship.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.ConcurrentReferenceHashMap;
 import org.springframework.util.ConcurrentReferenceHashMap.ReferenceType;
 import pl.nn44.battleship.model.Game;
@@ -13,8 +11,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class LockerImpl implements Locker {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(LockerImpl.class);
 
   private final Lock fastLock = new FastLock();
   private final Map<Object, Lock> locks = new ConcurrentReferenceHashMap<>(16, ReferenceType.WEAK);

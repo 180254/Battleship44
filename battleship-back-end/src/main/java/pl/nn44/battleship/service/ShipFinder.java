@@ -65,7 +65,7 @@ public class ShipFinder {
         Cell cell = grid.getCell(coord);
 
         if (cell.getType() == Cell.Type.SHIP || cell.getType() == Cell.Type.SHIP_SUNK) {
-          if (!isShipCoord(ships, coord)) {
+          if (!isShipCoord(ships, coord)) { // NOPMD CollapsibleIfStatements - ignore pmd, i like that style
 
             List<Coord> shipCoords = collectShipCoords(coord);
             Ship ship = new Ship(shipCoords);

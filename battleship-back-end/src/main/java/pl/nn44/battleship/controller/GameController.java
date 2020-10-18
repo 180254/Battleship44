@@ -457,6 +457,7 @@ public class GameController extends TextWebSocketHandler {
     send(player, "PONG %s", param);
   }
 
+  @SuppressWarnings("PMD.UnusedFormalParameter") // must match to "commands" map prototype
   private void processOtherCommand(Player player, String payload) {
     send(player, "400 unknown-command");
   }
