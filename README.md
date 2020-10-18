@@ -125,7 +125,7 @@ vX.Y.Z (planned)
 ← `400 GAME no-free-slot`  
 ← `400 GAME you-are-in-game`  
   
-← `GAME-RULES fleet-sizes=russian,fleet-mode=curved,fleet-can-touch-each-other-diagonally=true,show-fields-for-sure-empty=true`  
+← `GAME-RULES grid-size=10x10,fleet-sizes=russian,fleet-mode=curved,...`  
 → `GAME-RULES fleet-sizes=next`  
 → `GAME-RULES fleet-sizes=classic_one`  
 ← `GAME-RULES fleet-sizes=classic_one`  
