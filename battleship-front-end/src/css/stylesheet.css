@@ -8,8 +8,14 @@ html {
   }
 }
 
-body {
+html {
   background-color: #2C3E44;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    background-color: #00090e;
+  }
 }
 
 main {
@@ -40,9 +46,7 @@ main {
   font-family: Verdana, Geneva, sans-serif;
   text-align: center;
   font-size: 1.25rem;
-  color: #000000;
 
-  background-color: rgba(171, 181, 70, 0.96);
   border-radius: 2px;
   margin-bottom: 20px;
 
@@ -57,17 +61,45 @@ main {
   justify-content: center;
 }
 
+#message {
+  color: #1f1f1f;
+  background-color: rgba(171, 181, 70, 0.96);
+}
+
+@media (prefers-color-scheme: dark) {
+  #message {
+    color: #cbd2c2;
+    background-color: rgba(23, 35, 5, 0.96);
+  }
+}
+
+
 #message .message {
   display: block;
 }
 
 #message-const a {
-  color: #000057;
   cursor: pointer;
 }
 
+#message-const a {
+  color: #000057;
+}
+
+@media (prefers-color-scheme: dark) {
+  #message-const a {
+    color: #cbd2c2;
+  }
+}
+
 .message-fail {
-  color: #ab0505;
+  color: #820404;
+}
+
+@media (prefers-color-scheme: dark) {
+  .message-fail {
+    color: #ff8383;
+  }
 }
 
 .message-important {
@@ -135,7 +167,7 @@ td width/height calculations rationale:
 }
 
 .grid td.cell-unknown {
-  background-color: #ffffff;
+  background-color: #F0F0F0;
 }
 
 .grid td.cell-empty {
@@ -150,20 +182,52 @@ td width/height calculations rationale:
   background-color: #0b5c53;
 }
 
+@media (prefers-color-scheme: dark) {
+  .grid td.cell-unknown {
+    background-color: #b7b7b7;
+  }
+
+  .grid td.cell-empty {
+    background-color: #d6c5d0;
+  }
+
+  .grid td.cell-ship {
+    background-color: #334E49;
+  }
+
+  .grid td.cell-ship-sunk {
+    background-color: #334E49;
+  }
+}
+
 .grid td.cell-ship-sunk:after {
   content: "*";
-
   font-family: Tahoma, Geneva, sans-serif;
   font-size: 1.3125rem;
-  color: powderblue;
 }
 
 .grid td.cell-oppshoot::after {
   content: "*";
-
   font-family: Tahoma, Geneva, sans-serif;
   font-size: 1.3125rem;
+}
+
+.grid td.cell-ship-sunk:after {
+  color: #E8F7F7;
+}
+
+.grid td.cell-oppshoot::after {
   color: red;
+}
+
+@media (prefers-color-scheme: dark) {
+  .grid td.cell-ship-sunk:after {
+    color: #6ec3ce;
+  }
+
+  .grid td.cell-oppshoot::after {
+    color: #501b1b;
+  }
 }
 
 .cell-shootable {
@@ -176,11 +240,25 @@ td width/height calculations rationale:
 
 #info {
   font-family: Verdana, Geneva, sans-serif;
-  font-size: 0.9375rem;
-  color: darkgray;
+  font-size: 1rem;
   clear: both;
-
   padding-top: 1rem;
+}
+
+@media all and (min-width: 850px) {
+  #info {
+    font-size: 0.9375rem;
+  }
+}
+
+#info {
+  color: darkgray;
+}
+
+@media (prefers-color-scheme: dark) {
+  #info {
+    color: #71797c;
+  }
 }
 
 .info-td-1 {
@@ -212,4 +290,21 @@ a.change-disabled {
 
 .game-rules-value {
   color: #fa8b00;
+}
+
+@media (prefers-color-scheme: dark) {
+  a.change-enabled {
+    color: dodgerblue;
+  }
+
+  a.change-disabled {
+    color: gray;
+  }
+
+  .stats-value {
+  }
+
+  .game-rules-value {
+    color: #b46400;
+  }
 }
