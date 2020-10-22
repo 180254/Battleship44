@@ -24,6 +24,7 @@
         <spotbugs.version>4.1.4</spotbugs.version>
         <maven-pmd-plugin.version>3.13.0</maven-pmd-plugin.version>
         <maven-jxr-plugin.version>3.0.0</maven-jxr-plugin.version>
+        <thinlayout.version>1.0.25.RELEASE</thinlayout.version>
     </properties>
 
     <parent>
@@ -120,6 +121,27 @@
                         </includes>
                     </resource>
                 </resources>
+            </build>
+        </profile>
+        <profile>
+            <id>thinjar</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.springframework.boot.experimental</groupId>
+                                <artifactId>spring-boot-thin-layout</artifactId>
+                                <version>${thinlayout.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
             </build>
         </profile>
     </profiles>
