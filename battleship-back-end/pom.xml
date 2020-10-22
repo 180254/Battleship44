@@ -116,28 +116,13 @@
                         <artifactId>maven-resources-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>fe-resources-src</id>
+                                <id>fe-resources-dist</id>
                                 <phase>process-resources</phase>
                                 <goals>
                                     <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
                                     <outputDirectory>${project.build.directory}/classes/static</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${project.basedir}/../battleship-front-end/src</directory>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>fe-resources-src-dist</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${project.build.directory}/classes/static/dist</outputDirectory>
                                     <resources>
                                         <resource>
                                             <directory>${project.basedir}/../battleship-front-end/dist</directory>

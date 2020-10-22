@@ -9,21 +9,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
   <link rel="icon" type="image/png" sizes="16x16" href="favicon.png"/>
-  <link rel="stylesheet" href="dist/stylesheet.css"/>
-
-  <script src="dist/jquery.min.js" defer="defer"></script>
-  <script src="dist/js.cookie.min.js" defer="defer"></script>
-  <script src="dist/runtime.js" defer="defer"></script>
-  <script src="dist/vendors.js" defer="defer"></script>
-  <script src="dist/app.js" defer="defer"></script>
-
   <link rel="prefetch" href="i18n/en.json"/>
   <link rel="prefetch" href="i18n/pl.json"/>
-  <link rel="preload" href="flag/us.png" as="image"/>
-  <link rel="preload" href="flag/pl.png" as="image"/>
+  <link rel="preload" href="flags/us.png" as="image"/>
+  <link rel="preload" href="flags/pl.png" as="image"/>
+
+  <%= htmlWebpackPlugin.tags.headTags %>
 </head>
 
 <body>
+<%= htmlWebpackPlugin.tags.bodyTags %>
 <div id="container">
   <main>
     <!--
