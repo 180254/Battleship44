@@ -180,13 +180,14 @@ module.exports = (env, argv) => {
       new HtmlWebpackPlugin({
         template: path.resolve(__dirname, 'src/index.html'),
         filename: 'index.html',
+        minify: false,
         scriptLoading: 'defer',
         inject: false,
         hash: false,
       }),
       new HtmlWebpackTagsPlugin({
         tags: [`jquery.${someHash}.min.js`, `js.cookie.${someHash}.min.js`],
-        append: false,
+        append: false, // it means prepend
       }),
     ],
   };
