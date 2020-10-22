@@ -21,7 +21,7 @@ export class UiFlags {
         $flag.attr('role', 'button');
         $flag.attr('alt', langTag.lang);
         $flag.attr('src', 'flags/{0}.png'.format(langTag.region!.toLowerCase()));
-        $flag.attr('class', htmlStrings.flag.clazz.default);
+        $flag.attr('class', htmlStrings.flags.clazz.default);
 
         $flag.on('click', () => {
           this.translator.getLangSetter().setLang(langTag);
@@ -31,7 +31,7 @@ export class UiFlags {
           );
         });
 
-        $(htmlStrings.flag.id).append($flag);
+        $(htmlStrings.flags.id).append($flag);
         this.logger.trace('init={0}', langTag);
       });
   }

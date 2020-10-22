@@ -28,18 +28,22 @@ main {
   }
 }
 
-#flag {
+#flags {
   float: right;
   margin-bottom: 5px;
   cursor: pointer;
 }
 
-#flag > img {
+#flags > img {
   padding-right: 10px;
 }
 
-#flag > :last-child {
+#flags > :last-child {
   padding-right: 0 !important;
+}
+
+.flag {
+  width: 24px;
 }
 
 #message {

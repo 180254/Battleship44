@@ -1,6 +1,6 @@
 export const htmlStrings = {
-  flag: {
-    id: '#flag',
+  flags: {
+    id: '#flags',
     clazz: {
       default: 'flag',
     },
