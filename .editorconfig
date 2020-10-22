@@ -9,7 +9,10 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-[pom.xml]
+[*.xml]
+indent_size = 4
+
+[*.py]
 indent_size = 4
 
 [*.java]

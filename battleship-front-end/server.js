@@ -1,14 +1,13 @@
 'use strict';
 
 const express = require('express');
-const serveStatic = require('serve-static');
 const morgan = require('morgan');
 
 const app = express();
 app.disable('x-powered-by');
 app.use(morgan('dev', {}));
-app.use(serveStatic('static', {index: ['index.html']}));
-
+app.use('/', express.static('src'));
+app.use('/dist', express.static('dist'));
 const port = process.argv[2] || 8090;
 app.listen(port, () => {
   console.log('live at port ' + port);

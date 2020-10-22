@@ -34,23 +34,51 @@ function fix_mode(mode) {
   return 'production';
 }
 
-function js_config(webpack_config) {
+module.exports = (env, argv) => {
+  const webpack_mode = fix_mode(env_config.mode || argv.mode);
+  const webpack_config = webpack_configs[webpack_mode];
+
   return {
     target: ['web', 'es5'],
     mode: webpack_config.mode,
     devtool: webpack_config.devtool,
     entry: {
       app: './src/js/app-entrypoint.ts',
+      stylesheet: './src/css/stylesheet.css',
     },
     output: {
-      path: path.resolve(__dirname, 'static/js/dist/'),
-      filename: '[name].dist.js',
+      path: path.resolve(__dirname, 'dist/'),
+      filename: '[name].js',
     },
     resolve: {
-      extensions: ['.js', '.ts'],
+      extensions: ['.js', '.ts', '.css'],
     },
     module: {
       rules: [
+        {
+          test: /\.css$/,
+          use: [
+            {
+              loader: MiniCssExtractPlugin.loader,
+            },
+            {loader: 'css-loader', options: {importLoaders: 1}},
+            {
+              loader: 'postcss-loader',
+              options: {
+                postcssOptions: {
+                  plugins: [
+                    ['postcss-preset-env', {browsers: webpack_config.browserslist}],
+                    [
+                      'postcss-normalize',
+                      {browsers: webpack_config.browserslist, forceImport: true},
+                    ],
+                  ],
+                },
+              },
+            },
+          ],
+          exclude: [/[\\/]node_modules[\\/]/],
+        },
         {
           test: /\.(ts|js)$/,
           use: [
@@ -97,6 +125,7 @@ function js_config(webpack_config) {
         new TerserPlugin({
           exclude: /.min.js$/,
         }),
+        new CssMinimizerPlugin(),
       ],
       runtimeChunk: 'single',
       splitChunks: {
@@ -115,6 +144,9 @@ function js_config(webpack_config) {
         WEBPACK_DEFINE_MODE: JSON.stringify(webpack_config.mode),
         WEBPACK_DEFINE_BACKEND: JSON.stringify(webpack_config.backend),
       }),
+      new MiniCssExtractPlugin({
+        filename: '[name].css',
+      }),
       new CopyPlugin({
         patterns: [
           {
@@ -129,65 +161,4 @@ function js_config(webpack_config) {
       }),
     ],
   };
-}
-
-function css_config(webpack_config) {
-  return {
-    target: ['web', 'es5'],
-    mode: webpack_config.mode,
-    devtool: webpack_config.devtool,
-    entry: {
-      stylesheet: './src/css/stylesheet.css',
-    },
-    output: {
-      path: path.resolve(__dirname, 'static/css/dist/'),
-      filename: '[name].dist.js',
-    },
-    resolve: {
-      extensions: ['.css'],
-    },
-    module: {
-      rules: [
-        {
-          test: /\.css$/,
-          use: [
-            {
-              loader: MiniCssExtractPlugin.loader,
-            },
-            {loader: 'css-loader', options: {importLoaders: 1}},
-            {
-              loader: 'postcss-loader',
-              options: {
-                postcssOptions: {
-                  plugins: [
-                    ['postcss-preset-env', {browsers: webpack_config.browserslist}],
-                    [
-                      'postcss-normalize',
-                      {browsers: webpack_config.browserslist, forceImport: true},
-                    ],
-                  ],
-                },
-              },
-            },
-          ],
-          exclude: [/[\\/]node_modules[\\/]/],
-        },
-      ],
-    },
-    optimization: {
-      minimizer: [new CssMinimizerPlugin()],
-    },
-    plugins: [
-      new CleanWebpackPlugin(),
-      new MiniCssExtractPlugin({
-        filename: '[name].dist.css',
-      }),
-    ],
-  };
-}
-
-module.exports = (env, argv) => {
-  const webpack_mode = fix_mode(env_config.mode || argv.mode);
-  const webpack_config = webpack_configs[webpack_mode];
-  return [js_config(webpack_config), css_config(webpack_config)];
 };
