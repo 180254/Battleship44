@@ -46,7 +46,7 @@ main {
   width: 24px;
 }
 
-#message {
+#messages {
   font-family: Verdana, Geneva, sans-serif;
   text-align: center;
   font-size: 1.25rem;
@@ -65,19 +65,19 @@ main {
   justify-content: center;
 }
 
-#message {
+#messages {
   color: #1f1f1f;
   background-color: rgba(171, 181, 70, 0.96);
 }
 
 @media (prefers-color-scheme: dark) {
-  #message {
+  #messages {
     color: #cbd2c2;
     background-color: rgba(23, 35, 5, 0.96);
   }
 }
 
-#message .message {
+#messages .message {
   display: block;
 }
 

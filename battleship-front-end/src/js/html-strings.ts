@@ -7,7 +7,7 @@ export const htmlStrings = {
   },
 
   message: {
-    id: '#message',
+    id_container: '#messages',
     id_const: '#message-const',
 
     clazz: {
@@ -24,7 +24,7 @@ export const htmlStrings = {
   },
 
   grid: {
-    id: '#grid',
+    id_container: '#grids',
     id_opponent: '#grid-opponent',
     id_shoot: '#grid-shoot',
 

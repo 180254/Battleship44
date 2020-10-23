@@ -58,11 +58,11 @@ export class UiMessage {
     $outer.append($inner);
 
     if (timeout) {
-      $(htmlStrings.message.id).append($outer);
+      $(htmlStrings.message.id_container).append($outer);
       setTimeout(() => $(outerId).fadeOut('fast', () => $(outerId).remove()), timeout);
     } else {
       $(htmlStrings.message.id_const).remove();
-      $(htmlStrings.message.id).append($outer);
+      $(htmlStrings.message.id_container).append($outer);
     }
   }
 }
