@@ -18,15 +18,11 @@
   <link rel="prefetch" href="i18n/en.json"/>
   <link rel="prefetch" href="i18n/pl.json"/>
 
-  <% for (let i = 0; i < htmlWebpackPlugin.tags.headTags.length; i++) { %>
-  <%= htmlWebpackPlugin.tags.headTags[i] %>
-  <% } %>
+  <%= htmlWebpackPlugin.tags.headTags.join("\n  ") %>
 </head>
 
 <body>
-<% for (let i = 0; i < htmlWebpackPlugin.tags.bodyTags.length; i++) { %>
-<%= htmlWebpackPlugin.tags.bodyTags[i] %>
-<% } %>
+<%= htmlWebpackPlugin.tags.bodyTags.join("\n") %>
 <div id="container">
   <main>
     <!-- LICENSE: flags/LICENSE.txt -->

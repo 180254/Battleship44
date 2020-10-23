@@ -10,7 +10,6 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
-const SriPlugin = require('webpack-subresource-integrity');
 
 const itdepends_configs = {
   development: {
@@ -182,15 +181,12 @@ module.exports = (env, argv) => {
         filename: 'index.html',
         minify: false,
         scriptLoading: 'defer',
+        xhtml: true,
         inject: false,
       }),
       new HtmlWebpackTagsPlugin({
         tags: [`jquery.${someSalt}.min.js`, `js.cookie.${someSalt}.min.js`],
         append: false, // it means prepend
-      }),
-      new SriPlugin({
-        hashFuncNames: ['sha3-224', 'sha256'],
-        enabled: itdepends_config.sriEnabled,
       }),
     ],
   };
