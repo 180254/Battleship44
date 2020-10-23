@@ -1,6 +1,7 @@
 /* eslint-disable node/no-unpublished-require */
 
 const path = require('path');
+const rndm = require('rndm');
 const webpack = require('webpack');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -9,7 +10,7 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
-const rndm = require('rndm');
+const SriPlugin = require('webpack-subresource-integrity');
 
 const itdepends_configs = {
   development: {
@@ -17,12 +18,14 @@ const itdepends_configs = {
     backend: process.env.BACKEND || 'ws://localhost:8080/ws',
     devtool: 'source-map',
     browserslist: ['last 2 chrome versions', 'last 2 firefox versions'],
+    sriEnabled: false,
   },
   production: {
     mode: 'production',
     backend: process.env.BACKEND || '',
     devtool: undefined,
     browserslist: ['defaults'],
+    sriEnabled: true,
   },
 };
 
@@ -51,6 +54,7 @@ module.exports = (env, argv) => {
       path: path.resolve(__dirname, 'dist/'),
       filename: '[name].[contenthash].js',
       hashDigestLength: 8,
+      crossOriginLoading: 'anonymous',
     },
     resolve: {
       extensions: ['.js', '.ts', '.css'],
@@ -183,6 +187,10 @@ module.exports = (env, argv) => {
       new HtmlWebpackTagsPlugin({
         tags: [`jquery.${someSalt}.min.js`, `js.cookie.${someSalt}.min.js`],
         append: false, // it means prepend
+      }),
+      new SriPlugin({
+        hashFuncNames: ['sha3-224', 'sha256'],
+        enabled: itdepends_config.sriEnabled,
       }),
     ],
   };

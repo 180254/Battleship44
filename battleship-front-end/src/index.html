@@ -9,10 +9,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
   <link rel="icon" type="image/png" sizes="16x16" href="favicon.png"/>
-  <link rel="prefetch" href="i18n/en.json"/>
-  <link rel="prefetch" href="i18n/pl.json"/>
+
+  <!-- optimizing for current session -->
   <link rel="preload" href="flags/us.png" as="image"/>
   <link rel="preload" href="flags/pl.png" as="image"/>
+
+  <!-- optimizing for future sessions -->
+  <link rel="prefetch" href="i18n/en.json"/>
+  <link rel="prefetch" href="i18n/pl.json"/>
 
   <% for (let i = 0; i < htmlWebpackPlugin.tags.headTags.length; i++) { %>
   <%= htmlWebpackPlugin.tags.headTags[i] %>
