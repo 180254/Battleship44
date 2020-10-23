@@ -1,7 +1,6 @@
 /* eslint-disable node/no-unpublished-require */
 
 const path = require('path');
-const rndm = require('rndm');
 const webpack = require('webpack');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -11,40 +10,38 @@ const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
 
-const itdepends_configs = {
+const jQueryVersion = require('jquery/package.json').version;
+const jsCookieVersion = require('js-cookie/package.json').version;
+
+const configs = {
   development: {
     mode: 'development',
     backend: process.env.BACKEND || 'ws://localhost:8080/ws',
     devtool: 'source-map',
     browserslist: ['last 2 chrome versions', 'last 2 firefox versions'],
-    sriEnabled: false,
   },
   production: {
     mode: 'production',
     backend: process.env.BACKEND || '',
     devtool: undefined,
     browserslist: ['defaults'],
-    sriEnabled: true,
   },
 };
 
-function fix_mode(mode) {
+function fixMode(mode) {
   if (['development', 'dev', 'd'].includes(mode)) return 'development';
   if (['production', 'prod', 'p'].includes(mode)) return 'production';
   return 'production';
 }
 
 module.exports = (env, argv) => {
-  const itdepends_mode = fix_mode(process.env.MODE || argv.mode || '');
-  const itdepends_config = itdepends_configs[itdepends_mode];
-
-  // https://github.com/jharris4/html-webpack-tags-plugin/issues/56
-  const someSalt = rndm.base36(8);
+  const mode = fixMode(process.env.MODE || argv.mode || '');
+  const itdepends = configs[mode];
 
   return {
-    target: `browserslist:${itdepends_config.browserslist}`,
-    mode: itdepends_config.mode,
-    devtool: itdepends_config.devtool,
+    target: `browserslist:${itdepends.browserslist}`,
+    mode: itdepends.mode,
+    devtool: itdepends.devtool,
     entry: {
       app: path.resolve(__dirname, 'src/js/app-entrypoint.ts'),
       stylesheet: path.resolve(__dirname, 'src/css/stylesheet.css'),
@@ -53,7 +50,6 @@ module.exports = (env, argv) => {
       path: path.resolve(__dirname, 'dist/'),
       filename: '[name].[contenthash].js',
       hashDigestLength: 8,
-      crossOriginLoading: 'anonymous',
     },
     resolve: {
       extensions: ['.js', '.ts', '.css'],
@@ -72,11 +68,8 @@ module.exports = (env, argv) => {
               options: {
                 postcssOptions: {
                   plugins: [
-                    ['postcss-preset-env', {browsers: itdepends_config.browserslist}],
-                    [
-                      'postcss-normalize',
-                      {browsers: itdepends_config.browserslist, forceImport: true},
-                    ],
+                    ['postcss-preset-env', {browsers: itdepends.browserslist}],
+                    ['postcss-normalize', {browsers: itdepends.browserslist, forceImport: true}],
                   ],
                 },
               },
@@ -94,7 +87,7 @@ module.exports = (env, argv) => {
                   [
                     '@babel/preset-env',
                     {
-                      targets: itdepends_config.browserslist,
+                      targets: itdepends.browserslist,
                       // Note: These optimizations will be enabled by default in Babel 8
                       bugfixes: true,
                       //A normal mode follows the semantics of ECMAScript 6 as closely as possible.
@@ -146,8 +139,8 @@ module.exports = (env, argv) => {
     plugins: [
       new CleanWebpackPlugin(),
       new webpack.DefinePlugin({
-        WEBPACK_DEFINE_MODE: JSON.stringify(itdepends_config.mode),
-        WEBPACK_DEFINE_BACKEND: JSON.stringify(itdepends_config.backend),
+        WEBPACK_DEFINE_MODE: JSON.stringify(itdepends.mode),
+        WEBPACK_DEFINE_BACKEND: JSON.stringify(itdepends.backend),
       }),
       new MiniCssExtractPlugin({
         filename: '[name].[contenthash].css',
@@ -168,11 +161,11 @@ module.exports = (env, argv) => {
           },
           {
             from: path.resolve(__dirname, 'node_modules/jquery/dist/jquery.min.js'),
-            to: `jquery.${someSalt}.min.js`,
+            to: `jquery.${jQueryVersion}.min.js`,
           },
           {
             from: path.resolve(__dirname, 'node_modules/js-cookie/dist/js.cookie.min.js'),
-            to: `js.cookie.${someSalt}.min.js`,
+            to: `js.cookie.${jsCookieVersion}.min.js`,
           },
         ],
       }),
@@ -185,7 +178,7 @@ module.exports = (env, argv) => {
         inject: false,
       }),
       new HtmlWebpackTagsPlugin({
-        tags: [`jquery.${someSalt}.min.js`, `js.cookie.${someSalt}.min.js`],
+        tags: [`jquery.${jQueryVersion}.min.js`, `js.cookie.${jsCookieVersion}.min.js`],
         append: false, // it means prepend
       }),
     ],
