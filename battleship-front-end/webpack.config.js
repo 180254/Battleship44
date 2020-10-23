@@ -9,7 +9,7 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
-const {nanoid} = require('nanoid');
+const rndm = require('rndm');
 
 const itdepends_configs = {
   development: {
@@ -37,7 +37,7 @@ module.exports = (env, argv) => {
   const itdepends_config = itdepends_configs[itdepends_mode];
 
   // https://github.com/jharris4/html-webpack-tags-plugin/issues/56
-  const someHash = nanoid(8);
+  const someSalt = rndm.base36(8);
 
   return {
     target: `browserslist:${itdepends_config.browserslist}`,
@@ -165,11 +165,11 @@ module.exports = (env, argv) => {
           },
           {
             from: path.resolve(__dirname, 'node_modules/jquery/dist/jquery.min.js'),
-            to: `jquery.${someHash}.min.js`,
+            to: `jquery.${someSalt}.min.js`,
           },
           {
             from: path.resolve(__dirname, 'node_modules/js-cookie/dist/js.cookie.min.js'),
-            to: `js.cookie.${someHash}.min.js`,
+            to: `js.cookie.${someSalt}.min.js`,
           },
         ],
       }),
@@ -181,7 +181,7 @@ module.exports = (env, argv) => {
         inject: false,
       }),
       new HtmlWebpackTagsPlugin({
-        tags: [`jquery.${someHash}.min.js`, `js.cookie.${someHash}.min.js`],
+        tags: [`jquery.${someSalt}.min.js`, `js.cookie.${someSalt}.min.js`],
         append: false, // it means prepend
       }),
     ],
