@@ -14,11 +14,15 @@
   <link rel="preload" href="flags/us.png" as="image"/>
   <link rel="preload" href="flags/pl.png" as="image"/>
 
-  <%= htmlWebpackPlugin.tags.headTags %>
+  <% for (let i = 0; i < htmlWebpackPlugin.tags.headTags.length; i++) { %>
+  <%= htmlWebpackPlugin.tags.headTags[i] %>
+  <% } %>
 </head>
 
 <body>
-<%= htmlWebpackPlugin.tags.bodyTags %>
+<% for (let i = 0; i < htmlWebpackPlugin.tags.bodyTags.length; i++) { %>
+<%= htmlWebpackPlugin.tags.bodyTags[i] %>
+<% } %>
 <div id="container">
   <main>
     <!-- LICENSE: flags/LICENSE.txt -->

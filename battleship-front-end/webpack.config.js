@@ -11,21 +11,16 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
 const {nanoid} = require('nanoid');
 
-const env_config = {
-  mode: process.env.MODE || '',
-  backend: process.env.BACKEND || '',
-};
-
-const webpack_configs = {
+const itdepends_configs = {
   development: {
     mode: 'development',
-    backend: env_config.backend || 'ws://localhost:8080/ws',
+    backend: process.env.BACKEND || 'ws://localhost:8080/ws',
     devtool: 'source-map',
-    browserslist: ['last 1 chrome versions', 'last 1 firefox versions'],
+    browserslist: ['last 2 chrome versions', 'last 2 firefox versions'],
   },
   production: {
     mode: 'production',
-    backend: env_config.backend || '',
+    backend: process.env.BACKEND || '',
     devtool: undefined,
     browserslist: ['defaults'],
   },
@@ -38,16 +33,16 @@ function fix_mode(mode) {
 }
 
 module.exports = (env, argv) => {
-  const webpack_mode = fix_mode(env_config.mode || argv.mode);
-  const webpack_config = webpack_configs[webpack_mode];
+  const itdepends_mode = fix_mode(process.env.MODE || argv.mode || '');
+  const itdepends_config = itdepends_configs[itdepends_mode];
 
   // https://github.com/jharris4/html-webpack-tags-plugin/issues/56
-  const someHash = nanoid();
+  const someHash = nanoid(8);
 
   return {
-    target: ['web', 'es5'],
-    mode: webpack_config.mode,
-    devtool: webpack_config.devtool,
+    target: `browserslist:${itdepends_config.browserslist}`,
+    mode: itdepends_config.mode,
+    devtool: itdepends_config.devtool,
     entry: {
       app: path.resolve(__dirname, 'src/js/app-entrypoint.ts'),
       stylesheet: path.resolve(__dirname, 'src/css/stylesheet.css'),
@@ -55,6 +50,7 @@ module.exports = (env, argv) => {
     output: {
       path: path.resolve(__dirname, 'dist/'),
       filename: '[name].[contenthash].js',
+      hashDigestLength: 8,
     },
     resolve: {
       extensions: ['.js', '.ts', '.css'],
@@ -73,10 +69,10 @@ module.exports = (env, argv) => {
               options: {
                 postcssOptions: {
                   plugins: [
-                    ['postcss-preset-env', {browsers: webpack_config.browserslist}],
+                    ['postcss-preset-env', {browsers: itdepends_config.browserslist}],
                     [
                       'postcss-normalize',
-                      {browsers: webpack_config.browserslist, forceImport: true},
+                      {browsers: itdepends_config.browserslist, forceImport: true},
                     ],
                   ],
                 },
@@ -95,7 +91,7 @@ module.exports = (env, argv) => {
                   [
                     '@babel/preset-env',
                     {
-                      targets: webpack_config.browserslist,
+                      targets: itdepends_config.browserslist,
                       // Note: These optimizations will be enabled by default in Babel 8
                       bugfixes: true,
                       //A normal mode follows the semantics of ECMAScript 6 as closely as possible.
@@ -147,8 +143,8 @@ module.exports = (env, argv) => {
     plugins: [
       new CleanWebpackPlugin(),
       new webpack.DefinePlugin({
-        WEBPACK_DEFINE_MODE: JSON.stringify(webpack_config.mode),
-        WEBPACK_DEFINE_BACKEND: JSON.stringify(webpack_config.backend),
+        WEBPACK_DEFINE_MODE: JSON.stringify(itdepends_config.mode),
+        WEBPACK_DEFINE_BACKEND: JSON.stringify(itdepends_config.backend),
       }),
       new MiniCssExtractPlugin({
         filename: '[name].[contenthash].css',
@@ -183,7 +179,6 @@ module.exports = (env, argv) => {
         minify: false,
         scriptLoading: 'defer',
         inject: false,
-        hash: false,
       }),
       new HtmlWebpackTagsPlugin({
         tags: [`jquery.${someHash}.min.js`, `js.cookie.${someHash}.min.js`],
