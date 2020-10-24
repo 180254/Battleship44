@@ -37,7 +37,7 @@ Supported `browsers`:
 * `BE` is written in `Java 11`
 * it is `spring boot` application
 * uses `maven` as build automation tool & dependency manager
-* required system-wide dependencies: [Java](http://www.oracle.com/technetwork/java/javase/overview/index.html) >= 11, [maven](https://maven.apache.org/) >= 3.3
+* requires system-wide dependencies: [Java](http://www.oracle.com/technetwork/java/javase/overview/index.html) >= 11, [maven](https://maven.apache.org/) >= 3.2.5
 * install local (project) dependencies: (auto installed while compiling)
 * compile (`FE` not included): `mvn package`
 * compile with included `FE`: `mvn package -Pfe`
@@ -53,14 +53,14 @@ Supported `browsers`:
 
 * `FE` is written in `html5+TypeScript4`
 * uses `npm`, `webpack` as build automation tool & dependency manager
-* required system-wide dependencies: [nodejs](https://nodejs.org/en/) >=10.0.0
+* requires system-wide dependencies: [nodejs](https://nodejs.org/en/) >=10.16.0
 * install local (project) dependencies: `npm install`
 * compile in `development` mode: `npx webpack --mode development`
 * compile in `production` mode: `npx webpack --mode production`
 * default backend in `development` mode: `ws://localhost:8080/ws`
 * default backend in `production` mode: `protocol + '//' + window.location.host + '/ws`
 * compile with a custom backend url: `BACKEND='ws://localhost:8080/ws' npx webpack --mode <mode>`
-* start in the standalone mode: `npm start <server port>`
+* start in the standalone mode: `node server.js <server port>`
 
 ## changelog 
 v1.0.0 (released 2016-08-18)  

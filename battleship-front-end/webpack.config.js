@@ -1,6 +1,8 @@
 /* eslint-disable node/no-unpublished-require */
 
 const path = require('path');
+const zlib = require('zlib');
+
 const webpack = require('webpack');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -9,6 +11,7 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
 
 const jQueryVersion = require('jquery/package.json').version;
 const jsCookieVersion = require('js-cookie/package.json').version;
@@ -19,12 +22,14 @@ const configs = {
     backend: process.env.BACKEND || 'ws://localhost:8080/ws',
     devtool: 'source-map',
     browserslist: ['last 2 chrome versions', 'last 2 firefox versions'],
+    compression: false,
   },
   production: {
     mode: 'production',
     backend: process.env.BACKEND || '',
     devtool: undefined,
     browserslist: ['defaults'],
+    compression: true,
   },
 };
 
@@ -179,6 +184,32 @@ module.exports = (env, argv) => {
         tags: [`jquery.${jQueryVersion}.min.js`, `js.cookie.${jsCookieVersion}.min.js`],
         append: false, // it means prepend
       }),
-    ],
+      itdepends.compression &&
+        new CompressionPlugin({
+          algorithm: 'gzip',
+          filename: '[path][base].gz',
+          test: /\.(js|map|css|html|svg)$/,
+          compressionOptions: {
+            level: zlib.constants.Z_DEFAULT_COMPRESSION,
+            strategy: zlib.constants.Z_DEFAULT_STRATEGY,
+          },
+          minRatio: Number.MAX_SAFE_INTEGER,
+        }),
+      itdepends.compression &&
+        new CompressionPlugin({
+          algorithm: 'brotliCompress',
+          filename: '[path][base].br',
+          test: /\.(js|map|css|html|svg)$/,
+          compressionOptions: {
+            params: {
+              [zlib.constants.BROTLI_PARAM_QUALITY]: zlib.constants.BROTLI_DEFAULT_QUALITY,
+              [zlib.constants.BROTLI_PARAM_MODE]: zlib.constants.BROTLI_DEFAULT_MODE,
+              [zlib.constants.BROTLI_PARAM_SIZE_HINT]: 0,
+            },
+          },
+          minRatio: Number.MAX_SAFE_INTEGER,
+        }),
+      // https://stackoverflow.com/a/56222505
+    ].filter(n => n),
   };
 };
