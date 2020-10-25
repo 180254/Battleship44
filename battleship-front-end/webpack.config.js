@@ -161,6 +161,10 @@ module.exports = (env, argv) => {
             to: 'i18n/',
           },
           {
+            from: path.resolve(__dirname, 'src/og/'),
+            to: 'og/',
+          },
+          {
             from: path.resolve(__dirname, 'src/favicon.png'),
             to: 'favicon.png',
           },
