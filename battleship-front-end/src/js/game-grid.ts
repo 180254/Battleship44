@@ -44,9 +44,6 @@ export class Grids {
   }
 
   public init(): void {
-    this.createGrid(this.$shoot.attr('id')!).appendTo(this.$shoot);
-    this.createGrid(this.$opponent.attr('id')!).appendTo(this.$opponent);
-
     this.$shootCells = this.$shoot.find('td');
     this.$opponentCells = this.$opponent.find('td');
   }
@@ -78,6 +75,11 @@ export class Grids {
     $element.addClass(clazz);
   }
 
+  // DEPRECATED
+  // Grids are now statically inserted into index.html to decrease cumulative layout shift.
+  // These methods will come in handy if you can change the game-rules/grid-size.
+  // this.createGrid(this.$shoot.attr('id')!).appendTo(this.$shoot);
+  // this.createGrid(this.$opponent.attr('id')!).appendTo(this.$opponent);
   private createGrid(id: string): JQuery {
     const $table: JQuery = $('<table/>');
 

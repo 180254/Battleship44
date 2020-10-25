@@ -32,6 +32,12 @@ main {
   float: right;
   margin-bottom: 5px;
   cursor: pointer;
+  height: 20px;
+}
+
+#flags:empty:after {
+  content: ".";
+  visibility: hidden;
 }
 
 #flags > img {
@@ -44,6 +50,7 @@ main {
 
 .flag {
   width: 24px;
+  height: 15px;
 }
 
 #messages {
