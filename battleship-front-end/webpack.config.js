@@ -190,7 +190,13 @@ module.exports = (env, argv) => {
           filename: '[path][base].gz',
           test: /\.(js|map|css|html|svg)$/,
           compressionOptions: {
-            level: zlib.constants.Z_DEFAULT_COMPRESSION,
+            // Z_BEST_COMPRESSION is ok for pre-compressed content.
+            // For dynamic compression it is better to use default level (6).
+            // - https://www.iiwnz.com/improve-website-speed-by-compression/
+            // - https://blogs.akamai.com/2016/02/understanding-brotlis-potential.html
+            // - https://blog.cloudflare.com/results-experimenting-brotli/
+            level: zlib.constants.Z_BEST_COMPRESSION,
+            memLevel: zlib.constants.Z_DEFAULT_MEMLEVEL,
             strategy: zlib.constants.Z_DEFAULT_STRATEGY,
           },
           minRatio: Number.MAX_SAFE_INTEGER,
@@ -202,7 +208,12 @@ module.exports = (env, argv) => {
           test: /\.(js|map|css|html|svg)$/,
           compressionOptions: {
             params: {
-              [zlib.constants.BROTLI_PARAM_QUALITY]: zlib.constants.BROTLI_DEFAULT_QUALITY,
+              // BROTLI_MAX_QUALITY is ok for pre-compressed content.
+              // For dynamic compression it is better to use quality=4.
+              // - https://www.iiwnz.com/improve-website-speed-by-compression/
+              // - https://blogs.akamai.com/2016/02/understanding-brotlis-potential.html
+              // - https://blog.cloudflare.com/results-experimenting-brotli/
+              [zlib.constants.BROTLI_PARAM_QUALITY]: zlib.constants.BROTLI_MAX_QUALITY,
               [zlib.constants.BROTLI_PARAM_MODE]: zlib.constants.BROTLI_DEFAULT_MODE,
               [zlib.constants.BROTLI_PARAM_SIZE_HINT]: 0,
             },

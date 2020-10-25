@@ -1,13 +1,20 @@
 'use strict';
 
 const express = require('express');
-const serveStatic = require('serve-static');
+const expressStaticGzip = require('express-static-gzip');
 const morgan = require('morgan');
 
 const app = express();
 app.disable('x-powered-by');
 app.use(morgan('dev', {}));
-app.use(serveStatic('dist'));
+
+app.use(
+  '/',
+  expressStaticGzip('dist', {
+    enableBrotli: true,
+    orderPreference: ['br', 'gz'],
+  })
+);
 
 const port = process.argv[2] || 8090;
 app.listen(port, () => {

@@ -1856,9 +1856,9 @@ commander@^4.1.1:
   integrity sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA==
 
 commander@^6.0.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-6.1.0.tgz#f8d722b78103141006b66f4c7ba1e97315ba75bc"
-  integrity sha512-wl7PNrYWd2y5mp1OK/LhTlv8Ff4kQJQRXXAvF+uU/TPNiVJUxZLRYGj/B0y/lPGAVcSbJqH2Za/cvHmrPMC8mA==
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-6.2.0.tgz#b990bfb8ac030aedc6d11bc04d1488ffef56db75"
+  integrity sha512-zP4jEKbe8SHzKJYQmq8Y9gYjtO/POJLgIdKgV7B9qNmABVFVc+ctqSX6iXh4mCpJfRBOabiZ2YKPg8ciDw6C+Q==
 
 commondir@^1.0.1:
   version "1.0.1"
@@ -2710,6 +2710,13 @@ execa@^4.0.0, execa@^4.0.3:
     onetime "^5.1.0"
     signal-exit "^3.0.2"
     strip-final-newline "^2.0.0"
+
+express-static-gzip@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/express-static-gzip/-/express-static-gzip-2.1.0.tgz#fd85f9867e5cfc61a97a5ff33bc87e665b73e727"
+  integrity sha512-XGozfjgsfVKBc8lQmPco9zd1+sK9Wy1ZPEAYtH8E34FbBr5BFp2HV+V1PpmIYHaWg8+ecLl/JnQkREbtPSJyxQ==
+  dependencies:
+    serve-static "^1.14.1"
 
 express@^4.17.1:
   version "4.17.1"
