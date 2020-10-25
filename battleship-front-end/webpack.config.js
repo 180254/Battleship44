@@ -8,6 +8,7 @@ const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const JsonMinimizerPlugin = require('json-minimizer-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
@@ -127,6 +128,7 @@ module.exports = (env, argv) => {
           exclude: /.min.js$/,
         }),
         new CssMinimizerPlugin(),
+        new JsonMinimizerPlugin(),
       ],
       runtimeChunk: 'single',
       splitChunks: {
@@ -188,7 +190,7 @@ module.exports = (env, argv) => {
         new CompressionPlugin({
           algorithm: 'gzip',
           filename: '[path][base].gz',
-          test: /\.(js|map|css|html|svg)$/,
+          test: /\.(js|map|css|html|svg|json)$/,
           compressionOptions: {
             // Z_BEST_COMPRESSION is ok for pre-compressed content.
             // For dynamic compression it is better to use default level (6).
@@ -205,7 +207,7 @@ module.exports = (env, argv) => {
         new CompressionPlugin({
           algorithm: 'brotliCompress',
           filename: '[path][base].br',
-          test: /\.(js|map|css|html|svg)$/,
+          test: /\.(js|map|css|html|svg|json)$/,
           compressionOptions: {
             params: {
               // BROTLI_MAX_QUALITY is ok for pre-compressed content.

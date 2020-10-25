@@ -7,7 +7,7 @@ trap 'echo "ERROR: ${BASH_SOURCE:-$BASH_COMMAND in $0}: ${FUNCNAME[0]:-line} at 
 
 # Custom startup script. Before using, check if the startup parameters match your server configuration and your needs.
 exec java -jar battleship44-0.0.1.jar \
-  --server.port=8080 \
+  --server.port=8090 \
   --spring.resources.chain.enabled=true \
   --spring.resources.chain.compressed=true \
   --server.forward-headers-strategy=native \

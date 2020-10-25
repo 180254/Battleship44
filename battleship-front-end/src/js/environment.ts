@@ -6,5 +6,5 @@ declare global {
 export class Environment {
   public static MODE = WEBPACK_DEFINE_MODE;
   public static BACKEND = WEBPACK_DEFINE_BACKEND;
-  public static ServerLanguages: string[] = ['pl-pl', 'en-us'];
+  public static ServerLanguages: string[] = ['en-us', 'pl-pl'];
 }

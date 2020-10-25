@@ -15,8 +15,9 @@
     "url": "git+https://github.com/180254/Battleship44.git"
   },
   "scripts": {
-    "dev": "webpack --mode development --watch",
-    "prod": "webpack --mode production"
+    "dev": "webpack --mode development",
+    "prod": "webpack --mode production",
+    "server": "node server.js"
   },
   "license": "MIT",
   "author": "180254",
@@ -47,6 +48,7 @@
     "gts": "^3.0.1",
     "html-webpack-plugin": "^5.0.0-alpha.6",
     "html-webpack-tags-plugin": "^2.0.17",
+    "json-minimizer-webpack-plugin": "^1.0.1",
     "mini-css-extract-plugin": "^1.2.0",
     "mocha": "^8.2.0",
     "postcss": "^8.1.4",
