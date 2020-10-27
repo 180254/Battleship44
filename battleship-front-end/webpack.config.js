@@ -194,8 +194,7 @@ module.exports = (env, argv) => {
         new CompressionPlugin({
           algorithm: 'gzip',
           filename: '[path][base].gz',
-          // excludes html: https://github.com/spring-projects/spring-boot/issues/23830
-          test: /\.(js|map|css|svg|json)$/,
+          test: /\.(html|js|map|css|svg|json)$/,
           compressionOptions: {
             // Z_BEST_COMPRESSION is ok for pre-compressed content.
             // For dynamic compression it is better to use default level (6).
@@ -212,8 +211,7 @@ module.exports = (env, argv) => {
         new CompressionPlugin({
           algorithm: 'brotliCompress',
           filename: '[path][base].br',
-          // excludes html: https://github.com/spring-projects/spring-boot/issues/23830
-          test: /\.(js|map|css|svg|json)$/,
+          test: /\.(html|js|map|css|svg|json)$/,
           compressionOptions: {
             params: {
               // BROTLI_MAX_QUALITY is ok for pre-compressed content.
