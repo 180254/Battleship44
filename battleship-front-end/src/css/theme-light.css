@@ -1,0 +1,63 @@
+body.theme-light {
+  background-color: #333333;
+}
+
+.theme-light #theme-switcher {
+  color: #f8f8ff;
+}
+
+.theme-light #messages {
+  color: #d8d8d8;
+  background-color: rgba(99, 99, 33, 0.96);
+}
+
+.theme-light #message-const a {
+  color: #d5d5ef;
+}
+
+.theme-light .message-fail {
+  color: #ffcccc;
+}
+
+.theme-light .grid td.cell-unknown {
+  background-color: #F0F0F0;
+}
+
+.theme-light .grid td.cell-empty {
+  background-color: #cccccc;
+}
+
+.theme-light .grid td.cell-ship {
+  background-color: #006666;
+}
+
+.theme-light .grid td.cell-ship-sunk {
+  background-color: #006666;
+}
+
+.theme-light .grid td.cell-ship-sunk:after {
+  color: #ffffff;
+}
+
+.theme-light .grid td.cell-oppshoot::after {
+  color: #ff0000;
+}
+
+.theme-light #info {
+  color: #9b9b9b;
+}
+
+.theme-light a.change-enabled {
+  color: #3b9fff;
+}
+
+.theme-light a.change-disabled {
+  color: #666666;
+}
+
+.theme-light .stats-value {
+}
+
+.theme-light .game-rules-value {
+  color: #f2793c;
+}

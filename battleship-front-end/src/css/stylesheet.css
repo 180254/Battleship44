@@ -1,3 +1,4 @@
+@import url("theme-light.css");
 @import url("theme-classic.css");
 @import url("theme-dark.css");
 
@@ -36,7 +37,6 @@ main {
 
 #theme-switcher {
   font-size: 20px;
-  font-weight: bold;
   cursor: pointer;
   user-select: none;
 }

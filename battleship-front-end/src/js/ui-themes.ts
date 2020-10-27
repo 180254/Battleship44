@@ -5,7 +5,7 @@ import {Logger, LoggerFactory} from './logger';
 export class UiThemes {
   private readonly logger: Logger = LoggerFactory.getLogger(UiThemes);
 
-  private readonly classes: string[] = ['theme-classic', 'theme-dark'];
+  private readonly classes: string[] = ['theme-light', 'theme-classic', 'theme-dark'];
   // http://xahlee.info/comp/unicode_games_cards.html
   private readonly switcherContents: string[] = ['&#x1f032;', '&#x1f039;', '&#x1f03a;'];
 
