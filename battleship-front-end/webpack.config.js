@@ -153,12 +153,19 @@ module.exports = (env, argv) => {
       new CopyPlugin({
         patterns: [
           {
-            from: path.resolve(__dirname, 'src/flags/'),
+            from: path.resolve(__dirname, 'src/flags/LICENSE.txt'),
             to: 'flags/',
+            flatten: true,
           },
           {
-            from: path.resolve(__dirname, 'src/i18n/'),
+            from: path.resolve(__dirname, 'src/flags/*.png'),
+            to: 'flags/',
+            flatten: true,
+          },
+          {
+            from: path.resolve(__dirname, 'src/i18n/*.json'),
             to: 'i18n/',
+            flatten: true,
           },
           {
             from: path.resolve(__dirname, 'src/og/*.webp'),
@@ -197,41 +204,41 @@ module.exports = (env, argv) => {
         append: false, // it means prepend
       }),
       itdepends.compression &&
-      new CompressionPlugin({
-        algorithm: 'gzip',
-        filename: '[path][base].gz',
-        test: /\.(html|js|map|css|svg|json)$/,
-        compressionOptions: {
-          // Z_BEST_COMPRESSION is ok for pre-compressed content.
-          // For dynamic compression it is better to use default level (6).
-          // - https://www.iiwnz.com/improve-website-speed-by-compression/
-          // - https://blogs.akamai.com/2016/02/understanding-brotlis-potential.html
-          // - https://blog.cloudflare.com/results-experimenting-brotli/
-          level: zlib.constants.Z_BEST_COMPRESSION,
-          memLevel: zlib.constants.Z_DEFAULT_MEMLEVEL,
-          strategy: zlib.constants.Z_DEFAULT_STRATEGY,
-        },
-        minRatio: Number.MAX_SAFE_INTEGER,
-      }),
-      itdepends.compression &&
-      new CompressionPlugin({
-        algorithm: 'brotliCompress',
-        filename: '[path][base].br',
-        test: /\.(html|js|map|css|svg|json)$/,
-        compressionOptions: {
-          params: {
-            // BROTLI_MAX_QUALITY is ok for pre-compressed content.
-            // For dynamic compression it is better to use quality=4.
+        new CompressionPlugin({
+          algorithm: 'gzip',
+          filename: '[path][base].gz',
+          test: /\.(html|js|map|css|svg|json)$/,
+          compressionOptions: {
+            // Z_BEST_COMPRESSION is ok for pre-compressed content.
+            // For dynamic compression it is better to use default level (6).
             // - https://www.iiwnz.com/improve-website-speed-by-compression/
             // - https://blogs.akamai.com/2016/02/understanding-brotlis-potential.html
             // - https://blog.cloudflare.com/results-experimenting-brotli/
-            [zlib.constants.BROTLI_PARAM_QUALITY]: zlib.constants.BROTLI_MAX_QUALITY,
-            [zlib.constants.BROTLI_PARAM_MODE]: zlib.constants.BROTLI_DEFAULT_MODE,
-            [zlib.constants.BROTLI_PARAM_SIZE_HINT]: 0,
+            level: zlib.constants.Z_BEST_COMPRESSION,
+            memLevel: zlib.constants.Z_DEFAULT_MEMLEVEL,
+            strategy: zlib.constants.Z_DEFAULT_STRATEGY,
           },
-        },
-        minRatio: Number.MAX_SAFE_INTEGER,
-      }),
+          minRatio: Number.MAX_SAFE_INTEGER,
+        }),
+      itdepends.compression &&
+        new CompressionPlugin({
+          algorithm: 'brotliCompress',
+          filename: '[path][base].br',
+          test: /\.(html|js|map|css|svg|json)$/,
+          compressionOptions: {
+            params: {
+              // BROTLI_MAX_QUALITY is ok for pre-compressed content.
+              // For dynamic compression it is better to use quality=4.
+              // - https://www.iiwnz.com/improve-website-speed-by-compression/
+              // - https://blogs.akamai.com/2016/02/understanding-brotlis-potential.html
+              // - https://blog.cloudflare.com/results-experimenting-brotli/
+              [zlib.constants.BROTLI_PARAM_QUALITY]: zlib.constants.BROTLI_MAX_QUALITY,
+              [zlib.constants.BROTLI_PARAM_MODE]: zlib.constants.BROTLI_DEFAULT_MODE,
+              [zlib.constants.BROTLI_PARAM_SIZE_HINT]: 0,
+            },
+          },
+          minRatio: Number.MAX_SAFE_INTEGER,
+        }),
       // https://stackoverflow.com/a/56222505
     ].filter(n => n),
   };
