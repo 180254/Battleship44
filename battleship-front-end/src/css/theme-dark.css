@@ -3,7 +3,7 @@ body.theme-dark {
 }
 
 .theme-dark #theme-switcher {
-  color: ghostwhite;
+  color: #f8f8ff;
 }
 
 .theme-dark #messages {
@@ -48,7 +48,7 @@ body.theme-dark {
 }
 
 .theme-dark a.change-enabled {
-  color: dodgerblue;
+  color: #427eb7;
 }
 
 .theme-dark a.change-disabled {

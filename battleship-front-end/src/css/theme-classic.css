@@ -3,7 +3,7 @@ body.theme-classic {
 }
 
 .theme-classic #theme-switcher {
-  color: ghostwhite;
+  color: #f8f8ff;
 }
 
 .theme-classic #messages {
@@ -48,7 +48,7 @@ body.theme-classic {
 }
 
 .theme-classic a.change-enabled {
-  color: dodgerblue;
+  color: #59aaf7;
 }
 
 .theme-classic a.change-disabled {
