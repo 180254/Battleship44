@@ -1,3 +1,6 @@
+@import url("theme-classic.css");
+@import url("theme-dark.css");
+
 html {
   font-size: 12px;
 }
@@ -5,16 +8,6 @@ html {
 @media all and (min-width: 850px) {
   html {
     font-size: 16px;
-  }
-}
-
-html {
-  background-color: #2C3E44;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    background-color: #00090e;
   }
 }
 
@@ -72,17 +65,6 @@ main {
   justify-content: center;
 }
 
-#messages {
-  color: #1f1f1f;
-  background-color: rgba(171, 181, 70, 0.96);
-}
-
-@media (prefers-color-scheme: dark) {
-  #messages {
-    color: #cbd2c2;
-    background-color: rgba(23, 35, 5, 0.96);
-  }
-}
 
 #messages .message {
   display: block;
@@ -90,26 +72,6 @@ main {
 
 #message-const a {
   cursor: pointer;
-}
-
-#message-const a {
-  color: #000057;
-}
-
-@media (prefers-color-scheme: dark) {
-  #message-const a {
-    color: #cbd2c2;
-  }
-}
-
-.message-fail {
-  color: #820404;
-}
-
-@media (prefers-color-scheme: dark) {
-  .message-fail {
-    color: #ff8383;
-  }
 }
 
 .message-important {
@@ -176,40 +138,6 @@ td width/height calculations rationale:
   text-align: center;
 }
 
-.grid td.cell-unknown {
-  background-color: #F0F0F0;
-}
-
-.grid td.cell-empty {
-  background-color: #d6c5d0;
-}
-
-.grid td.cell-ship {
-  background-color: #0b5c53;
-}
-
-.grid td.cell-ship-sunk {
-  background-color: #0b5c53;
-}
-
-@media (prefers-color-scheme: dark) {
-  .grid td.cell-unknown {
-    background-color: #b7b7b7;
-  }
-
-  .grid td.cell-empty {
-    background-color: #d6c5d0;
-  }
-
-  .grid td.cell-ship {
-    background-color: #334E49;
-  }
-
-  .grid td.cell-ship-sunk {
-    background-color: #334E49;
-  }
-}
-
 .grid td.cell-ship-sunk:after {
   content: "*";
   font-family: Tahoma, Geneva, sans-serif;
@@ -220,24 +148,6 @@ td width/height calculations rationale:
   content: "*";
   font-family: Tahoma, Geneva, sans-serif;
   font-size: 1.3125rem;
-}
-
-.grid td.cell-ship-sunk:after {
-  color: #E8F7F7;
-}
-
-.grid td.cell-oppshoot::after {
-  color: red;
-}
-
-@media (prefers-color-scheme: dark) {
-  .grid td.cell-ship-sunk:after {
-    color: #6ec3ce;
-  }
-
-  .grid td.cell-oppshoot::after {
-    color: #501b1b;
-  }
 }
 
 .cell-shootable {
@@ -261,16 +171,6 @@ td width/height calculations rationale:
   }
 }
 
-#info {
-  color: darkgray;
-}
-
-@media (prefers-color-scheme: dark) {
-  #info {
-    color: #71797c;
-  }
-}
-
 .info-td-1 {
   width: 16rem;
 }
@@ -285,36 +185,4 @@ a.change {
   font-family: Lucida Sans Unicode, sans-serif;
   font-size: 1.2rem;
   text-decoration: none;
-}
-
-a.change-enabled {
-  color: dodgerblue;
-}
-
-a.change-disabled {
-  color: gray;
-}
-
-.stats-value {
-}
-
-.game-rules-value {
-  color: #fa8b00;
-}
-
-@media (prefers-color-scheme: dark) {
-  a.change-enabled {
-    color: dodgerblue;
-  }
-
-  a.change-disabled {
-    color: gray;
-  }
-
-  .stats-value {
-  }
-
-  .game-rules-value {
-    color: #b46400;
-  }
 }

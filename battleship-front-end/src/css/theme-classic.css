@@ -1,0 +1,59 @@
+body.theme-classic {
+  background-color: #2C3E44;
+}
+
+.theme-classic #messages {
+  color: #1f1f1f;
+  background-color: rgba(171, 181, 70, 0.96);
+}
+
+.theme-classic #message-const a {
+  color: #000057;
+}
+
+.theme-classic .message-fail {
+  color: #820404;
+}
+
+.theme-classic .grid td.cell-unknown {
+  background-color: #F0F0F0;
+}
+
+.theme-classic .grid td.cell-empty {
+  background-color: #d6c5d0;
+}
+
+.theme-classic .grid td.cell-ship {
+  background-color: #0b5c53;
+}
+
+.theme-classic .grid td.cell-ship-sunk {
+  background-color: #0b5c53;
+}
+
+.theme-classic .grid td.cell-ship-sunk:after {
+  color: #E8F7F7;
+}
+
+.theme-classic .grid td.cell-oppshoot::after {
+  color: red;
+}
+
+.theme-classic #info {
+  color: darkgray;
+}
+
+.theme-classic a.change-enabled {
+  color: dodgerblue;
+}
+
+.theme-classic a.change-disabled {
+  color: gray;
+}
+
+.theme-classic .stats-value {
+}
+
+.theme-classic .game-rules-value {
+  color: #fa8b00;
+}
