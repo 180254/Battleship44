@@ -18,6 +18,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <start-class>pl.nn44.battleship.Application</start-class>
         <!-- mvn versions:display-plugin-updates "Plugins require minimum Maven version of: ..." -->
+        <spring-framework.version>5.3.0</spring-framework.version>
         <require.maven.version>3.2.5</require.maven.version>
         <maven-site-plugin.version>3.9.1</maven-site-plugin.version>
         <findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
