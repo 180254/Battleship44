@@ -207,7 +207,7 @@ module.exports = (env, argv) => {
         new CompressionPlugin({
           algorithm: 'gzip',
           filename: '[path][base].gz',
-          test: /\.(html|js|map|css|svg|json)$/,
+          test: /\.(html|js|map|css|svg|json|txt)$/,
           compressionOptions: {
             // Z_BEST_COMPRESSION is ok for pre-compressed content.
             // For dynamic compression it is better to use default level (6).
@@ -224,7 +224,7 @@ module.exports = (env, argv) => {
         new CompressionPlugin({
           algorithm: 'brotliCompress',
           filename: '[path][base].br',
-          test: /\.(html|js|map|css|svg|json)$/,
+          test: /\.(html|js|map|css|svg|json|txt)$/,
           compressionOptions: {
             params: {
               // BROTLI_MAX_QUALITY is ok for pre-compressed content.
