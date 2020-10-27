@@ -1,4 +1,9 @@
 export const htmlStrings = {
+  themeSwitcher: {
+    id_switcher: '#theme-switcher',
+    id_theme_holder: 'body',
+  },
+
   flags: {
     id: '#flags',
     clazz: {

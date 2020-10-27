@@ -21,11 +21,24 @@ main {
   }
 }
 
-#flags {
-  float: right;
-  margin-bottom: 5px;
-  cursor: pointer;
+#header {
   height: 20px;
+  margin-bottom: 5px;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+#theme-switcher {
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
 }
 
 #flags:empty:after {
@@ -34,14 +47,15 @@ main {
 }
 
 #flags > img {
-  padding-right: 10px;
+  margin-right: 10px;
 }
 
 #flags > :last-child {
-  padding-right: 0 !important;
+  margin-right: 0 !important;
 }
 
 .flag {
+  cursor: pointer;
   width: 24px;
   height: 15px;
 }

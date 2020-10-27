@@ -37,8 +37,15 @@
 <%= htmlWebpackPlugin.tags.bodyTags.join("\n") %>
 <div id="container">
   <main>
-    <!-- LICENSE: flags/LICENSE.txt -->
-    <div id="flags"></div>
+    <div id="header">
+      <div class="left">
+        <a role="button" id="theme-switcher">&#x1f032;</a>
+      </div>
+      <div class="right">
+        <!-- LICENSE: flags/LICENSE.txt -->
+        <div id="flags"></div>
+      </div>
+    </div>
 
     <div id="messages">
       <span id="message-const" data-i18n-path="pre.initializing">

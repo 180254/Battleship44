@@ -6,6 +6,7 @@ import {Url} from './url';
 import {GridSerializer} from './game-grid-serializer';
 import {UiFlags} from './ui-flags';
 import {UiGameRules} from './ui-gamerules';
+import {UiThemes} from './ui-themes';
 import {UiTitle} from './ui-title';
 import {Document2Event} from './document2-event';
 import {Random} from './random';
@@ -33,6 +34,7 @@ class Game {
   private readonly uiGameRules = new UiGameRules();
   private readonly uiMessage: UiMessage = new UiMessage(this.random, this.translator);
   private readonly uiMessageTimeout: UiMessageTimeout = new UiMessageTimeout();
+  private readonly uiThemes: UiThemes = new UiThemes();
   private readonly uiTitle: UiTitle = new UiTitle(this.translator);
   private readonly url: Url = new Url();
   private readonly sessionContext: SessionContext = new SessionContext();
@@ -74,6 +76,7 @@ class Game {
   );
 
   public init(): void {
+    this.uiThemes.init();
     this.onWsMessage.init();
     this.onWsEvent.init();
     this.gameStarter.init();

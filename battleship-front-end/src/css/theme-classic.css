@@ -2,6 +2,10 @@ body.theme-classic {
   background-color: #2C3E44;
 }
 
+.theme-classic #theme-switcher {
+  color: ghostwhite;
+}
+
 .theme-classic #messages {
   color: #1f1f1f;
   background-color: rgba(171, 181, 70, 0.96);
