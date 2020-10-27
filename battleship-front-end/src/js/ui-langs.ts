@@ -54,7 +54,7 @@ export class LangTagComparer {
 
 export class LangFinder {
   private readonly logger: Logger = LoggerFactory.getLogger(LangFinder);
-  private readonly langTagCookieName = 'i18n-lang-tag';
+  private readonly langTagCookieName = 'i18n';
 
   // gist: Language detection in javascript
   // https://gist.github.com/ksol/62b489572944ca70b4ba
