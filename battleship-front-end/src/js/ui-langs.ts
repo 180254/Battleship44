@@ -174,7 +174,7 @@ export class LangSelector {
 
 export class LangSetter {
   private readonly logger: Logger = LoggerFactory.getLogger(LangSetter);
-  private readonly langTagCookieName = 'i18n-lang-tag';
+  private readonly langTagCookieName = 'i18n';
 
   public setLang(langTag: LangTag): void {
     this.logger.trace('result={0}', langTag);
