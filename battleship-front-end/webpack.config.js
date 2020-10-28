@@ -2,6 +2,7 @@
 
 const path = require('path');
 const zlib = require('zlib');
+const zopfli = require('@gfx/zopfli');
 
 const webpack = require('webpack');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
@@ -23,14 +24,60 @@ const configs = {
     backend: process.env.BACKEND || 'ws://localhost:8080/ws',
     devtool: 'source-map',
     browserslist: ['last 2 chrome versions', 'last 2 firefox versions'],
-    compression: false,
+    extraOptimizations: {
+      runtimeChunk: 'single',
+      splitChunks: {
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all',
+          },
+        },
+      },
+    },
+    extraPlugins: [],
   },
   production: {
     mode: 'production',
     backend: process.env.BACKEND || '',
     devtool: undefined,
     browserslist: ['defaults'],
-    compression: true,
+    extraOptimizations: {},
+    extraPlugins: [
+      new CompressionPlugin({
+        algorithm: zopfli.gzip,
+        filename: '[path][base].gz',
+        test: /\.(html|js|map|css|svg|json|txt)$/,
+        compressionOptions: {
+          // defaults
+          verbose: false,
+          verbose_more: false,
+          numiterations: 15,
+          blocksplitting: true,
+          blocksplittingmax: 15,
+        },
+        minRatio: Number.MAX_SAFE_INTEGER,
+      }),
+      new CompressionPlugin({
+        algorithm: zlib.brotliCompress,
+        filename: '[path][base].br',
+        test: /\.(html|js|map|css|svg|json|txt)$/,
+        compressionOptions: {
+          params: {
+            // BROTLI_MAX_QUALITY is ok for pre-compressed content.
+            // For dynamic compression it is better to use quality=4.
+            // - https://www.iiwnz.com/improve-website-speed-by-compression/
+            // - https://blogs.akamai.com/2016/02/understanding-brotlis-potential.html
+            // - https://blog.cloudflare.com/results-experimenting-brotli/
+            [zlib.constants.BROTLI_PARAM_QUALITY]: zlib.constants.BROTLI_MAX_QUALITY,
+            [zlib.constants.BROTLI_PARAM_MODE]: zlib.constants.BROTLI_DEFAULT_MODE,
+            [zlib.constants.BROTLI_PARAM_SIZE_HINT]: 0,
+          },
+        },
+        minRatio: Number.MAX_SAFE_INTEGER,
+      }),
+    ],
   },
 };
 
@@ -130,16 +177,7 @@ module.exports = (env, argv) => {
         new CssMinimizerPlugin(),
         new JsonMinimizerPlugin(),
       ],
-      runtimeChunk: 'single',
-      splitChunks: {
-        cacheGroups: {
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
-            chunks: 'all',
-          },
-        },
-      },
+      ...itdepends.extraOptimizations,
     },
     plugins: [
       new CleanWebpackPlugin(),
@@ -153,12 +191,12 @@ module.exports = (env, argv) => {
       new CopyPlugin({
         patterns: [
           {
-            from: path.resolve(__dirname, 'src/flags/LICENSE.txt'),
+            from: path.resolve(__dirname, 'src/flags/*.png'),
             to: 'flags/',
             flatten: true,
           },
           {
-            from: path.resolve(__dirname, 'src/flags/*.png'),
+            from: path.resolve(__dirname, 'src/flags/LICENSE.txt'),
             to: 'flags/',
             flatten: true,
           },
@@ -168,12 +206,12 @@ module.exports = (env, argv) => {
             flatten: true,
           },
           {
-            from: path.resolve(__dirname, 'src/og/*.webp'),
+            from: path.resolve(__dirname, 'src/og/*.png'),
             to: 'og/',
             flatten: true,
           },
           {
-            from: path.resolve(__dirname, 'src/og/*.png'),
+            from: path.resolve(__dirname, 'src/og/*.webp'),
             to: 'og/',
             flatten: true,
           },
@@ -195,51 +233,15 @@ module.exports = (env, argv) => {
         template: path.resolve(__dirname, 'src/index.html'),
         filename: 'index.html',
         minify: false,
+        inject: false,
         scriptLoading: 'defer',
         xhtml: true,
-        inject: false,
       }),
       new HtmlWebpackTagsPlugin({
         tags: [`jquery.${jQueryVersion}.min.js`, `js.cookie.${jsCookieVersion}.min.js`],
         append: false, // it means prepend
       }),
-      itdepends.compression &&
-        new CompressionPlugin({
-          algorithm: 'gzip',
-          filename: '[path][base].gz',
-          test: /\.(html|js|map|css|svg|json|txt)$/,
-          compressionOptions: {
-            // Z_BEST_COMPRESSION is ok for pre-compressed content.
-            // For dynamic compression it is better to use default level (6).
-            // - https://www.iiwnz.com/improve-website-speed-by-compression/
-            // - https://blogs.akamai.com/2016/02/understanding-brotlis-potential.html
-            // - https://blog.cloudflare.com/results-experimenting-brotli/
-            level: zlib.constants.Z_BEST_COMPRESSION,
-            memLevel: zlib.constants.Z_DEFAULT_MEMLEVEL,
-            strategy: zlib.constants.Z_DEFAULT_STRATEGY,
-          },
-          minRatio: Number.MAX_SAFE_INTEGER,
-        }),
-      itdepends.compression &&
-        new CompressionPlugin({
-          algorithm: 'brotliCompress',
-          filename: '[path][base].br',
-          test: /\.(html|js|map|css|svg|json|txt)$/,
-          compressionOptions: {
-            params: {
-              // BROTLI_MAX_QUALITY is ok for pre-compressed content.
-              // For dynamic compression it is better to use quality=4.
-              // - https://www.iiwnz.com/improve-website-speed-by-compression/
-              // - https://blogs.akamai.com/2016/02/understanding-brotlis-potential.html
-              // - https://blog.cloudflare.com/results-experimenting-brotli/
-              [zlib.constants.BROTLI_PARAM_QUALITY]: zlib.constants.BROTLI_MAX_QUALITY,
-              [zlib.constants.BROTLI_PARAM_MODE]: zlib.constants.BROTLI_DEFAULT_MODE,
-              [zlib.constants.BROTLI_PARAM_SIZE_HINT]: 0,
-            },
-          },
-          minRatio: Number.MAX_SAFE_INTEGER,
-        }),
-      // https://stackoverflow.com/a/56222505
-    ].filter(n => n),
+      ...itdepends.extraPlugins,
+    ],
   };
 };
