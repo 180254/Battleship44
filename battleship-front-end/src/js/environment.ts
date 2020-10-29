@@ -4,7 +4,7 @@ declare global {
 }
 
 export class Environment {
-  public static MODE = WEBPACK_DEFINE_MODE;
-  public static BACKEND = WEBPACK_DEFINE_BACKEND;
+  public static MODE: string = WEBPACK_DEFINE_MODE;
+  public static BACKEND: string = WEBPACK_DEFINE_BACKEND;
   public static ServerLanguages: string[] = ['en-us', 'pl-pl'];
 }

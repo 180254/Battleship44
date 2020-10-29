@@ -1,4 +1,4 @@
-import * as $ from 'jquery';
+import {Document2} from './document2';
 import {htmlStrings} from './html-strings';
 
 export class Cell {
@@ -12,10 +12,10 @@ export class Cell {
     this.clazz = clazz;
   }
 
-  public static FromElement($cell: JQuery<Element>): Cell {
+  public static FromElement(cell: HTMLElement): Cell {
     return new Cell(
-      Number.parseInt($cell.attr('data-row-i')!),
-      Number.parseInt($cell.attr('data-col-i')!)
+      Number.parseInt(cell.getAttribute('data-row-i')!),
+      Number.parseInt(cell.getAttribute('data-col-i')!)
     );
   }
 
@@ -28,29 +28,27 @@ export class Grids {
   public readonly rows = 10;
   public readonly cols = 10;
 
-  public readonly $shoot: JQuery = $(htmlStrings.grid.id_shoot);
-  public $shootCells!: JQuery;
+  public readonly shoot: HTMLElement;
+  public readonly shootCells: NodeListOf<HTMLElement>;
 
-  public readonly $opponent: JQuery = $(htmlStrings.grid.id_opponent);
-  public $opponentCells!: JQuery;
+  public readonly opponent: HTMLElement;
+  public readonly opponentCells: NodeListOf<HTMLElement>;
 
-  private static createCell(gridId: string, rowIndex: number, colIndex: number): JQuery {
-    return $('<td/>', {
-      ['class']: htmlStrings.cell.clazz.unknown,
-      ['data-grid-id']: gridId,
-      ['data-row-i']: rowIndex,
-      ['data-col-i']: colIndex,
-    });
-  }
-
-  public init(): void {
-    this.$shootCells = this.$shoot.find('td');
-    this.$opponentCells = this.$opponent.find('td');
+  public constructor() {
+    this.shoot = document.querySelector<HTMLElement>(htmlStrings.grid.selector.shoot)!;
+    this.shootCells = document.querySelectorAll(htmlStrings.cell.selector.shoot);
+    this.opponent = document.querySelector<HTMLElement>(htmlStrings.grid.selector.opponent)!;
+    this.opponentCells = document.querySelectorAll(htmlStrings.cell.selector.opponent);
   }
 
   public reset(): void {
-    this.$shootCells.attr('class', htmlStrings.cell.clazz.unknown);
-    this.$opponentCells.attr('class', htmlStrings.cell.clazz.unknown);
+    this.shootCells.forEach(element => {
+      element.setAttribute('class', htmlStrings.cell.clazz.unknown);
+    });
+
+    this.opponentCells.forEach(element => {
+      element.setAttribute('class', htmlStrings.cell.clazz.unknown);
+    });
   }
 
   public putFleet(fleet: number[]): void {
@@ -61,112 +59,95 @@ export class Grids {
     fleet
       .map(code => codeToClazz[code])
       .forEach((clazz, index) => {
-        this.$shootCells.get(index).setAttribute('class', clazz);
+        this.shootCells.item(index).setAttribute('class', clazz);
       });
   }
 
-  public setCellClass($grid: JQuery, cell: Cell, clazz: string, keepCurrent: boolean): void {
-    const $element: JQuery = $grid.find('tr').eq(cell.row).find('td').eq(cell.col);
+  public setCellClass(
+    gridCells: NodeListOf<HTMLElement>,
+    cell: Cell,
+    clazz: string,
+    keepCurrent: boolean
+  ): void {
+    const element = gridCells.item(cell.row * this.cols + cell.col);
 
     if (!keepCurrent) {
-      $element.removeClass();
+      element.removeAttribute('class');
     }
 
-    $element.addClass(clazz);
-  }
-
-  // DEPRECATED
-  // Grids are now statically inserted into index.html to decrease cumulative layout shift.
-  // These methods will come in handy if you can change the game-rules/grid-size.
-  // this.createGrid(this.$shoot.attr('id')!).appendTo(this.$shoot);
-  // this.createGrid(this.$opponent.attr('id')!).appendTo(this.$opponent);
-  private createGrid(id: string): JQuery {
-    const $table: JQuery = $('<table/>');
-
-    for (let rowIt = 0; rowIt < this.rows; rowIt += 1) {
-      const newRow: JQuery = this.createRow(id, rowIt);
-      $table.append(newRow);
-    }
-
-    return $table;
-  }
-
-  private createRow(gridId: string, rowIndex: number): JQuery {
-    const $row: JQuery = $('<tr/>');
-
-    for (let colIt = 0; colIt < this.cols; colIt += 1) {
-      const newCell: JQuery = Grids.createCell(gridId, rowIndex, colIt);
-      $row.append(newCell);
-    }
-
-    return $row;
+    element.classList.add(clazz);
   }
 }
 
 export class GridSelection {
   private readonly grids: Grids;
+  private readonly document2: Document2;
 
-  public constructor(grids: Grids) {
+  public constructor(grids: Grids, document2: Document2) {
     this.grids = grids;
+    this.document2 = document2;
   }
 
   public activate(): void {
     let isMouseDown = false;
     let isHighlighted = false;
 
-    this.grids.$shootCells
-      .addClass(htmlStrings.cell.clazz.shootable)
+    this.grids.shootCells.forEach(element => {
+      element.classList.add(htmlStrings.cell.clazz.shootable);
 
-      .on('mousedown', function (this: Element): boolean {
+      this.document2.addEventListener(element, 'mousedown', event => {
         isMouseDown = true;
-        $(this).toggleClass(htmlStrings.cell.clazz.ship);
-        isHighlighted = $(this).hasClass(htmlStrings.cell.clazz.ship);
-        $(this).toggleClass(htmlStrings.cell.clazz.unknown, !isHighlighted);
-        return false;
-      })
+        isHighlighted = element.classList.toggle(htmlStrings.cell.clazz.ship);
+        element.classList.toggle(htmlStrings.cell.clazz.unknown, !isHighlighted);
+        event.preventDefault();
+      });
 
-      .on('mouseover', function (this: Element): void {
+      this.document2.addEventListener(element, 'mouseover', event => {
         if (isMouseDown) {
-          $(this).toggleClass(htmlStrings.cell.clazz.ship, isHighlighted);
-          $(this).toggleClass(htmlStrings.cell.clazz.unknown, !isHighlighted);
+          element.classList.toggle(htmlStrings.cell.clazz.ship, isHighlighted);
+          element.classList.toggle(htmlStrings.cell.clazz.unknown, !isHighlighted);
         }
-      })
+        event.preventDefault();
+      });
 
-      .on('selectstart', () => false);
+      this.document2.addEventListener(element, 'selectstart', event => {
+        event.preventDefault();
+      });
+    });
 
-    $(document).on('mouseup', () => (isMouseDown = false));
+    this.document2.addEventListener(document, 'mouseup', event => {
+      isMouseDown = false;
+      event.preventDefault();
+    });
   }
 
   public deactivate(): void {
-    this.grids.$shoot
-      .find('td')
-      .removeClass(htmlStrings.cell.clazz.shootable)
-      .off('mousedown')
-      .off('mouseover')
-      .off('selectstart');
+    this.grids.shootCells.forEach(element => {
+      element.classList.remove(htmlStrings.cell.clazz.shootable);
+      this.document2.removeAllEventListeners(element, 'mousedown');
+      this.document2.removeAllEventListeners(element, 'mouseover');
+      this.document2.removeAllEventListeners(element, 'selectstart');
+    });
 
-    $(document).off('mousedown');
+    this.document2.removeAllEventListeners(document, 'mouseup');
   }
 
   public collect(): string {
-    return this.grids.$shoot
-      .find('tr')
-      .find('td')
-      .map(function (this: Element): number {
-        return +$(this).hasClass(htmlStrings.cell.clazz.ship);
+    return Array.from(this.grids.shootCells)
+      .map(element => {
+        return +element.classList.contains(htmlStrings.cell.clazz.ship);
       })
-      .get()
       .join(',');
   }
 
   public moveToLeft(): void {
-    const shoot: JQuery = this.grids.$shootCells;
-    const opponent: JQuery = this.grids.$opponentCells;
+    const shoot = this.grids.shootCells;
+    const opponent = this.grids.opponentCells;
 
     for (let i = 0; i < shoot.length; i += 1) {
-      const shootClass: string = shoot.eq(i).attr('class')!;
-      shoot.eq(i).attr('class', htmlStrings.cell.clazz.unknown);
-      opponent.eq(i).attr('class', shootClass);
+      const shootClass: string = shoot.item(i).getAttribute('class')!;
+      shoot.item(i).setAttribute('class', htmlStrings.cell.clazz.unknown);
+      opponent.item(i).setAttribute('class', shootClass);
     }
   }
 }

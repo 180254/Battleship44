@@ -1,6 +1,6 @@
-import {Logger, LoggerFactory} from './logger';
 import * as Cookies from 'js-cookie';
 import {Environment} from './environment';
+import {Logger, LoggerFactory} from './logger';
 
 declare global {
   // extend navigator: add not standard lang tags
@@ -178,6 +178,6 @@ export class LangSetter {
 
   public setLang(langTag: LangTag): void {
     this.logger.trace('result={0}', langTag);
-    Cookies.set(this.langTagCookieName, langTag.toString(), {sameSite: 'Strict'});
+    Cookies.set(this.langTagCookieName, langTag.toString(), {sameSite: 'strict'});
   }
 }

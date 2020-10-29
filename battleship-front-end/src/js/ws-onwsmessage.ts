@@ -1,17 +1,16 @@
-import {Logger} from './logger';
-import {Consumer} from './functional-interfaces';
-import {I18nKey, i18nKey, Translator} from './ui-i18n';
-import {htmlStrings} from './html-strings';
-import * as $ from 'jquery';
-import {Url, UrlParam} from './url';
 import {Cell, Grids, GridSelection} from './game-grid';
-import {UiMessage, UiMessageTimeout} from './ui-message';
-import {Ws} from './ws-ws';
-import {WsMessage} from './ws-wsmessage';
-import {Document2Event} from './document2-event';
-import {UiTitle} from './ui-title';
+import {Consumer} from './functional-interfaces';
+import {Document2} from './document2';
 import {GridSerializer} from './game-grid-serializer';
+import {I18nKey, i18nKey, Translator} from './ui-i18n';
+import {Logger} from './logger';
 import {UiGameRules} from './ui-gamerules';
+import {UiMessage, UiMessageTimeout} from './ui-message';
+import {UiTitle} from './ui-title';
+import {Url, UrlParam} from './url';
+import {WsMessage} from './ws-wsmessage';
+import {Ws} from './ws-ws';
+import {htmlStrings} from './html-strings';
 
 export class SessionContext {
   public numberOfPlayersInGame = 1;
@@ -24,7 +23,7 @@ export class OnWsMessage {
   private funcs!: Map<string, Consumer<string>>;
 
   private readonly ws: Ws;
-  private readonly document2Event: Document2Event;
+  private readonly document2: Document2;
   private readonly gridSelection: GridSelection;
   private readonly gridSerializer: GridSerializer;
   private readonly grids: Grids;
@@ -38,7 +37,7 @@ export class OnWsMessage {
 
   public constructor(
     ws: Ws,
-    document2Event: Document2Event,
+    document2: Document2,
     gridSelection: GridSelection,
     gridSerializer: GridSerializer,
     grids: Grids,
@@ -51,7 +50,7 @@ export class OnWsMessage {
     sessionContext: SessionContext
   ) {
     this.ws = ws;
-    this.document2Event = document2Event;
+    this.document2 = document2;
     this.gridSelection = gridSelection;
     this.gridSerializer = gridSerializer;
     this.grids = grids;
@@ -100,21 +99,26 @@ export class OnWsMessage {
         'GAME OK',
         payload => {
           this.sessionContext.gridAlreadySet = false;
-          this.grids.$opponent.addClass(htmlStrings.grid.clazz.inactive);
-          this.grids.$shoot.removeClass(htmlStrings.grid.clazz.inactive);
+          this.grids.opponent.classList.add(htmlStrings.grid.clazz.inactive);
+          this.grids.shoot.classList.remove(htmlStrings.grid.clazz.inactive);
 
           if (payload) {
-            const $gameUrl: JQuery = $(htmlStrings.info.id_game_url);
+            const gameUrl: HTMLElement = document.querySelector<HTMLElement>(
+              htmlStrings.info.selector.game_url
+            )!;
 
-            this.translator.removeTranslation($gameUrl);
+            this.translator.removeTranslation(gameUrl);
 
             const urlParams: UrlParam[] = [
               this.url.getParam('d'),
               new UrlParam('id', payload),
             ].filter(urlParam => urlParam !== null) as UrlParam[];
-            $gameUrl.text(this.url.buildUrlWithParams(...urlParams));
+            gameUrl.textContent = this.url.buildUrlWithParams(...urlParams);
 
-            $(htmlStrings.info.id_players_game).text(1);
+            const infoPlayersGame: HTMLElement = document.querySelector<HTMLElement>(
+              htmlStrings.info.selector.players_game
+            )!;
+            infoPlayersGame.textContent = '1';
           }
 
           this.grids.reset();
@@ -122,22 +126,29 @@ export class OnWsMessage {
 
           this.uiMessage.setFixed(i18nKey('put.info'));
 
-          $(htmlStrings.message.id_const).append(' ');
+          const messageConstElement: HTMLElement = document.querySelector<HTMLElement>(
+            htmlStrings.message.selector.const
+          )!;
+          messageConstElement.append(' ');
           this.uiMessage.addFixedLink(
             i18nKey('put.random'),
-            htmlStrings.message.ok.id_random_ship_selection
+            htmlStrings.message.ok.id.random_ship_selection
           );
-          $(htmlStrings.message.ok.id_random_ship_selection).on('click', () =>
-            this.ws.send('GRID RANDOM')
+          this.document2.addEventListener(
+            document.querySelector(htmlStrings.message.ok.selector.random_ship_selection)!,
+            'click',
+            () => this.ws.send('GRID RANDOM')
           );
 
-          $(htmlStrings.message.id_const).append(' ');
+          messageConstElement.append(' ');
           this.uiMessage.addFixedLink(
             i18nKey('put.done'),
-            htmlStrings.message.ok.id_ship_selection
+            htmlStrings.message.ok.id.ship_selection
           );
-          $(htmlStrings.message.ok.id_ship_selection).on('click', () =>
-            this.ws.send('GRID {0}'.format(this.gridSelection.collect()))
+          this.document2.addEventListener(
+            document.querySelector(htmlStrings.message.ok.selector.ship_selection)!,
+            'click',
+            () => this.ws.send('GRID {0}'.format(this.gridSelection.collect()))
           );
 
           if (
@@ -166,7 +177,7 @@ export class OnWsMessage {
             const gameRuleValue = gameRuleSplit[1];
 
             this.translator.translateElement(
-              $('#game-rules-{0}-value'.format(gameRuleKey)),
+              document.getElementById('game-rules-{0}-value'.format(gameRuleKey))!,
               new I18nKey('game-rules.{0}.{1}'.format(gameRuleKey, gameRuleValue))
             );
           }
@@ -192,8 +203,8 @@ export class OnWsMessage {
         'GRID OK',
         () => {
           this.sessionContext.gridAlreadySet = true;
-          this.grids.$opponent.removeClass(htmlStrings.grid.clazz.inactive);
-          this.grids.$shoot.addClass(htmlStrings.grid.clazz.inactive);
+          this.grids.opponent.classList.remove(htmlStrings.grid.clazz.inactive);
+          this.grids.shoot.classList.add(htmlStrings.grid.clazz.inactive);
 
           this.uiMessage.setFixed(i18nKey('tour.awaiting'));
           this.uiGameRules.deactivateChanging();
@@ -247,18 +258,17 @@ export class OnWsMessage {
       [
         'TOUR YOU',
         () => {
-          this.grids.$shoot.removeClass(htmlStrings.grid.clazz.inactive);
+          this.grids.shoot.classList.remove(htmlStrings.grid.clazz.inactive);
 
           this.uiMessage.setFixed(i18nKey('tour.shoot_me'), htmlStrings.message.clazz.important);
           this.uiTitle.setBlinkingTitle(i18nKey('title.shoot_me'), false);
 
-          const $cells: JQuery = this.grids.$shootCells;
-
-          $cells.addClass(htmlStrings.cell.clazz.shootable);
-          this.document2Event.onetime($cells, 'click', $td => {
-            const pos: string = this.gridSerializer.cellSerializer(Cell.FromElement($td));
-
-            this.ws.send('SHOT {0}'.format(pos));
+          this.grids.shootCells.forEach(element => {
+            element.classList.add(htmlStrings.cell.clazz.shootable);
+            this.document2.addOnetimeEventListener(element, 'click', () => {
+              const pos: string = this.gridSerializer.cellSerializer(Cell.FromElement(element));
+              this.ws.send('SHOT {0}'.format(pos));
+            });
           });
         },
       ],
@@ -266,8 +276,10 @@ export class OnWsMessage {
       [
         'TOUR HE',
         () => {
-          this.grids.$shoot.addClass(htmlStrings.grid.clazz.inactive);
-          this.grids.$shootCells.removeClass(htmlStrings.cell.clazz.shootable);
+          this.grids.shoot.classList.add(htmlStrings.grid.clazz.inactive);
+          this.grids.shootCells.forEach(element => {
+            element.classList.remove(htmlStrings.cell.clazz.shootable);
+          });
 
           this.uiMessage.setFixed(i18nKey('tour.shoot_opp'));
           this.uiTitle.setFixedTitle(i18nKey('title.shoot_opp'));
@@ -287,7 +299,7 @@ export class OnWsMessage {
 
           cells.forEach(cell => {
             this.grids.setCellClass(
-              this.grids.$shoot,
+              this.grids.shootCells,
               cell,
               clazzMap.get(cell.clazz!) || '',
               false
@@ -303,7 +315,7 @@ export class OnWsMessage {
 
           cells.forEach(cell => {
             this.grids.setCellClass(
-              this.grids.$opponent,
+              this.grids.opponentCells,
               cell,
               htmlStrings.cell.clazz.opp_shoot,
               true
@@ -315,14 +327,14 @@ export class OnWsMessage {
       [
         'WON_',
         payload => {
-          this.grids.$opponent.addClass(htmlStrings.grid.clazz.inactive);
-          this.grids.$shoot.addClass(htmlStrings.grid.clazz.inactive);
+          this.grids.opponent.classList.add(htmlStrings.grid.clazz.inactive);
+          this.grids.shoot.classList.add(htmlStrings.grid.clazz.inactive);
 
-          const winning: JQuery =
+          const winning: HTMLElement =
             payload === 'YOU'
-              ? $(htmlStrings.info.id_winning_me)
-              : $(htmlStrings.info.id_winning_opp);
-          winning.text(Number.parseInt(winning.text()) + 1);
+              ? document.querySelector<HTMLElement>(htmlStrings.info.selector.winning_me)!
+              : document.querySelector<HTMLElement>(htmlStrings.info.selector.winning_opp)!;
+          winning.textContent = (Number.parseInt(winning.textContent || '0') + 1).toString();
 
           payload === 'YOU'
             ? this.uiMessage.setFixed(i18nKey('end.won_me'))
@@ -330,10 +342,12 @@ export class OnWsMessage {
 
           this.uiMessage.addFixedLink(
             i18nKey('end.next_game'),
-            htmlStrings.message.ok.id_game_next
+            htmlStrings.message.ok.id.game_next
           );
-          this.document2Event.onetime($(htmlStrings.message.ok.id_game_next), 'click', () =>
-            this.process(new WsMessage('', 'GAME OK', ''))
+          this.document2.addOnetimeEventListener(
+            document.querySelector(htmlStrings.message.ok.selector.game_next)!,
+            'click',
+            () => this.process(new WsMessage('', 'GAME OK', ''))
           );
 
           this.uiTitle.setFixedDefaultTitle();
@@ -344,7 +358,11 @@ export class OnWsMessage {
         '1PLA',
         payload => {
           this.sessionContext.numberOfPlayersInGame = 1;
-          $(htmlStrings.info.id_players_game).text(1);
+
+          const infoPlayersGame: HTMLElement = document.querySelector<HTMLElement>(
+            htmlStrings.info.selector.players_game
+          )!;
+          infoPlayersGame.textContent = '1';
 
           const interrupted: boolean = payload === 'game-interrupted';
 
@@ -353,22 +371,26 @@ export class OnWsMessage {
             : this.uiMessage.addFleeting(i18nKey('end.opp_gone'), this.uiMessageTimeout.slow);
 
           if (interrupted) {
-            this.grids.$shootCells.removeClass(htmlStrings.cell.clazz.shootable);
-            this.grids.$shootCells.off('click'); // remove shoot action
+            this.grids.shootCells.forEach(element => {
+              element.classList.remove(htmlStrings.cell.clazz.shootable);
+              this.document2.removeAllEventListeners(element, 'click');
+            });
 
             this.uiMessage.addFixedLink(
               i18nKey('end.next_game'),
-              htmlStrings.message.ok.id_game_next
+              htmlStrings.message.ok.id.game_next
             );
 
-            this.grids.$opponent.addClass(htmlStrings.grid.clazz.inactive);
-            this.grids.$shoot.addClass(htmlStrings.grid.clazz.inactive);
+            this.grids.opponent.classList.add(htmlStrings.grid.clazz.inactive);
+            this.grids.shoot.classList.add(htmlStrings.grid.clazz.inactive);
 
             this.uiTitle.setFixedDefaultTitle();
           }
 
-          this.document2Event.onetime($(htmlStrings.message.ok.id_game_next), 'click', () =>
-            this.process(new WsMessage('', 'GAME OK', ''))
+          this.document2.addOnetimeEventListener(
+            document.querySelector(htmlStrings.message.ok.selector.game_next)!,
+            'click',
+            () => this.process(new WsMessage('', 'GAME OK', ''))
           );
 
           if (!this.sessionContext.gridAlreadySet) {
@@ -381,14 +403,23 @@ export class OnWsMessage {
         '2PLA',
         () => {
           this.sessionContext.numberOfPlayersInGame = 2;
-          $(htmlStrings.info.id_players_game).text(2);
+
+          const infoPlayersGame: HTMLElement = document.querySelector<HTMLElement>(
+            htmlStrings.info.selector.players_game
+          )!;
+          infoPlayersGame.textContent = '2';
 
           this.uiMessage.addFleeting(i18nKey('tour.two_players'), this.uiMessageTimeout.slow);
 
-          $('[{0}]'.format(htmlStrings.game_rules.data_game_rules_change)).off('click');
-          $('[{0}]'.format(htmlStrings.game_rules.data_game_rules_change))
-            .removeClass('change-enabled')
-            .addClass('change-disabled');
+          document
+            .querySelectorAll(htmlStrings.game_rules.selector.data_game_rules_change)
+            .forEach(element => {
+              this.document2.removeAllEventListeners(element, 'click');
+              element.classList.replace(
+                htmlStrings.game_rules.clazz.change_enabled,
+                htmlStrings.game_rules.clazz.change_disabled
+              );
+            });
         },
       ],
 
@@ -403,17 +434,19 @@ export class OnWsMessage {
         'STAT',
         payload => {
           const infoStat: {[key: string]: string} = {
-            players: htmlStrings.info.id_players_global,
+            players: htmlStrings.info.selector.players_global,
           };
 
           const stats: string[] = payload.split(',');
 
           stats.forEach(stat => {
             const [key, value]: string[] = stat.split('=');
-            const $infoStatKey: JQuery = $(infoStat[key]);
+            const infoStatElement: HTMLElement = document.querySelector<HTMLElement>(
+              infoStat[key]
+            )!;
 
-            $infoStatKey.text(value);
-            this.translator.removeTranslation($infoStatKey);
+            infoStatElement.textContent = value;
+            this.translator.removeTranslation(infoStatElement);
           });
         },
       ],

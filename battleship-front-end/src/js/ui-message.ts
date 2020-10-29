@@ -1,7 +1,8 @@
-import {htmlStrings} from './html-strings';
+import {Css} from './css';
+import {I18nKey, Translator} from './ui-i18n';
 import {Logger, LoggerFactory} from './logger';
 import {Random} from './random';
-import {I18nKey, Translator} from './ui-i18n';
+import {htmlStrings} from './html-strings';
 
 export class UiMessageTimeout {
   public readonly fast: number = 1500;
@@ -12,10 +13,12 @@ export class UiMessageTimeout {
 export class UiMessage {
   private readonly logger: Logger = LoggerFactory.getLogger(UiMessage);
 
+  private readonly css: Css;
   private readonly random: Random;
   private readonly translator: Translator;
 
-  public constructor(random: Random, translator: Translator) {
+  public constructor(css: Css, random: Random, translator: Translator) {
+    this.css = css;
     this.random = random;
     this.translator = translator;
   }
@@ -31,38 +34,53 @@ export class UiMessage {
   }
 
   public addFixedLink(i18nKey: I18nKey, id: string, clazz?: string): void {
-    const $a: JQuery = $('<a/>', {
-      ['role']: 'button',
-      ['id']: id.substring(1),
-      ['class']: 'like-href ' + (clazz || ''),
-    });
+    const link: HTMLAnchorElement = document.createElement('a');
+    link.setAttribute('role', 'button');
+    link.setAttribute('id', id);
+    link.classList.add('like-href');
+    if (clazz !== undefined) {
+      link.classList.add(clazz);
+    }
 
-    this.translator.translateElement($a, i18nKey);
-    $(htmlStrings.message.id_const).append($a);
+    this.translator.translateElement(link, i18nKey);
+
+    const messagesConst: HTMLElement = document.querySelector<HTMLElement>(
+      htmlStrings.message.selector.const
+    )!;
+    messagesConst.append(link);
 
     this.logger.trace('{0},{1},{2}', i18nKey, id, clazz);
   }
 
   private set(i18nKey: I18nKey, timeout?: number, clazz?: string): void {
     const outerId: string = timeout
-      ? '#{0}'.format(this.random.str(7, 'a'))
-      : htmlStrings.message.id_const;
+      ? '{0}'.format(this.random.str(7, 'a'))
+      : htmlStrings.message.id.const;
 
-    const $outer: JQuery = $('<span/>', {
-      ['id']: outerId.substring(1),
-      ['class']: '{0} msg'.format(clazz || ''),
-    });
+    const outer: HTMLElement = document.createElement('span');
+    outer.setAttribute('id', outerId);
+    outer.classList.add('msg');
+    if (clazz !== undefined) {
+      outer.classList.add(clazz);
+    }
 
-    const $inner: JQuery = $('<span/>');
-    this.translator.translateElement($inner, i18nKey);
-    $outer.append($inner);
+    const inner: HTMLElement = document.createElement('span');
+    this.translator.translateElement(inner, i18nKey);
+    outer.append(inner);
+
+    const messagesContainer: HTMLElement = document.querySelector<HTMLElement>(
+      htmlStrings.message.selector.container
+    )!;
+    const messagesConst: HTMLElement = document.querySelector<HTMLElement>(
+      htmlStrings.message.selector.const
+    )!;
 
     if (timeout) {
-      $(htmlStrings.message.id_container).append($outer);
-      setTimeout(() => $(outerId).fadeOut('fast', () => $(outerId).remove()), timeout);
+      messagesContainer.append(outer);
+      this.css.fadeOut(outer, timeout);
     } else {
-      $(htmlStrings.message.id_const).remove();
-      $(htmlStrings.message.id_container).append($outer);
+      messagesConst.remove();
+      messagesContainer.append(outer);
     }
   }
 }

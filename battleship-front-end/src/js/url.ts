@@ -1,5 +1,5 @@
-import {Logger, LoggerFactory} from './logger';
 import './regexp-escape';
+import {Logger, LoggerFactory} from './logger';
 
 export class Url {
   private readonly logger: Logger = LoggerFactory.getLogger(Url);

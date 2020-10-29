@@ -1,26 +1,28 @@
-import {UiMessage, UiMessageTimeout} from './ui-message';
-import {LangFinder, LangSelector, LangSetter, LangTagComparer} from './ui-langs';
-import {Translator} from './ui-i18n';
-import {Grids, GridSelection} from './game-grid';
-import {Url} from './url';
+import {Css} from './css';
+import {Document2} from './document2';
+import {GameStarter} from './app-game-starter';
 import {GridSerializer} from './game-grid-serializer';
+import {Grids, GridSelection} from './game-grid';
+import {LangFinder, LangSelector, LangSetter, LangTagComparer} from './ui-langs';
+import {OnWsEvent} from './ws-onwsevent';
+import {OnWsMessage, SessionContext} from './ws-onwsmessage';
+import {Random} from './random';
+import {Translator} from './ui-i18n';
 import {UiFlags} from './ui-flags';
 import {UiGameRules} from './ui-gamerules';
+import {UiMessage, UiMessageTimeout} from './ui-message';
 import {UiThemes} from './ui-themes';
 import {UiTitle} from './ui-title';
-import {Document2Event} from './document2-event';
-import {Random} from './random';
-import {OnWsMessage, SessionContext} from './ws-onwsmessage';
-import {OnWsEvent} from './ws-onwsevent';
-import {GameStarter} from './app-game-starter';
+import {Url} from './url';
 import {Ws} from './ws-ws';
 
 class Game {
   // private readonly assert: Assert = new Assert();
   private readonly random: Random = new Random();
-  private readonly document2Event: Document2Event = new Document2Event(this.random);
+  private readonly document2: Document2 = new Document2(this.random);
+  private readonly css: Css = new Css();
   private readonly grids: Grids = new Grids();
-  private readonly gridSelection: GridSelection = new GridSelection(this.grids);
+  private readonly gridSelection: GridSelection = new GridSelection(this.grids, this.document2);
   private readonly gridSerializer: GridSerializer = new GridSerializer();
   private readonly langTagComparer: LangTagComparer = new LangTagComparer();
   private readonly langFinder: LangFinder = new LangFinder();
@@ -30,11 +32,11 @@ class Game {
   );
   private readonly langSetter: LangSetter = new LangSetter();
   private readonly translator: Translator = new Translator(this.langSelector, this.langSetter);
-  private readonly uiFlags: UiFlags = new UiFlags(this.translator);
-  private readonly uiGameRules = new UiGameRules();
-  private readonly uiMessage: UiMessage = new UiMessage(this.random, this.translator);
+  private readonly uiFlags: UiFlags = new UiFlags(this.translator, this.document2);
+  private readonly uiGameRules = new UiGameRules(this.document2);
+  private readonly uiMessage: UiMessage = new UiMessage(this.css, this.random, this.translator);
   private readonly uiMessageTimeout: UiMessageTimeout = new UiMessageTimeout();
-  private readonly uiThemes: UiThemes = new UiThemes();
+  private readonly uiThemes: UiThemes = new UiThemes(this.document2);
   private readonly uiTitle: UiTitle = new UiTitle(this.translator);
   private readonly url: Url = new Url();
   private readonly sessionContext: SessionContext = new SessionContext();
@@ -43,7 +45,7 @@ class Game {
 
   private readonly onWsMessage: OnWsMessage = new OnWsMessage(
     this.ws,
-    this.document2Event,
+    this.document2,
     this.gridSelection,
     this.gridSerializer,
     this.grids,

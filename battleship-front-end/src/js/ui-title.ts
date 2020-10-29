@@ -1,5 +1,5 @@
-import {Logger, LoggerFactory} from './logger';
 import {I18nKey, Translator} from './ui-i18n';
+import {Logger, LoggerFactory} from './logger';
 
 export class UiTitle {
   private readonly logger: Logger = LoggerFactory.getLogger(UiTitle);

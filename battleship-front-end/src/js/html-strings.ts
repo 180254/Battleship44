@@ -1,19 +1,30 @@
 export const htmlStrings = {
-  themeSwitcher: {
-    id_switcher: '#theme-switcher',
-    id_theme_holder: 'body',
+  theme: {
+    selector: {
+      switcher: '#theme-switcher',
+      holder: '#body',
+    },
   },
 
   flags: {
-    id: '#flags',
+    selector: {
+      container: '#flags',
+    },
     clazz: {
       default: 'flag',
     },
   },
 
   message: {
-    id_container: '#messages',
-    id_const: '#message-const',
+    id: {
+      container: 'messages',
+      const: 'message-const',
+    },
+
+    selector: {
+      container: '#messages',
+      const: '#message-const',
+    },
 
     clazz: {
       default: 'message',
@@ -22,16 +33,26 @@ export const htmlStrings = {
     },
 
     ok: {
-      id_ship_selection: '#ok-ship-selection',
-      id_random_ship_selection: '#random-ship-selection',
-      id_game_next: '#ok-game-next',
+      id: {
+        ship_selection: 'ok-ship-selection',
+        random_ship_selection: 'random-ship-selection',
+        game_next: 'ok-game-next',
+      },
+
+      selector: {
+        ship_selection: '#ok-ship-selection',
+        random_ship_selection: '#random-ship-selection',
+        game_next: '#ok-game-next',
+      },
     },
   },
 
   grid: {
-    id_container: '#grids',
-    id_opponent: '#grid-opponent',
-    id_shoot: '#grid-shoot',
+    selector: {
+      container: '#grids',
+      opponent: '#grid-opponent',
+      shoot: '#grid-shoot',
+    },
 
     clazz: {
       default: 'grid',
@@ -40,6 +61,11 @@ export const htmlStrings = {
   },
 
   cell: {
+    selector: {
+      opponent: '#grid-opponent td',
+      shoot: '#grid-shoot td',
+    },
+
     clazz: {
       unknown: 'cell-unknown',
       empty: 'cell-empty',
@@ -51,21 +77,34 @@ export const htmlStrings = {
   },
 
   info: {
-    id: '#info',
-    id_game_url: '#info-game-url',
-    id_players_game: '#info-players-game',
-    id_players_global: '#info-players-global',
-    id_winning_ratio: '#info-winning-ratio',
-    id_winning_me: '#info-winning-me',
-    id_winning_opp: '#info-winning-opp',
+    selector: {
+      container: '#info',
+      game_url: '#info-game-url',
+      players_game: '#info-players-game',
+      players_global: '#info-players-global',
+      winning_ratio: '#info-winning-ratio',
+      winning_me: '#info-winning-me',
+      winning_opp: '#info-winning-opp',
+    },
 
     clazz: {
-      td_1: '.info-td-1',
-      td_2: '.info-td-2',
+      td_1: 'info-td-1',
+      td_2: 'info-td-2',
     },
   },
 
   game_rules: {
-    data_game_rules_change: 'data-game-rules-change',
+    selector: {
+      data_game_rules_change: '[data-game-rules-change]',
+    },
+
+    attribute: {
+      data_game_rules_change: 'data-game-rules-change',
+    },
+
+    clazz: {
+      change_enabled: 'change-enabled',
+      change_disabled: 'change-disabled',
+    },
   },
 };

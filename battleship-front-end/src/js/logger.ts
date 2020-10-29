@@ -1,5 +1,5 @@
-import {Consumer} from './functional-interfaces';
 import './string-format';
+import {Consumer} from './functional-interfaces';
 
 export enum Level {
   TRACE = 6,
@@ -23,7 +23,7 @@ export class Caller {
   // trace@http://localhost:8090/js/dist/app.dist.js:575:10
   // initFlags/<@http://localhost:8090/js/dist/app.dist.js:852:19
   // initFlags@<http://localhost:8090/js/dist/app.dist.js:852:19
-  private readonly spiderMonkeyRegExp = new RegExp(/(\w+)@/, 'g');
+  private readonly spiderMonkeyRegExp: RegExp = new RegExp(/(\w+)@/, 'g');
 
   // Error
   // at Caller.get (logger.ts:98)
@@ -32,9 +32,9 @@ export class Caller {
   // at ui-flags.ts:37
   // at Array.forEach (<anonymous>)
   // at UiFlags.initFlags (ui-flags.ts:22)
-  private readonly v8RegExp = new RegExp(/at (?:\w+)\.(\w+) \((?!<)/, 'g');
+  private readonly v8RegExp: RegExp = new RegExp(/at (?:\w+)\.(\w+) \((?!<)/, 'g');
 
-  private readonly commonRegExp = new RegExp(
+  private readonly commonRegExp: RegExp = new RegExp(
     '(?:{0})|(?:{1})'.format(this.spiderMonkeyRegExp.source, this.v8RegExp.source),
     'g'
   );

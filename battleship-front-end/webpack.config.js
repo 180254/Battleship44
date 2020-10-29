@@ -15,7 +15,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 
-const jQueryVersion = require('jquery/package.json').version;
 const jsCookieVersion = require('js-cookie/package.json').version;
 
 const configs = {
@@ -98,7 +97,14 @@ module.exports = (env, argv) => {
     mode: itdepends.mode,
     devtool: itdepends.devtool,
     entry: {
-      app: path.resolve(__dirname, 'src/js/app-entrypoint.ts'),
+      app: [
+        // core-js@3 do not polyfill window.fetch
+        // https://caniuse.com/?search=fetch
+        // https://github.com/developit/unfetch
+        // https://unpkg.com/browse/whatwg-fetch@3.4.1/
+        'unfetch/polyfill',
+        path.resolve(__dirname, 'src/js/app-entrypoint.ts'),
+      ],
       stylesheet: path.resolve(__dirname, 'src/css/stylesheet.css'),
     },
     output: {
@@ -223,10 +229,6 @@ module.exports = (env, argv) => {
             to: 'favicon.png',
           },
           {
-            from: path.resolve(__dirname, 'node_modules/jquery/dist/jquery.min.js'),
-            to: `jquery.${jQueryVersion}.min.js`,
-          },
-          {
             from: path.resolve(__dirname, 'node_modules/js-cookie/dist/js.cookie.min.js'),
             to: `js.cookie.${jsCookieVersion}.min.js`,
           },
@@ -241,7 +243,7 @@ module.exports = (env, argv) => {
         xhtml: true,
       }),
       new HtmlWebpackTagsPlugin({
-        tags: [`jquery.${jQueryVersion}.min.js`, `js.cookie.${jsCookieVersion}.min.js`],
+        tags: [`js.cookie.${jsCookieVersion}.min.js`],
         append: false, // it means prepend
       }),
       ...itdepends.extraPlugins,

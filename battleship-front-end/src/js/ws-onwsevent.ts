@@ -1,13 +1,13 @@
-import {Logger, LoggerFactory} from './logger';
-import {UiMessage} from './ui-message';
-import {i18nKey} from './ui-i18n';
-import {htmlStrings} from './html-strings';
-import {Ws} from './ws-ws';
-import {UiTitle} from './ui-title';
 import {GridSelection} from './game-grid';
+import {Logger, LoggerFactory} from './logger';
 import {OnWsMessage} from './ws-onwsmessage';
-import {WsMessage} from './ws-wsmessage';
+import {UiMessage} from './ui-message';
+import {UiTitle} from './ui-title';
 import {Url} from './url';
+import {WsMessage} from './ws-wsmessage';
+import {Ws} from './ws-ws';
+import {htmlStrings} from './html-strings';
+import {i18nKey} from './ui-i18n';
 
 export class OnWsEvent {
   private readonly logger: Logger = LoggerFactory.getLogger(OnWsEvent);

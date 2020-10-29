@@ -1,6 +1,6 @@
-import {PublisherSubscriber} from './publisher-subscriber';
 import {Consumer} from './functional-interfaces';
 import {LangSelector, LangSetter, LangTag} from './ui-langs';
+import {PublisherSubscriber} from './publisher-subscriber';
 
 export class I18nKey {
   public readonly path: string;
@@ -62,53 +62,60 @@ export class Translator {
       : Translator.getDefaultTranslation(i18nKey);
   }
 
-  public translatableElements(): JQuery {
-    return $('[{0}]'.format(this.dataAttrPath));
+  public translatableElements(): NodeListOf<HTMLElement> {
+    return document.querySelectorAll('[{0}]'.format(this.dataAttrPath));
   }
 
-  public translateElement($element: JQuery, i18nKey?: I18nKey): void {
-    const path: string = i18nKey ? i18nKey.path : $element.attr(this.dataAttrPath)!;
+  public translateElement(element: HTMLElement, i18nKey?: I18nKey): void {
+    const path: string = i18nKey ? i18nKey.path : element.getAttribute(this.dataAttrPath)!;
 
     const params: string[] = i18nKey
       ? i18nKey.params
-      : JSON.parse($element.attr(this.dataAttrParams) || '[]');
+      : JSON.parse(element.getAttribute(this.dataAttrParams) || '[]');
 
     if (i18nKey) {
-      $element.attr(this.dataAttrPath, i18nKey.path);
-      $element.attr(this.dataAttrParams, JSON.stringify(i18nKey.params));
+      element.setAttribute(this.dataAttrPath, i18nKey.path);
+      element.setAttribute(this.dataAttrParams, JSON.stringify(i18nKey.params));
     }
 
-    $element.text(this.getTranslation(new I18nKey(path, params)));
+    element.textContent = this.getTranslation(new I18nKey(path, params));
   }
 
-  public removeTranslation($element: JQuery): void {
-    $element.removeAttr(this.dataAttrPath);
-    $element.removeAttr(this.dataAttrParams);
+  public removeTranslation(element: HTMLElement): void {
+    element.removeAttribute(this.dataAttrPath);
+    element.removeAttribute(this.dataAttrParams);
   }
 
   public translateAllElements(): void {
-    this.translatableElements().each((i, element) => this.translateElement($(element)));
+    this.translatableElements().forEach(element => this.translateElement(element));
   }
 
   public init(onError?: Consumer<unknown>, callback?: Consumer<LangTag>): void {
     const langTag: LangTag = this.langSelector.autoSelect()[0];
     const jsonPath: string = Translator.fileWithTranslations(langTag);
 
-    // core-js@3 do not polyfill window.fetch
-    const fetch: JQuery.jqXHR<{[key: string]: string}> = $.get(jsonPath);
-    fetch.done(data => {
-      this.translatedStrings = data;
-      this.translateAllElements();
-      this.onLangChange.publish(0);
+    fetch(jsonPath)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(
+            'network request failed: {0} {1}'.format(response.status, response.statusText)
+          );
+        }
+        return response.json();
+      })
+      .then(data => {
+        this.translatedStrings = data;
+        this.translateAllElements();
+        this.onLangChange.publish(0);
 
-      if (callback) {
-        callback(langTag);
-      }
-    });
-    fetch.fail(err => {
-      if (onError) {
-        onError(err);
-      }
-    });
+        if (callback) {
+          callback(langTag);
+        }
+      })
+      .catch(err => {
+        if (onError) {
+          onError(err);
+        }
+      });
   }
 }

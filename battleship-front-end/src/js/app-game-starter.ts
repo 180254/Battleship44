@@ -52,7 +52,6 @@ export class GameStarter {
 
         this.uiTitle.setFixedDefaultTitle();
         this.uiFlags.initFlags();
-        this.grids.init();
 
         'WebSocket' in window ? this.ws.init() : this.uiMessage.setFixed(i18nKey('ws.unable'));
       }

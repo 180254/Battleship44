@@ -1,7 +1,7 @@
 import {Supplier} from './functional-interfaces';
 
 export class Random {
-  public random0to1: Supplier<number>;
+  public readonly random0to1: Supplier<number>;
 
   public constructor() {
     if (typeof window === 'object' && window.crypto && window.crypto.getRandomValues) {
