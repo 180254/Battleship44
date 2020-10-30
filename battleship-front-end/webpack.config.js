@@ -46,11 +46,13 @@ const configs = {
     extraOptimizations: {},
     extraPlugins: [
       new CompressionPlugin({
+        // https://github.com/google/zopfli
+        // Very good, but slow, zlib compression. Good for pre-compressed content.
         algorithm: zopfli.gzip,
         filename: '[path][base].gz',
         test: /\.(html|js|map|css|svg|json|txt)$/,
         compressionOptions: {
-          // defaults
+          // just defaults
           verbose: false,
           verbose_more: false,
           numiterations: 15,
@@ -137,17 +139,18 @@ module.exports = (env, argv) => {
                 presets: [
                   [
                     '@babel/preset-env',
+                    // https://babeljs.io/docs/en/babel-preset-env#options
                     {
                       targets: itdepends.browserslist,
                       // Note: These optimizations will be enabled by default in Babel 8
                       bugfixes: true,
-                      //A normal mode follows the semantics of ECMAScript 6 as closely as possible.
-                      //A loose mode produces simpler ES5 code.
+                      // A normal mode follows the semantics of ECMAScript 6 as closely as possible.
+                      // A loose mode produces simpler ES5 code.
                       loose: true,
                       // Outputs to console.log the polyfills and transform plugins enabled
                       debug: false,
                       // Adds specific imports for polyfills (core-js@3),
-                      // when they are used in each file.
+                      // when they are used, in each file.
                       useBuiltIns: 'usage',
                       corejs: {version: 3},
                     },
