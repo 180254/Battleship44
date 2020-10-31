@@ -1,8 +1,8 @@
 {
-  "ws.unsupported": "Error: your browser does not support WebSocket.",
-  "ws.unable": "WebSocket: unable to initialize.",
-  "ws.close": "WebSocket: connection closed [{0},{1}].",
-  "ws.error": "WebSocket: connection closed [{0}].",
+  "ws.unsupported": "Unable to initialize app. Your browser does not support WebSocket.",
+  "ws.unable": "Unable to initialize WebSocket.",
+  "ws.close": "WebSocket connection closed [{0},{1}].",
+  "ws.error": "WebSocket connection closed [{0}].",
   "title.default": "Battleship",
   "title.shoot_me": "B44: Your shoot …",
   "title.shoot_opp": "B44: Opponent's shoot …",

@@ -1,8 +1,8 @@
 {
-  "ws.unsupported": "Jest problem. Twoja przeglądarka nie obsługuje WebSocket.",
-  "ws.unable": "WebSocket: coś nie tak, nie da rady rozpocząć.",
-  "ws.close": "WebSocket: połączenie zakończone [{0},{1}].",
-  "ws.error": "WebSocket: połączenie zakończone [{0}].",
+  "ws.unsupported": "Twoja przeglądarka nie obsługuje WebSocket.",
+  "ws.unable": "Nie udało się zainicjalizować połączenia WebSocket.",
+  "ws.close": "Połączenie WebSocket zakończone [{0},{1}].",
+  "ws.error": "Połączenie WebSocket zakończone [{0}].",
   "title.default": "Okręty",
   "title.shoot_me": "O44: Twój strzał …",
   "title.shoot_opp": "O44: Teraz przeciwnik …",
