@@ -36,11 +36,11 @@ class Game {
   private readonly langSetter: LangSetter = new LangSetter();
   private readonly translator: Translator = new Translator(this.langSelector, this.langSetter);
 
-  private readonly uiFlags: UiFlags = new UiFlags(this.translator, this.document2);
+  private readonly uiFlags: UiFlags = new UiFlags(this.translator);
   private readonly uiGameRules = new UiGameRules(this.document2);
   private readonly uiMessage: UiMessage = new UiMessage(this.css, this.random, this.translator);
   private readonly uiMessageTimeout: UiMessageTimeout = new UiMessageTimeout();
-  private readonly uiThemes: UiThemes = new UiThemes(this.document2);
+  private readonly uiThemes: UiThemes = new UiThemes();
   private readonly uiTitle: UiTitle = new UiTitle(this.translator);
 
   private readonly sessionContext: SessionContext = new SessionContext();

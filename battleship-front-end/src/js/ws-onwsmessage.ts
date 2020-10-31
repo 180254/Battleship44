@@ -135,22 +135,24 @@ export class OnWsMessage {
             i18nKey('put.random'),
             htmlStrings.message.ok.id.random_ship_selection
           );
-          this.document2.addEventListener(
-            document.querySelector(htmlStrings.message.ok.selector.random_ship_selection)!,
-            'click',
-            () => this.ws.send('GRID RANDOM')
-          );
+          const randomShipSelection: HTMLElement = document.querySelector<HTMLElement>(
+            htmlStrings.message.ok.selector.random_ship_selection
+          )!;
+          randomShipSelection.addEventListener('click', () => {
+            this.ws.send('GRID RANDOM');
+          });
 
           messageConstElement.append(' ');
           this.uiMessage.addFixedLink(
             i18nKey('put.done'),
             htmlStrings.message.ok.id.ship_selection
           );
-          this.document2.addEventListener(
-            document.querySelector(htmlStrings.message.ok.selector.ship_selection)!,
-            'click',
-            () => this.ws.send('GRID {0}'.format(this.gridSelection.collect()))
-          );
+          const shipSelection: HTMLElement = document.querySelector<HTMLElement>(
+            htmlStrings.message.ok.selector.ship_selection
+          )!;
+          shipSelection.addEventListener('click', () => {
+            this.ws.send('GRID {0}'.format(this.gridSelection.collect()));
+          });
 
           if (
             this.sessionContext.numberOfPlayersInGame === 1 &&
@@ -266,7 +268,12 @@ export class OnWsMessage {
 
           this.grids.shootCells.forEach(element => {
             element.classList.add(htmlStrings.cell.clazz.shootable);
-            this.document2.addOnetimeEventListener(element, 'click', () => {
+          });
+
+          const clickNamespaced: string = 'click.{0}'.format(this.document2.getRandomNamespace());
+          this.grids.shootCells.forEach(element => {
+            this.document2.addEventListener(element, clickNamespaced, () => {
+              this.document2.removeEventListeners(undefined, clickNamespaced);
               const pos: string = this.gridSerializer.cellSerializer(Cell.FromElement(element));
               this.ws.send('SHOT {0}'.format(pos));
             });
@@ -340,11 +347,12 @@ export class OnWsMessage {
             i18nKey('end.next_game'),
             htmlStrings.message.ok.id.game_next
           );
-          this.document2.addOnetimeEventListener(
-            document.querySelector(htmlStrings.message.ok.selector.game_next)!,
-            'click',
-            () => this.process(new WsMessage('', 'GAME OK', ''))
-          );
+          const nextGame: HTMLElement = document.querySelector<HTMLElement>(
+            htmlStrings.message.ok.selector.game_next
+          )!;
+          nextGame.addEventListener('click', () => {
+            this.process(new WsMessage('', 'GAME OK', ''));
+          });
 
           this.uiTitle.setFixedDefaultTitle();
         },
@@ -369,18 +377,18 @@ export class OnWsMessage {
           if (interrupted) {
             this.grids.shootCells.forEach(element => {
               element.classList.remove(htmlStrings.cell.clazz.shootable);
-              this.document2.removeAllEventListeners(element, 'click');
+              this.document2.removeEventListeners(element, 'click');
             });
 
             this.uiMessage.addFixedLink(
               i18nKey('end.next_game'),
               htmlStrings.message.ok.id.game_next
             );
-
-            this.document2.addOnetimeEventListener(
-              document.querySelector(htmlStrings.message.ok.selector.game_next)!,
-              'click',
-              () => this.process(new WsMessage('', 'GAME OK', ''))
+            const nextGame: HTMLElement = document.querySelector<HTMLElement>(
+              htmlStrings.message.ok.selector.game_next
+            )!;
+            nextGame.addEventListener('click', () =>
+              this.process(new WsMessage('', 'GAME OK', ''))
             );
 
             this.grids.opponent.classList.add(htmlStrings.grid.clazz.inactive);
@@ -411,7 +419,7 @@ export class OnWsMessage {
             htmlStrings.game_rules.selector.data_game_rules_change
           );
           gameRulesChangers.forEach(element => {
-            this.document2.removeAllEventListeners(element, 'click');
+            this.document2.removeEventListeners(element, 'click');
             element.classList.replace(
               htmlStrings.game_rules.clazz.change_enabled,
               htmlStrings.game_rules.clazz.change_disabled

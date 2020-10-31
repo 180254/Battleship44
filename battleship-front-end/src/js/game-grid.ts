@@ -117,7 +117,7 @@ export class GridSelection {
       });
     });
 
-    this.document2.addEventListener(document, 'mouseup', event => {
+    this.document2.addEventListener(document.body, 'mouseup', event => {
       isMouseDown = false;
       event.preventDefault();
     });
@@ -126,12 +126,12 @@ export class GridSelection {
   public deactivate(): void {
     this.grids.shootCells.forEach(element => {
       element.classList.remove(htmlStrings.cell.clazz.shootable);
-      this.document2.removeAllEventListeners(element, 'mousedown');
-      this.document2.removeAllEventListeners(element, 'mouseover');
-      this.document2.removeAllEventListeners(element, 'selectstart');
+      this.document2.removeEventListeners(element, 'mousedown');
+      this.document2.removeEventListeners(element, 'mouseover');
+      this.document2.removeEventListeners(element, 'selectstart');
     });
 
-    this.document2.removeAllEventListeners(document, 'mouseup');
+    this.document2.removeEventListeners(document.body, 'mouseup');
   }
 
   public collect(): string {

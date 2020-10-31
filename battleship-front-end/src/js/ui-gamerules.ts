@@ -43,7 +43,7 @@ export class UiGameRules {
     );
 
     gameRulesChangers.forEach(gameRulesChanger => {
-      this.document2.removeAllEventListeners(gameRulesChanger, 'click');
+      this.document2.removeEventListeners(gameRulesChanger, 'click');
 
       gameRulesChanger.classList.replace(
         htmlStrings.game_rules.clazz.change_enabled,

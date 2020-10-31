@@ -1,5 +1,4 @@
 import * as Cookies from 'js-cookie';
-import {Document2} from './document2';
 import {Logger, LoggerFactory} from './logger';
 import {htmlStrings} from './html-strings';
 
@@ -26,11 +25,6 @@ export class UiThemes {
 
   private themeIndex = 0;
 
-  private readonly document2: Document2;
-  constructor(document2: Document2) {
-    this.document2 = document2;
-  }
-
   activate(nextThemeIndex: number): void {
     if (this.themeIndex === nextThemeIndex) {
       return;
@@ -49,7 +43,7 @@ export class UiThemes {
     )!;
     themeSwitcher.innerHTML = this.themes[nextThemeIndex].switcherContent;
 
-    Cookies.set(this.cookieName, nextThemeIndex.toString(), {sameSite: 'Strict', secure: true});
+    Cookies.set(this.cookieName, nextThemeIndex.toString(), {sameSite: 'Strict'});
 
     this.logger.trace('theme={0}', this.themes[nextThemeIndex].clazz);
     this.themeIndex = nextThemeIndex;
@@ -59,7 +53,7 @@ export class UiThemes {
     const themeSwitcher: HTMLElement = document.querySelector<HTMLElement>(
       htmlStrings.theme.selector.switcher
     )!;
-    this.document2.addEventListener(themeSwitcher, 'click', () => {
+    themeSwitcher.addEventListener('click', () => {
       this.activate((this.themeIndex + 1) % this.themes.length);
     });
 
