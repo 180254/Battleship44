@@ -17,18 +17,13 @@
   "scripts": {
     "dev": "webpack --mode development",
     "prod": "webpack --mode production",
-    "server": "node server.js"
+    "server": "node server.js",
+    "server.js": "node server.js"
   },
   "license": "MIT",
   "author": "180254",
   "contributors": [],
   "dependencies": {
-    "express": "^4.17.1",
-    "express-static-gzip": "^2.1.0",
-    "morgan": "^1.10.0",
-    "serve-static": "^1.14.1"
-  },
-  "devDependencies": {
     "@babel/core": "^7.12.3",
     "@babel/preset-env": "^7.12.1",
     "@gfx/zopfli": "^1.0.15",
@@ -44,24 +39,31 @@
     "core-js": "^3.6.5",
     "css-loader": "^5.0.0",
     "css-minimizer-webpack-plugin": "^1.1.5",
+    "express": "^4.17.1",
+    "express-static-gzip": "^2.1.0",
     "gts": "^3.0.2",
     "html-webpack-plugin": "^5.0.0-alpha.7",
-    "html-webpack-tags-plugin": "^2.0.17",
     "js-cookie": "^3.0.0-rc.1",
     "json-minimizer-webpack-plugin": "^1.0.1",
     "mini-css-extract-plugin": "^1.2.1",
     "mocha": "^8.2.0",
+    "morgan": "^1.10.0",
     "postcss": "^8.1.4",
     "postcss-cli": "^8.2.0",
     "postcss-loader": "^4.0.4",
     "postcss-normalize": "^9.0.0",
     "postcss-preset-env": "^6.7.0",
+    "serve-static": "^1.14.1",
     "terser-webpack-plugin": "^5.0.3",
     "ts-loader": "^8.0.7",
     "typescript": "^4.0.5",
     "unfetch": "^4.2.0",
     "webpack": "^5.3.2",
     "webpack-cli": "^4.1.0"
+  },
+  "about:dependencies": {
+    "js-cookie": "app runtime dependency",
+    "_other_": "app build dependency"
   },
   "engines": {
     "node": ">=10.16.0"

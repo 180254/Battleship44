@@ -1,5 +1,3 @@
-/* eslint-disable node/no-unpublished-require */
-
 const path = require('path');
 const zlib = require('zlib');
 const zopfli = require('@gfx/zopfli');
@@ -12,15 +10,13 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const JsonMinimizerPlugin = require('json-minimizer-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
-
-const jsCookieVersion = require('js-cookie/package.json').version;
 
 const configs = {
   development: {
     mode: 'development',
     backend: process.env.BACKEND || 'ws://localhost:8080/ws',
+    filenamePrefix: '[name]',
     devtool: 'source-map',
     browserslist: ['last 2 chrome versions', 'last 2 firefox versions'],
     extraOptimizations: {
@@ -37,9 +33,11 @@ const configs = {
     },
     extraPlugins: [],
   },
+
   production: {
     mode: 'production',
     backend: process.env.BACKEND || '',
+    filenamePrefix: '[name].[contenthash]',
     devtool: undefined,
     browserslist: ['defaults'],
     extraOptimizations: {},
@@ -98,18 +96,22 @@ module.exports = (env, argv) => {
     devtool: itdepends.devtool,
     entry: {
       app: [
-        // core-js@3 do not polyfill window.fetch
-        // https://caniuse.com/?search=fetch
-        // https://github.com/developit/unfetch
-        // https://unpkg.com/browse/whatwg-fetch@3.4.1/
+        // js-cookie is an app runtime dependency
+        'js-cookie',
+        /**
+         * core-js@3 do not polyfill window.fetch
+         * https://caniuse.com/?search=fetch
+         * https://github.com/developit/unfetch
+         * https://github.com/github/fetch
+         */
         'unfetch/polyfill',
         path.resolve(__dirname, 'src/js/app-entrypoint.ts'),
+        path.resolve(__dirname, 'src/css/stylesheet.css'),
       ],
-      stylesheet: path.resolve(__dirname, 'src/css/stylesheet.css'),
     },
     output: {
       path: path.resolve(__dirname, 'dist/'),
-      filename: '[name].[contenthash].js',
+      filename: `${itdepends.filenamePrefix}.js`,
       hashDigestLength: 8,
     },
     resolve: {
@@ -148,12 +150,12 @@ module.exports = (env, argv) => {
                     // https://babeljs.io/docs/en/babel-preset-env#options
                     {
                       targets: itdepends.browserslist,
-                      // Note: These optimizations will be enabled by default in Babel 8
+                      // "Note: These optimizations will be enabled by default in Babel 8"
                       bugfixes: true,
-                      // A normal mode follows the semantics of ECMAScript 6 as closely as possible.
-                      // A loose mode produces simpler ES5 code.
+                      // "A normal mode follows the semantics of ECMAScript 6
+                      //  as closely as possible. A loose mode produces simpler ES5 code."
                       loose: true,
-                      // Outputs to console.log the polyfills and transform plugins enabled
+                      // "Outputs to console.log the polyfills and transform plugins enabled"
                       debug: false,
                       // Adds specific imports for polyfills (core-js@3),
                       // when they are used, in each file.
@@ -174,10 +176,6 @@ module.exports = (env, argv) => {
         },
       ],
     },
-    externals: {
-      jquery: 'jQuery',
-      'js-cookie': 'Cookies',
-    },
     optimization: {
       minimizer: [
         new TerserPlugin({
@@ -195,7 +193,7 @@ module.exports = (env, argv) => {
         WEBPACK_DEFINE_BACKEND: JSON.stringify(itdepends.backend),
       }),
       new MiniCssExtractPlugin({
-        filename: '[name].[contenthash].css',
+        filename: `${itdepends.filenamePrefix}.css`,
       }),
       new CopyPlugin({
         patterns: [
@@ -228,10 +226,6 @@ module.exports = (env, argv) => {
             from: path.resolve(__dirname, 'src/favicon.png'),
             to: 'favicon.png',
           },
-          {
-            from: path.resolve(__dirname, 'node_modules/js-cookie/dist/js.cookie.min.js'),
-            to: `js.cookie.${jsCookieVersion}.min.js`,
-          },
         ],
       }),
       new HtmlWebpackPlugin({
@@ -241,10 +235,6 @@ module.exports = (env, argv) => {
         inject: false,
         scriptLoading: 'defer',
         xhtml: true,
-      }),
-      new HtmlWebpackTagsPlugin({
-        tags: [`js.cookie.${jsCookieVersion}.min.js`],
-        append: false, // it means prepend
       }),
       ...itdepends.extraPlugins,
     ],
