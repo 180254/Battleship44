@@ -180,6 +180,7 @@ module.exports = (env, argv) => {
       minimizer: [
         new TerserPlugin({
           exclude: /.min.js$/,
+          extractComments: false,
           terserOptions: {
             compress: {
               passes: 2,
@@ -193,6 +194,9 @@ module.exports = (env, argv) => {
     },
     plugins: [
       new CleanWebpackPlugin(),
+      new webpack.BannerPlugin({
+        banner: 'For license information please see app.LICENSE.txt file.',
+      }),
       new webpack.DefinePlugin({
         WEBPACK_DEFINE_MODE: JSON.stringify(itdepends.mode),
         WEBPACK_DEFINE_BACKEND: JSON.stringify(itdepends.backend),
@@ -203,12 +207,12 @@ module.exports = (env, argv) => {
       new CopyPlugin({
         patterns: [
           {
-            from: path.resolve(__dirname, 'src/flags/*.png'),
-            to: 'flags/',
+            from: path.resolve(__dirname, 'src/app.LICENSE.txt'),
+            to: './',
             flatten: true,
           },
           {
-            from: path.resolve(__dirname, 'src/flags/LICENSE.txt'),
+            from: path.resolve(__dirname, 'src/flags/*.png'),
             to: 'flags/',
             flatten: true,
           },
