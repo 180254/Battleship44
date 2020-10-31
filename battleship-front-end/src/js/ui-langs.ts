@@ -178,6 +178,6 @@ export class LangSetter {
 
   public setLang(langTag: LangTag): void {
     this.logger.trace('result={0}', langTag);
-    Cookies.set(this.langTagCookieName, langTag.toString(), {sameSite: 'strict'});
+    Cookies.set(this.langTagCookieName, langTag.toString(), {sameSite: 'Strict', secure: true});
   }
 }

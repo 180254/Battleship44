@@ -129,6 +129,7 @@ export class OnWsMessage {
           const messageConstElement: HTMLElement = document.querySelector<HTMLElement>(
             htmlStrings.message.selector.const
           )!;
+
           messageConstElement.append(' ');
           this.uiMessage.addFixedLink(
             i18nKey('put.random'),
@@ -177,7 +178,7 @@ export class OnWsMessage {
             const gameRuleValue = gameRuleSplit[1];
 
             this.translator.translateElement(
-              document.getElementById('game-rules-{0}-value'.format(gameRuleKey))!,
+              document.querySelector<HTMLElement>('#game-rules-{0}-value'.format(gameRuleKey))!,
               new I18nKey('game-rules.{0}.{1}'.format(gameRuleKey, gameRuleValue))
             );
           }
@@ -298,12 +299,7 @@ export class OnWsMessage {
           ]);
 
           cells.forEach(cell => {
-            this.grids.setCellClass(
-              this.grids.shootCells,
-              cell,
-              clazzMap.get(cell.clazz!) || '',
-              false
-            );
+            this.grids.setCellClass(this.grids.shootCells, cell, clazzMap.get(cell.clazz!), false);
           });
         },
       ],
@@ -411,15 +407,16 @@ export class OnWsMessage {
 
           this.uiMessage.addFleeting(i18nKey('tour.two_players'), this.uiMessageTimeout.slow);
 
-          document
-            .querySelectorAll(htmlStrings.game_rules.selector.data_game_rules_change)
-            .forEach(element => {
-              this.document2.removeAllEventListeners(element, 'click');
-              element.classList.replace(
-                htmlStrings.game_rules.clazz.change_enabled,
-                htmlStrings.game_rules.clazz.change_disabled
-              );
-            });
+          const gameRulesChangers: NodeListOf<HTMLElement> = document.querySelectorAll(
+            htmlStrings.game_rules.selector.data_game_rules_change
+          );
+          gameRulesChangers.forEach(element => {
+            this.document2.removeAllEventListeners(element, 'click');
+            element.classList.replace(
+              htmlStrings.game_rules.clazz.change_enabled,
+              htmlStrings.game_rules.clazz.change_disabled
+            );
+          });
         },
       ],
 

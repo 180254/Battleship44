@@ -49,7 +49,7 @@ export class UiThemes {
     )!;
     themeSwitcher.innerHTML = this.themes[nextThemeIndex].switcherContent;
 
-    Cookies.set(this.cookieName, nextThemeIndex.toString(), {sameSite: 'strict'});
+    Cookies.set(this.cookieName, nextThemeIndex.toString(), {sameSite: 'Strict', secure: true});
 
     this.logger.trace('theme={0}', this.themes[nextThemeIndex].clazz);
     this.themeIndex = nextThemeIndex;

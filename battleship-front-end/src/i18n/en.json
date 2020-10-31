@@ -1,4 +1,5 @@
 {
+  "ws.unsupported": "Error: your browser does not support WebSocket.",
   "ws.unable": "WebSocket: unable to initialize.",
   "ws.close": "WebSocket: connection closed [{0},{1}].",
   "ws.error": "WebSocket: connection closed [{0}].",

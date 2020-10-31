@@ -1,13 +1,13 @@
-import {Level, Logger, LoggerFactory} from './logger';
 import {Environment} from './environment';
-import {i18nKey, Translator} from './ui-i18n';
-import {Ws} from './ws-ws';
-import {UiTitle} from './ui-title';
-import {UiFlags} from './ui-flags';
 import {Grids} from './game-grid';
-import {UiMessage} from './ui-message';
-import {Url} from './url';
 import {LangTag} from './ui-langs';
+import {Level, Logger, LoggerFactory} from './logger';
+import {UiFlags} from './ui-flags';
+import {UiMessage} from './ui-message';
+import {UiTitle} from './ui-title';
+import {Url} from './url';
+import {Ws} from './ws-ws';
+import {i18nKey, Translator} from './ui-i18n';
 
 export class GameStarter {
   private readonly logger: Logger = LoggerFactory.getLogger(GameStarter);
@@ -53,7 +53,7 @@ export class GameStarter {
         this.uiTitle.setFixedDefaultTitle();
         this.uiFlags.initFlags();
 
-        'WebSocket' in window ? this.ws.init() : this.uiMessage.setFixed(i18nKey('ws.unable'));
+        'WebSocket' in window ? this.ws.init() : this.uiMessage.setFixed(i18nKey('ws.unsupported'));
       }
     );
   }

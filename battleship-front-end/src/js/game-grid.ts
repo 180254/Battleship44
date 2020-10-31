@@ -66,7 +66,7 @@ export class Grids {
   public setCellClass(
     gridCells: NodeListOf<HTMLElement>,
     cell: Cell,
-    clazz: string,
+    clazz: string | undefined,
     keepCurrent: boolean
   ): void {
     const element = gridCells.item(cell.row * this.cols + cell.col);
@@ -75,7 +75,9 @@ export class Grids {
       element.removeAttribute('class');
     }
 
-    element.classList.add(clazz);
+    if (clazz !== undefined) {
+      element.classList.add(clazz);
+    }
   }
 }
 

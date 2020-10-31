@@ -1,4 +1,11 @@
 export const htmlStrings = {
+  css: {
+    clazz: {
+      fadeOut: 'fadeout',
+      fadeOutHide: 'fadeout-hide',
+    },
+  },
+
   theme: {
     selector: {
       switcher: '#theme-switcher',

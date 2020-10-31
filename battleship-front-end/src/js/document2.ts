@@ -1,5 +1,6 @@
 import './string-format';
 import {Random} from './random';
+import {Logger, LoggerFactory} from './logger';
 
 interface EventListener {
   node: Node;
@@ -9,6 +10,8 @@ interface EventListener {
 }
 
 export class Document2 {
+  private readonly logger: Logger = LoggerFactory.getLogger(Document2);
+
   private readonly random: Random;
 
   /**
@@ -28,11 +31,15 @@ export class Document2 {
     listener: EventListenerOrEventListenerObject,
     options?: boolean | AddEventListenerOptions
   ): void {
+    this.logger.trace('eventListeners.length={0}', this.eventListeners.length);
+
     this.eventListeners.push({node: node, type: type, listener: listener, options: options});
     node.addEventListener(type, listener, options);
   }
 
   public removeAllEventListeners(node: Node, type: string): void {
+    this.logger.trace('eventListeners.length={0}', this.eventListeners.length);
+
     const callbacks = this.eventListeners.filter(eventListener => {
       return eventListener.node === node && eventListener.type === type;
     });

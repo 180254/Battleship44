@@ -180,6 +180,11 @@ module.exports = (env, argv) => {
       minimizer: [
         new TerserPlugin({
           exclude: /.min.js$/,
+          terserOptions: {
+            compress: {
+              passes: 2,
+            },
+          },
         }),
         new CssMinimizerPlugin(),
         new JsonMinimizerPlugin(),
@@ -235,6 +240,7 @@ module.exports = (env, argv) => {
         inject: false,
         scriptLoading: 'defer',
         xhtml: true,
+        cache: false, // https://github.com/webpack/webpack/issues/10761
       }),
       ...itdepends.extraPlugins,
     ],

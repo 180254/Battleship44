@@ -1,5 +1,6 @@
 {
-  "ws.unable": "WebSocket: nie da rady rozpocząć.",
+  "ws.unsupported": "Jest problem. Twoja przeglądarka nie obsługuje WebSocket.",
+  "ws.unable": "WebSocket: coś nie tak, nie da rady rozpocząć.",
   "ws.close": "WebSocket: połączenie zakończone [{0},{1}].",
   "ws.error": "WebSocket: połączenie zakończone [{0}].",
   "title.default": "Okręty",
