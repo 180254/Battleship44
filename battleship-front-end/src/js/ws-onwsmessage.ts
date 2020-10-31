@@ -377,17 +377,17 @@ export class OnWsMessage {
               htmlStrings.message.ok.id.game_next
             );
 
+            this.document2.addOnetimeEventListener(
+              document.querySelector(htmlStrings.message.ok.selector.game_next)!,
+              'click',
+              () => this.process(new WsMessage('', 'GAME OK', ''))
+            );
+
             this.grids.opponent.classList.add(htmlStrings.grid.clazz.inactive);
             this.grids.shoot.classList.add(htmlStrings.grid.clazz.inactive);
 
             this.uiTitle.setFixedDefaultTitle();
           }
-
-          this.document2.addOnetimeEventListener(
-            document.querySelector(htmlStrings.message.ok.selector.game_next)!,
-            'click',
-            () => this.process(new WsMessage('', 'GAME OK', ''))
-          );
 
           if (!this.sessionContext.gridAlreadySet) {
             this.uiGameRules.activateChanging();
