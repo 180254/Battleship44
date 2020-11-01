@@ -39,7 +39,7 @@ const configs = {
     backend: process.env.BACKEND || '',
     filenamePrefix: '[name].[contenthash]',
     devtool: undefined,
-    browserslist: ['defaults'],
+    browserslist: '> 0.5%, last 2 versions, Firefox ESR, not dead', // 'defaults'
     extraOptimizations: {},
     extraPlugins: [
       new CompressionPlugin({
