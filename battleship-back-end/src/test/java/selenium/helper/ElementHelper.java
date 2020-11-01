@@ -48,13 +48,13 @@ public class ElementHelper {
 
   public WebElement oneCell(String grid, int row, int col) {
     return driver.findElement(By.cssSelector(String.format(
-        "#%s > table > tr:nth-child(%d) > td:nth-child(%d)", grid, row + 1, col + 1
+        "#%s > table tr:nth-child(%d) > td:nth-child(%d)", grid, row + 1, col + 1
     )));
   }
 
   public List<WebElement> listOfCell(String grid, int row, int col) {
     return driver.findElements(By.cssSelector(String.format(
-        "#%s > table > tr:nth-child(%d) > td:nth-child(%d)", grid, row - 1, col - 1
+        "#%s > table tr:nth-child(%d) > td:nth-child(%d)", grid, row - 1, col - 1
     )));
   }
 

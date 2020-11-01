@@ -12,20 +12,23 @@ import selenium.helper.GeneralHelper;
 import selenium.helper.TabHelper;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Disabled("selenium test." +
-    "- ignored while building." +
-    "- NOT a unit test. this is not even a 'real' test." +
-    "- run whole test class, test are interdependent." +
-    "- this test contains automated game flows/cases." +
-    "- need to be verified by tester." +
-    "- watch execution and verify if it seems to work." +
-    "- race condition included.")
-@TestMethodOrder(MethodOrderer.Alphanumeric.class)
-public class AppTest {
+@Disabled(
+    "selenium test" +
+        "- ignored while building" +
+        "- NOT a unit test. this is not even a 'real' test" +
+        "- run whole test class, test are interdependent" +
+        "- this test contains automated game flows/cases" +
+        "- need to be verified by tester" +
+        "- watch execution and verify if it seems to work" +
+        "- race conditions are included"
+)
+@TestMethodOrder(MethodOrderer.MethodName.class)
+public class SeleniumTest {
 
-  static final String APP_URL = "http://localhost:8080/";
+  static final String APP_URL = "http://localhost:8090/";
 
   static RemoteWebDriver driver;
   static Wait<WebDriver> wait;
@@ -51,7 +54,7 @@ public class AppTest {
 
   @AfterEach
   public void after() {
-    generalHelper.sleep(2000);
+    generalHelper.sleep(500);
   }
 
   @Test
@@ -81,7 +84,47 @@ public class AppTest {
   }
 
   @Test
-  public void a03_gridVerificationFail1() {
+  public void a03_changesTheme() {
+    WebElement themeSwitcher = elementHelper.oneById("theme-switcher");
+
+    themeSwitcher.click();
+    generalHelper.sleep(1000);
+
+    themeSwitcher.click();
+    generalHelper.sleep(1000);
+
+    themeSwitcher.click();
+    generalHelper.sleep(1000);
+  }
+
+  @Test
+  public void a04_putsRandomFleet() {
+    WebElement randomFleet = elementHelper.oneById("random-ship-selection");
+
+    randomFleet.click();
+    generalHelper.sleep(1000);
+
+    randomFleet.click();
+    generalHelper.sleep(1000);
+  }
+
+  @Test
+  public void a05_changesGameRules() {
+    List<WebElement> gameRulesChangers = elementHelper.listByCss("[data-game-rules-change]");
+    WebElement randomFleet = elementHelper.oneById("random-ship-selection");
+
+    for (WebElement gameRulesChanger : gameRulesChangers) {
+      gameRulesChanger.click();
+      randomFleet.click();
+      generalHelper.sleep(1000);
+    }
+
+    driver.get(APP_URL);
+    generalHelper.sleep(1000);
+  }
+
+  @Test
+  public void a06_gridVerificationFail1() {
     elementHelper.oneCell("grid-shoot", 0, 1).click();
 
     elementHelper.oneById("ok-ship-selection").click();
@@ -91,7 +134,7 @@ public class AppTest {
   }
 
   @Test
-  public void a04_gridVerificationFail2() {
+  public void a07_gridVerificationFail2() {
     generalHelper.clickProperShips();
     elementHelper.oneCell("grid-shoot", 8, 8).click();
 
@@ -103,7 +146,7 @@ public class AppTest {
   }
 
   @Test
-  public void a05_acceptsProperGrid() {
+  public void a08_acceptsProperGrid() {
     generalHelper.clickProperShips();
 
     elementHelper.oneById("ok-ship-selection").click();
@@ -111,7 +154,7 @@ public class AppTest {
   }
 
   @Test
-  public void a06_msgSecondUserGoneNoGame() {
+  public void a09_msgSecondUserGoneNoGame() {
     String gameUrl = elementHelper.oneById("info-game-url").getText();
 
     tabHelper.switchTo(1);
@@ -121,10 +164,12 @@ public class AppTest {
     tabHelper.clear();
     tabHelper.switchTo(0);
     wait.until((@Nonnull WebDriver wd) -> elementHelper.listByI18n("end.opp_gone").size() > 0);
+
+    generalHelper.sleep(1000);
   }
 
   @Test
-  public void a07_msgSecondUserGameInProgress() {
+  public void a10_msgSecondUserGameInProgress() {
     String gameUrl = elementHelper.oneById("info-game-url").getText();
 
     tabHelper.switchTo(1);
@@ -138,30 +183,31 @@ public class AppTest {
   }
 
   @Test
-  public void a08_blinkingTitleIsTranslated() {
+  public void a11_blinkingTitleIsTranslated() {
     WebElement enFlag = elementHelper.oneFlag("en");
     WebElement plFlag = elementHelper.oneFlag("pl");
 
     enFlag.click();
-    generalHelper.sleep(2000);
+    generalHelper.sleep(1000);
 
     plFlag.click();
     generalHelper.sleep(2000);
 
     enFlag.click();
-    generalHelper.sleep(2000);
+    generalHelper.sleep(1000);
   }
 
   @Test
-  public void a09_msgUserGoneGameInterrupted() {
+  public void a12_msgUserGoneGameInterrupted() {
     tabHelper.clear();
     tabHelper.switchTo(0);
     wait.until((@Nonnull WebDriver wd) -> elementHelper.listByI18n("end.next_game").size() > 0);
+    generalHelper.sleep(2000);
     elementHelper.oneById("ok-game-next").click();
   }
 
   @Test
-  public void a10_gameFlowWorks() {
+  public void a13_gameFlowWorks() {
     String gameUrl = elementHelper.oneById("info-game-url").getText();
 
     tabHelper.switchTo(1);
