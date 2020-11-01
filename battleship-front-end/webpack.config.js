@@ -47,7 +47,7 @@ const configs = {
         // Very good, but slow, zlib compression. Good for pre-compressed content.
         algorithm: zopfli.gzip,
         filename: '[path][base].gz',
-        test: /\.(html|js|map|css|svg|json|txt)$/,
+        test: /\.(html|js|map|css|svg|ico|json|txt)$/,
         compressionOptions: {
           // just defaults
           verbose: false,
@@ -61,7 +61,7 @@ const configs = {
       new CompressionPlugin({
         algorithm: zlib.brotliCompress,
         filename: '[path][base].br',
-        test: /\.(html|js|map|css|svg|json|txt)$/,
+        test: /\.(html|js|map|css|svg|ico|json|txt)$/,
         compressionOptions: {
           params: {
             // BROTLI_MAX_QUALITY is ok for pre-compressed content.
@@ -232,8 +232,9 @@ module.exports = (env, argv) => {
             flatten: true,
           },
           {
-            from: path.resolve(__dirname, 'src/favicon.png'),
-            to: 'favicon.png',
+            from: path.resolve(__dirname, 'src/favicon.*'),
+            to: './',
+            flatten: true,
           },
         ],
       }),
