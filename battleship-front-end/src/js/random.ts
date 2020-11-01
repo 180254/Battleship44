@@ -6,7 +6,7 @@ export class Random {
   public constructor() {
     if (typeof window === 'object' && window.crypto && window.crypto.getRandomValues) {
       this.random0to1 = () => {
-        // credits: friends @ stackoverflow
+        // credits: sindilevich @ stackoverflow (https://stackoverflow.com/users/598847/sindilevich)
         // url: https://stackoverflow.com/a/42321673
         // license: cc by-sa 3.0
         // license url: https://creativecommons.org/licenses/by-sa/3.0/
@@ -41,7 +41,7 @@ export class Random {
     return Math.floor(this.random0to1() * (max - min + 1)) + min;
   }
 
-  // credits: friends @ stackoverflow
+  // credits: Nimphious @ stackoverflow (https://stackoverflow.com/users/1391040/nimphious)
   // url: http://stackoverflow.com/a/10727155
   // license: cc by-sa 3.0
   // license url: https://creativecommons.org/licenses/by-sa/3.0/

@@ -5,7 +5,7 @@ declare global {
   }
 }
 
-// credits: friends @ stackoverflow
+// credits: Fenton @ stackoverflow (https://stackoverflow.com/users/75525/fenton)
 // url: http://stackoverflow.com/a/20070599
 // license: cc by-sa 3.0
 // license url: https://creativecommons.org/licenses/by-sa/3.0/
