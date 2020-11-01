@@ -7,7 +7,7 @@ trap 'echo "ERROR: ${BASH_SOURCE:-$BASH_COMMAND in $0}: ${FUNCNAME[0]:-line} at 
 
 pushd battleship-front-end
 if command -v yarn &>/dev/null; then
-  yarn install
+  yarn install --frozen-lockfile
 else
   npm install
 fi
