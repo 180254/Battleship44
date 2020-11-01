@@ -39,7 +39,12 @@ const configs = {
     backend: process.env.BACKEND || '',
     filenamePrefix: '[name].[contenthash]',
     devtool: undefined,
-    browserslist: '> 0.5%, last 2 versions, Firefox ESR, not dead', // 'defaults'
+    browserslist: [
+      // 'defaults'
+      '> 0.5%, last 2 versions, Firefox ESR, not dead',
+      // IE?! That browser is not dead? It should. It is hard to find the thing that works there.
+      'not IE >0',
+    ],
     extraOptimizations: {},
     extraPlugins: [
       new CompressionPlugin({
@@ -98,13 +103,6 @@ module.exports = (env, argv) => {
       app: [
         // js-cookie is an app runtime dependency
         'js-cookie',
-        /**
-         * core-js@3 do not polyfill window.fetch
-         * https://caniuse.com/?search=fetch
-         * https://github.com/developit/unfetch
-         * https://github.com/github/fetch
-         */
-        'unfetch/polyfill',
         path.resolve(__dirname, 'src/js/app-entrypoint.ts'),
         path.resolve(__dirname, 'src/css/stylesheet.css'),
       ],
