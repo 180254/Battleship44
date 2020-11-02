@@ -61,7 +61,7 @@ export class Document2 {
    * Enhanced version of node.removeEventListener().
    * - it is required to use document2.addEventListener() beforehand,
    * - you don't have to remember the 'listener' and 'options' passed to addEventListener(),
-   * - 'type' may be simple ('click'), or namespaced ('click.magic'), or just namespace ('.magic')
+   * - 'type' may be simple ('click'), or namespaced ('click.magic'), or just namespace ('.magic').
    */
   public removeEventListeners(
     node: Node | undefined,

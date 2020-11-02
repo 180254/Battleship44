@@ -51,9 +51,8 @@ export class UiMessage {
   }
 
   private set(i18nKey: I18nKey, timeout?: number, clazz?: string): void {
-    const outerId: string = timeout
-      ? '{0}'.format(this.random.str(7, 'a'))
-      : htmlStrings.message.id.const;
+    const outerId: string =
+      timeout !== undefined ? '{0}'.format(this.random.str(7, 'a')) : htmlStrings.message.id.const;
 
     const outer: HTMLElement = document.createElement('span');
     outer.setAttribute('id', outerId);
@@ -66,17 +65,15 @@ export class UiMessage {
     this.translator.translateElement(inner, i18nKey);
     outer.append(inner);
 
-    const messagesContainer: HTMLElement = document.getElementById(
-      htmlStrings.message.id.container
-    )!;
-    const messagesConst: HTMLElement = document.getElementById(htmlStrings.message.id.const)!;
+    const msgContainer: HTMLElement = document.getElementById(htmlStrings.message.id.container)!;
+    const msgConst: HTMLElement = document.getElementById(htmlStrings.message.id.const)!;
 
     if (timeout) {
-      messagesContainer.append(outer);
+      msgContainer.append(outer);
       this.css.fadeOut(outer, timeout);
     } else {
-      messagesConst.remove();
-      messagesContainer.append(outer);
+      msgConst.remove();
+      msgContainer.append(outer);
     }
   }
 }

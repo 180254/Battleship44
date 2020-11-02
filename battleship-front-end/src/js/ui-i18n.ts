@@ -69,9 +69,10 @@ export class Translator {
   public translateElement(element: HTMLElement, i18nKey?: I18nKey): void {
     const path: string = i18nKey ? i18nKey.path : element.getAttribute(this.dataAttrPath)!;
 
-    const params: string[] = i18nKey
-      ? i18nKey.params
-      : JSON.parse(element.getAttribute(this.dataAttrParams) || '[]');
+    const params: string[] =
+      i18nKey !== undefined
+        ? i18nKey.params
+        : JSON.parse(element.getAttribute(this.dataAttrParams) || '[]');
 
     if (i18nKey) {
       element.setAttribute(this.dataAttrPath, i18nKey.path);

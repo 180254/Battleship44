@@ -1,6 +1,6 @@
 declare global {
-  const WEBPACK_DEFINE_MODE: string;
-  const WEBPACK_DEFINE_BACKEND: string;
+  let WEBPACK_DEFINE_MODE: string;
+  let WEBPACK_DEFINE_BACKEND: string;
 }
 
 export class Environment {

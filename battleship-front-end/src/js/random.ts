@@ -3,8 +3,10 @@ import {Supplier} from './functional-interfaces';
 export class Random {
   public readonly random0to1: Supplier<number>;
 
-  public constructor() {
-    if (typeof window === 'object' && window.crypto && window.crypto.getRandomValues) {
+  public constructor(random0to1?: Supplier<number>) {
+    if (random0to1 !== undefined) {
+      this.random0to1 = random0to1;
+    } else if (typeof window === 'object' && window.crypto && window.crypto.getRandomValues) {
       this.random0to1 = () => {
         // credits: sindilevich @ stackoverflow (https://stackoverflow.com/users/598847/sindilevich)
         // url: https://stackoverflow.com/a/42321673

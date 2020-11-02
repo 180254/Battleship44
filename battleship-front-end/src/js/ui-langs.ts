@@ -95,8 +95,8 @@ export class LangSelector {
   private readonly landTagComparer: LangTagComparer;
   private readonly langFinder: LangFinder;
 
-  public constructor(langTagComparison: LangTagComparer, finder: LangFinder) {
-    this.landTagComparer = langTagComparison;
+  public constructor(langTagComparer: LangTagComparer, finder: LangFinder) {
+    this.landTagComparer = langTagComparer;
     this.langFinder = finder;
   }
 
@@ -112,43 +112,43 @@ export class LangSelector {
       throw new Error('finder.server cannot be empty, set supported lang tags');
     }
 
-    let resultLandTag: LangTag | undefined;
-    let resultLandTag2: LangTag | undefined;
+    let resultLangTag: LangTag | undefined;
+    let resultLangTag2: LangTag | undefined;
     let resultSelectType: LangTagSelectType | undefined;
 
     for (const userLang of user) {
       // try exact tag, as from user data
-      resultLandTag = server.find(serverLang =>
+      resultLangTag = server.find(serverLang =>
         this.landTagComparer.exactlyMatches(userLang, serverLang)
       );
-      if (resultLandTag !== undefined) {
+      if (resultLangTag !== undefined) {
         resultSelectType = LangTagSelectType.EXACTLY;
         break;
       }
 
       // or maybe approx tag
-      resultLandTag = server.find(serverLang =>
+      resultLangTag = server.find(serverLang =>
         this.landTagComparer.approxMatches(userLang, serverLang)
       );
-      if (resultLandTag !== undefined) {
+      if (resultLangTag !== undefined) {
         resultSelectType = LangTagSelectType.APPROX;
 
         // maybe user has exact but on next position?
-        resultLandTag2 = user.find(userLang =>
-          this.landTagComparer.exactlyMatches(userLang, resultLandTag!)
+        resultLangTag2 = user.find(userLang =>
+          this.landTagComparer.exactlyMatches(userLang, resultLangTag!)
         );
-        if (resultLandTag2 !== undefined) {
+        if (resultLangTag2 !== undefined) {
           resultSelectType = LangTagSelectType.EXACTLY;
           break;
         }
 
         // should prefer general, if same region is not available
         const userLangWithoutRegion: LangTag = new LangTag(userLang.lang);
-        resultLandTag2 = server.find(serverLang =>
+        resultLangTag2 = server.find(serverLang =>
           this.landTagComparer.exactlyMatches(userLangWithoutRegion, serverLang)
         );
-        if (resultSelectType !== undefined) {
-          resultLandTag = resultLandTag2;
+        if (resultLangTag2 !== undefined) {
+          resultLangTag = resultLangTag2;
           resultSelectType = LangTagSelectType.APPROX; // region was ignored
           break;
         }
@@ -158,17 +158,17 @@ export class LangSelector {
     }
 
     // or first supported (default)
-    if (resultLandTag === undefined || resultSelectType === undefined) {
-      resultLandTag = server[0];
+    if (resultLangTag === undefined || resultSelectType === undefined) {
+      resultLangTag = server[0];
       resultSelectType = LangTagSelectType.DEFAULT;
     }
 
     this.logger.trace(
       'result={0},{1}',
-      resultLandTag,
+      resultLangTag,
       LangTagSelectType[resultSelectType].toLowerCase()
     );
-    return [resultLandTag, resultSelectType];
+    return [resultLangTag, resultSelectType];
   }
 }
 

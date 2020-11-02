@@ -17,7 +17,6 @@ import {Url} from './url';
 import {Ws} from './ws-ws';
 
 class Game {
-  // private readonly assert: Assert = new Assert();
   private readonly random: Random = new Random();
   private readonly document2: Document2 = new Document2(this.random);
   private readonly css: Css = new Css();
