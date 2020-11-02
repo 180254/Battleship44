@@ -30,17 +30,13 @@ export class UiThemes {
       return;
     }
 
-    const themeHolder: HTMLElement = document.querySelector<HTMLElement>(
-      htmlStrings.theme.selector.holder
-    )!;
+    const themeHolder: HTMLElement = document.getElementById(htmlStrings.theme.id.holder)!;
     themeHolder.classList.replace(
       this.themes[this.themeIndex].clazz,
       this.themes[nextThemeIndex].clazz
     );
 
-    const themeSwitcher: HTMLElement = document.querySelector<HTMLElement>(
-      htmlStrings.theme.selector.switcher
-    )!;
+    const themeSwitcher: HTMLElement = document.getElementById(htmlStrings.theme.id.switcher)!;
     themeSwitcher.innerHTML = this.themes[nextThemeIndex].switcherContent;
 
     Cookies.set(this.cookieName, nextThemeIndex.toString(), {sameSite: 'Strict'});
@@ -50,9 +46,7 @@ export class UiThemes {
   }
 
   public init(): void {
-    const themeSwitcher: HTMLElement = document.querySelector<HTMLElement>(
-      htmlStrings.theme.selector.switcher
-    )!;
+    const themeSwitcher: HTMLElement = document.getElementById(htmlStrings.theme.id.switcher)!;
     themeSwitcher.addEventListener('click', () => {
       this.activate((this.themeIndex + 1) % this.themes.length);
     });

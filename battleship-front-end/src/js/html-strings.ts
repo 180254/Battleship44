@@ -7,15 +7,15 @@ export const htmlStrings = {
   },
 
   theme: {
-    selector: {
-      switcher: '#theme-switcher',
-      holder: '#body',
+    id: {
+      switcher: 'theme-switcher',
+      holder: 'body',
     },
   },
 
   flags: {
-    selector: {
-      container: '#flags',
+    id: {
+      container: 'flags',
     },
     clazz: {
       default: 'flag',
@@ -26,11 +26,6 @@ export const htmlStrings = {
     id: {
       container: 'messages',
       const: 'message-const',
-    },
-
-    selector: {
-      container: '#messages',
-      const: '#message-const',
     },
 
     clazz: {
@@ -45,20 +40,14 @@ export const htmlStrings = {
         random_ship_selection: 'random-ship-selection',
         game_next: 'ok-game-next',
       },
-
-      selector: {
-        ship_selection: '#ok-ship-selection',
-        random_ship_selection: '#random-ship-selection',
-        game_next: '#ok-game-next',
-      },
     },
   },
 
   grid: {
-    selector: {
-      container: '#grids',
-      opponent: '#grid-opponent',
-      shoot: '#grid-shoot',
+    id: {
+      container: 'grids',
+      opponent: 'grid-opponent',
+      shoot: 'grid-shoot',
     },
 
     clazz: {
@@ -84,14 +73,14 @@ export const htmlStrings = {
   },
 
   info: {
-    selector: {
-      container: '#info',
-      game_url: '#info-game-url',
-      players_game: '#info-players-game',
-      players_global: '#info-players-global',
-      winning_ratio: '#info-winning-ratio',
-      winning_me: '#info-winning-me',
-      winning_opp: '#info-winning-opp',
+    id: {
+      container: 'info',
+      game_url: 'info-game-url',
+      players_game: 'info-players-game',
+      players_global: 'info-players-global',
+      winning_ratio: 'info-winning-ratio',
+      winning_me: 'info-winning-me',
+      winning_opp: 'info-winning-opp',
     },
 
     clazz: {

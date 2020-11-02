@@ -103,9 +103,7 @@ export class OnWsMessage {
           this.grids.shoot.classList.remove(htmlStrings.grid.clazz.inactive);
 
           if (payload) {
-            const gameUrl: HTMLElement = document.querySelector<HTMLElement>(
-              htmlStrings.info.selector.game_url
-            )!;
+            const gameUrl: HTMLElement = document.getElementById(htmlStrings.info.id.game_url)!;
 
             this.translator.removeTranslation(gameUrl);
 
@@ -115,8 +113,8 @@ export class OnWsMessage {
             ].filter(urlParam => urlParam !== null) as UrlParam[];
             gameUrl.textContent = this.url.buildUrlWithParams(...urlParams);
 
-            const infoPlayersGame: HTMLElement = document.querySelector<HTMLElement>(
-              htmlStrings.info.selector.players_game
+            const infoPlayersGame: HTMLElement = document.getElementById(
+              htmlStrings.info.id.players_game
             )!;
             infoPlayersGame.textContent = '1';
           }
@@ -126,8 +124,8 @@ export class OnWsMessage {
 
           this.uiMessage.setFixed(i18nKey('put.info'));
 
-          const messageConstElement: HTMLElement = document.querySelector<HTMLElement>(
-            htmlStrings.message.selector.const
+          const messageConstElement: HTMLElement = document.getElementById(
+            htmlStrings.message.id.const
           )!;
 
           messageConstElement.append(' ');
@@ -135,8 +133,8 @@ export class OnWsMessage {
             i18nKey('put.random'),
             htmlStrings.message.ok.id.random_ship_selection
           );
-          const randomShipSelection: HTMLElement = document.querySelector<HTMLElement>(
-            htmlStrings.message.ok.selector.random_ship_selection
+          const randomShipSelection: HTMLElement = document.getElementById(
+            htmlStrings.message.ok.id.random_ship_selection
           )!;
           randomShipSelection.addEventListener('click', () => {
             this.ws.send('GRID RANDOM');
@@ -147,8 +145,8 @@ export class OnWsMessage {
             i18nKey('put.done'),
             htmlStrings.message.ok.id.ship_selection
           );
-          const shipSelection: HTMLElement = document.querySelector<HTMLElement>(
-            htmlStrings.message.ok.selector.ship_selection
+          const shipSelection: HTMLElement = document.getElementById(
+            htmlStrings.message.ok.id.ship_selection
           )!;
           shipSelection.addEventListener('click', () => {
             this.ws.send('GRID {0}'.format(this.gridSelection.collect()));
@@ -335,8 +333,8 @@ export class OnWsMessage {
 
           const winning: HTMLElement =
             payload === 'YOU'
-              ? document.querySelector<HTMLElement>(htmlStrings.info.selector.winning_me)!
-              : document.querySelector<HTMLElement>(htmlStrings.info.selector.winning_opp)!;
+              ? document.getElementById(htmlStrings.info.id.winning_me)!
+              : document.getElementById(htmlStrings.info.id.winning_opp)!;
           winning.textContent = (Number.parseInt(winning.textContent || '0') + 1).toString();
 
           payload === 'YOU'
@@ -347,8 +345,8 @@ export class OnWsMessage {
             i18nKey('end.next_game'),
             htmlStrings.message.ok.id.game_next
           );
-          const nextGame: HTMLElement = document.querySelector<HTMLElement>(
-            htmlStrings.message.ok.selector.game_next
+          const nextGame: HTMLElement = document.getElementById(
+            htmlStrings.message.ok.id.game_next
           )!;
           nextGame.addEventListener('click', () => {
             this.process(new WsMessage('', 'GAME OK', ''));
@@ -363,8 +361,8 @@ export class OnWsMessage {
         payload => {
           this.sessionContext.numberOfPlayersInGame = 1;
 
-          const infoPlayersGame: HTMLElement = document.querySelector<HTMLElement>(
-            htmlStrings.info.selector.players_game
+          const infoPlayersGame: HTMLElement = document.getElementById(
+            htmlStrings.info.id.players_game
           )!;
           infoPlayersGame.textContent = '1';
 
@@ -384,8 +382,8 @@ export class OnWsMessage {
               i18nKey('end.next_game'),
               htmlStrings.message.ok.id.game_next
             );
-            const nextGame: HTMLElement = document.querySelector<HTMLElement>(
-              htmlStrings.message.ok.selector.game_next
+            const nextGame: HTMLElement = document.getElementById(
+              htmlStrings.message.ok.id.game_next
             )!;
             nextGame.addEventListener('click', () =>
               this.process(new WsMessage('', 'GAME OK', ''))
@@ -408,8 +406,8 @@ export class OnWsMessage {
         () => {
           this.sessionContext.numberOfPlayersInGame = 2;
 
-          const infoPlayersGame: HTMLElement = document.querySelector<HTMLElement>(
-            htmlStrings.info.selector.players_game
+          const infoPlayersGame: HTMLElement = document.getElementById(
+            htmlStrings.info.id.players_game
           )!;
           infoPlayersGame.textContent = '2';
 
@@ -439,16 +437,14 @@ export class OnWsMessage {
         'STAT',
         payload => {
           const infoStat: {[key: string]: string} = {
-            players: htmlStrings.info.selector.players_global,
+            players: htmlStrings.info.id.players_global,
           };
 
           const stats: string[] = payload.split(',');
 
           stats.forEach(stat => {
             const [key, value]: string[] = stat.split('=');
-            const infoStatElement: HTMLElement = document.querySelector<HTMLElement>(
-              infoStat[key]
-            )!;
+            const infoStatElement: HTMLElement = document.getElementById(infoStat[key])!;
 
             infoStatElement.textContent = value;
             this.translator.removeTranslation(infoStatElement);

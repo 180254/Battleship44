@@ -31,9 +31,7 @@ export class UiFlags {
           );
         });
 
-        const flags: HTMLElement = document.querySelector<HTMLElement>(
-          htmlStrings.flags.selector.container
-        )!;
+        const flags: HTMLElement = document.getElementById(htmlStrings.flags.id.container)!;
         flags.append(flag);
 
         this.logger.trace('init={0}', langTag);

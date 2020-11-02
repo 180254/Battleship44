@@ -44,9 +44,7 @@ export class UiMessage {
 
     this.translator.translateElement(link, i18nKey);
 
-    const messagesConst: HTMLElement = document.querySelector<HTMLElement>(
-      htmlStrings.message.selector.const
-    )!;
+    const messagesConst: HTMLElement = document.getElementById(htmlStrings.message.id.const)!;
     messagesConst.append(link);
 
     this.logger.trace('{0},{1},{2}', i18nKey, id, clazz);
@@ -68,12 +66,10 @@ export class UiMessage {
     this.translator.translateElement(inner, i18nKey);
     outer.append(inner);
 
-    const messagesContainer: HTMLElement = document.querySelector<HTMLElement>(
-      htmlStrings.message.selector.container
+    const messagesContainer: HTMLElement = document.getElementById(
+      htmlStrings.message.id.container
     )!;
-    const messagesConst: HTMLElement = document.querySelector<HTMLElement>(
-      htmlStrings.message.selector.const
-    )!;
+    const messagesConst: HTMLElement = document.getElementById(htmlStrings.message.id.const)!;
 
     if (timeout) {
       messagesContainer.append(outer);

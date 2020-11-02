@@ -35,9 +35,9 @@ export class Grids {
   public readonly opponentCells: NodeListOf<HTMLElement>;
 
   public constructor() {
-    this.shoot = document.querySelector<HTMLElement>(htmlStrings.grid.selector.shoot)!;
+    this.shoot = document.getElementById(htmlStrings.grid.id.shoot)!;
     this.shootCells = document.querySelectorAll(htmlStrings.cell.selector.shoot);
-    this.opponent = document.querySelector<HTMLElement>(htmlStrings.grid.selector.opponent)!;
+    this.opponent = document.getElementById(htmlStrings.grid.id.opponent)!;
     this.opponentCells = document.querySelectorAll(htmlStrings.cell.selector.opponent);
   }
 
