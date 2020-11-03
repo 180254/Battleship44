@@ -9,7 +9,6 @@ describe('Url', () => {
 
   before(() => {
     Logger.LEVEL = Level.WARN;
-    Logger.LEVEL = Level.WARN;
     assert = chai.assert;
   });
 
