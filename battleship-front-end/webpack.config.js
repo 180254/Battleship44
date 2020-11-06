@@ -243,7 +243,6 @@ module.exports = (env, argv) => {
         inject: false,
         scriptLoading: 'defer',
         xhtml: true,
-        cache: false, // https://github.com/webpack/webpack/issues/10761
       }),
       ...itdepends.extraPlugins,
     ],
