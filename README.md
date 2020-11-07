@@ -1,6 +1,6 @@
 # **Battleship44**
 
-Just <a href="https://en.wikipedia.org/wiki/Battleship_(game)">battleship</a> html5 `game`.  
+Just <a href="https://en.wikipedia.org/wiki/Battleship_(game)">battleship</a> html5 `game`. Perhaps available <a href="https://battleship.8tr.pl/">online</a>.  
 
 <img src="screenshots/0.png" alt="screenshot" width="700"/>
 
@@ -53,7 +53,7 @@ Supported `browsers`:
 
 * `FE` is written in `html5+TypeScript4`
 * uses `npm`, `webpack` as build automation tool & dependency manager
-* requires system-wide dependencies: [nodejs](https://nodejs.org/en/) >=10.16.0
+* requires system-wide dependencies: [nodejs](https://nodejs.org/en/) >=12.0.0
 * install local (project) dependencies: `npm install`
 * compile in `development` mode: `npx webpack --mode development`
 * compile in `production` mode: `npx webpack --mode production`
@@ -69,18 +69,18 @@ v1.0.0 (released 2016-08-18)
 v1.1.0 (released 2016-08-22)  
 + front: general improvements and refactoring  
 + front: handle WinSocket onerror event  
-+ front: info about number of players in current game  
-+ front: info about current winning ratio  
-+ back/front: info about number of players on a server (STAT)  
++ front: info about the number of players in the current game  
++ front: info about the current winning ratio  
++ back/front: info about the number of players on a the server (STAT)  
 + back: add on error controller  
-+ back: possible to customize WebSocket conf&policy by .properties file  
++ back: possibility to customize WebSocket conf&policy using the .properties file  
   
 v1.2.0 (released 2016-08-31)  
 + front: general improvements and refactoring  
-+ front: i18n: strings configurable by json files  
++ front: i18n: strings configurable with json files  
 + front: i18n: polish lang support  
-+ front: i18n: possible to change lang without reloading page  
-+ front: pointer cursor on all flag, and cross-hair on shoot grid  
++ front: i18n: possibility to change lang without reloading the page  
++ front: pointer cursor on flags, and cross-hair on the shooting grid  
   
 v1.3.0 (released 2016-10-05)   
 + front: re-written & refactored js to TypeScript2  
@@ -91,25 +91,28 @@ v1.3.0 (released 2016-10-05)
 v1.4.0 (released 2017-05-10)  
 + general: separated front-end/back-end codes, now they can be started separately  
 + front bug fix: WebSocket connection on HTTPS didn't work  
-+ front bug fix: URL to flags were incorrect (uppercase)  
++ front bug fix: flag URLs were incorrect (uppercase)  
   
 v1.4.1 (released 2020-09-24)
-+ front: updated dependencies  
++ front: dependencies maintenance  
 + front: development/build process refactored & simplified  
 + front: refactored code to meet [gts](https://github.com/google/gts) rules  
-+ back: updated dependencies  
++ back: dependencies maintenance  
 + back: code updated to java 11  
   
 v2.0.0 (unreleased)  
-+ general: revised protocol,
-+ back/front: a new feature: random fleet location  
-+ back/front: a new feature: possibility to change the rules of the game in each game  
++ general: revised protocol  
++ back: added endpoint with metrics  
++ back/front: new feature: random fleet location  
++ back/front: new feature: possibility to change game rules in each game  
++ back/front: compiled game code takes less space, less dependencies  
++ front: new feature: several themes to choose from  
   
-vX.Y.Z (planned)  
+vX.Y.Z (unplanned)  
 - "availability broadcasting" - look for a waiting player  
-- back/front: info which ship sizes has been already shot & which are still to shoot down  
+- back/front: info which ship sizes has been already been shot down & which are still to shoot down  
 - back/front: a mini chat in game, between players  
-- back/front: grid-size is now game-level, not server-level  
+- back/front: grid-size is now customizable at game-level, not at server-level  
   
 ## protocol
   
