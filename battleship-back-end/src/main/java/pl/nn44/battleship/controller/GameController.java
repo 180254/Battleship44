@@ -346,17 +346,17 @@ public class GameController extends TextWebSocketHandler {
     Game game = player.getGame();
 
     if (game == null) {
-      send(player, "400_ no-game-set");
+      send(player, "400 GRID no-game-set");
       return;
     }
 
     if (game.getState() == Game.State.IN_PROGRESS) {
-      send(player, "400_ game-in-progress");
+      send(player, "400 GRID game-in-progress");
       return;
     }
 
     if (player.getGrid() != null) {
-      send(player, "400_ grid-already-set");
+      send(player, "400 GRID grid-already-set");
       return;
     }
 
