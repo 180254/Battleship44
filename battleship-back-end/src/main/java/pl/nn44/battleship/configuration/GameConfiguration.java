@@ -57,6 +57,7 @@ public class GameConfiguration {
     Random random = new Random();
     Locker locker = new LockerImpl(metricsService);
     IdGenerator idGenerator = new BigIdGenerator(random, gameProperties.getImpl().getIdLen());
+    MatchMakingService matchMakingService = new MatchMakingService(locker, idGenerator);
     Serializer<Grid, String> gridSerializer = new GridSerializer(gameProperties.getRules());
     Serializer<Coord, String> coordSerializer = new CoordSerializer();
     Serializer<List<Cell>, String> cellSerializer = new CellSerializer();
@@ -67,6 +68,7 @@ public class GameConfiguration {
         locker,
         idGenerator,
         metricsService,
+        matchMakingService,
         gridSerializer,
         coordSerializer,
         cellSerializer

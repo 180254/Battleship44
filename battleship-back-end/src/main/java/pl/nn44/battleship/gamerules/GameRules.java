@@ -3,6 +3,7 @@ package pl.nn44.battleship.gamerules;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
+import java.util.Objects;
 import java.util.StringJoiner;
 
 @ConfigurationProperties(prefix = "game.rules", ignoreInvalidFields = false, ignoreUnknownFields = false)
@@ -78,6 +79,23 @@ public class GameRules {
         .add("fleet-can-touch-each-other-diagonally=" + fleetCanTouchEachOtherDiagonally)
         .add("show-fields-for-sure-empty=" + showFieldsForSureEmpty)
         .toString();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    GameRules gameRules = (GameRules) o;
+    return fleetCanTouchEachOtherDiagonally == gameRules.fleetCanTouchEachOtherDiagonally &&
+        showFieldsForSureEmpty == gameRules.showFieldsForSureEmpty &&
+        gridSize.equals(gameRules.gridSize) &&
+        fleetSizes == gameRules.fleetSizes &&
+        fleetMode == gameRules.fleetMode;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(gridSize, fleetSizes, fleetMode, fleetCanTouchEachOtherDiagonally, showFieldsForSureEmpty);
   }
 
   @Override

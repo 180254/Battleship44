@@ -35,6 +35,7 @@ public class GameController extends TextWebSocketHandler {
   private final Locker locker;
   private final IdGenerator idGenerator;
   private final MetricsService metricsService;
+  private final MatchMakingService matchMakingService;
   private final Serializer<Grid, String> gridSerializer;
   private final Serializer<Coord, String> coordSerializer;
   private final Serializer<List<Cell>, String> cellSerializer;
@@ -43,6 +44,7 @@ public class GameController extends TextWebSocketHandler {
       Map.ofEntries(
           Map.entry("GAME", this::processCommandGame),
           Map.entry("GAME-RULES", this::processCommandGameRules),
+          Map.entry("MATCHMK", this::processCommandMatchMaking),
           Map.entry("GRID", this::processCommandGrid),
           Map.entry("SHOT", this::processCommandShot),
           Map.entry("PING", this::processCommandPing)
@@ -53,7 +55,7 @@ public class GameController extends TextWebSocketHandler {
                         Locker locker,
                         IdGenerator idGenerator,
                         MetricsService metricsService,
-                        Serializer<Grid, String> gridSerializer,
+                        MatchMakingService matchMakingService, Serializer<Grid, String> gridSerializer,
                         Serializer<Coord, String> coordSerializer,
                         Serializer<List<Cell>, String> cellSerializer) {
     this.defaultGameRules = defaultGameRules;
@@ -61,6 +63,7 @@ public class GameController extends TextWebSocketHandler {
     this.locker = locker;
     this.idGenerator = idGenerator;
     this.metricsService = metricsService;
+    this.matchMakingService = matchMakingService;
     this.gridSerializer = gridSerializer;
     this.coordSerializer = coordSerializer;
     this.cellSerializer = cellSerializer;
@@ -340,6 +343,30 @@ public class GameController extends TextWebSocketHandler {
         send(player, "400 GAME-RULES invalid-game-rules-change");
       }
     }
+  }
+
+  private void processCommandMatchMaking(Player player, String param) {
+    Game game = player.getGame();
+
+    if (game == null) {
+      send(player, "400 MATCHMK no-game-set");
+      return;
+    }
+
+    if (game.getState() == Game.State.IN_PROGRESS) {
+      send(player, "400 MATCHMK game-in-progress");
+      return;
+    }
+
+    matchMakingService.makeGameAsync(player).whenComplete((newGame, throwable) -> {
+      if (throwable != null) {
+        send(player, "408 MATCHMK timeout");
+        return;
+      }
+
+      send(newGame.getPlayer(0), "MATCHMK %s", newGame.getId());
+      send(newGame.getPlayer(1), "MATCHMK %s", newGame.getId());
+    });
   }
 
   private void processCommandGrid(Player player, String param) {
