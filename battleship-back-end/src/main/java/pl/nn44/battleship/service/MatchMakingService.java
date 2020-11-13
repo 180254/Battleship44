@@ -6,13 +6,13 @@ import pl.nn44.battleship.service.Locker.Unlocker;
 import pl.nn44.battleship.util.IdGenerator;
 
 import java.time.Duration;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.*;
 
 public class MatchMakingService {
 
-  private final Set<Player> playersQueue = ConcurrentHashMap.newKeySet();
+  private final Map<Player, CompletableFuture<Game>> playersQueue = new ConcurrentHashMap<>();
 
   private final Locker locker;
   private final IdGenerator idGenerator;
@@ -47,12 +47,15 @@ public class MatchMakingService {
   public CompletableFuture<Game> makeGameAsync(Player player) {
     long startTime = System.currentTimeMillis();
 
-    playersQueue.add(player);
     CompletableFuture<Game> gameFuture = new CompletableFuture<>();
+    playersQueue.put(player, gameFuture);
 
     ScheduledFuture<?> makeGameScheduledFuture
         = scheduledThreadPoolExecutor.scheduleAtFixedRate(
-        () -> makeGameInternal(player).ifPresent(gameFuture::complete),
+        () -> makeGameInternal(player).ifPresent(newGame -> {
+          playersQueue.get(newGame.getPlayer0()).complete(newGame.getGame());
+          playersQueue.get(newGame.getPlayer1()).complete(newGame.getGame());
+        }),
         attemptInitialDelay.toMillis(), attemptPeriod.toMillis(), TimeUnit.MILLISECONDS);
 
     ScheduledFuture<?> makeGameTimeoutScheduledFuture
@@ -68,7 +71,7 @@ public class MatchMakingService {
       String metricCounterKey;
       if (throwable != null) {
         String throwableSimpleName = throwable.getClass().getSimpleName();
-        metricCounterKey = "matchMakingService.makeGameAsync.completedExceptionally." + throwableSimpleName;
+        metricCounterKey = "matchMakingService.makeGameAsync." + throwableSimpleName;
       } else if (game == null) {
         metricCounterKey = "matchMakingService.makeGameAsync.completedNull";
       } else {
@@ -85,15 +88,19 @@ public class MatchMakingService {
   }
 
   @SuppressWarnings("PMD.AvoidBranchingStatementAsLastInLoop") // hm, i like it
-  private Optional<Game> makeGameInternal(Player player) {
-    Optional<Game> result = Optional.empty();
+  private Optional<NewGame> makeGameInternal(Player player) {
+    Optional<NewGame> result = Optional.empty();
     long startTime = System.currentTimeMillis();
 
     Optional<Unlocker> playerUnlocker = Optional.empty();
     Optional<Unlocker> otherPlayerUnlocker = Optional.empty();
 
     try {
-      for (Player otherPlayer : playersQueue) {
+      for (Player otherPlayer : playersQueue.keySet()) {
+        if (player == otherPlayer) {
+          continue;
+        }
+
         if (!matchMakingMatches(player, otherPlayer)) {
           continue;
         }
@@ -122,7 +129,9 @@ public class MatchMakingService {
 
         game.setPlayer(1, otherPlayer);
         otherPlayer.setGame(game);
-        result = Optional.of(game);
+
+        NewGame newGame = new NewGame(game, player, otherPlayer);
+        result = Optional.of(newGame);
         break;
       }
 
@@ -150,5 +159,29 @@ public class MatchMakingService {
     }
 
     return game1.getGameRules().equals(game2.getGameRules());
+  }
+
+  public static class NewGame {
+    private final Game game;
+    private final Player player0;
+    private final Player player1;
+
+    public NewGame(Game game, Player player0, Player player1) {
+      this.game = game;
+      this.player0 = player0;
+      this.player1 = player1;
+    }
+
+    public Game getGame() {
+      return game;
+    }
+
+    public Player getPlayer0() {
+      return player0;
+    }
+
+    public Player getPlayer1() {
+      return player1;
+    }
   }
 }

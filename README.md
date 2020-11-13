@@ -129,10 +129,10 @@ vX.Y.Z (unplanned)
 ← `400 GAME no-free-slot`  
 ← `400 GAME you-are-in-game`  
   
-→ `MATCHMK`  
-← `MATCHMK <game_id>`  
-← `400 MATCHMK game-in-progress`  
-← `408 MATCHMK timeout`  
+→ `MATCHMAKING`  
+← `MATCHMAKING OK <game_id>`  
+← `400 MATCHMAKING game-in-progress`  
+← `408 MATCHMAKING timeout`  
   
 ← `GAME-RULES grid-size=10x10,fleet-sizes=russian,fleet-mode=curved,...`  
 → `GAME-RULES fleet-sizes=next`  

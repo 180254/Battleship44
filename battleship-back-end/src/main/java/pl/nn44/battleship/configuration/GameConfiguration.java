@@ -51,8 +51,8 @@ public class GameConfiguration {
   @Bean
   public GameController gameController(GameProperties gameProperties, MetricsService metricsService) {
     Instant applicationStartTime = Instant.now();
-    metricsService.registerDeliverableMetric("uptime", () -> Duration.between(applicationStartTime, Instant.now()));
-    metricsService.registerDeliverableMetric("gameProperties", () -> gameProperties);
+    metricsService.registerDeliverableMetric("general.uptime", () -> Duration.between(applicationStartTime, Instant.now()));
+    metricsService.registerDeliverableMetric("general.gameProperties", () -> gameProperties);
 
     Random random = new Random();
     Locker locker = new LockerImpl(

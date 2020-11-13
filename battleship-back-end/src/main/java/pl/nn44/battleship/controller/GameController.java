@@ -46,7 +46,7 @@ public class GameController extends TextWebSocketHandler {
       Map.ofEntries(
           Map.entry("GAME", this::processCommandGame),
           Map.entry("GAME-RULES", this::processCommandGameRules),
-          Map.entry("MATCHMK", this::processCommandMatchMaking),
+          Map.entry("MATCHMAKING", this::processCommandMatchMaking),
           Map.entry("GRID", this::processCommandGrid),
           Map.entry("SHOT", this::processCommandShot),
           Map.entry("PING", this::processCommandPing)
@@ -73,8 +73,8 @@ public class GameController extends TextWebSocketHandler {
     this.coordSerializer = coordSerializer;
     this.cellSerializer = cellSerializer;
 
-    this.metricsService.registerDeliverableMetric("players.currentSize", players::size);
-    this.metricsService.registerDeliverableMetric("games.currentSize", games::size);
+    this.metricsService.registerDeliverableMetric("gameController.players.currentSize", players::size);
+    this.metricsService.registerDeliverableMetric("gameController.games.currentSize", games::size);
   }
 
   private String sessionId(WebSocketSession session) {
@@ -121,7 +121,7 @@ public class GameController extends TextWebSocketHandler {
     InetAddress clientAddress = (clientSocketAddress != null)
         ? clientSocketAddress.getAddress()
         : null;
-    metricsService.countUniqueValues("players.uniqueSoFar", clientAddress);
+    metricsService.countUniqueValues("gameController.players.uniqueSoFar", clientAddress);
 
     players.computeIfAbsent(session, Player::new);
     broadcast("STAT players=%s", players.size());
@@ -202,7 +202,7 @@ public class GameController extends TextWebSocketHandler {
       games.put(game.getId(), game);
       send(player, "GAME OK %s", game.getId());
       send(player, "GAME-RULES %s", game.getGameRules().describe());
-      metricsService.incrementCounter("games.totalCreated");
+      metricsService.incrementCounter("gameController.games.totalCreated");
       return;
     }
 
@@ -355,23 +355,34 @@ public class GameController extends TextWebSocketHandler {
     Game game = player.getGame();
 
     if (game == null) {
-      send(player, "400 MATCHMK no-game-set");
+      send(player, "400 MATCHMAKING no-game-set");
       return;
     }
 
     if (game.getState() == Game.State.IN_PROGRESS) {
-      send(player, "400 MATCHMK game-in-progress");
+      send(player, "400 MATCHMAKING game-in-progress");
       return;
     }
 
     matchMakingService.makeGameAsync(player).whenComplete((newGame, throwable) -> {
       if (throwable != null) {
-        send(player, "408 MATCHMK timeout");
+        send(player, "408 MATCHMAKING timeout");
         return;
       }
 
-      send(newGame.getPlayer(0), "MATCHMK %s", newGame.getId());
-      send(newGame.getPlayer(1), "MATCHMK %s", newGame.getId());
+      games.remove(game.getId());
+      games.putIfAbsent(newGame.getId(), newGame);
+      send(player, "MATCHMAKING OK %s", newGame.getId());
+
+      Locker.Unlocker newGameLock = locker.lock(newGame);
+      try {
+        // start the game once
+        if (newGame.getPlayer(0).equals(player)) {
+          maybeStartGame(newGame);
+        }
+      } finally {
+        newGameLock.unlock();
+      }
     });
   }
 
@@ -427,6 +438,10 @@ public class GameController extends TextWebSocketHandler {
     player.setGrid(grid.get());
     send(player, "GRID OK");
 
+    maybeStartGame(game);
+  }
+
+  private void maybeStartGame(Game game) {
     if (game.bothGridSets()) {
       game.setState(Game.State.IN_PROGRESS);
       game.prepareShootGrids();
@@ -437,7 +452,7 @@ public class GameController extends TextWebSocketHandler {
       send(game.getTourPlayer(), "TOUR YOU");
       send(game.getNotTourPlayer(), "TOUR HE");
 
-      metricsService.incrementCounter("games.totalStarted");
+      metricsService.incrementCounter("gameController.games.totalStarted");
     }
   }
 
@@ -479,8 +494,8 @@ public class GameController extends TextWebSocketHandler {
       send(game.getNotTourPlayer(), "WON_ HE");
       game.nextGame();
 
-      metricsService.incrementCounter("games.totalFinished");
-      metricsService.incrementCounter("games.totalCreated");
+      metricsService.incrementCounter("gameController.games.totalFinished");
+      metricsService.incrementCounter("gameController.games.totalCreated");
 
     } else {
       boolean goodShoot = shoot.stream()

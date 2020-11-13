@@ -50,7 +50,7 @@ public class MonteCarloFleet {
 
       if (throwable != null) {
         String throwableSimpleName = throwable.getClass().getSimpleName();
-        metricCounterKey = "monteCarloFleet.completedExceptionally." + throwableSimpleName;
+        metricCounterKey = "monteCarloFleet." + throwableSimpleName;
       } else if (grid == null) {
         metricCounterKey = "monteCarloFleet.completedNull";
       } else {
