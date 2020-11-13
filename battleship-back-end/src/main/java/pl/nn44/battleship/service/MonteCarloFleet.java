@@ -56,6 +56,7 @@ public class MonteCarloFleet {
     return futureGrid;
   }
 
+  @Nullable
   private Grid randomFleet() {
     long startTime = System.currentTimeMillis();
     List<Integer> availableShipSizes = gameRules.getFleetSizes().getAvailableShipSizes();

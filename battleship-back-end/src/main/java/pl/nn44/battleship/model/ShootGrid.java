@@ -6,6 +6,7 @@ import pl.nn44.battleship.service.ShipFinder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class ShootGrid extends Grid {
 
@@ -34,7 +35,9 @@ public class ShootGrid extends Grid {
     if (opponentCell == Cell.Type.SHIP || opponentCell == Cell.Type.SHIP_SUNK) {
       this.setCell(coord, Cell.Type.SHIP);
 
-      Ship opponentShip = opShipFinder.findShip(coord);
+      // In this case, opponentShip is non-null for sure.
+      Ship opponentShip = Objects.requireNonNull(opShipFinder.findShip(coord));
+
       if (isShipSunk(opponentShip)) {
         for (Coord shipCoord : opponentShip.getCoords()) {
           this.setCell(shipCoord, Cell.Type.SHIP_SUNK);

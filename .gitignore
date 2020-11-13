@@ -2,6 +2,7 @@
 *.iml
 target/
 dist/
+infer-out/
 node_modules/
 node_bower/
 node_types/

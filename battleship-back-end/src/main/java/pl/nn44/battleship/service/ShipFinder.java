@@ -6,6 +6,7 @@ import pl.nn44.battleship.model.Grid;
 import pl.nn44.battleship.model.Ship;
 import pl.nn44.battleship.util.Suppliers;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,6 +43,7 @@ public class ShipFinder {
     return calculateNeighbours(ship, grid::neighboursX);
   }
 
+  @Nullable
   public Ship findShip(Coord coord) {
     Ship find = null;
 
