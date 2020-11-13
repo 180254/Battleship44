@@ -55,14 +55,28 @@ public class GameConfiguration {
     metricsService.registerDeliverableMetric("gameProperties", () -> gameProperties);
 
     Random random = new Random();
-    Locker locker = new LockerImpl(metricsService);
-    IdGenerator idGenerator = new BigIdGenerator(random, gameProperties.getImpl().getIdLen());
-    MatchMakingService matchMakingService = new MatchMakingService(locker, idGenerator);
+    Locker locker = new LockerImpl(
+        metricsService,
+        gameProperties.getImpl().getLockerImplConfig().getInitialCapacity()
+    );
+    IdGenerator idGenerator = new BigIdGenerator(
+        random,
+        gameProperties.getImpl().getBigIdGeneratorConfig().getChars()
+    );
+    MatchMakingService matchMakingService = new MatchMakingService(
+        locker,
+        idGenerator,
+        gameProperties.getImpl().getMatchMakingServiceConfig().getCorePoolSize(),
+        gameProperties.getImpl().getMatchMakingServiceConfig().getAttemptInitialDelay(),
+        gameProperties.getImpl().getMatchMakingServiceConfig().getAttemptPeriod(),
+        gameProperties.getImpl().getMatchMakingServiceConfig().getTimeout()
+    );
     Serializer<Grid, String> gridSerializer = new GridSerializer(gameProperties.getRules());
     Serializer<Coord, String> coordSerializer = new CoordSerializer();
     Serializer<List<Cell>, String> cellSerializer = new CellSerializer();
 
     return new GameController(
+        gameProperties,
         gameProperties.getRules(),
         random,
         locker,

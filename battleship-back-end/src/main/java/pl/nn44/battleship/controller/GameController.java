@@ -6,6 +6,7 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import pl.nn44.battleship.configuration.GameProperties;
 import pl.nn44.battleship.gamerules.FleetMode;
 import pl.nn44.battleship.gamerules.FleetSizes;
 import pl.nn44.battleship.gamerules.GameRules;
@@ -30,6 +31,7 @@ public class GameController extends TextWebSocketHandler {
   private final ConcurrentMap<WebSocketSession, Player> players = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, Game> games = new ConcurrentHashMap<>();
 
+  private final GameProperties gameProperties;
   private final GameRules defaultGameRules;
   private final Random random;
   private final Locker locker;
@@ -50,14 +52,17 @@ public class GameController extends TextWebSocketHandler {
           Map.entry("PING", this::processCommandPing)
       );
 
-  public GameController(GameRules defaultGameRules,
+  public GameController(GameProperties gameProperties,
+                        GameRules defaultGameRules,
                         Random random,
                         Locker locker,
                         IdGenerator idGenerator,
                         MetricsService metricsService,
-                        MatchMakingService matchMakingService, Serializer<Grid, String> gridSerializer,
+                        MatchMakingService matchMakingService,
+                        Serializer<Grid, String> gridSerializer,
                         Serializer<Coord, String> coordSerializer,
                         Serializer<List<Cell>, String> cellSerializer) {
+    this.gameProperties = gameProperties;
     this.defaultGameRules = defaultGameRules;
     this.random = random;
     this.locker = locker;
@@ -345,6 +350,7 @@ public class GameController extends TextWebSocketHandler {
     }
   }
 
+  @SuppressWarnings("PMD.UnusedFormalParameter") // must match the prototype of the "command" map
   private void processCommandMatchMaking(Player player, String param) {
     Game game = player.getGame();
 
@@ -388,7 +394,15 @@ public class GameController extends TextWebSocketHandler {
     }
 
     if (param.equals("RANDOM")) {
-      MonteCarloFleet monteCarloFleet = new MonteCarloFleet(game.getGameRules(), random, metricsService);
+      MonteCarloFleet monteCarloFleet = new MonteCarloFleet(
+          game.getGameRules(),
+          random,
+          metricsService,
+          gameProperties.getImpl().getMonteCarloFleetConfig().getCorePoolSize(),
+          gameProperties.getImpl().getMonteCarloFleetConfig().getMaximumPoolSize(),
+          gameProperties.getImpl().getMonteCarloFleetConfig().getKeepAliveTime(),
+          gameProperties.getImpl().getMonteCarloFleetConfig().getTimeout()
+      );
       monteCarloFleet.maybeRandomFleet().whenComplete((grid, throwable) -> {
         if (throwable == null && grid != null) {
           send(player, "GRID RANDOM %s", gridSerializer.serialize(grid));
@@ -484,7 +498,7 @@ public class GameController extends TextWebSocketHandler {
     send(player, "PONG %s", param);
   }
 
-  @SuppressWarnings("PMD.UnusedFormalParameter") // must match to "commands" map prototype
+  @SuppressWarnings("PMD.UnusedFormalParameter") // must match the prototype of the "command" map
   private void processOtherCommand(Player player, String payload) {
     send(player, "400 unknown-command");
   }

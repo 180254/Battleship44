@@ -7,6 +7,7 @@ import pl.nn44.battleship.model.Grid;
 import pl.nn44.battleship.model.Ship;
 
 import javax.annotation.Nullable;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -19,18 +20,25 @@ public class MonteCarloFleet {
   private final GameRules gameRules;
   private final Random random;
   private final MetricsService metricsService;
+  private final Duration timeout;
 
-  public MonteCarloFleet(GameRules gameRules, Random random, MetricsService metricsService) {
+  public MonteCarloFleet(GameRules gameRules,
+                         Random random,
+                         MetricsService metricsService,
+                         int corePoolSize,
+                         int maximumPoolSize,
+                         Duration keepAliveTime,
+                         Duration timeout) {
     // based on Executors.newCachedThreadPool()
     this.executorService = new ThreadPoolExecutor(
-        1, 8,
-        60L, TimeUnit.SECONDS,
+        corePoolSize, maximumPoolSize,
+        keepAliveTime.toMillis(), TimeUnit.MILLISECONDS,
         new SynchronousQueue<>());
     this.cancelerService = Executors.newSingleThreadScheduledExecutor();
     this.gameRules = gameRules;
     this.random = random;
     this.metricsService = metricsService;
-
+    this.timeout = timeout;
     metricsService.registerDeliverableMetric("monteCarloFleet.currentPoolSize", executorService::getPoolSize);
   }
 
@@ -52,7 +60,7 @@ public class MonteCarloFleet {
       metricsService.incrementCounter(metricCounterKey);
     });
 
-    cancelerService.schedule(() -> futureGrid.cancel(true), 100, TimeUnit.MILLISECONDS);
+    cancelerService.schedule(() -> futureGrid.cancel(true), timeout.toMillis(), TimeUnit.MILLISECONDS);
     return futureGrid;
   }
 

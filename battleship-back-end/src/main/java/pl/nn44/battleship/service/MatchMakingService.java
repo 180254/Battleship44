@@ -5,6 +5,7 @@ import pl.nn44.battleship.model.Player;
 import pl.nn44.battleship.service.Locker.Unlocker;
 import pl.nn44.battleship.util.IdGenerator;
 
+import java.time.Duration;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.*;
@@ -12,16 +13,27 @@ import java.util.concurrent.*;
 public class MatchMakingService {
 
   private final Set<Player> players = ConcurrentHashMap.newKeySet();
+
   private final Locker locker;
   private final IdGenerator idGenerator;
+  private final Duration attemptInitialDelay;
+  private final Duration attemptPeriod;
+  private final Duration timeout;
 
   private final ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
 
-  public MatchMakingService(Locker locker, IdGenerator idGenerator) {
+  public MatchMakingService(Locker locker,
+                            IdGenerator idGenerator,
+                            int corePoolSize,
+                            Duration attemptInitialDelay,
+                            Duration attemptPeriod,
+                            Duration timeout) {
     this.locker = locker;
     this.idGenerator = idGenerator;
-    this.scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
-    this.scheduledThreadPoolExecutor.setMaximumPoolSize(2);
+    this.attemptInitialDelay = attemptInitialDelay;
+    this.attemptPeriod = attemptPeriod;
+    this.timeout = timeout;
+    this.scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(corePoolSize);
   }
 
   public CompletableFuture<Game> makeGameAsync(Player player) {
@@ -31,12 +43,12 @@ public class MatchMakingService {
     ScheduledFuture<?> makeGameScheduledFuture
         = scheduledThreadPoolExecutor.scheduleAtFixedRate(
         () -> makeGame(player).ifPresent(gameFuture::complete),
-        0, 100, TimeUnit.MILLISECONDS);
+        attemptInitialDelay.toMillis(), attemptPeriod.toMillis(), TimeUnit.MILLISECONDS);
 
     ScheduledFuture<?> makeGameTimeoutScheduledFuture
         = scheduledThreadPoolExecutor.schedule(
         () -> gameFuture.completeExceptionally(new TimeoutException()),
-        5, TimeUnit.SECONDS);
+        timeout.toMillis(), TimeUnit.MILLISECONDS);
 
     gameFuture.whenComplete((game, throwable) -> {
       makeGameScheduledFuture.cancel(false);
@@ -47,6 +59,7 @@ public class MatchMakingService {
     return gameFuture;
   }
 
+  @SuppressWarnings("PMD.AvoidBranchingStatementAsLastInLoop") // hm, i like it
   public Optional<Game> makeGame(Player player) {
     Optional<Unlocker> playerUnlocker = Optional.empty();
     Optional<Unlocker> otherPlayerUnlocker = Optional.empty();
@@ -93,8 +106,7 @@ public class MatchMakingService {
     }
   }
 
-  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-  boolean matchMakingMatches(Player player1, Player player2) {
+  private boolean matchMakingMatches(Player player1, Player player2) {
     Game game1 = player1.getGame();
     Game game2 = player2.getGame();
 

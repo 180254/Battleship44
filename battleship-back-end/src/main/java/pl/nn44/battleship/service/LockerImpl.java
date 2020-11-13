@@ -16,10 +16,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class LockerImpl implements Locker {
 
-  private final Lock fastLock = new FastLock();
-  private final Map<Object, Lock> locks = new ConcurrentReferenceHashMap<>(16, ReferenceType.WEAK);
+  private final Lock fastLock;
+  private final Map<Object, Lock> locks;
 
-  public LockerImpl(MetricsService metricsService) {
+  public LockerImpl(MetricsService metricsService, int initialCapacity) {
+    this.fastLock = new FastLock();
+    this.locks = new ConcurrentReferenceHashMap<>(initialCapacity, ReferenceType.WEAK);
     metricsService.registerDeliverableMetric("locks.currentSize", locks::size);
   }
 
@@ -63,20 +65,19 @@ public class LockerImpl implements Locker {
     return Optional.of(lock::unlock);
   }
 
-  Lock getLockObject(Object obj) {
+  private Lock getLockObject(Object obj) {
     return obj != null
         ? locks.computeIfAbsent(obj, (key) -> new ReentrantLock(false))
         : fastLock;
   }
 
-  void acquireLocks(Lock[] locks) {
+  private void acquireLocks(Lock[] locks) {
     for (Lock lock : locks) {
       lock.lock();
     }
   }
 
-  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-  boolean tryAcquireLocks(Lock[] locks, long time, TimeUnit unit) {
+  private boolean tryAcquireLocks(Lock[] locks, long time, TimeUnit unit) {
     try {
       int i = 0;
       for (Lock lock : locks) {
@@ -93,7 +94,7 @@ public class LockerImpl implements Locker {
     }
   }
 
-  void releaseLocks(Lock[] locks) {
+  private void releaseLocks(Lock[] locks) {
     for (int i = locks.length - 1; i >= 0; i--) {
       Lock lock = locks[i];
       lock.unlock();

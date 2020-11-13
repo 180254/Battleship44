@@ -12,6 +12,78 @@
       "sourceMethod": "getImpl()"
     },
     {
+      "name": "game.impl.big-id-generator",
+      "type": "pl.nn44.battleship.configuration.GameProperties$BigIdGeneratorConf",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Impl",
+      "sourceMethod": "getBigIdGenerator()"
+    },
+    {
+      "name": "game.impl.big-id-generator-conf",
+      "type": "pl.nn44.battleship.configuration.GameProperties$BigIdGeneratorConf",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Impl",
+      "sourceMethod": "getBigIdGeneratorConf()"
+    },
+    {
+      "name": "game.impl.big-id-generator-config",
+      "type": "pl.nn44.battleship.configuration.GameProperties$BigIdGeneratorConfig",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Impl",
+      "sourceMethod": "getBigIdGeneratorConfig()"
+    },
+    {
+      "name": "game.impl.locker-impl",
+      "type": "pl.nn44.battleship.configuration.GameProperties$LockerImpl",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Impl",
+      "sourceMethod": "getLockerImpl()"
+    },
+    {
+      "name": "game.impl.locker-impl-conf",
+      "type": "pl.nn44.battleship.configuration.GameProperties$LockerImplConf",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Impl",
+      "sourceMethod": "getLockerImplConf()"
+    },
+    {
+      "name": "game.impl.locker-impl-config",
+      "type": "pl.nn44.battleship.configuration.GameProperties$LockerImplConfig",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Impl",
+      "sourceMethod": "getLockerImplConfig()"
+    },
+    {
+      "name": "game.impl.match-making-service",
+      "type": "pl.nn44.battleship.configuration.GameProperties$MatchMakingServiceConf",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Impl",
+      "sourceMethod": "getMatchMakingService()"
+    },
+    {
+      "name": "game.impl.match-making-service-conf",
+      "type": "pl.nn44.battleship.configuration.GameProperties$MatchMakingServiceConf",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Impl",
+      "sourceMethod": "getMatchMakingServiceConf()"
+    },
+    {
+      "name": "game.impl.match-making-service-config",
+      "type": "pl.nn44.battleship.configuration.GameProperties$MatchMakingServiceConfig",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Impl",
+      "sourceMethod": "getMatchMakingServiceConfig()"
+    },
+    {
+      "name": "game.impl.monte-carlo-fleet",
+      "type": "pl.nn44.battleship.configuration.GameProperties$MonteCarloFleetConf",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Impl",
+      "sourceMethod": "getMonteCarloFleet()"
+    },
+    {
+      "name": "game.impl.monte-carlo-fleet-conf",
+      "type": "pl.nn44.battleship.configuration.GameProperties$MonteCarloFleetConf",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Impl",
+      "sourceMethod": "getMonteCarloFleetConf()"
+    },
+    {
+      "name": "game.impl.monte-carlo-fleet-config",
+      "type": "pl.nn44.battleship.configuration.GameProperties$MonteCarloFleetConfig",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$Impl",
+      "sourceMethod": "getMonteCarloFleetConfig()"
+    },
+    {
       "name": "game.rules",
       "type": "pl.nn44.battleship.gamerules.GameRules",
       "sourceType": "pl.nn44.battleship.gamerules.GameRules"
@@ -30,10 +102,65 @@
   ],
   "properties": [
     {
+      "name": "game.impl.big-id-generator-config.chars",
+      "type": "java.lang.Integer",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$BigIdGeneratorConfig",
+      "defaultValue": 0
+    },
+    {
       "name": "game.impl.id-len",
       "type": "java.lang.Integer",
       "sourceType": "pl.nn44.battleship.configuration.GameProperties$Impl",
       "defaultValue": 0
+    },
+    {
+      "name": "game.impl.locker-impl-config.initial-capacity",
+      "type": "java.lang.Integer",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$LockerImplConfig",
+      "defaultValue": 0
+    },
+    {
+      "name": "game.impl.match-making-service-config.attempt-initial-delay",
+      "type": "java.time.Duration",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$MatchMakingServiceConfig"
+    },
+    {
+      "name": "game.impl.match-making-service-config.attempt-period",
+      "type": "java.time.Duration",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$MatchMakingServiceConfig"
+    },
+    {
+      "name": "game.impl.match-making-service-config.core-pool-size",
+      "type": "java.lang.Integer",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$MatchMakingServiceConfig",
+      "defaultValue": 0
+    },
+    {
+      "name": "game.impl.match-making-service-config.timeout",
+      "type": "java.time.Duration",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$MatchMakingServiceConfig"
+    },
+    {
+      "name": "game.impl.monte-carlo-fleet-config.core-pool-size",
+      "type": "java.lang.Integer",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$MonteCarloFleetConfig",
+      "defaultValue": 0
+    },
+    {
+      "name": "game.impl.monte-carlo-fleet-config.keep-alive-time",
+      "type": "java.time.Duration",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$MonteCarloFleetConfig"
+    },
+    {
+      "name": "game.impl.monte-carlo-fleet-config.maximum-pool-size",
+      "type": "java.lang.Integer",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$MonteCarloFleetConfig",
+      "defaultValue": 0
+    },
+    {
+      "name": "game.impl.monte-carlo-fleet-config.timeout",
+      "type": "java.time.Duration",
+      "sourceType": "pl.nn44.battleship.configuration.GameProperties$MonteCarloFleetConfig"
     },
     {
       "name": "game.rules",

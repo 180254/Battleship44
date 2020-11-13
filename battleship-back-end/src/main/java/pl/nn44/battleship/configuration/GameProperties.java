@@ -52,21 +52,50 @@ public class GameProperties {
 
   public static class Impl {
 
-    private int idLen;
+    private BigIdGeneratorConfig bigIdGeneratorConfig;
+    private LockerImplConfig lockerImplConfig;
+    private MonteCarloFleetConfig monteCarloFleetConfig;
+    private MatchMakingServiceConfig matchMakingServiceConfig;
 
-    public int getIdLen() {
-      return idLen;
+    public BigIdGeneratorConfig getBigIdGeneratorConfig() {
+      return bigIdGeneratorConfig;
     }
 
-    public void setIdLen(int idLen) {
-      this.idLen = idLen;
+    public void setBigIdGeneratorConfig(BigIdGeneratorConfig bigIdGeneratorConfig) {
+      this.bigIdGeneratorConfig = bigIdGeneratorConfig;
     }
 
+    public LockerImplConfig getLockerImplConfig() {
+      return lockerImplConfig;
+    }
+
+    public void setLockerImplConfig(LockerImplConfig lockerImplConfig) {
+      this.lockerImplConfig = lockerImplConfig;
+    }
+
+    public MonteCarloFleetConfig getMonteCarloFleetConfig() {
+      return monteCarloFleetConfig;
+    }
+
+    public void setMonteCarloFleetConfig(MonteCarloFleetConfig monteCarloFleetConfig) {
+      this.monteCarloFleetConfig = monteCarloFleetConfig;
+    }
+
+    public MatchMakingServiceConfig getMatchMakingServiceConfig() {
+      return matchMakingServiceConfig;
+    }
+
+    public void setMatchMakingServiceConfig(MatchMakingServiceConfig matchMakingServiceConfig) {
+      this.matchMakingServiceConfig = matchMakingServiceConfig;
+    }
 
     @Override
     public String toString() {
       return new StringJoiner(", ", Impl.class.getSimpleName() + "[", "]")
-          .add("idLen=" + idLen)
+          .add("bigIdGeneratorConfig=" + bigIdGeneratorConfig)
+          .add("lockerImplConfig=" + lockerImplConfig)
+          .add("monteCarloFleetConfig=" + monteCarloFleetConfig)
+          .add("matchMakingServiceConfig=" + matchMakingServiceConfig)
           .toString();
     }
   }
@@ -129,6 +158,146 @@ public class GameProperties {
           .add("policyMaxTextMessageBufferSize=" + policyMaxTextMessageBufferSize)
           .add("policyMaxBinaryMessageBufferSize=" + policyMaxBinaryMessageBufferSize)
           .add("policyIdleTimeout=" + policyIdleTimeout)
+          .toString();
+    }
+  }
+
+  public static class BigIdGeneratorConfig {
+
+    private int chars;
+
+    public int getChars() {
+      return chars;
+    }
+
+    public void setChars(int chars) {
+      this.chars = chars;
+    }
+
+    @Override
+    public String toString() {
+      return new StringJoiner(", ", BigIdGeneratorConfig.class.getSimpleName() + "[", "]")
+          .add("chars=" + chars)
+          .toString();
+    }
+  }
+
+  public static class LockerImplConfig {
+
+    private int initialCapacity;
+
+    public int getInitialCapacity() {
+      return initialCapacity;
+    }
+
+    public void setInitialCapacity(int initialCapacity) {
+      this.initialCapacity = initialCapacity;
+    }
+
+    @Override
+    public String toString() {
+      return new StringJoiner(", ", LockerImplConfig.class.getSimpleName() + "[", "]")
+          .add("initialCapacity=" + initialCapacity)
+          .toString();
+    }
+  }
+
+  public static class MonteCarloFleetConfig {
+
+    private int corePoolSize;
+    private int maximumPoolSize;
+    private Duration keepAliveTime;
+    private Duration timeout;
+
+    public int getCorePoolSize() {
+      return corePoolSize;
+    }
+
+    public void setCorePoolSize(int corePoolSize) {
+      this.corePoolSize = corePoolSize;
+    }
+
+    public int getMaximumPoolSize() {
+      return maximumPoolSize;
+    }
+
+    public void setMaximumPoolSize(int maximumPoolSize) {
+      this.maximumPoolSize = maximumPoolSize;
+    }
+
+    public Duration getKeepAliveTime() {
+      return keepAliveTime;
+    }
+
+    public void setKeepAliveTime(Duration keepAliveTime) {
+      this.keepAliveTime = keepAliveTime;
+    }
+
+    public Duration getTimeout() {
+      return timeout;
+    }
+
+    public void setTimeout(Duration timeout) {
+      this.timeout = timeout;
+    }
+
+    @Override
+    public String toString() {
+      return new StringJoiner(", ", MonteCarloFleetConfig.class.getSimpleName() + "[", "]")
+          .add("corePoolSize=" + corePoolSize)
+          .add("maximumPoolSize=" + maximumPoolSize)
+          .add("keepAliveTime=" + keepAliveTime)
+          .add("timeout=" + timeout)
+          .toString();
+    }
+  }
+
+  public static class MatchMakingServiceConfig {
+
+    private int corePoolSize;
+    private Duration attemptInitialDelay;
+    private Duration attemptPeriod;
+    private Duration timeout;
+
+    public int getCorePoolSize() {
+      return corePoolSize;
+    }
+
+    public void setCorePoolSize(int corePoolSize) {
+      this.corePoolSize = corePoolSize;
+    }
+
+    public Duration getAttemptInitialDelay() {
+      return attemptInitialDelay;
+    }
+
+    public void setAttemptInitialDelay(Duration attemptInitialDelay) {
+      this.attemptInitialDelay = attemptInitialDelay;
+    }
+
+    public Duration getAttemptPeriod() {
+      return attemptPeriod;
+    }
+
+    public void setAttemptPeriod(Duration attemptPeriod) {
+      this.attemptPeriod = attemptPeriod;
+    }
+
+    public Duration getTimeout() {
+      return timeout;
+    }
+
+    public void setTimeout(Duration timeout) {
+      this.timeout = timeout;
+    }
+
+    @Override
+    public String toString() {
+      return new StringJoiner(", ", MatchMakingServiceConfig.class.getSimpleName() + "[", "]")
+          .add("corePoolSize=" + corePoolSize)
+          .add("attemptInitialDelay=" + attemptInitialDelay)
+          .add("attemptPeriod=" + attemptPeriod)
+          .add("timeout=" + timeout)
           .toString();
     }
   }
