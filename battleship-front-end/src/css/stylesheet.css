@@ -88,6 +88,11 @@ main {
   cursor: pointer;
 }
 
+#message-const a.click-disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 .message-important {
   font-weight: bold;
   animation: message-blinker 1s linear infinite;

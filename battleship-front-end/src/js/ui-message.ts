@@ -5,8 +5,8 @@ import {Random} from './random';
 import {htmlStrings} from './html-strings';
 
 export class UiMessageTimeout {
-  public readonly fast: number = 1500;
-  public readonly default: number = 2500;
+  public readonly fast: number = 2000;
+  public readonly default: number = 3000;
   public readonly slow: number = 5000;
 }
 

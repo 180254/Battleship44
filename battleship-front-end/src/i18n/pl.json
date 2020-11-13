@@ -21,6 +21,8 @@
   "end.won_opp": "Koniec gry. Wygrał przeciwnik. ",
   "end.opp_gone": "Twój przeciwnik sobie poszedł. ",
   "end.next_game": "kolejna gra?",
+  "matchmaking.start": "poszukać losowego?",
+  "matchmaking.notfound": "Niestety, nie udało się znaleźć przeciwnika.",
   "fail.fail": "błąd: {0}",
   "stats.unknown": "nieznany",
   "stats.game_url": "gra/adres",

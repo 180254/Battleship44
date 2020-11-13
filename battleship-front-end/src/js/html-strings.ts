@@ -32,6 +32,7 @@ export const htmlStrings = {
       default: 'message',
       fail: 'message-fail',
       important: 'message-important',
+      click_disabled: 'click-disabled',
     },
 
     ok: {
@@ -39,6 +40,7 @@ export const htmlStrings = {
         ship_selection: 'ok-ship-selection',
         random_ship_selection: 'random-ship-selection',
         game_next: 'ok-game-next',
+        matchmaking: 'ok-matchmaking-start',
       },
     },
   },

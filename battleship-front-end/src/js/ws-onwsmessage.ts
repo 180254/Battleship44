@@ -103,15 +103,14 @@ export class OnWsMessage {
           this.grids.shoot.classList.remove(htmlStrings.grid.clazz.inactive);
 
           if (payload) {
-            const gameUrl: HTMLElement = document.getElementById(htmlStrings.info.id.game_url)!;
-
-            this.translator.removeTranslation(gameUrl);
-
-            const urlParams: UrlParam[] = [
+            const gameUrlParams: UrlParam[] = [
               this.url.getParam('d'),
               new UrlParam('id', payload),
             ].filter(urlParam => urlParam !== null) as UrlParam[];
-            gameUrl.textContent = this.url.buildUrlWithParams(...urlParams);
+            const gameUrl: HTMLElement = document.getElementById(htmlStrings.info.id.game_url)!;
+            gameUrl.textContent = this.url.buildUrlWithParams(...gameUrlParams);
+
+            this.translator.removeTranslation(gameUrl);
 
             const infoPlayersGame: HTMLElement = document.getElementById(
               htmlStrings.info.id.players_game
@@ -169,6 +168,31 @@ export class OnWsMessage {
       ],
 
       [
+        'MATCHMAKING',
+        payload => {
+          if (payload.startsWith('OK')) {
+            this.process(WsMessage.Sub('MATCHMAKING', payload, 'OK'));
+          } else {
+            this.logger.error('unknown_func={0},{1}', 'MATCHMAKING', payload);
+          }
+        },
+      ],
+
+      [
+        'MATCHMAKING OK',
+        payload => {
+          const gameUrlParams: UrlParam[] = [
+            this.url.getParam('d'),
+            new UrlParam('id', payload),
+          ].filter(urlParam => urlParam !== null) as UrlParam[];
+          const gameUrl: HTMLElement = document.getElementById(htmlStrings.info.id.game_url)!;
+          gameUrl.textContent = this.url.buildUrlWithParams(...gameUrlParams);
+
+          this.process(new WsMessage('', '2PLA', ''));
+        },
+      ],
+
+      [
         'GAME-RULES',
         payload => {
           const gameRules = payload.split(',');
@@ -208,6 +232,27 @@ export class OnWsMessage {
           this.grids.shoot.classList.add(htmlStrings.grid.clazz.inactive);
 
           this.uiMessage.setFixed(i18nKey('tour.awaiting'));
+
+          const messageConstElement: HTMLElement = document.getElementById(
+            htmlStrings.message.id.const
+          )!;
+          messageConstElement.append(' ');
+          this.uiMessage.addFixedLink(
+            i18nKey('matchmaking.start'),
+            htmlStrings.message.ok.id.matchmaking
+          );
+
+          const okStartMatchmaking: HTMLElement = document.getElementById(
+            htmlStrings.message.ok.id.matchmaking
+          )!;
+          okStartMatchmaking.addEventListener('click', () => {
+            if (okStartMatchmaking.classList.contains(htmlStrings.message.clazz.click_disabled)) {
+              return;
+            }
+            okStartMatchmaking.classList.add(htmlStrings.message.clazz.click_disabled);
+            this.ws.send('MATCHMAKING');
+          });
+
           this.uiGameRules.deactivateChanging();
 
           this.gridSelection.deactivate();
@@ -413,6 +458,11 @@ export class OnWsMessage {
 
           this.uiMessage.addFleeting(i18nKey('tour.two_players'), this.uiMessageTimeout.slow);
 
+          const okMatchmakingStart: HTMLElement = document.getElementById(
+            htmlStrings.message.ok.id.matchmaking
+          )!;
+          okMatchmakingStart.classList.add(htmlStrings.message.clazz.click_disabled);
+
           const gameRulesChangers: NodeListOf<HTMLElement> = document.querySelectorAll(
             htmlStrings.game_rules.selector.data_game_rules_change
           );
@@ -457,6 +507,30 @@ export class OnWsMessage {
         payload => {
           this.uiMessage.setFixed(i18nKey('fail.fail', '400 ' + payload));
           this.logger.error('400={0}', payload);
+        },
+      ],
+
+      [
+        '408',
+        payload => {
+          if (payload === 'MATCHMAKING timeout') {
+            if (this.sessionContext.numberOfPlayersInGame === 2) {
+              return;
+            }
+
+            const okMatchmakingStart: HTMLElement = document.getElementById(
+              htmlStrings.message.ok.id.matchmaking
+            )!;
+            okMatchmakingStart.classList.remove(htmlStrings.message.clazz.click_disabled);
+
+            this.uiMessage.addFleeting(
+              i18nKey('matchmaking.notfound'),
+              this.uiMessageTimeout.default,
+              htmlStrings.message.clazz.fail
+            );
+          } else {
+            this.logger.error('408={0}', payload);
+          }
         },
       ],
     ]);

@@ -21,6 +21,8 @@
   "end.won_opp": "Game over. The opponent won. ",
   "end.opp_gone": "Your opponent has left the game. ",
   "end.next_game": "next game?",
+  "matchmaking.start": "seek a random one?",
+  "matchmaking.notfound": "Sorry, no opponent was found.",
   "fail.fail": "error: {0}",
   "stats.unknown": "unknown",
   "stats.game_url": "game/url",
