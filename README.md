@@ -104,13 +104,13 @@ v1.4.1 (released 2020-09-24)
 v2.0.0 (unreleased)  
 + general: revised protocol  
 + back: added endpoint with metrics  
++ front: new feature: several themes to choose from  
 + back/front: new feature: random fleet location  
 + back/front: new feature: possibility to change game rules in each game  
 + back/front: compiled game code takes less space, less dependencies  
-+ front: new feature: several themes to choose from  
++ back/front: new feature: matchmaking - looking for a random opponent  
   
 vX.Y.Z (unplanned)  
-- "availability broadcasting" - look for a waiting player  
 - back/front: info which ship sizes has been already been shot down & which are still to shoot down  
 - back/front: a mini chat in game, between players  
 - back/front: grid-size is now customizable at game-level, not at server-level  
