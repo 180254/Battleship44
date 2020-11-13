@@ -12,10 +12,11 @@ import java.util.concurrent.*;
 
 public class MatchMakingService {
 
-  private final Set<Player> players = ConcurrentHashMap.newKeySet();
+  private final Set<Player> playersQueue = ConcurrentHashMap.newKeySet();
 
   private final Locker locker;
   private final IdGenerator idGenerator;
+  private final MetricsService metricsService;
   private final Duration attemptInitialDelay;
   private final Duration attemptPeriod;
   private final Duration timeout;
@@ -24,25 +25,34 @@ public class MatchMakingService {
 
   public MatchMakingService(Locker locker,
                             IdGenerator idGenerator,
+                            MetricsService metricsService,
                             int corePoolSize,
                             Duration attemptInitialDelay,
                             Duration attemptPeriod,
                             Duration timeout) {
     this.locker = locker;
     this.idGenerator = idGenerator;
+    this.metricsService = metricsService;
     this.attemptInitialDelay = attemptInitialDelay;
     this.attemptPeriod = attemptPeriod;
     this.timeout = timeout;
     this.scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(corePoolSize);
+
+    metricsService.registerDeliverableMetric(
+        "matchMakingService.threadPool.currentSize", scheduledThreadPoolExecutor::getPoolSize);
+    metricsService.registerDeliverableMetric(
+        "matchMakingService.playersQueue.currentSize", playersQueue::size);
   }
 
   public CompletableFuture<Game> makeGameAsync(Player player) {
-    players.add(player);
+    long startTime = System.currentTimeMillis();
+
+    playersQueue.add(player);
     CompletableFuture<Game> gameFuture = new CompletableFuture<>();
 
     ScheduledFuture<?> makeGameScheduledFuture
         = scheduledThreadPoolExecutor.scheduleAtFixedRate(
-        () -> makeGame(player).ifPresent(gameFuture::complete),
+        () -> makeGameInternal(player).ifPresent(gameFuture::complete),
         attemptInitialDelay.toMillis(), attemptPeriod.toMillis(), TimeUnit.MILLISECONDS);
 
     ScheduledFuture<?> makeGameTimeoutScheduledFuture
@@ -53,19 +63,37 @@ public class MatchMakingService {
     gameFuture.whenComplete((game, throwable) -> {
       makeGameScheduledFuture.cancel(false);
       makeGameTimeoutScheduledFuture.cancel(false);
-      players.remove(player);
+      playersQueue.remove(player);
+
+      String metricCounterKey;
+      if (throwable != null) {
+        String throwableSimpleName = throwable.getClass().getSimpleName();
+        metricCounterKey = "matchMakingService.makeGameAsync.completedExceptionally." + throwableSimpleName;
+      } else if (game == null) {
+        metricCounterKey = "matchMakingService.makeGameAsync.completedNull";
+      } else {
+        metricCounterKey = "matchMakingService.makeGameAsync.completedOk";
+      }
+      metricsService.incrementCounter(metricCounterKey);
+
+      long elapsedTime = System.currentTimeMillis() - startTime;
+      metricsService.recordElapsedTime(
+          "matchMakingService.makeGameAsync.avgTimeMs", elapsedTime, TimeUnit.MILLISECONDS);
     });
 
     return gameFuture;
   }
 
   @SuppressWarnings("PMD.AvoidBranchingStatementAsLastInLoop") // hm, i like it
-  public Optional<Game> makeGame(Player player) {
+  private Optional<Game> makeGameInternal(Player player) {
+    Optional<Game> result = Optional.empty();
+    long startTime = System.currentTimeMillis();
+
     Optional<Unlocker> playerUnlocker = Optional.empty();
     Optional<Unlocker> otherPlayerUnlocker = Optional.empty();
 
     try {
-      for (Player otherPlayer : players) {
+      for (Player otherPlayer : playersQueue) {
         if (!matchMakingMatches(player, otherPlayer)) {
           continue;
         }
@@ -94,11 +122,14 @@ public class MatchMakingService {
 
         game.setPlayer(1, otherPlayer);
         otherPlayer.setGame(game);
-
-        return Optional.of(game);
+        result = Optional.of(game);
+        break;
       }
 
-      return Optional.empty();
+      long elapsedTime = System.currentTimeMillis() - startTime;
+      metricsService.recordElapsedTime(
+          "matchMakingService.makeGameInternal.avgTimeMs", elapsedTime, TimeUnit.MILLISECONDS);
+      return result;
 
     } finally {
       playerUnlocker.ifPresent(Unlocker::unlock);

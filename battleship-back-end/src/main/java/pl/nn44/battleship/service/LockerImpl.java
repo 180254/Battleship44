@@ -22,7 +22,7 @@ public class LockerImpl implements Locker {
   public LockerImpl(MetricsService metricsService, int initialCapacity) {
     this.fastLock = new FastLock();
     this.locks = new ConcurrentReferenceHashMap<>(initialCapacity, ReferenceType.WEAK);
-    metricsService.registerDeliverableMetric("locks.currentSize", locks::size);
+    metricsService.registerDeliverableMetric("locker.locks.currentSize", locks::size);
   }
 
   @Override

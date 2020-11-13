@@ -66,6 +66,7 @@ public class GameConfiguration {
     MatchMakingService matchMakingService = new MatchMakingService(
         locker,
         idGenerator,
+        metricsService,
         gameProperties.getImpl().getMatchMakingServiceConfig().getCorePoolSize(),
         gameProperties.getImpl().getMatchMakingServiceConfig().getAttemptInitialDelay(),
         gameProperties.getImpl().getMatchMakingServiceConfig().getAttemptPeriod(),
