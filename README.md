@@ -101,7 +101,7 @@ v1.4.1 (released 2020-09-24)
 + back: dependencies maintenance  
 + back: code updated to java 11  
   
-v2.0.0 (unreleased)  
+v2.0.0 (released 2020-11-14)
 + general: revised protocol  
 + back: added endpoint with metrics  
 + front: new feature: several themes to choose from  
