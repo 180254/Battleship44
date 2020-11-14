@@ -78,8 +78,8 @@ public class LockerImpl implements Locker {
   }
 
   private boolean tryAcquireLocks(Lock[] locks, long time, TimeUnit unit) {
+    int i = 0;
     try {
-      int i = 0;
       for (Lock lock : locks) {
         if (!lock.tryLock(time, unit)) {
           releaseLocks(Arrays.copyOfRange(locks, 0, i));
@@ -89,7 +89,7 @@ public class LockerImpl implements Locker {
       }
       return true;
     } catch (InterruptedException e) {
-      releaseLocks(locks);
+      releaseLocks(Arrays.copyOfRange(locks, 0, i));
       return false;
     }
   }
