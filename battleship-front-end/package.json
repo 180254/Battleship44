@@ -17,7 +17,7 @@
   "scripts": {
     "dev": "webpack --mode development",
     "prod": "webpack --mode production",
-    "compile": "webpack --mode production",
+    "watch": "webpack --mode development --watch",
     "server": "node server.js",
     "server.js": "node server.js",
     "test": "mocha --require ts-node/register 'test/js/*.test.ts'"
