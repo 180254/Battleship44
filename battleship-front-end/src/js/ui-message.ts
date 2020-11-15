@@ -54,14 +54,14 @@ export class UiMessage {
     const outerId: string =
       timeout !== undefined ? '{0}'.format(this.random.str(7, 'a')) : htmlStrings.message.id.const;
 
-    const outer: HTMLElement = document.createElement('span');
+    const outer: HTMLSpanElement = document.createElement('span');
     outer.setAttribute('id', outerId);
     outer.classList.add('msg');
     if (clazz !== undefined) {
       outer.classList.add(clazz);
     }
 
-    const inner: HTMLElement = document.createElement('span');
+    const inner: HTMLSpanElement = document.createElement('span');
     this.translator.translateElement(inner, i18nKey);
     outer.append(inner);
 

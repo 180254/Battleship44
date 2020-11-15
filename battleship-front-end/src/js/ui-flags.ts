@@ -17,7 +17,7 @@ export class UiFlags {
       .getLangFinder()
       .server()
       .forEach(langTag => {
-        const flag: HTMLElement = document.createElement('img');
+        const flag: HTMLImageElement = document.createElement('img');
         flag.setAttribute('role', 'button');
         flag.setAttribute('alt', langTag.lang);
         flag.setAttribute('src', 'flags/{0}.png'.format(langTag.region!.toLowerCase()));
@@ -29,6 +29,8 @@ export class UiFlags {
             () => this.logger.error('lang.change fail={0}', langTag),
             () => this.logger.trace('lang.change ok={0}', langTag)
           );
+          const documentRoot: HTMLHtmlElement = document.getElementsByTagName('html')[0];
+          documentRoot.setAttribute('lang', langTag.lang);
         });
 
         const flags: HTMLElement = document.getElementById(htmlStrings.flags.id.container)!;
