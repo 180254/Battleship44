@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -Eeuo pipefail
 [[ "${DEBUG:-0}" -eq 1 ]] && set -x
 
 ARGUMENTS="$*"

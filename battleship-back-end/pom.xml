@@ -17,23 +17,23 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <start-class>pl.nn44.battleship.Application</start-class>
-        <spring-boot.version>2.4.4</spring-boot.version>
+        <spring-boot.version>2.5.3</spring-boot.version>
         <!-- mvn versions:display-plugin-updates "Plugins require minimum Maven version of: ..." -->
         <require.maven.version>3.2.5</require.maven.version>
         <!-- mvn versions:display-property-updates -->
         <maven-site-plugin.version>3.9.1</maven-site-plugin.version>
         <findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
-        <spotbugs-maven-plugin.version>4.2.2</spotbugs-maven-plugin.version>
-        <spotbugs.version>4.2.2</spotbugs.version>
+        <spotbugs-maven-plugin.version>4.3.0</spotbugs-maven-plugin.version>
+        <spotbugs.version>4.3.0</spotbugs.version>
         <maven-pmd-plugin.version>3.14.0</maven-pmd-plugin.version>
-        <maven-jxr-plugin.version>3.0.0</maven-jxr-plugin.version>
-        <thinlayout.version>1.0.26.RELEASE</thinlayout.version>
+        <maven-jxr-plugin.version>3.1.1</maven-jxr-plugin.version>
+        <thinlayout.version>1.0.27.RELEASE</thinlayout.version>
     </properties>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.4</version>
+        <version>2.5.3</version>
         <relativePath/>
     </parent>
 
@@ -116,6 +116,9 @@
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <version>${spotbugs-maven-plugin.version}</version>
+                <configuration>
+                    <excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
+                </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>com.github.spotbugs</groupId>

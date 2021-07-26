@@ -20,12 +20,6 @@ public class Error0Controller extends AbstractErrorController {
     super(new DefaultErrorAttributes(), Collections.emptyList());
   }
 
-  @Override
-  @SuppressWarnings({"deprecation", "RedundantSuppression"}) // just implementing ErrorController
-  public String getErrorPath() {
-    return null;
-  }
-
   @RequestMapping(produces = MediaType.TEXT_PLAIN_VALUE)
   public ResponseEntity<String> textPlainError(HttpServletRequest request) {
     HttpStatus status = getStatus(request);
