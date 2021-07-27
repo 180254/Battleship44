@@ -242,14 +242,17 @@ export class OnWsMessage {
             htmlStrings.message.ok.id.matchmaking
           );
 
-          const okStartMatchmaking: HTMLElement = document.getElementById(
+          const okMatchmakingStart: HTMLElement = document.getElementById(
             htmlStrings.message.ok.id.matchmaking
           )!;
-          okStartMatchmaking.addEventListener('click', () => {
-            if (okStartMatchmaking.classList.contains(htmlStrings.message.clazz.click_disabled)) {
+          if (this.sessionContext.numberOfPlayersInGame == 2) {
+            okMatchmakingStart.classList.add(htmlStrings.message.clazz.click_disabled);
+          }
+          okMatchmakingStart.addEventListener('click', () => {
+            if (okMatchmakingStart.classList.contains(htmlStrings.message.clazz.click_disabled)) {
               return;
             }
-            okStartMatchmaking.classList.add(htmlStrings.message.clazz.click_disabled);
+            okMatchmakingStart.classList.add(htmlStrings.message.clazz.click_disabled);
             this.ws.send('MATCHMAKING');
           });
 
@@ -458,10 +461,12 @@ export class OnWsMessage {
 
           this.uiMessage.addFleeting(i18nKey('tour.two_players'), this.uiMessageTimeout.slow);
 
-          const okMatchmakingStart: HTMLElement = document.getElementById(
+          const okMatchmakingStart: HTMLElement | null = document.getElementById(
             htmlStrings.message.ok.id.matchmaking
-          )!;
-          okMatchmakingStart.classList.add(htmlStrings.message.clazz.click_disabled);
+          );
+          if (okMatchmakingStart !== null) {
+            okMatchmakingStart.classList.add(htmlStrings.message.clazz.click_disabled);
+          }
 
           const gameRulesChangers: NodeListOf<HTMLElement> = document.querySelectorAll(
             htmlStrings.game_rules.selector.data_game_rules_change
