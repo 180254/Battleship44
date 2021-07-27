@@ -206,33 +206,27 @@ module.exports = (env, argv) => {
         patterns: [
           {
             from: path.resolve(__dirname, 'src/app.LICENSE.txt'),
-            to: './',
-            flatten: true,
+            to: './[name][ext]',
           },
           {
             from: path.resolve(__dirname, 'src/flags/*.png'),
-            to: 'flags/',
-            flatten: true,
+            to: 'flags/[name][ext]',
           },
           {
             from: path.resolve(__dirname, 'src/i18n/*.json'),
-            to: 'i18n/',
-            flatten: true,
+            to: 'i18n/[name][ext]',
           },
           {
             from: path.resolve(__dirname, 'src/og/*.png'),
-            to: 'og/',
-            flatten: true,
+            to: 'og/[name][ext]',
           },
           {
             from: path.resolve(__dirname, 'src/og/*.webp'),
-            to: 'og/',
-            flatten: true,
+            to: 'og/[name][ext]',
           },
           {
             from: path.resolve(__dirname, 'src/favicon.*'),
-            to: './',
-            flatten: true,
+            to: './[name][ext]',
           },
         ],
       }),

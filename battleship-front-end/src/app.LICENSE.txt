@@ -1,6 +1,6 @@
 The MIT License (MIT)
 
-Copyright (c) 2016 180254
+Copyright (c) 2016-2021 180254
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -55,7 +55,7 @@ The following software may be included in this product: core-js.
 A copy of the source code may be downloaded from https://github.com/zloirock/core-js.
 This software contains the following license and notice below:
 
-Copyright (c) 2014-2020 Denis Pushkarev
+Copyright (c) 2014-2021 Denis Pushkarev
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

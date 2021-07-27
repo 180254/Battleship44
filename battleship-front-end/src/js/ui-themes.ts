@@ -1,4 +1,4 @@
-import * as Cookies from 'js-cookie';
+import Cookies from 'js-cookie';
 import {Logger, LoggerFactory} from './logger';
 import {htmlStrings} from './html-strings';
 

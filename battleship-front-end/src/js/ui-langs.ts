@@ -1,4 +1,4 @@
-import * as Cookies from 'js-cookie';
+import Cookies from 'js-cookie';
 import {Environment} from './environment';
 import {Logger, LoggerFactory} from './logger';
 
