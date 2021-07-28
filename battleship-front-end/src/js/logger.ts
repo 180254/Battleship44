@@ -32,7 +32,7 @@ export class Caller {
   // at ui-flags.ts:37
   // at Array.forEach (<anonymous>)
   // at UiFlags.initFlags (ui-flags.ts:22)
-  private readonly v8RegExp: RegExp = new RegExp(/at (?:\w+)\.(\w+) \((?!<)/, 'g');
+  private readonly v8RegExp: RegExp = new RegExp(/at \w+\.(\w+) \((?!<)/, 'g');
 
   private readonly commonRegExp: RegExp = new RegExp(
     '(?:{0})|(?:{1})'.format(this.spiderMonkeyRegExp.source, this.v8RegExp.source),

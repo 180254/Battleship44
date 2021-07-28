@@ -245,7 +245,7 @@ export class OnWsMessage {
           const okMatchmakingStart: HTMLElement = document.getElementById(
             htmlStrings.message.ok.id.matchmaking
           )!;
-          if (this.sessionContext.numberOfPlayersInGame == 2) {
+          if (this.sessionContext.numberOfPlayersInGame === 2) {
             okMatchmakingStart.classList.add(htmlStrings.message.clazz.click_disabled);
           }
           okMatchmakingStart.addEventListener('click', () => {
